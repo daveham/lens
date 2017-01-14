@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "version": "0.0.0",
+  "description": "inference lens generative image system",
+  "author": "daveham",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "2.0.0-beta.32"
+  }
+}

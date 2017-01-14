@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "@lens/vagrant",
+  "version": "0.1.0",
+  "description": "inference lens generative image system - vagrant configuration",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:daveham/lens.git"
+  },
+  "author": "daveham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveham/lens/issues"
+  }
+}

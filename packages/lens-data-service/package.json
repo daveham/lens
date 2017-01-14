@@ -1,11 +1,11 @@
 {
+  "private": true,
   "name": "@lens/data-service",
   "version": "0.1.0",
-  "description": "Redis/Resque-based node service for generating graphics and analysis for InferenceLens",
-  "scripts": {
-    "start": "npm run dev",
-    "dev": "nodemon -r dotenv/config bin/register.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "inference lens generative image system - data service",
+  "engines": {
+    "node": ">=4.2.0",
+    "npm": "^3.0.0"
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,14 @@
   },
   "author": "daveham",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveham/lens/issues"
+  },
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "nodemon -r dotenv/config bin/register.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-resolver": "0.0.7",

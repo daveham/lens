@@ -1,11 +1,21 @@
 {
-  "name": "inferencelens-graphics-manager-redux",
+  "private": true,
+  "name": "@lens/data-manager",
   "version": "0.1.0",
-  "description": "Redux-based web app for managing graphics used in InferenceLens",
+  "description": "inference lens generative image system - data manager",
   "main": "index.js",
   "engines": {
     "node": ">=4.2.0",
     "npm": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:daveham/lens.git"
+  },
+  "author": "daveham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveham/lens/issues"
   },
   "scripts": {
     "clean": "rimraf dist",
@@ -93,12 +103,6 @@
       }
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/daveham/ilgmrdx.git"
-  },
-  "author": "Dave Hamilton",
-  "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.5.1",
     "babel-core": "^6.3.17",

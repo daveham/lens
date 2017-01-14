@@ -1,0 +1,11 @@
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  min-width: 0;
+  width: 100%;
+}
+
+.details {
+  flex: 2;
+}

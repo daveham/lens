@@ -2,9 +2,27 @@
   "private": true,
   "version": "0.0.0",
   "description": "inference lens generative image system",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:daveham/lens.git"
+  },
   "author": "daveham",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveham/lens/issues"
+  },
   "devDependencies": {
+    "eslint": "^3.9.0",
+    "eslint-config-standard": "^5.1.0",
+    "eslint-config-standard-react": "^3.0.0",
+    "eslint-loader": "^1.5.0",
+    "eslint-plugin-babel": "^3.3.0",
+    "eslint-plugin-flowtype": "^2.20.0",
+    "eslint-plugin-promise": "^2.0.0",
+    "eslint-plugin-react": "^5.0.0",
+    "eslint-plugin-standard": "^2.0.0",
     "lerna": "2.0.0-beta.32"
   }
 }

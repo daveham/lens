@@ -1,0 +1,29 @@
+$gray-base:              #000 !default;
+$gray-darker:            #222 !default; // #222
+$gray-dark:              #282828 !default;   // #333
+$gray:                   #555 !default; // #555
+$gray-light:             #888 !default;   // #999
+$gray-lighter:           #ADAFAE !default; // #eee
+
+$brand-primary:         #2A9FD6 !default;
+$brand-success:         #77B300 !default;
+$brand-info:            #9933CC !default;
+$brand-warning:         #FF8800 !default;
+$brand-danger:          #CC0000 !default;
+
+
+//== Scaffolding
+//
+//## Settings for some of the most global styles.
+
+//** Background color for `<body>`.
+$body-bg:               #060606 !default;
+//** Global text color on `<body>`.
+$text-color:            $gray-light !default;
+
+//** Global textual link color.
+$link-color:            $brand-primary !default;
+//** Link hover color set via `darken()` function.
+$link-hover-color:      $link-color !default;
+//** Link hover decoration.
+$link-hover-decoration: underline !default;

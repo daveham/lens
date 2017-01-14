@@ -1,6 +1,8 @@
 .DS_STORE
 *.log
-.nvmrc
 
-lens_data
 node_modules
+
+dist
+data
+coverage

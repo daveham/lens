@@ -1,0 +1,22 @@
+.container {
+  margin: 0 10px;
+  vertical-align: text-bottom;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+}
+
+.socketId {
+  text-align: right;
+}
+
+.growMore {
+  flex: 2;
+}
+
+.growMoreCentered {
+  flex: 2;
+  text-align: center;
+}

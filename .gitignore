@@ -2,5 +2,8 @@
 *.log
 .nvmrc
 
+*.sublime-project
+*.sublime-workspace
+
 lens-data
 node_modules

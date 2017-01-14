@@ -2,5 +2,5 @@
 *.log
 .nvmrc
 
-lens_data
+lens-data
 node_modules

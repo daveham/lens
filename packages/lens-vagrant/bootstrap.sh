@@ -10,13 +10,14 @@ sudo yum -y install ctags ctags-etags
 #sudo yum -y install nginx
 sudo yum -y install vim
 sudo npm install -g n
-sudo n 6.3
+sudo n 6.9.4
 sudo npm install -g npm
 sudo npm install -g gulp
 sudo npm install -g webpack
 sudo npm install -g nodemon
 sudo npm install -g mocha
 sudo npm install -g redis-commander
+sudo npm install -g lerna
 
 # install unison from source
 cd ~
@@ -40,6 +41,8 @@ sudo yum -y install redis
 sudo echo "Defaults:vagrant env_keep=HOME" >> /etc/sudoers.d/10_vagrant
 sudo mkdir /lens
 sudo chmod 777 /lens
+sudo mkdir /lens/data
+sudo chmod 777 /lens/data
 
 # Use local dot files if they exist
 for file in /.{bash_profile,bash_prompt}; do

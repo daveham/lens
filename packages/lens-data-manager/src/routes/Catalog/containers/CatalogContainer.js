@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
-import { makeThumbImageDescriptor, makeImageId } from 'utils';
+import { makeThumbImageDescriptor, makeImageId } from '@lens/image-descriptors';
 
 import { actions as catalogActions } from '../modules/catalog';
 import { actions as sourceMetadataActions } from '../modules/sources-metadata';

@@ -104,6 +104,7 @@
     }
   },
   "dependencies": {
+    "@lens/image-descriptors": "^0.1.0",
     "babel-cli": "^6.5.1",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",

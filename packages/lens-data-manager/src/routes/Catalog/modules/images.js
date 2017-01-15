@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
-import { makeImageId } from 'utils';
+import { makeImageId } from '@lens/image-descriptors';
 
 import debugLib from 'debug';
 const debug = debugLib('app:module:images');

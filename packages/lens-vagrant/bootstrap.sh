@@ -41,8 +41,8 @@ sudo yum -y install redis
 sudo echo "Defaults:vagrant env_keep=HOME" >> /etc/sudoers.d/10_vagrant
 sudo mkdir /lens
 sudo chmod 777 /lens
-sudo mkdir /lens/data
-sudo chmod 777 /lens/data
+sudo mkdir /data
+sudo chmod 777 /data
 
 # Use local dot files if they exist
 for file in /.{bash_profile,bash_prompt}; do

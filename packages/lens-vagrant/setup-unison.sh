@@ -4,20 +4,18 @@
 ssh_config="$PWD/.vagrant/ssh-config"
 vagrant ssh-config > "$ssh_config"
 
-# common roots
-root_host="$PWD/.."
-root_vm="ssh://default//lens/"
-root_data_host="$PWD/../../lens-data"
-root_data_vm="ssh://default//lens/data/"
-
 # create unison profile for lens projects
+root_host="$PWD/../.."
+root_vm="ssh://default//lens/"
+
 profile1="
 root = $root_host
 root = $root_vm
-path = lens-data-manager
-path = lens-data-service
-ignore = Name {CHANGELOG.md,CONTRIBUTING.md,LICENSE,README.md,*.log}
-ignore = Name {.git,node_modules,.DS_Store,lens-vagrant}
+ignore = Path lens-data
+ignore = Path packages/lens-vagrant
+ignore = Name {*.md,LICENSE,*.log}
+ignore = Name {*.sublime-project,*.sublime-workspace}
+ignore = Name {.git,node_modules,.DS_Store}
 prefer = $root_host
 repeat = 2
 terse = true
@@ -27,11 +25,17 @@ sshargs = -F $ssh_config
 "
 
 # create unison profile for lens data
+root_data_host="$PWD/../../lens-data"
+root_data_vm="ssh://default//data/"
+
 profile2="
 root = $root_data_host
 root = $root_data_vm
+ignore = Path stats
+ignore = Path thumbs
+ignore = Path tiles
 ignore = Name {*.log}
-ignore = Name {.git,node_modules,.DS_Store,dump.*,stats,thumbs,tiles}
+ignore = Name {.git,node_modules,.DS_Store,dump.*}
 prefer = $root_data_host
 repeat = 2
 terse = true

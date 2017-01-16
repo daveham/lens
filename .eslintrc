@@ -1,0 +1,39 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "plugins": [
+    "babel",
+    "promise",
+    "flowtype"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "io": false,
+    "Promise": false,
+    "__DEV__": false,
+    "__PROD__": false,
+    "__DEBUG__": false,
+    "__DEBUG_NEW_WINDOW__": false,
+    "__COVERAGE__": false,
+    "__BASENAME__": false
+  },
+  "rules": {
+    "semi": [2, "always"],
+    "padded-blocks": 0,
+    "space-before-function-paren": 0,
+    "jsx-quotes": [2, "prefer-single"],
+    "flowtype/define-flow-type": 1,
+    "flowtype/use-flow-type": 1
+  }
+}

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { queue as Queue } from 'node-resque';
-import { pathFromImageDescriptor, urlFromImageDescriptor } from './utils';
+import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 
 const connectionDetails = {
   pkg: 'ioredis',

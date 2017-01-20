@@ -1,9 +1,12 @@
 .DS_STORE
 *.log
+*.tmp
 .nvmrc
 
 *.sublime-project
 *.sublime-workspace
 
 lens-data
+lib
+dist
 node_modules

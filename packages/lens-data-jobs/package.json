@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "@lens/image-descriptors",
+  "name": "@lens/data-jobs",
   "version": "0.1.0",
-  "description": "inference lens generative image system - image data utilities",
+  "description": "inference lens generative image system - queued job utilities",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -14,5 +14,10 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "devDependencies": {
+  },
+  "babel": {
+    "presets": [
+      "es2015", "stage-0"
+    ]
   }
 }

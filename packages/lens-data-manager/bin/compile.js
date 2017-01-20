@@ -1,4 +1,11 @@
-require('babel-register');
+require('dotenv').config({ silent: false });
+require('babel-register')({
+  "presets": ["es2015", "react", "stage-0"],
+  "plugins": [
+    "transform-runtime",
+    ["resolver", { "resolveDirs": ["server", "config"] }]
+  ]
+});
 
 const config = require('../config');
 const debug = require('debug')('app:bin:compile');

@@ -2,6 +2,8 @@ import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import fs from 'fs';
+import path from 'path';
 import config from '../config';
 import _debug from 'debug';
 
@@ -17,6 +19,9 @@ const webpackConfig = {
   resolve: {
     root: paths.base(config.dir_client),
     extensions: ['', '.js', '.jsx', 'json']
+  },
+  resolveLoader: {
+    root: [path.resolve(__dirname, 'node_modules')]
   },
   module: {}
 };
@@ -104,15 +109,21 @@ webpackConfig.eslint = {
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
+var includePaths = [
+  paths.base('config'),
+  paths.base('src')//,
+//  fs.realpathSync(paths.base('node_modules/@lens/data-jobs'))
+];
 webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
-  exclude: /node_modules/,
+//  exclude: /node_modules/,
+  include: includePaths,
   loader: 'babel',
   query: {
     cacheDirectory: true,
-    plugins: ['transform-runtime'],
+    plugins: ['transform-runtime'].map(dep => require.resolve('babel-plugin-' + dep)),
     presets: __DEV__
-      ? ['es2015', 'react', 'stage-0', 'react-hmre']
+      ? ['es2015', 'react', 'stage-0', 'react-hmre'].map(dep => require.resolve('babel-preset-' + dep))
       : ['es2015', 'react', 'stage-0']
   }
 },

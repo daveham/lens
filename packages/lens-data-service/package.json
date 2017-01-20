@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "inference lens generative image system - data service",
   "engines": {
-    "node": ">=4.2.0",
+    "node": ">=6.9.0",
     "npm": "^3.0.0"
   },
   "repository": {
@@ -18,14 +18,12 @@
   },
   "scripts": {
     "start": "npm run dev",
-    "dev": "nodemon -r dotenv/config bin/register.js",
+    "dev": "nodemon bin/register.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "babel-register": "^6.4.3",
     "body-parser": "^1.14.2",
     "debug": "^2.2.0",
-    "dotenv": "^1.2.0",
     "express": "^4.13.4",
     "morgan": "^1.6.1",
     "node-resque": "^4.0.5",

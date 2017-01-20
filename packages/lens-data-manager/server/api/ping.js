@@ -1,4 +1,5 @@
 import { queue as Queue } from 'node-resque';
+import { createPing } from '@lens/data-jobs';
 const debug = require('debug')('app:api-ping');
 
 export default function configureApi(router) {
@@ -17,7 +18,8 @@ export default function configureApi(router) {
       const queue = new Queue({ connection: connectionDetails });
       queue.on('error', (error) => { debug(error); });
       queue.connect(() => {
-        queue.enqueue('il', 'ping');
+        const payload = createPing();
+        queue.enqueue('il', payload.command, payload);
         res.json({ msg: 'enqueued' });
       });
     });

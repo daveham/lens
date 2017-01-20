@@ -3,7 +3,7 @@
   "name": "@lens/data-jobs",
   "version": "0.1.0",
   "description": "inference lens generative image system - queued job utilities",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:daveham/lens.git"
@@ -14,10 +14,5 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "devDependencies": {
-  },
-  "babel": {
-    "presets": [
-      "es2015", "stage-0"
-    ]
   }
 }

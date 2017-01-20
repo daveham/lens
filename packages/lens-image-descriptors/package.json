@@ -3,7 +3,7 @@
   "name": "@lens/image-descriptors",
   "version": "0.1.0",
   "description": "inference lens generative image system - image data utilities",
-  "main": "index.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:daveham/lens.git"

@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const gulp = require('gulp');
+const babel = require('gulp-babel');
 const gutil = require('gulp-util');
 const newer = require('gulp-newer');
 const path = require('path');
@@ -7,7 +8,12 @@ const path = require('path');
 const through = require('through2');
 const watch = require('gulp-watch');
 
-const scripts = './packages/*/src/**/*.js';
+const excludedPackages = [
+  'lens-data-manager',
+  'lens-data-service',
+  'lens-vagrant'
+];
+const scripts = `./packages/!(${excludedPackages.join('|')})/src/**/*.js`;
 const dest = 'packages';
 
 const srcEx = new RegExp('(packages/[^/]+)/src/');
@@ -29,6 +35,11 @@ function compile(watch) {
       const filepath = path.relative(path.resolve(__dirname, 'packages'), file._path);
       gutil.log('Compiling', '\'' + chalk.cyan(filepath) + '\'...');
       cb(null, file);
+    }))
+    .pipe(babel({
+      presets: ['es2015', 'stage-0'],
+      plugins: ['add-module-exports', 'transform-runtime'],
+      babelrc: false
     }))
     .pipe(gulp.dest(dest));
 }

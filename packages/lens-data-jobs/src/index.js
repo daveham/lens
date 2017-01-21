@@ -1,4 +1,4 @@
-import { createJob } from '../utils';
+import { createJob } from './utils';
 
 console.log('typeof createJob' + typeof createJob);
 

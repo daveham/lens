@@ -11,7 +11,7 @@ const config = {
   // Project Structure
   // ----------------------------------
   path_base  : path.resolve(__dirname, '../'),
-  dir_client : 'app',
+  dir_client : 'src',
   dir_dist   : 'dist',
   dir_server : 'server',
   dir_test   : 'tests',

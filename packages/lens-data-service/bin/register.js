@@ -1,10 +1,11 @@
-require('dotenv').config({ silent: false });
+require('dotenv').config();
 require('babel-register')({
   presets: ['es2015', 'stage-0'],
   plugins: [
-    'transform-runtime',
+    'add-module-exports', 'transform-runtime',
     ['resolver', { resolveDirs: ['server', 'config'] }]
-  ]
+  ],
+  babelrc: false
 });
 
 require('./start');

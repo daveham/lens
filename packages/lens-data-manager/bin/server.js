@@ -1,9 +1,7 @@
-import _debug from 'debug';
-const debug = _debug('bin:server');
-debug('I am here');
-
 import config from '../config';
 import app from 'app';
+import _debug from 'debug';
+const debug = _debug('bin:server');
 
 const host = config.server_host;
 const port = config.server_port;

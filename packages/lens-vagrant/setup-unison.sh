@@ -8,6 +8,8 @@ vagrant ssh-config > "$ssh_config"
 root_host="$PWD/../.."
 root_vm="ssh://default//lens/"
 
+# ? dontchmod = true
+
 profile1="
 root = $root_host
 root = $root_vm
@@ -19,7 +21,6 @@ ignore = Name {.git,node_modules,.DS_Store}
 prefer = $root_host
 repeat = 2
 terse = true
-dontchmod = true
 perms = 0
 sshargs = -F $ssh_config
 "
@@ -39,7 +40,6 @@ ignore = Name {.git,node_modules,.DS_Store,dump.*}
 prefer = $root_data_host
 repeat = 2
 terse = true
-dontchmod = true
 perms = 0
 sshargs = -F $ssh_config
 "

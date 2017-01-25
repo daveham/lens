@@ -45,7 +45,7 @@
       "command": "nodemon bin/register.js",
       "env": {
         "NODE_ENV": "development",
-        "DEBUG": "app:*,bin:*"
+        "DEBUG": "lens:*,app:*,srv:*"
       }
     },
     "deploy": {

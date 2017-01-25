@@ -2,7 +2,7 @@ import { argv } from 'yargs';
 import config from '../config';
 import webpackConfig from './webpack';
 
-const debug = require('debug')('app:karma');
+const debug = require('debug')('lens:build-karma');
 debug('Create configuration.');
 
 const karmaConfig = {

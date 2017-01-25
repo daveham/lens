@@ -3,7 +3,7 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import config from 'config';
 
-const debug = require('debug')('app:api-util');
+const debug = require('debug')('srv:api-util');
 
 const paths = config.utils_paths;
 const catalogDataFile = path.join(paths.base(config.dir_data), 'data.json');

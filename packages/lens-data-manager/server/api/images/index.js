@@ -10,7 +10,7 @@ const connectionDetails = {
   database: 0
 };
 
-const debug = require('debug')('app:api-images');
+const debug = require('debug')('srv:api-images');
 
 export default function configureApi(router) {
   debug('configure api post /images');

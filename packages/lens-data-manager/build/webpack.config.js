@@ -2,12 +2,10 @@ import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import fs from 'fs';
-import path from 'path';
 import config from '../config';
 import _debug from 'debug';
 
-const debug = _debug('app:webpack:config');
+const debug = _debug('lens:build-webpack-config');
 const paths = config.utils_paths;
 const {__DEV__, __PROD__, __TEST__} = config.globals;
 
@@ -19,9 +17,6 @@ const webpackConfig = {
   resolve: {
     root: paths.base(config.dir_client),
     extensions: ['', '.js', '.jsx', 'json']
-  },
-  resolveLoader: {
-    root: [path.resolve(__dirname, 'node_modules')]
   },
   module: {}
 };
@@ -96,8 +91,15 @@ if (!__TEST__) {
 // ------------------------------------
 webpackConfig.module.preLoaders = [{
   test: /\.(js|jsx)$/,
-  loader: 'eslint',
-  exclude: /node_modules/
+  include: [
+    paths.base('bin'),
+    paths.base('build'),
+    paths.base('config'),
+    paths.base('server'),
+    paths.base('src'),
+    paths.base('tests')
+  ],
+  loader: 'eslint'
 }];
 
 webpackConfig.eslint = {
@@ -109,21 +111,21 @@ webpackConfig.eslint = {
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
-var includePaths = [
-  paths.base('config'),
-  paths.base('src')//,
-//  fs.realpathSync(paths.base('node_modules/@lens/data-jobs'))
-];
+//var includePaths = [
+//  paths.base('config'),
+//  paths.base('src')//,
+////  fs.realpathSync(paths.base('node_modules/@lens/data-jobs'))
+//];
 webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
-//  exclude: /node_modules/,
-  include: includePaths,
+  exclude: /node_modules/,
+//  include: includePaths,
   loader: 'babel',
   query: {
     cacheDirectory: true,
-    plugins: ['transform-runtime'].map(dep => require.resolve('babel-plugin-' + dep)),
+    plugins: ['transform-runtime'], //.map(dep => require.resolve('babel-plugin-' + dep)),
     presets: __DEV__
-      ? ['es2015', 'react', 'stage-0', 'react-hmre'].map(dep => require.resolve('babel-preset-' + dep))
+      ? ['es2015', 'react', 'stage-0', 'react-hmre'] //.map(dep => require.resolve('babel-preset-' + dep))
       : ['es2015', 'react', 'stage-0']
   }
 },

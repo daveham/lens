@@ -11,7 +11,7 @@ import mkdirp from 'mkdirp';
 import webpackDevMiddleware from './middleware/webpack-dev';
 import webpackHMRMiddleware from './middleware/webpack-hmr';
 
-const debug = _debug('app:server');
+const debug = _debug('srv:server-app');
 const paths = config.utils_paths;
 
 import { configureApi } from 'api';

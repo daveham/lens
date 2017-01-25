@@ -3,7 +3,7 @@ import _debug from 'debug';
 import path from 'path';
 import { argv } from 'yargs';
 
-const debug = _debug('app:config:_base');
+const debug = _debug('lens:config-base');
 const config = {
   env : process.env.NODE_ENV || 'development',
 
@@ -53,6 +53,10 @@ const config = {
     'redux-thunk',
     'reselect'
   ],
+  mono_repo_vendor: [
+    'react',
+    'react-dom'
+  ],
 
   // ----------------------------------
   // Test Configuration
@@ -97,7 +101,10 @@ const pkg = require('../package.json');
 config.compiler_vendor = config.compiler_vendor
   .filter(dep => {
     if (pkg.dependencies[dep]) return true;
+    if (config.mono_repo_vendor.find(item => item === dep)) return true;
 
+    // This warning is not accurate in a monorepo scenario where dependencies
+    // can be found in higher directories of the overal repo hierarchy.
     debug(
       `Package "${dep}" was not found as an npm dependency in package.json; ` +
       `it won't be included in the webpack vendor bundle.\n` +

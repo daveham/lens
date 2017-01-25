@@ -1,6 +1,6 @@
 import { queue as Queue } from 'node-resque';
 import { createPing } from '@lens/data-jobs';
-const debug = require('debug')('app:api-ping');
+const debug = require('debug')('srv:api-ping');
 
 export default function configureApi(router) {
   debug('configure api post /ping');

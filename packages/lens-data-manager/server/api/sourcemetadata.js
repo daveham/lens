@@ -7,7 +7,7 @@ import { identifyPromise } from 'api/gm-util';
 
 const paths = config.utils_paths;
 
-const debug = require('debug')('app:api-sourcemetadata');
+const debug = require('debug')('srv:api-sourcemetadata');
 
 const unpackStats = (dest, data) => {
   dest.ctime = data.ctime;

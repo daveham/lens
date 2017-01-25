@@ -1,6 +1,6 @@
 import gm from 'gm';
 
-const debug = require('debug')('app:api-gm-util');
+const debug = require('debug')('srv:api-gm-util');
 
 export const identifyPromise = graphicsFile => {
   return new Promise((resolve, reject) => {

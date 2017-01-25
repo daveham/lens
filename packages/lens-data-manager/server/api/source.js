@@ -1,7 +1,7 @@
 import path from 'path';
 import config from 'config';
 import { loadSource, statPromise } from 'api/util';
-const debug = require('debug')('app:api-source');
+const debug = require('debug')('srv:api-source');
 
 const paths = config.utils_paths;
 

@@ -26,7 +26,7 @@ export const connectService = () => {
     }
 
     // connect to ilgmsvc, primarily for socket notificataions
-    const socket = io.connect('http://localhost:3001/');
+    const socket = io.connect('http://dev.local:3001/');
     socket.on('connect', () => {
       debug('connected');
       dispatch(receiveServiceConntected({ socket }));

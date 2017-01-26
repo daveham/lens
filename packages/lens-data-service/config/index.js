@@ -4,7 +4,7 @@ import { argv } from 'yargs';
 const config = {
   env: process.env.NODE_ENV,
 
-  server_host: '0.0.0.0',
+  server_host: '192.168.20.20',
   server_port: process.env.PORT || 3001,
 
   path_base: path.resolve(__dirname, '../'),

@@ -72,7 +72,7 @@ export const sendServiceCommand = (message, data) => {
                 if (json.error) {
                   dispatch(receiveServiceMessage({ message: json.error, data: { status: 'error' } }));
                 }
-                return dispatch(sendServiceMessage({ message }));
+                return dispatch(sendServiceMessage({ message: `${message}.${json.id}` }));
               }
             );
         }
@@ -117,8 +117,8 @@ export default (state = {}, action) => {
     case RECEIVE_SERVICE_MESSAGE: {
       let { message } = action.payload;
       const { data } = action.payload;
-      if (data && data.status) {
-        message = `${message}/${data.status}`;
+      if (data) {
+        message = `${message}.${data.id}/${data.status}`;
       }
       return {
         ...state,

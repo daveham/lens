@@ -3,11 +3,15 @@ import app from 'app';
 
 const defineJob = (jobs) => {
   jobs.ping = {
-    perform: (data, cb) => {
-      debug('ping perform', { data });
+    perform: ({ id, timestamp }, cb) => {
+      debug('ping perform', { id, timestamp });
       if (app) {
         const socket = app.get('socket');
-        socket.emit('il-pong', { status: 'task complete' });
+        socket.emit('il-pong', {
+          id,
+          timestamp,
+          status: 'task complete'
+        });
       }
       cb();
     }

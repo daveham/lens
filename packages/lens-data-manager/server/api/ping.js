@@ -20,7 +20,7 @@ export default function configureApi(router) {
       queue.connect(() => {
         const payload = createPing();
         queue.enqueue('il', payload.command, payload);
-        res.json({ msg: 'enqueued' });
+        res.json(payload);
       });
     });
 }

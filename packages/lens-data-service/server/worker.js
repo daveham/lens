@@ -3,8 +3,8 @@ const debug = _debug('svc:worker');
 
 import { worker as Worker } from 'node-resque';
 
-const start = (connection, queues, scheduler, jobs, jobCount, cb) => {
-  let jobsToComplete = jobCount;
+const start = (connection, queues, scheduler, jobs/*, jobCount, cb*/) => {
+//  let jobsToComplete = jobCount;
 
   const worker = new Worker({connection, queues}, jobs);
 
@@ -22,7 +22,7 @@ const start = (connection, queues, scheduler, jobs, jobCount, cb) => {
 
   worker.on('start', () => { debug('started'); });
   worker.on('end', () => { debug('ended'); });
-  worker.on('cleaning_worker', (worker, pid) => { debug(`cleaning old worker ${worker}`); });
+  worker.on('cleaning_worker', (worker/*, pid*/) => { debug(`cleaning old worker ${worker}`); });
   // worker.on('poll', (queue) => { debug(`polling ${queue}`); });
   worker.on('job', (queue, job) => { debug(`job ${queue} ${JSON.stringify(job)}`); });
   worker.on('reEnqueue', (queue, job, plugin) => { debug(`reEnqueue job (${plugin}) ${queue} ${JSON.stringify(job)}`); });
@@ -30,7 +30,7 @@ const start = (connection, queues, scheduler, jobs, jobCount, cb) => {
   worker.on('success',
     (queue, job, result) => {
       debug(`job success ${queue} ${JSON.stringify(job)} >> ${result}`);
-      jobsToComplete--;
+      //jobsToComplete--;
       shutdown();
     }
   );
@@ -38,7 +38,7 @@ const start = (connection, queues, scheduler, jobs, jobCount, cb) => {
   worker.on('failure',
     (queue, job, failure) => {
       debug(`job failure ${queue} ${JSON.stringify(job)} >> ${failure}`);
-      jobsToComplete--;
+      //jobsToComplete--;
       shutdown();
     }
   );

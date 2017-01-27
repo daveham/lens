@@ -20,8 +20,11 @@ const config = {
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
-  server_host : '192.168.20.20',
+  server_host : process.env.USER === 'vagrant' ? '192.168.20.20' : '0.0.0.0',
   server_port : process.env.PORT || 3000,
+
+  socket_host : process.env.USER === 'vagrant' ? 'dev.local' : '0.0.0.0',
+  socket_port : 3001,
 
   // ----------------------------------
   // Compiler Configuration
@@ -82,7 +85,9 @@ Edit at Your Own Risk
 // ------------------------------------
 config.globals = {
   'process.env'  : {
-    'NODE_ENV' : JSON.stringify(config.env)
+    'NODE_ENV' : JSON.stringify(config.env),
+    'DEBUG'    : JSON.stringify(process.env.DEBUG),
+    'SOCKET_HOST': JSON.stringify(`http://${config.socket_host}:${config.socket_port}`)
   },
   'NODE_ENV'     : config.env,
   '__DEV__'      : config.env === 'development',

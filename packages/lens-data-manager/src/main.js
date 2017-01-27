@@ -5,6 +5,8 @@ import { useRouterHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import createStore from 'store/createStore';
 import Root from 'containers/Root';
+import _debug from 'debug';
+_debug.enable(process.env.DEBUG);
 
 // Browser History Setup
 const browserHistory = useRouterHistory(createBrowserHistory)({

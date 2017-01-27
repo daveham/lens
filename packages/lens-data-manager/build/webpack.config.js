@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import config from '../config';
 import _debug from 'debug';
@@ -55,6 +56,11 @@ webpackConfig.plugins = [
     minify: {
       collapseWhitespace: true
     }
+  }),
+  new HtmlWebpackIncludeAssetsPlugin({
+    assets: ['socket.io/socket.io.js'],
+    publicPath: `http://${config.socket_host}:${config.socket_port}/`,
+    append: false
   })
 ];
 

@@ -3,6 +3,8 @@ import fetch from 'isomorphic-fetch';
 import _debug from 'debug';
 const debug = _debug('app:module:service');
 
+const socketHost = process.env.SOCKET_HOST;
+
 import { configureCommandHandlers } from './commands';
 
 const SERVICE_CONNECT = 'SERVICE_CONNECT';
@@ -26,7 +28,7 @@ export const connectService = () => {
     }
 
     // connect to ilgmsvc, primarily for socket notificataions
-    const socket = io.connect('http://dev.local:3001/');
+    const socket = io.connect(socketHost);
     socket.on('connect', () => {
       debug('connected');
       dispatch(receiveServiceConntected({ socket }));

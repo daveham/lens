@@ -66,7 +66,16 @@ const config = {
   coverage_reporters : [
     { type : 'text-summary' },
     { type : 'html', dir : 'coverage' }
-  ]
+  ],
+
+  queue_connection: {
+    pkg: 'ioredis',
+    host: '127.0.0.1',
+    password: null,
+    port: 6379,
+    database: 0
+  },
+  queue_name: 'il'
 };
 
 /************************************************

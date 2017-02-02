@@ -3,15 +3,18 @@ import app from 'server/app';
 
 const defineJob = (jobs) => {
   jobs.ping = {
-    perform: ({ id, timestamp }, cb) => {
-      debug('ping perform', { id, timestamp });
+    perform: (job, cb) => {
+      const { jobId, timestamp } = job;
+      debug('ping perform', { jobId, timestamp });
       if (app) {
         const socket = app.get('socket');
-        socket.emit('il-pong', {
-          id,
-          timestamp,
-          status: 'task complete'
-        });
+//        socket.emit('il-pong', {
+//          jobId,
+//          timestamp,
+//          status: 'task complete'
+//        });
+        debug('ping job duration', Date.now() - timestamp);
+        socket.emit('il-job-complete', job);
       }
       cb();
     }

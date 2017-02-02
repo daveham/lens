@@ -48,18 +48,19 @@ export const connectService = () => {
 
 const sendServiceMessage = createAction(SEND_SERVICE_MESSAGE);
 export const receiveServiceMessage = createAction(RECEIVE_SERVICE_MESSAGE);
-export const sendServiceCommand = (message, data) => {
+export const sendServiceCommand = (command, channel) => {
   return (dispatch, getState) => {
-    switch (message) {
-      case 'il-ping':
-        if (data === 'socket') {
-          // in 'socket' mode, ping the task server directly
+    switch (command) {
+      case 'ping':
+        if (channel === 'socket') {
+          // ping the task server directly over the socket
           const { socket } = getState().service;
-          dispatch(sendServiceMessage({ message }));
-          socket.emit(message);
+          dispatch(sendServiceMessage({ message: command }));
+          debug('sendServiceCommand - socket emit il-ping');
+          socket.emit('il-ping');
         } else {
-          // otherwise assume 'task' mode, use an api call to enqueue a task to respond to the ping
-          const body = JSON.stringify({ category: data });
+          // otherwise use the api to enqueue a task to respond to the ping
+          const body = JSON.stringify({ category: channel }); // TODO: body value doesn't matter, can be empty?
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json'
@@ -74,7 +75,8 @@ export const sendServiceCommand = (message, data) => {
                 if (json.error) {
                   dispatch(receiveServiceMessage({ message: json.error, data: { status: 'error' } }));
                 }
-                return dispatch(sendServiceMessage({ message: `${message}.${json.id}` }));
+                debug('json response from post to ping', { json });
+                return dispatch(sendServiceMessage({ message: `ping.${json.jobId}` }));
               }
             );
         }
@@ -82,7 +84,7 @@ export const sendServiceCommand = (message, data) => {
 
       default:
         dispatch(sendServiceMessage({ message: 'unsupported' }));
-        debug('unsupported command', message);
+        debug('unsupported command', command);
     }
   };
 };
@@ -118,9 +120,12 @@ export default (state = {}, action) => {
 
     case RECEIVE_SERVICE_MESSAGE: {
       let { message } = action.payload;
-      const { data } = action.payload;
+      const { data, command, jobId } = action.payload;
       if (data) {
-        message = `${message}.${data.id}/${data.status}`;
+        message = `${message}.${data.jobId}/${data.status}`;
+      }
+      if (command) {
+        message = `${command}.${jobId}`;
       }
       return {
         ...state,

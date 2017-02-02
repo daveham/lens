@@ -18,7 +18,7 @@ io.on('connection', socket => {
   });
 
   socket.on('il-ping', () => {
-    debug('ping');
+    debug('il-ping');
     socket.emit('il-pong');
   });
 });

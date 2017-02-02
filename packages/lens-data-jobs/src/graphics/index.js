@@ -1,5 +1,5 @@
 import { createJob } from '../utils';
 
-export const createThumbnail = () => {
-  return createJob('thumbnail');
+export const createThumbnail = (id) => {
+  return createJob('thumbnail', { id });
 };

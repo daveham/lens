@@ -14,8 +14,8 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const { connecting, socket, serviceError, lastSent, lastReceived } = state.service;
-  return { connecting, socket, serviceError, lastSent, lastReceived };
+  const { connecting, serviceError, lastSent, lastReceived } = state.service;
+  return { connecting, serviceError, lastSent, lastReceived };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Socket);

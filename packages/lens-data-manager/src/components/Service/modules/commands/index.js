@@ -7,12 +7,16 @@ export const configureCommandHandlers = (socket, dispatch) => {
   const pong = 'il-pong';
   socket.on(pong, data => {
     debug(pong, data);
-    dispatch(receiveServiceMessage({ message: pong, data }));
+    dispatch(receiveServiceMessage({ message: 'pong', data }));
   });
 
+  socket.on('il-job-complete', data => {
+    debug('il-job-complete', { data });
+    dispatch(receiveServiceMessage({ command: data.command, jobId: data.jobId }));
+  });
 };
 
-export const sendPingCommand = (data) => {
-  const ping = 'il-ping';
-  return sendServiceCommand(ping, data);
+export const sendPingCommand = (channel) => {
+  const ping = 'ping';
+  return sendServiceCommand(ping, channel);
 };

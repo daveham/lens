@@ -9,7 +9,6 @@ import styles from './Socket.scss';
 export class Socket extends Component {
   static propTypes = {
     connecting: PropTypes.bool,
-    socket: PropTypes.object,
     serviceError: PropTypes.string,
     lastSent: PropTypes.string,
     lastReceived: PropTypes.string,
@@ -21,9 +20,9 @@ export class Socket extends Component {
     this.props.connect();
   }
 
-  handleOnClickPing(key) {
-    debug('handleOnClickPing', key);
-    this.props.ping(key);
+  handleOnClickPing(channel) {
+    debug('handleOnClickPing', { channel });
+    this.props.ping(channel);
   }
 
   renderMessage() {
@@ -39,7 +38,7 @@ export class Socket extends Component {
   }
 
   render () {
-    const { socket, lastSent, lastReceived } = this.props;
+    const { lastSent, lastReceived } = this.props;
     const textStyle = 'text-success';
 
     return (
@@ -50,7 +49,7 @@ export class Socket extends Component {
             <MenuItem onSelect={this.handleOnClickPing.bind(this)} eventKey='task'>task</MenuItem>
           </SplitButton>
         </div>
-        <div className={styles.growMoreCentered}>
+        <div className={styles.message}>
           {this.renderMessage()}
         </div>
         <div className={styles.growMore}>
@@ -65,13 +64,6 @@ export class Socket extends Component {
           {
             lastReceived &&
               <span className={textStyle}>{lastReceived}</span>
-          }
-        </div>
-        <div className={styles.socketId}>
-          <span className='text-muted'>id: </span>
-          {
-            socket &&
-              <span className={textStyle}>{socket.id}</span>
           }
         </div>
       </div>

@@ -1,16 +1,11 @@
 import fs from 'fs';
 import { queue as Queue } from 'node-resque';
 import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
+import { createThumbnail } from '@lens/data-jobs';
+import config from 'config';
 
-const connectionDetails = {
-  pkg: 'ioredis',
-  host: '127.0.0.1',
-  password: null,
-  port: 6379,
-  database: 0
-};
-
-const debug = require('debug')('srv:api-images');
+import _debug from 'debug';
+const debug = _debug('srv:api-images');
 
 export default function configureApi(router) {
   debug('configure api post /images');
@@ -25,11 +20,12 @@ export default function configureApi(router) {
         if (err) {
           if (err.code === 'ENOENT') {
             debug('file does not exist - creating task');
-            const queue = new Queue({ connection: connectionDetails });
+            const queue = new Queue({ connection: config.queue_connection });
             queue.on('error', (error) => { debug(error); });
             queue.connect(() => {
-              queue.enqueue('il', 'ping'); // TODO: image thumbnail task
-              res.json({ task: 'xyzzy' });
+              const payload = createThumbnail(id);
+              queue.enqueue(config.queue_name, payload.command, payload);
+              res.json(payload);
             });
           } else {
             debug('file access error', err);

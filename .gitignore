@@ -6,6 +6,8 @@
 *.sublime-project
 *.sublime-workspace
 
+stats.json
+
 lens-data
 lib
 dist

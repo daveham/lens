@@ -1,9 +1,9 @@
-import configureCatalogApi from 'api/catalog';
+import configureCatalogApi from 'server/api/catalog';
 // import configureSourceApi from './source';
-import configureSourcethumbsApi from 'api/sourcethumbs';
-import configureSourceMetadataApi from 'api/sourcemetadata';
-import configurePingApi from 'api/ping';
-import configureImagesApi from 'api/images';
+import configureSourcethumbsApi from 'server/api/sourcethumbs';
+import configureSourceMetadataApi from 'server/api/sourcemetadata';
+import configurePingApi from 'server/api/ping';
+import configureImagesApi from 'server/api/images';
 
 export function configureApi(router) {
 

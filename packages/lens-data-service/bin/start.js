@@ -1,5 +1,5 @@
 import config from 'config';
-import app from 'app';
+import app from 'server/app';
 import http from 'http';
 import socketio from 'socket.io';
 import _debug from 'debug';
@@ -30,7 +30,7 @@ httpServer.listen(port, host, () => {
   debug(`Server is now running at ${host}:${port}.`);
 });
 
-import startTaskService from 'task-service';
+import startTaskService from 'server/task-service';
 startTaskService(() => {
   debug('Task service is running.');
 });

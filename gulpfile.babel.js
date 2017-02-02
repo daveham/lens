@@ -9,6 +9,7 @@ const path = require('path');
 const plumber = require('gulp-plumber');
 const through = require('through2');
 const watch = require('gulp-watch');
+const env = require('gulp-env');
 
 const packagesPath = 'packages';
 const excludedPackages = [
@@ -53,7 +54,12 @@ function describeFiles(label) {
 }
 
 function compile(watching) {
+  const envs = env.set({
+    NODE_ENV: 'development',
+    DEBUG: 'lens*'
+  });
   return gulp.src(scripts)
+    .pipe(envs)
     .pipe(handleErrors())
     .pipe(watching ? newy(absDestFile) : gutil.noop())
     .pipe(describeFiles('Compiling'))

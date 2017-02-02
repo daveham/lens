@@ -1,5 +1,5 @@
 const debug = require('debug')('svc:jobs-ping');
-import app from 'app';
+import app from 'server/app';
 
 const defineJob = (jobs) => {
   jobs.ping = {

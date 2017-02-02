@@ -2,8 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import rimraf from 'rimraf';
 import config from 'config';
-import { loadSource, statPromise, writeJsonCachePromise } from 'api/util';
-import { identifyPromise } from 'api/gm-util';
+import { loadSource, statPromise, writeJsonCachePromise } from 'server/api/util';
+import { identifyPromise } from 'server/api/gm-util';
 
 const paths = config.utils_paths;
 

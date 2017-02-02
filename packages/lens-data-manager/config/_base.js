@@ -1,9 +1,9 @@
 /* eslint key-spacing:0 spaced-comment:0 */
-import _debug from 'debug';
 import path from 'path';
 import { argv } from 'yargs';
 
-const debug = _debug('lens:config-base');
+export const VAGRANT_HOST_ADDRESS = '192.168.20.20';
+
 const config = {
   env : process.env.NODE_ENV || 'development',
 
@@ -20,11 +20,11 @@ const config = {
   // ----------------------------------
   // Server Configuration
   // ----------------------------------
-  server_host : process.env.USER === 'vagrant' ? '192.168.20.20' : '0.0.0.0',
+  server_host : process.env.USER === 'vagrant' ? VAGRANT_HOST_ADDRESS : '0.0.0.0',
   server_port : process.env.PORT || 3000,
 
-  socket_host : process.env.USER === 'vagrant' ? 'dev.local' : '0.0.0.0',
-  socket_port : 3001,
+  socket_host : process.env.USER === 'vagrant' ? VAGRANT_HOST_ADDRESS : '0.0.0.0',
+  socket_port : process.env.PORT + 1 || 3001,
 
   // ----------------------------------
   // Compiler Configuration
@@ -41,6 +41,7 @@ const config = {
     colors : true
   },
   compiler_vendor : [
+    'debug',
     'history',
     'isomorphic-fetch',
     'react',
@@ -51,14 +52,11 @@ const config = {
     'react-router',
     'react-router-bootstrap',
     'react-router-redux',
+    'redbox-react',
     'redux',
     'redux-actions',
     'redux-thunk',
     'reselect'
-  ],
-  mono_repo_vendor: [
-    'react',
-    'react-dom'
   ],
 
   // ----------------------------------
@@ -97,25 +95,6 @@ config.globals = {
   '__DEBUG_NEW_WINDOW__' : !!argv.nw,
   '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
 };
-
-// ------------------------------------
-// Validate Vendor Dependencies
-// ------------------------------------
-const pkg = require('../package.json');
-
-config.compiler_vendor = config.compiler_vendor
-  .filter(dep => {
-    if (pkg.dependencies[dep]) return true;
-    if (config.mono_repo_vendor.find(item => item === dep)) return true;
-
-    // This warning is not accurate in a monorepo scenario where dependencies
-    // can be found in higher directories of the overal repo hierarchy.
-    debug(
-      `Package "${dep}" was not found as an npm dependency in package.json; ` +
-      `it won't be included in the webpack vendor bundle.\n` +
-      `Consider removing it from vendor_dependencies in ~/config/index.js`
-    );
-  });
 
 // ------------------------------------
 // Utilities

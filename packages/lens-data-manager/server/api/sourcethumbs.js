@@ -1,7 +1,7 @@
 import path from 'path';
 import glob from 'glob';
 import config from 'config';
-import { thumbPromise } from 'api/gm-util';
+import { thumbPromise } from 'server/api/gm-util';
 const debug = require('debug')('srv:api-sourcethumbs');
 
 const paths = config.utils_paths;

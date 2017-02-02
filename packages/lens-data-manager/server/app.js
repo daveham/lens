@@ -5,16 +5,17 @@ import path from 'path';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import history from 'connect-history-api-fallback';
-import _debug from 'debug';
 import config from 'config';
 import mkdirp from 'mkdirp';
 import webpackDevMiddleware from './middleware/webpack-dev';
 import webpackHMRMiddleware from './middleware/webpack-hmr';
 
+import _debug from 'debug';
 const debug = _debug('srv:server-app');
+
 const paths = config.utils_paths;
 
-import { configureApi } from 'api';
+import { configureApi } from 'server/api';
 
 const app = express();
 app.use(logger('dev'));
@@ -46,7 +47,7 @@ if (config.env === 'development') {
   const { publicPath } = webpackConfig.output;
 
   app.use(webpackDevMiddleware(compiler, publicPath));
-  app.use(webpackHMRMiddleware(compiler));
+  app.use(webpackHMRMiddleware(compiler, { log: (text) => debug(text) }));
 
   // Serve static assets from ~/src/static since Webpack is unaware of
   // these files. This middleware doesn't need to be enabled outside

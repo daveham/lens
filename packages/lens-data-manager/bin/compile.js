@@ -1,24 +1,19 @@
-require('dotenv').config({ silent: false });
-require('babel-register')({
-  "presets": ["es2015", "react", "stage-0"],
-  "plugins": [
-    "transform-runtime",
-    ["resolver", { "resolveDirs": ["server", "config"] }]
-  ]
-});
+import config from '../config';
 
-const config = require('../config');
-const debug = require('debug')('lens:bin-compile');
+import _debug from 'debug';
+const debug = _debug('lens:bin-compile');
 
 debug('Create webpack compiler.');
 
-const compiler = require('webpack')(require('../build/webpack'));
+import webpack from 'webpack';
+import webpackConfig from '../build/webpack.config';
+const compiler = webpack(webpackConfig);
 
-compiler.run(function (err, stats) {
+compiler.run((err, stats) => {
   const jsonStats = stats.toJson();
 
   debug('Webpack compile completed.');
-  console.log(stats.toString(config.compiler_stats));
+  debug(stats.toString(config.compiler_stats));
 
   if (err) {
     debug('Webpack compiler encountered a fatal error.', err);

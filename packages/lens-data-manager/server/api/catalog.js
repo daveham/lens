@@ -1,4 +1,4 @@
-import { loadCatalog } from 'api/util';
+import { loadCatalog } from 'server/api/util';
 const debug = require('debug')('srv:api-catalog');
 
 export default function configureApi(router) {

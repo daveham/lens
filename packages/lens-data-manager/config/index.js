@@ -1,8 +1,9 @@
 import fs from 'fs';
-import _debug from 'debug';
 import config from './_base';
 
+import _debug from 'debug';
 const debug = _debug('lens:config');
+
 debug('Create configuration.');
 debug(`Apply environment overrides for NODE_ENV "${config.env}".`);
 
@@ -14,7 +15,7 @@ let hasOverridesFile;
 try {
   fs.lstatSync(`${__dirname}/${overridesFilename}.js`);
   hasOverridesFile = true;
-} catch (e) {}
+} catch (e) { /* ignore exceptions */}
 
 // Overrides file exists, so we can attempt to require it.
 // We intentionally don't wrap this in a try/catch as we want

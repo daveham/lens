@@ -1,11 +1,11 @@
 import config from '../config';
-import app from 'app';
+import app from 'server/app';
+
 import _debug from 'debug';
 const debug = _debug('lens:bin-server');
 
-const host = config.server_host;
-const port = config.server_port;
+const { server_host, server_port } = config;
 
-app.listen(port, host, () => {
-  debug(`Server is now running at ${host}:${port}.`);
+app.listen(server_port, server_host, () => {
+  debug(`Server is now running at ${server_host}:${server_port}.`);
 });

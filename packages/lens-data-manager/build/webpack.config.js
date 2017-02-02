@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import cssnano from 'cssnano';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import StatsWebpackPlugin from 'stats-webpack-plugin';
 import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import config from '../config';
@@ -26,10 +27,16 @@ const webpackConfig = {
 // ------------------------------------
 const APP_ENTRY_PATH = paths.base(config.dir_client) + '/main.js';
 
+const SHARED_ENTRY_PATHS = [
+  paths.base('node_modules/@lens/data-jobs'),
+  paths.base('node_modules/@lens/image-descriptors')
+];
+
 webpackConfig.entry = {
   app: __DEV__
     ? [APP_ENTRY_PATH, `webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`]
     : [APP_ENTRY_PATH],
+  shared: SHARED_ENTRY_PATHS,
   vendor: config.compiler_vendor
 };
 
@@ -61,6 +68,10 @@ webpackConfig.plugins = [
     assets: ['socket.io/socket.io.js'],
     publicPath: `http://${config.socket_host}:${config.socket_port}/`,
     append: false
+  }),
+  new StatsWebpackPlugin('stats.json', {
+    chunkModules: true,
+    exclude: [/node_modules[\\\/]react/]
   })
 ];
 
@@ -88,7 +99,8 @@ if (__DEV__) {
 // Don't split bundles during testing, since we only want import one bundle
 if (!__TEST__) {
   webpackConfig.plugins.push(new webpack.optimize.CommonsChunkPlugin({
-    names: ['vendor']
+    names: ['shared', 'vendor'],
+    minChunks: Infinity
   }));
 }
 
@@ -117,21 +129,15 @@ webpackConfig.eslint = {
 // Loaders
 // ------------------------------------
 // JavaScript / JSON
-//var includePaths = [
-//  paths.base('config'),
-//  paths.base('src')//,
-////  fs.realpathSync(paths.base('node_modules/@lens/data-jobs'))
-//];
 webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
   exclude: /node_modules/,
-//  include: includePaths,
   loader: 'babel',
   query: {
     cacheDirectory: true,
-    plugins: ['transform-runtime'], //.map(dep => require.resolve('babel-plugin-' + dep)),
+    plugins: ['transform-runtime'],
     presets: __DEV__
-      ? ['es2015', 'react', 'stage-0', 'react-hmre'] //.map(dep => require.resolve('babel-preset-' + dep))
+      ? ['es2015', 'react', 'stage-0', 'react-hmre']
       : ['es2015', 'react', 'stage-0']
   }
 },
@@ -156,7 +162,7 @@ webpackConfig.module.loaders.push({
   loaders: [
     'style',
     cssLoader,
-    'postcss',
+    'postcss-loader',
     'sass?sourceMap'
   ]
 });

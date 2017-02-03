@@ -4,15 +4,14 @@ const debug = _debug('app:module:service:commands');
 
 export const configureCommandHandlers = (socket, dispatch) => {
 
-  const pong = 'il-pong';
-  socket.on(pong, data => {
-    debug(pong, data);
-    dispatch(receiveServiceMessage({ message: 'pong', data }));
+  socket.on('flash', data => {
+    debug('socket on flash', { data });
+    dispatch(receiveServiceMessage(data));
   });
 
-  socket.on('il-job-complete', data => {
-    debug('il-job-complete', { data });
-    dispatch(receiveServiceMessage({ command: data.command, jobId: data.jobId }));
+  socket.on('job', data => {
+    debug('job', { data });
+    dispatch(receiveServiceMessage(data));
   });
 };
 

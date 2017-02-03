@@ -55,12 +55,13 @@ export const sendServiceCommand = (command, channel) => {
         if (channel === 'socket') {
           // ping the task server directly over the socket
           const { socket } = getState().service;
-          dispatch(sendServiceMessage({ message: command }));
-          debug('sendServiceCommand - socket emit il-ping');
-          socket.emit('il-ping');
+          const payload = { flashId: 0, command, timestamp: Date.now() };
+          dispatch(sendServiceMessage(payload));
+          debug('sendServiceCommand(flash)', { payload });
+          socket.emit('flash', payload);
         } else {
           // otherwise use the api to enqueue a task to respond to the ping
-          const body = JSON.stringify({ category: channel }); // TODO: body value doesn't matter, can be empty?
+          const body = JSON.stringify({ });
           const headers = {
             'Content-Type': 'application/json',
             Accept: 'application/json'
@@ -72,11 +73,14 @@ export const sendServiceCommand = (command, channel) => {
             )
             .then(
               (json) => {
+                const payload = { command, jobId: json.jobId };
                 if (json.error) {
-                  dispatch(receiveServiceMessage({ message: json.error, data: { status: 'error' } }));
+                  payload.status = 'error';
+                  payload.data = json.error;
+                  dispatch(receiveServiceMessage(payload));
                 }
                 debug('json response from post to ping', { json });
-                return dispatch(sendServiceMessage({ message: `ping.${json.jobId}` }));
+                return dispatch(sendServiceMessage(payload));
               }
             );
         }
@@ -112,26 +116,30 @@ export default (state = {}, action) => {
         serviceError: 'service not available'
       };
 
-    case SEND_SERVICE_MESSAGE:
-      return {
-        ...state,
-        lastSent: action.payload.message
-      };
-
-    case RECEIVE_SERVICE_MESSAGE: {
-      let { message } = action.payload;
-      const { data, command, jobId } = action.payload;
-      if (data) {
-        message = `${message}.${data.jobId}/${data.status}`;
-      }
-      if (command) {
-        message = `${command}.${jobId}`;
+    case SEND_SERVICE_MESSAGE: {
+      const { jobId, flashId, command, status } = action.payload;
+      let lastSent = `${command}.${jobId || flashId}`;
+      if (status) {
+        lastSent = `${lastSent}-${status}`;
       }
       return {
         ...state,
-        lastReceived: `${message}`
+        lastSent
       };
     }
+
+    case RECEIVE_SERVICE_MESSAGE: {
+      const { jobId, flashId, command, status } = action.payload;
+      let lastReceived = `${command}.${jobId || flashId}`;
+      if (status) {
+        lastReceived = `${lastReceived}-${status}`;
+      }
+      return {
+        ...state,
+        lastReceived
+      };
+    }
+
     default:
       return state;
   }

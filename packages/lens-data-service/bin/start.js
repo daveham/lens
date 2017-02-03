@@ -17,9 +17,16 @@ io.on('connection', socket => {
     debug('user disconnected');
   });
 
-  socket.on('il-ping', () => {
-    debug('il-ping');
-    socket.emit('il-pong');
+  socket.on('flash', (data) => {
+    debug('socket on flash', { data });
+    if (data.command === 'ping') {
+      const result = {
+        ...data,
+        command: 'pong',
+        timestamp: Date.now()
+      };
+      socket.emit('flash', result);
+    }
   });
 });
 

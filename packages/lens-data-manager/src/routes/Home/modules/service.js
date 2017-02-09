@@ -13,7 +13,7 @@ const RECEIVE_SERVICE_MESSAGE = 'RECEIVE_SERVICE_MESSAGE';
 
 // actions
 const requestServiceConnect = createAction(SERVICE_CONNECT);
-const receiveServiceConntected = createAction(SERVICE_CONNECTED);
+const receiveServiceConnected = createAction(SERVICE_CONNECTED);
 const serviceFailed = createAction(SERVICE_FAILED);
 export const connectService = () => {
   return (dispatch /*, getState */) => {
@@ -29,7 +29,7 @@ export const connectService = () => {
     const socket = io.connect(socketHost);
     socket.on('connect', () => {
       debug('connected');
-      dispatch(receiveServiceConntected({ socket }));
+      dispatch(receiveServiceConnected({ socket }));
     });
     socket.on('disconnect', () => {
       debug('disconnected');

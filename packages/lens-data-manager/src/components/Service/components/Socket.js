@@ -45,8 +45,8 @@ export class Socket extends Component {
       <div className={styles.container}>
         <div>
           <SplitButton title='ping' id='ping-dropdown' dropup bsSize='xs'>
-            <MenuItem onSelect={this.handleOnClickPing.bind(this)} eventKey='socket'>socket</MenuItem>
-            <MenuItem onSelect={this.handleOnClickPing.bind(this)} eventKey='task'>task</MenuItem>
+            <MenuItem onSelect={this.handleOnClickPing.bind(this)} eventKey='flash'>flash</MenuItem>
+            <MenuItem onSelect={this.handleOnClickPing.bind(this)} eventKey='job'>job</MenuItem>
           </SplitButton>
         </div>
         <div className={styles.message}>

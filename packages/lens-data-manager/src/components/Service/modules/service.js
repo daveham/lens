@@ -5,8 +5,6 @@ const debug = _debug('app:module:service');
 
 const socketHost = process.env.SOCKET_HOST;
 
-import { configureCommandHandlers } from './commands';
-
 const SERVICE_CONNECT = 'SERVICE_CONNECT';
 const SERVICE_CONNECTED = 'SERVICE_CONNECTED';
 const SERVICE_FAILED = 'SERVICE_FAILED';
@@ -27,7 +25,7 @@ export const connectService = () => {
       return;
     }
 
-    // connect to ilgmsvc, primarily for socket notificataions
+    // connect to lens-data-service, primarily for socket notifications
     const socket = io.connect(socketHost);
     socket.on('connect', () => {
       debug('connected');
@@ -42,53 +40,57 @@ export const connectService = () => {
     socket.on('error', err => {
       debug('error', err);
     });
-    configureCommandHandlers(socket, dispatch);
+
+    socket.on('flash', payload => {
+      debug('socket flash message', { payload });
+      dispatch(receiveServiceMessage(payload));
+    });
+
+    socket.on('job', payload => {
+      debug('socket job message', { payload });
+      dispatch(receiveServiceMessage(payload));
+    });
   };
 };
 
 const sendServiceMessage = createAction(SEND_SERVICE_MESSAGE);
 export const receiveServiceMessage = createAction(RECEIVE_SERVICE_MESSAGE);
-export const sendServiceCommand = (command, channel) => {
-  return (dispatch, getState) => {
-    switch (command) {
-      case 'ping':
-        if (channel === 'socket') {
-          // ping the task server directly over the socket
-          const { socket } = getState().service;
-          const payload = { flashId: 0, command, timestamp: Date.now() };
-          dispatch(sendServiceMessage(payload));
-          debug('sendServiceCommand(flash)', { payload });
-          socket.emit('flash', payload);
-        } else {
-          // otherwise use the api to enqueue a task to respond to the ping
-          const body = JSON.stringify({ });
-          const headers = {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          };
-          return fetch('/api/ping', { method: 'POST', body, headers })
-            .then(
-              (response) => { return response.json(); },
-              (error) => { return { error }; }
-            )
-            .then(
-              (json) => {
-                const payload = { command, jobId: json.jobId };
-                if (json.error) {
-                  payload.status = 'error';
-                  payload.data = json.error;
-                  dispatch(receiveServiceMessage(payload));
-                }
-                debug('json response from post to ping', { json });
-                return dispatch(sendServiceMessage(payload));
-              }
-            );
-        }
-        break;
 
-      default:
-        dispatch(sendServiceMessage({ message: 'unsupported' }));
-        debug('unsupported command', command);
+const fetchHeaders = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json'
+};
+
+let flashCounter = 0;
+
+export const sendServiceCommand = (command, servicePath, body = {}) => {
+  return (dispatch, getState) => {
+    if (servicePath === 'flash') {
+      // send command to the server directly over the socket
+      const { socket } = getState().service;
+      const payload = { flashId: flashCounter++, command, timestamp: Date.now(), body };
+      dispatch(sendServiceMessage(payload));
+      debug('sendServiceCommand(flash)', { payload });
+      socket.emit('flash', payload);
+    } else {
+      // otherwise use the api to enqueue a job
+      return fetch(servicePath, { method: 'POST', body: JSON.stringify(body), headers: fetchHeaders })
+        .then(
+          (response) => { return response.json(); },
+          (error) => { return { error }; }
+        )
+        .then(
+          (json) => {
+            const payload = { command, jobId: json.jobId };
+            if (json.error) {
+              payload.status = 'error';
+              payload.data = json.error;
+              dispatch(receiveServiceMessage(payload));
+            }
+            debug('json response from post to api', { json });
+            return dispatch(sendServiceMessage(payload));
+          }
+        );
     }
   };
 };

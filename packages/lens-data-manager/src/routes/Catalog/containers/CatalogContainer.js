@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { actions as catalogActions } from '../modules/catalog';
-import { actions as sourceMetadataActions } from '../modules/sources-metadata';
-import { actions as sourceThumbsActions } from '../modules/sources-thumbs';
+import { actions as catalogActions } from '../modules/catalog/actions';
+import { actions as sourceMetadataActions } from '../modules/catalog/sources-metadata/actions';
+import { actions as sourceThumbsActions } from '../modules/catalog/sources-thumbs/actions';
 import { actions as imagesActions } from '../modules/images/actions';
 
 import {

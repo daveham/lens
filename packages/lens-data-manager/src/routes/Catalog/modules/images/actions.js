@@ -1,19 +1,16 @@
+import { makeImageId } from '@lens/image-descriptors';
+import { ACTIONS } from './constants';
+
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
-import { makeImageId } from '@lens/image-descriptors';
-
 import debugLib from 'debug';
-const debug = debugLib('app:module:images');
-
-const REQUEST_IMAGE = 'REQUEST_IMAGE';
-const CLEAR_REQUEST_IMAGE = 'CLEAR_REQUEST_IMAGE';
-const RECEIVE_IMAGE = 'RECEIVE_IMAGE';
+const debug = debugLib('app:module:images-acitons');
 
 // action creators
-const requestImageAction = createAction(REQUEST_IMAGE);
-const clearRequestImageAction = createAction(CLEAR_REQUEST_IMAGE);
-const receiveImageAction = createAction(RECEIVE_IMAGE);
+const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE);
+const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE);
+const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE);
 
 // actions
 export const ensureImage = (imageDescriptor, force) => {
@@ -61,56 +58,4 @@ export const ensureImage = (imageDescriptor, force) => {
 export const actions = {
   ensureImage,
   receiveImage: receiveImageAction
-};
-
-// reducers
-const imageReducer = (state = {}, url) => {
-  // add the url to the image object and reset the loading flag
-  return {
-    ...state,
-    url,
-    loading: false
-  };
-};
-
-const imageLoadingReducer = (state = {}, loading) => {
-  // set the loading flag
-  return {
-    ...state,
-    loading
-  };
-};
-
-export default (state = {}, { type, payload }) => {
-  switch (type) {
-    case REQUEST_IMAGE: {
-      // payload is the image descriptor; set the loading flag
-      const id = makeImageId(payload);
-      return {
-        ...state,
-        [id]: imageLoadingReducer(state[id], true)
-      };
-    }
-
-    case CLEAR_REQUEST_IMAGE: {
-      // payload is the image descriptor, reset the loading flag
-      const id = makeImageId(payload);
-      return {
-        ...state,
-        [id]: imageLoadingReducer(state[id], false)
-      };
-    }
-
-    case RECEIVE_IMAGE: {
-      const { imageDescriptor, url } = payload;
-      const id = makeImageId(imageDescriptor);
-      return {
-        ...state,
-        [id]: imageReducer(state[id], url)
-      };
-    }
-
-    default:
-      return state;
-  }
 };

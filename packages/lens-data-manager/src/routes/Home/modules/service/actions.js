@@ -1,20 +1,18 @@
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
+
+import { ACTIONS } from './constants';
+
 import _debug from 'debug';
-const debug = _debug('app:module:service');
+const debug = _debug('app:module:service-actions');
 
 const socketHost = process.env.SOCKET_HOST;
 
-const SERVICE_CONNECT = 'SERVICE_CONNECT';
-const SERVICE_CONNECTED = 'SERVICE_CONNECTED';
-const SERVICE_FAILED = 'SERVICE_FAILED';
-const SEND_SERVICE_MESSAGE = 'SEND_SERVICE_MESSAGE';
-const RECEIVE_SERVICE_MESSAGE = 'RECEIVE_SERVICE_MESSAGE';
-
 // actions
-const requestServiceConnect = createAction(SERVICE_CONNECT);
-const receiveServiceConnected = createAction(SERVICE_CONNECTED);
-const serviceFailed = createAction(SERVICE_FAILED);
+const requestServiceConnect = createAction(ACTIONS.SERVICE_CONNECT);
+const receiveServiceConnected = createAction(ACTIONS.SERVICE_CONNECTED);
+const serviceFailed = createAction(ACTIONS.SERVICE_FAILED);
+
 export const connectService = () => {
   return (dispatch /*, getState */) => {
     // TODO: make this return a promise
@@ -53,8 +51,8 @@ export const connectService = () => {
   };
 };
 
-const sendServiceMessage = createAction(SEND_SERVICE_MESSAGE);
-export const receiveServiceMessage = createAction(RECEIVE_SERVICE_MESSAGE);
+const sendServiceMessage = createAction(ACTIONS.SEND_SERVICE_MESSAGE);
+export const receiveServiceMessage = createAction(ACTIONS.RECEIVE_SERVICE_MESSAGE);
 
 const fetchHeaders = {
   'Content-Type': 'application/json',
@@ -93,56 +91,4 @@ export const sendServiceCommand = (command, servicePath, body = {}) => {
         );
     }
   };
-};
-
-// reducers
-export default (state = {}, action) => {
-  switch (action.type) {
-    case SERVICE_CONNECT:
-      return {
-        ...state,
-        connecting: true
-      };
-
-    case SERVICE_CONNECTED:
-      return {
-        ...state,
-        connecting: false,
-        socket: action.payload.socket
-      };
-
-    case SERVICE_FAILED:
-      return {
-        ...state,
-        connecting: false,
-        serviceError: 'service not available'
-      };
-
-    case SEND_SERVICE_MESSAGE: {
-      const { jobId, flashId, command, status } = action.payload;
-      let lastSent = `${command}.${jobId || flashId}`;
-      if (status) {
-        lastSent = `${lastSent}-${status}`;
-      }
-      return {
-        ...state,
-        lastSent
-      };
-    }
-
-    case RECEIVE_SERVICE_MESSAGE: {
-      const { jobId, flashId, command, status } = action.payload;
-      let lastReceived = `${command}.${jobId || flashId}`;
-      if (status) {
-        lastReceived = `${lastReceived}-${status}`;
-      }
-      return {
-        ...state,
-        lastReceived
-      };
-    }
-
-    default:
-      return state;
-  }
 };

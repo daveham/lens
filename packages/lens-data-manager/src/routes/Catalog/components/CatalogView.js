@@ -44,7 +44,7 @@ export class CatalogView extends Component {
     if (this.props.catalog.loading && !nextProps.catalog.loading) {
       // detected end of catalog loading, ensure thumbnails
       const { ensureImage, thumbnailImageDescriptors } = nextProps;
-      thumbnailImageDescriptors.map(ensureImage);
+      thumbnailImageDescriptors.map(id => ensureImage(id));
     }
   }
 

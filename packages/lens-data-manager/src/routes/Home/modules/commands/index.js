@@ -1,4 +1,4 @@
-import { sendServiceCommand } from '../service';
+import { sendServiceCommand } from '../service/actions';
 
 export const sendPingCommand = (channel) => {
   const servicePath = channel === 'job' ? '/api/ping' : channel;

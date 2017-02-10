@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { connectService } from 'routes/Home/modules/service';
+import { connectService } from 'routes/Home/modules/service/actions';
 import { sendPingCommand } from 'routes/Home/modules/commands';
 
 import Socket from '../components/Socket.js';

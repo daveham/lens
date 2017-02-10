@@ -46,7 +46,7 @@ export const pathFromImageDescriptor = (imageDescriptor) => {
   const { source, purpose } = imageDescriptor;
   if (purpose.category === 'u') {
     if (purpose.element === 't') {
-      return config.paths.thumbs(`${source.id}_thumb.jpg`);
+      return config.utils_paths.thumbs(`${source.id}_thumb.jpg`);
     }
   }
 };

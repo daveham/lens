@@ -13,6 +13,7 @@ export default function configureApi(router) {
   router.route('/images')
     .post((req, res /*, next */) => {
       const id = req.body;
+      debug('POST body (id)', { id });
       const path = pathFromImageDescriptor(id);
       debug('POST images', { path });
 

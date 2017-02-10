@@ -31,7 +31,7 @@ const start = (connection, queues, jobs, cb) => {
   );
 
   worker.on('cleaning_worker',
-    (worker, pid) => {
+    (worker/*, pid*/) => {
       debug(`cleaning old worker ${worker}`);
     }
   );
@@ -51,7 +51,7 @@ const start = (connection, queues, jobs, cb) => {
   );
 
   worker.on('success',
-    (queue, job, result) => {
+    (queue, job/*, result*/) => {
       debug(`${job.queue}/${job.class} success`);
     }
   );

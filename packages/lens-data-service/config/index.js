@@ -8,7 +8,16 @@ const config = {
   server_port: process.env.PORT || 3001,
 
   path_base: path.resolve(__dirname, '../'),
-  dir_dist: 'dist'
+  dir_dist: 'dist',
+
+  queue_connection: {
+    pkg: 'ioredis',
+    host: '127.0.0.1',
+    password: null,
+    port: 6379,
+    database: 0
+  },
+  queue_name: 'il'
 };
 
 config.globals = {

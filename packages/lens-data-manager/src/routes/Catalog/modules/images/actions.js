@@ -38,14 +38,14 @@ export const ensureImage = (imageDescriptor, force) => {
           throw new Error('ensureImage: Bad response from server');
         }
         return response.json();
-      }).then(({ url, task, error }) => {
+      }).then(({ url, jobId, error }) => {
         if (url) {
           // image already exists in file system
           debug('ensureImage - exists', { url });
           dispatch(receiveImageAction({ imageDescriptor, url }));
-        } else if (task) {
+        } else if (jobId) {
           // task has been enqueued to generate the image
-          debug('ensureImage - job enqueued', { task });
+          debug('ensureImage - job enqueued', { jobId });
         } else if (error) {
           // server encountered an error
           debug('ensureImage - server error', { error });

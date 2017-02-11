@@ -25,6 +25,7 @@ export default function configureApi(router) {
             queue.on('error', (error) => { debug(error); });
             queue.connect(() => {
               const payload = createThumbnail(id);
+              debug('enqueuing job', { payload });
               queue.enqueue(config.queue_name, payload.command, payload);
               res.json(payload);
             });

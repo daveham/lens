@@ -12,14 +12,14 @@ export const sourcesByIdSelector = createSelector(
   }
 );
 
-export const sourceImageIdsSelector = createSelector(
+export const sourceIdAndFileSelector = createSelector(
   state => state.catalog.sources,
-  sources => sources.map(source => source.id)
+  sources => sources.map(({ id, file }) => { return { id, file }; })
 );
 
 export const thumbnailImageDescriptorsSelector = createSelector(
-  sourceImageIdsSelector,
-  imageIds => imageIds.map(makeThumbImageDescriptor)
+  sourceIdAndFileSelector,
+  imageIds => imageIds.map(({ id, file}) => makeThumbImageDescriptor(id, file))
 );
 
 export const thumbnailImageIdsSelector = createSelector(

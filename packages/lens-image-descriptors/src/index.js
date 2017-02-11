@@ -29,15 +29,13 @@ export const makeImageId = (imageDescriptor) => {
   return source.id;
 };
 
-export const makeThumbImageDescriptor = (sourceId) => {
+export const makeThumbImageDescriptor = (id, file) => {
   return {
     purpose: {
       category: 'u', // UI
       element: 't' // thumbnail
     },
-    source: {
-      id: sourceId
-    }
+    source: { id, file }
   };
 };
 

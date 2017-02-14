@@ -9,8 +9,8 @@ const debug = debugLib('app:module:images-acitons');
 
 // action creators
 const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE);
-const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE);
-const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE);
+export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE);
+export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE);
 
 // actions
 export const ensureImage = (imageDescriptor, force) => {

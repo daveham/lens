@@ -2,7 +2,7 @@ import gm from 'gm';
 import config from 'config';
 import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 const debug = require('debug')('svc:jobs-thumbnail');
-//import app from 'server/app';
+import app from 'server/app';
 
 const defineJob = (jobs) => {
   jobs.thumbnail = {
@@ -17,26 +17,29 @@ const defineJob = (jobs) => {
       debug(`source file should be ${sourceFile} and dest file should be ${destFile}`);
 
       gm(sourceFile).thumb(100, 100, destFile, 80, (err, gmdata) => {
-        if (err) {
-          debug('gm thumb error', { err });
-          return cb();
+        if (app) {
+          const socket = app.get('socket');
+          const result = {
+            ...job,
+            timestamp: Date.now()
+          };
+          debug('thumbnail job duration', result.timestamp - timestamp);
+
+          if (err) {
+            debug('gm thumb error', { err });
+            result.status = 'error';
+          } else {
+            debug('gm thumb success', { gmdata });
+            result.status = 'complete';
+            result.url = urlFromImageDescriptor(job.id);
+          }
+          socket.emit('job', result);
+          cb();
         }
-        debug('gm thumb success', { gmdata });
-        cb();
       });
     }
   };
 };
 
-//      if (app) {
-//        const socket = app.get('socket');
-//        debug('ping job duration', Date.now() - timestamp);
-//        const result = {
-//          ...job,
-//          command: 'pong',
-//          timestamp: Date.now()
-//        };
-//        socket.emit('job', result);
-//      }
 
 export default defineJob;

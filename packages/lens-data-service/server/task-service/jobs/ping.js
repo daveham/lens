@@ -8,12 +8,12 @@ const defineJob = (jobs) => {
       debug('ping perform', { jobId, timestamp });
       if (app) {
         const socket = app.get('socket');
-        debug('ping job duration', Date.now() - timestamp);
         const result = {
           ...job,
           command: 'pong',
           timestamp: Date.now()
         };
+        debug('ping job duration', result.timestamp - timestamp);
         socket.emit('job', result);
       }
       cb();

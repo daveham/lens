@@ -14,7 +14,7 @@ const receiveServiceConnected = createAction(ACTIONS.SERVICE_CONNECTED);
 const serviceFailed = createAction(ACTIONS.SERVICE_FAILED);
 
 export const connectService = () => {
-  return (dispatch /*, getState */) => {
+  return (dispatch) => {
     // TODO: make this return a promise
     dispatch(requestServiceConnect());
     if (typeof io === 'undefined') {
@@ -41,12 +41,12 @@ export const connectService = () => {
 
     socket.on('flash', payload => {
       debug('socket flash message', { payload });
-      dispatch(receiveServiceMessage(payload));
+      dispatch(receiveServiceCommand(payload));
     });
 
     socket.on('job', payload => {
       debug('socket job message', { payload });
-      dispatch(receiveServiceMessage(payload));
+      dispatch(receiveServiceCommand(payload));
     });
   };
 };
@@ -90,5 +90,14 @@ export const sendServiceCommand = (command, servicePath, body = {}) => {
           }
         );
     }
+  };
+};
+
+const receiveServiceCommand = (payload) => {
+  return (dispatch, getState, context) => {
+    debug('receiveServiceCommand', { context });
+    dispatch(receiveServiceMessage(payload));
+
+    context.handleCommand(payload.command, payload, dispatch);
   };
 };

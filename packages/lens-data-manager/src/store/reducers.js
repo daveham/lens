@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { routerReducer as router } from 'react-router-redux';
-import service from 'routes/Home/modules/service';
+import service from 'commands/service';
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({

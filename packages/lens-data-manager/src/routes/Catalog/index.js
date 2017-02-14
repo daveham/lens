@@ -10,6 +10,9 @@ export default (store) => ({
       const imagesReducer = require('./modules/images').default;
       injectReducer(store, { key: 'images', reducer: imagesReducer });
 
+      const registerCatalogCommands = require('./commands').default;
+      registerCatalogCommands();
+
       cb(null, Catalog);
     }, 'catalog');
   }

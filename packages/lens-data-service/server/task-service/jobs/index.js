@@ -1,8 +1,8 @@
 import addPing from './ping';
-import addThumbnail from './thumbnail';
+import addImage from './image';
 
 const jobs = {};
 addPing(jobs);
-addThumbnail(jobs);
+addImage(jobs);
 
 export default jobs;

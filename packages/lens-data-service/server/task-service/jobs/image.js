@@ -5,7 +5,7 @@ const debug = require('debug')('svc:jobs-thumbnail');
 import app from 'server/app';
 
 const defineJob = (jobs) => {
-  jobs.thumbnail = {
+  jobs.image = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
       debug('thumbnail perform', { jobId, timestamp });

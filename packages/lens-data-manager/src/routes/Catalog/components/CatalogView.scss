@@ -1,6 +1,52 @@
-.container {
+@import '../../../styles/variables';
+
+.catalogContent {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  padding: 0;
+  justify-content: center;
+}
+
+.catalogName {
+  font-size: 3em;
+  color: $gray-lighter;
+}
+
+.catalogItems {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.catalogItem {
+  margin: 1em;
+
+  &:hover > .catalogImage {
+    border-color: $white;
+    opacity: 1;
+    transform: scale(1.1);
+    transition: opacity .2s ease-in, transform .2s ease-in, border-color .3s ease-in;
+  }
+
+  &:hover > .catalogImageLabel {
+    color: $gray-light;
+    transition: color .2s ease-in;
+  }
+}
+
+.catalogImage {
+  border-color: $gray-darker;
+  border-radius: 2px;
+  border-style: solid;
+  border-width: .5em;
+  margin-bottom: 1em;
+  opacity: .7;
+  transition: opacity .2s ease-in, transform .2s ease-in, border-color .1s ease-in;
+}
+
+.catalogImageLabel {
+  color: $gray-darker;
   text-align: center;
-  overflow-y: auto;
+  transition: color .2s ease-in;
 }

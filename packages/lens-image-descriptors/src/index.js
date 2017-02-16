@@ -39,21 +39,26 @@ export const makeThumbImageDescriptor = (id, file) => {
   };
 };
 
+const thumbnailFileName = (id) => {
+  return `${id}_thumb.jpg`;
+};
+
 // return where the file would be found if the image file exists
 export const pathFromImageDescriptor = (imageDescriptor) => {
   const { source, purpose } = imageDescriptor;
   if (purpose.category === 'u') {
     if (purpose.element === 't') {
-      return config.utils_paths.thumbs(`${source.id}_thumb.jpg`);
+      return config.utils_paths.thumbs(thumbnailFileName(source.id));
     }
   }
 };
 
+// return ulr to reference image through web server
 export const urlFromImageDescriptor = (imageDescriptor) => {
   const { source, purpose } = imageDescriptor;
   if (purpose.category === 'u') {
     if (purpose.element === 't') {
-      return path.join(config.dir_thumbs, `${source.id}_thumb.jpg`);
+      return path.join(config.dir_thumbs, thumbnailFileName(source.id));
     }
   }
 };

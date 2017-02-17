@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 
 //import debugLib from 'debug';
 //const debug = debugLib('app:CatalogView');
@@ -13,6 +14,7 @@ const sourcePropType = PropTypes.shape({
 
 export class CatalogView extends Component {
   static propTypes = {
+    children: PropTypes.node,
     catalog: PropTypes.shape({
       loading: PropTypes.bool.isRequired,
       name: PropTypes.string.isRequired,
@@ -50,7 +52,9 @@ export class CatalogView extends Component {
       const source = sources[index];
       return (
         <figure className={styles.catalogItem} key={source.id}>
-          <img className={styles.catalogImage} src={url}/>
+          <Link to={`/catalog/source/${source.id}`}>
+            <img className={styles.catalogImage} src={url}/>
+          </Link>
           <figcaption className={styles.catalogImageLabel}>{source.name}</figcaption>
         </figure>
       );
@@ -62,16 +66,31 @@ export class CatalogView extends Component {
     );
   }
 
-  render() {
+  renderChildren() {
+    return (
+      <main className={styles.catalogContent}>
+        {this.props.children}
+      </main>
+    );
+  }
+
+  renderCatalog() {
     const { catalog } = this.props;
     const catalogName = catalog.loading ? 'Loading...' : catalog.name;
 
     return (
       <main className={styles.catalogContent}>
-        <header className={styles.catalogName}>{catalogName}</header>
+        <header className={styles.catalogName}>
+          {catalogName}
+        </header>
         {this.renderDynamicImages()}
       </main>
     );
+  }
+
+  render() {
+    if (this.props.children) return this.renderChildren();
+    return this.renderCatalog();
   }
 }
 

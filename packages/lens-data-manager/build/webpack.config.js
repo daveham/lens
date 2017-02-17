@@ -17,7 +17,7 @@ const webpackConfig = {
   target: 'web',
   devtool: config.compiler_devtool,
   resolve: {
-    root: paths.base(config.dir_client),
+    root: paths.client(),
     extensions: ['', '.js', '.jsx', 'json']
   },
   module: {}
@@ -25,7 +25,7 @@ const webpackConfig = {
 // ------------------------------------
 // Entry Points
 // ------------------------------------
-const APP_ENTRY_PATH = paths.base(config.dir_client) + '/main.js';
+const APP_ENTRY_PATH = paths.client('main.js');
 
 const SHARED_ENTRY_PATHS = [
   paths.base('node_modules/@lens/data-jobs'),
@@ -34,7 +34,7 @@ const SHARED_ENTRY_PATHS = [
 
 webpackConfig.entry = {
   app: __DEV__
-    ? [APP_ENTRY_PATH, `webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`]
+    ? [APP_ENTRY_PATH].concat(`webpack-hot-middleware/client?path=${config.compiler_public_path}__webpack_hmr`)
     : [APP_ENTRY_PATH],
   shared: SHARED_ENTRY_PATHS,
   vendor: config.compiler_vendor

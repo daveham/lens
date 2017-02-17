@@ -1,6 +1,14 @@
 import { injectReducer } from 'store/reducers';
 
 export default (store) => ({
+  path: 'catalog',
+//  childRoutes: [SourceRoute(store)],
+  getChildRoutes(partialNextState, cb) {
+    require.ensure([], (require) => {
+      const SourceRoute = require('./routes/Source').default;
+      cb(null, [SourceRoute(store)]);
+    }, 'catalog');
+  },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
       const Catalog = require('./containers/CatalogContainer').default;

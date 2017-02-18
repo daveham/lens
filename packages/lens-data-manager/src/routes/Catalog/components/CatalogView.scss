@@ -22,14 +22,14 @@
 .catalogItem {
   margin: 1em;
 
-  &:hover > .catalogImage {
+  &:hover .catalogImage {
     border-color: $white;
     opacity: 1;
     transform: scale(1.1);
     transition: opacity .2s ease-in, transform .2s ease-in, border-color .3s ease-in;
   }
 
-  &:hover > .catalogImageLabel {
+  &:hover .catalogImageLabel {
     color: $gray-light;
     transition: color .2s ease-in;
   }

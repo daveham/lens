@@ -1,22 +1,19 @@
-import { injectReducer } from 'store/reducers';
+import { injectReducers } from 'store/reducers';
 
 export default (store) => ({
   path: 'catalog',
-//  childRoutes: [SourceRoute(store)],
   getChildRoutes(partialNextState, cb) {
-    require.ensure([], (require) => {
-      const SourceRoute = require('./routes/Source').default;
-      cb(null, [SourceRoute(store)]);
-    }, 'catalog');
+    const SourceRoute = require('./routes/Source').default;
+    cb(null, [SourceRoute(store)]);
   },
   getComponent (nextState, cb) {
     require.ensure([], (require) => {
       const Catalog = require('./containers/CatalogContainer').default;
-      const catalogReducer = require('./modules/catalog').default;
-      injectReducer(store, { key: 'catalog', reducer: catalogReducer });
 
-      const imagesReducer = require('./modules/images').default;
-      injectReducer(store, { key: 'images', reducer: imagesReducer });
+      const reducers = {};
+      reducers.catalog = require('./modules/catalog').default;
+      reducers.images = require('./modules/images').default;
+      injectReducers(store, reducers);
 
       const registerCatalogCommands = require('./commands').default;
       registerCatalogCommands();

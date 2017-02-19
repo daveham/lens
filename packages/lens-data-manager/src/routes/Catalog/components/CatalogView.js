@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
-//import debugLib from 'debug';
-//const debug = debugLib('app:CatalogView');
-
 import styles from './CatalogView.scss';
 
 const sourcePropType = PropTypes.shape({

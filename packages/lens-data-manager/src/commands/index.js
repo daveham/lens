@@ -10,9 +10,6 @@ const handlers = {
 };
 
 export const injectCommandHandler = (key, handler) => {
-  if (handlers[key]) {
-    debug(`warning: replacing exising handler at key '${key}'`);
-  }
   handlers[key] = handler;
 };
 

@@ -16,4 +16,11 @@ export const injectReducer = (store, { key, reducer }) => {
   store.replaceReducer(makeRootReducer(store.asyncReducers));
 };
 
+export const injectReducers = (store, reducers) => {
+  Object.keys(reducers).forEach(key => {
+    store.asyncReducers[key] = reducers[key];
+  });
+  store.replaceReducer(makeRootReducer(store.asyncReducers));
+};
+
 export default makeRootReducer;

@@ -34,17 +34,18 @@ export const thumbnailImagesSelector = createSelector(
   (images, ids) => ids.map(id => images[id])
 );
 
+const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';
 export const thumbnailImageUrlsSelector = createSelector(
   thumbnailImagesSelector,
   images => images.map((image) => {
     if (image) {
       if (image.loading) {
-        return '/thumbloading.png';
+        return THUMBNAIL_IMAGE_LOADING_URL;
       } else {
         return image.url;
       }
     } else {
-      return '/thumbloading.png';
+      return THUMBNAIL_IMAGE_LOADING_URL;
     }
   })
 );

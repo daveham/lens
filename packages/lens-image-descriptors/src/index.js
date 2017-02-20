@@ -65,12 +65,9 @@ export const urlFromImageDescriptor = (imageDescriptor) => {
 
 /* format of stats descriptor is
   {
-    source: {
-      id - catalog source image
-      location - x,y position in source image
-      size - size from source image
-    },
-    purpose: identify, etc
+    analysis: identify, ect,
+    imageDescriptor: see definition above
+    }
   }
 */
 
@@ -81,13 +78,15 @@ export const makeSourceStatsDescriptor = (imageDescriptor) => {
   };
 };
 
-// an image id is used as a key into an image cache
+// an stats id is used as a key into a stats cache
+// the stats id is a superset of an image id
 export const makeStatsId = (statsDescriptor) => {
-  const { analysis, imageDescriptor } = statsDescriptor;
+  const { analysis } = statsDescriptor;
+  const imageId = makeImageId(statsDescriptor.imageDescriptor);
   if (analysis) {
-    return `${analysis}_${makeImageId(imageDescriptor)}`;
+    return `${analysis}_${imageId}`;
   }
 
-  return makeImageId(imageDescriptor);
+  return imageId;
 };
 

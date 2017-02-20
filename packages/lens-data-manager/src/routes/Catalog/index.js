@@ -13,6 +13,7 @@ export default (store) => ({
       const reducers = {};
       reducers.catalog = require('./modules/catalog').default;
       reducers.images = require('./modules/images').default;
+      reducers.stats = require('./modules/stats').default;
       injectReducers(store, reducers);
 
       const registerCatalogCommands = require('./commands').default;

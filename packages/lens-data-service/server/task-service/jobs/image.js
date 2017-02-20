@@ -1,7 +1,7 @@
 import gm from 'gm';
 import config from 'config';
 import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
-const debug = require('debug')('svc:jobs-thumbnail');
+const debug = require('debug')('svc:jobs-image');
 import app from 'server/app';
 
 const defineJob = (jobs) => {
@@ -35,11 +35,13 @@ const defineJob = (jobs) => {
           }
           socket.emit('job', result);
           cb();
+        } else {
+          debug('oops: no socket to use');
+          cb();
         }
       });
     }
   };
 };
-
 
 export default defineJob;

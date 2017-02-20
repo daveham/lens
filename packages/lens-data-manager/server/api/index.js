@@ -4,6 +4,7 @@ import configureSourcethumbsApi from 'server/api/sourcethumbs';
 import configureSourceMetadataApi from 'server/api/sourcemetadata';
 import configurePingApi from 'server/api/ping';
 import configureImagesApi from 'server/api/images';
+import configureStatsApi from 'server/api/stats';
 
 export function configureApi(router) {
 
@@ -13,4 +14,5 @@ export function configureApi(router) {
   configureSourceMetadataApi(router);
   configurePingApi(router);
   configureImagesApi(router);
+  configureStatsApi(router);
 }

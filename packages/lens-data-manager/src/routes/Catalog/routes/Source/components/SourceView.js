@@ -1,23 +1,47 @@
 import React, { Component, PropTypes } from 'react';
 
-//import debugLib from 'debug';
-//const debug = debugLib('app:SourceView');
-
 import styles from './SourceView.scss';
 
 export class SourceView extends Component {
   static propTypes = {
-    params: PropTypes.shape({
-      id: PropTypes.string
-    })
+    id: PropTypes.string.isRequired,
+    catalogLoaded: PropTypes.bool.isRequired,
+    sourceStatsDescriptor: PropTypes.object.isRequired,
+    stats: PropTypes.object,
+    ensureStats: PropTypes.func.isRequired
   };
 
+  componentDidMount() {
+    if (this.props.catalogLoaded) {
+      this.props.ensureStats(this.props.sourceStatsDescriptor);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.catalogLoaded && nextProps.catalogLoaded) {
+      this.props.ensureStats(nextProps.sourceStatsDescriptor);
+    }
+  }
+
+  renderThumbnail() {
+    const { id } = this.props;
+    if (this.props.catalogLoaded) {
+      return (
+        <div className={styles.container}>
+          test-{id}
+        </div>
+      );
+    } else {
+      return (
+        <div className={styles.container}>
+          loading test-{id}
+        </div>
+      );
+    }
+  }
+
   render() {
-    return (
-      <div className={styles.container}>
-        test-{this.props.params.id}
-      </div>
-    );
+    return this.renderThumbnail();
   }
 }
 

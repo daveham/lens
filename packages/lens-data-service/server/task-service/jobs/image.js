@@ -9,10 +9,10 @@ const defineJob = (jobs) => {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
       debug('thumbnail perform', { jobId, timestamp });
-      debug(`I want to generate a thumbnail for source with id ${job.id.source.id} and file ${job.id.source.file}`);
+      debug(`I want to generate a thumbnail for source with id ${job.id.input.id} and file ${job.id.input.file}`);
       debug(`After it is generated, I need to report its url as ${urlFromImageDescriptor(job.id)}`);
 
-      const sourceFile = config.utils_paths.sources(job.id.source.file);
+      const sourceFile = config.utils_paths.sources(job.id.input.file);
       const destFile = config.utils_paths.thumbs(pathFromImageDescriptor(job.id));
       debug(`source file should be ${sourceFile} and dest file should be ${destFile}`);
 

@@ -3,39 +3,38 @@ import config from './config';
 
 /* format of image descriptor is
   {
-    source: {
+    input: {
       id - catalog source image
-      location - x,y position in source image
-      size - size from source image
-    },
-    purpose: {
-      category: ui, stats, render, etc
-      element: thumb, etc
+      file - name of source file, only provided if necessary for output purpose
+      location - x,y position in source image, defaults to 0, 0
+      size - size from within source image, defaults to full width, height
     },
     output: {
-      size - size of output
       id - used for naming output
+      purpose - image used for, thumb, etc
+      size - size of output
     }
   }
 */
 
 // an image id is used as a key into an image cache
-export const makeImageId = (imageDescriptor) => {
-  const { source, purpose } = imageDescriptor;
-  if (purpose) {
-    return `${source.id}_${purpose.element}_${purpose.category}`;
-  }
-
-  return source.id;
+export const makeImageId = ({ input, output }) => {
+  const params = output || input;
+  const id = params.id || input.id;
+  const { purpose } = params;
+  return purpose ? `${id}_${purpose}` : id;
 };
 
-export const makeThumbImageDescriptor = (id, file) => {
+export const makeSourceImageDescriptor = (id) => {
   return {
-    purpose: {
-      category: 'u', // UI
-      element: 't' // thumbnail
-    },
-    source: { id, file }
+    input: { id }
+  };
+};
+
+export const makeThumbnailImageDescriptor = (id) => {
+  return {
+    input: { id },
+    output: { purpose: 't' } // thumbnail
   };
 };
 
@@ -44,23 +43,19 @@ const thumbnailFileName = (id) => {
 };
 
 // return where the file would be found if the image file exists
-export const pathFromImageDescriptor = (imageDescriptor) => {
-  const { source, purpose } = imageDescriptor;
-  if (purpose.category === 'u') {
-    if (purpose.element === 't') {
-      return config.utils_paths.thumbs(thumbnailFileName(source.id));
-    }
+export const pathFromImageDescriptor = ({ input, output }) => {
+  if (output && output.purpose === 't') {
+    return config.utils_paths.thumbs(thumbnailFileName(input.id));
   }
+  // TODO: every other case
 };
 
 // return ulr to reference image through web server
-export const urlFromImageDescriptor = (imageDescriptor) => {
-  const { source, purpose } = imageDescriptor;
-  if (purpose.category === 'u') {
-    if (purpose.element === 't') {
-      return path.join(config.dir_thumbs, thumbnailFileName(source.id));
-    }
+export const urlFromImageDescriptor = ({ input, output }) => {
+  if (output && output.purpose === 't') {
+    return path.join(config.dir_thumbs, thumbnailFileName(input.id));
   }
+  // TODO: every other case
 };
 
 /* format of stats descriptor is
@@ -78,15 +73,12 @@ export const makeSourceStatsDescriptor = (imageDescriptor) => {
   };
 };
 
-// an stats id is used as a key into a stats cache
+// a stats id is used as a key into a stats cache
 // the stats id is a superset of an image id
-export const makeStatsId = (statsDescriptor) => {
-  const { analysis } = statsDescriptor;
-  const imageId = makeImageId(statsDescriptor.imageDescriptor);
+export const makeStatsId = ({ analysis, imageDescriptor }) => {
+  const imageId = makeImageId(imageDescriptor);
   if (analysis) {
     return `${analysis}_${imageId}`;
   }
-
   return imageId;
 };
-

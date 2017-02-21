@@ -1,25 +1,22 @@
 import { createSelector } from 'reselect';
-import { makeThumbImageDescriptor, makeImageId } from '@lens/image-descriptors';
+import { makeThumbnailImageDescriptor, makeImageId } from '@lens/image-descriptors';
 
 export const sourcesByIdSelector = createSelector(
   state => state.catalog.sources,
   sources => {
     const byId = {};
-    if (sources) {
-      sources.forEach((source) => { byId[source.id] = source; });
-    }
+    sources.forEach((source) => { byId[source.id] = source; });
     return byId;
   }
 );
 
-export const sourceIdAndFileSelector = createSelector(
-  state => state.catalog.sources,
-  sources => sources.map(({ id, file }) => { return { id, file }; })
-);
-
 export const thumbnailImageDescriptorsSelector = createSelector(
-  sourceIdAndFileSelector,
-  imageIds => imageIds.map(({ id, file}) => makeThumbImageDescriptor(id, file))
+  state => state.catalog.sources,
+  sources => sources.map(({ id, file}) => {
+    const desc = makeThumbnailImageDescriptor(id);
+    desc.input.file = file;
+    return desc;
+  })
 );
 
 export const thumbnailImageIdsSelector = createSelector(
@@ -30,8 +27,8 @@ export const thumbnailImageIdsSelector = createSelector(
 export const imagesSelector = state => state.images;
 
 export const thumbnailImagesSelector = createSelector(
-  [imagesSelector, thumbnailImageIdsSelector],
-  (images, ids) => ids.map(id => images[id])
+  [thumbnailImageIdsSelector, imagesSelector],
+  (ids, images) => ids.map(id => images[id])
 );
 
 const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';

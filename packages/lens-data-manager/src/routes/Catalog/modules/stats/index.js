@@ -2,11 +2,11 @@ import { makeStatsId } from '@lens/image-descriptors';
 import { ACTIONS } from './constants';
 
 // reducers
-const statsReducer = (state = {}, stats) => {
+const statsReducer = (state = {}, data) => {
   // add the url to the image object and reset the loading flag
   return {
     ...state,
-    stats,
+    data,
     loading: false
   };
 };
@@ -40,11 +40,11 @@ export default (state = {}, { type, payload }) => {
     }
 
     case ACTIONS.RECEIVE_STATS: {
-      const { statsDescriptor, stats } = payload;
+      const { statsDescriptor, data } = payload;
       const id = makeStatsId(statsDescriptor);
       return {
         ...state,
-        [id]: statsReducer(state[id], stats)
+        [id]: statsReducer(state[id], data)
       };
     }
 

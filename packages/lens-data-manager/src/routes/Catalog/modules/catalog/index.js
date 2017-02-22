@@ -1,7 +1,5 @@
 import { combineReducers } from 'redux';
 import sources from './sources';
-import sourcesMetadata from './sources-metadata';
-import sourcesThumbs from './sources-thumbs';
 
 import { ACTIONS } from './constants';
 
@@ -29,7 +27,5 @@ const name = (state = '', action) => {
 export default combineReducers({
   loading,
   name,
-  sources,
-  sourcesMetadata,
-  sourcesThumbs
+  sources
 });

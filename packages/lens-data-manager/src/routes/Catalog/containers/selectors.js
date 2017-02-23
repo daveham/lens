@@ -1,23 +1,19 @@
 import { createSelector } from 'reselect';
 import { makeThumbnailImageDescriptor, makeImageId } from '@lens/image-descriptors';
 
-export const sourcesByIdSelector = createSelector(
-  state => state.catalog.sources,
-  sources => {
-    const byId = {};
-    sources.forEach((source) => { byId[source.id] = source; });
-    return byId;
-  }
-);
+export const sourcesSelector = ({ sources }) => {
+  const { ids, byIds } = sources;
+  return ids.map(id => byIds[id]);
+};
 
-export const thumbnailImageDescriptorsSelector = createSelector(
-  state => state.catalog.sources,
-  sources => sources.map(({ id, file}) => {
+export const thumbnailImageDescriptorsSelector = ({ sources }) => {
+  const { ids, byIds } = sources;
+  return ids.map(id => {
     const desc = makeThumbnailImageDescriptor(id);
-    desc.input.file = file;
+    desc.input.file = byIds[id].file;
     return desc;
-  })
-);
+  });
+};
 
 export const thumbnailImageIdsSelector = createSelector(
   thumbnailImageDescriptorsSelector,

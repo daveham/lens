@@ -10,10 +10,11 @@ export default (store) => ({
     require.ensure([], (require) => {
       const Catalog = require('./containers/CatalogContainer').default;
 
-      const reducers = {};
-      reducers.catalog = require('./modules/catalog').default;
-      reducers.images = require('./modules/images').default;
-      reducers.stats = require('./modules/stats').default;
+      const reducers = {
+        ...require('./modules/catalog').default,
+        ...require('./modules/images').default,
+        ...require('./modules/stats').default
+      };
       injectReducers(store, reducers);
 
       const registerCatalogCommands = require('./commands').default;

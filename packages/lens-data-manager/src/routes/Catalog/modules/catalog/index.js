@@ -24,8 +24,10 @@ const name = (state = '', action) => {
   }
 };
 
-export default combineReducers({
-  loading,
-  name,
+export default {
+  catalog: combineReducers({
+    loading,
+    name
+  }),
   sources
-});
+};

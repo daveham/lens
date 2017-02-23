@@ -5,6 +5,7 @@ import { fetchCatalog } from '../modules/catalog/actions';
 import { ensureImage } from '../modules/images/actions';
 
 import {
+  sourcesSelector as sources,
   thumbnailImageDescriptorsSelector as thumbnailImageDescriptors,
   thumbnailImageUrlsSelector as thumbnailImageUrls
 } from './selectors';
@@ -18,6 +19,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = createStructuredSelector({
   catalog: state => state.catalog,
+  sources,
   thumbnailImageDescriptors,
   thumbnailImageUrls
 });

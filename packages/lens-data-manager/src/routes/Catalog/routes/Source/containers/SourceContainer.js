@@ -11,7 +11,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.params;
-  const catalogLoaded = !state.catalog.loading && state.catalog.sources.length > 0;
+  const catalogLoaded = !state.catalog.loading && state.sources.ids.length > 0;
   const sourceStatsDescriptor = makeSourceStatsDescriptor(makeSourceImageDescriptor(id));
   let stats;
   if (catalogLoaded) stats = state.stats[sourceStatsDescriptor];

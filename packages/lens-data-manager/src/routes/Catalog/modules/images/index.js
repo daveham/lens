@@ -1,8 +1,7 @@
 import { makeImageId } from '@lens/image-descriptors';
 import { ACTIONS } from './constants';
 
-// reducers
-const imageReducer = (state = {}, url) => {
+const imageLoadedReducer = (state = {}, url) => {
   // add the url to the image object and reset the loading flag
   return {
     ...state,
@@ -19,7 +18,7 @@ const imageLoadingReducer = (state = {}, loading) => {
   };
 };
 
-export default (state = {}, { type, payload }) => {
+const imageReducer = (state = {}, { type, payload }) => {
   switch (type) {
     case ACTIONS.REQUEST_IMAGE: {
       // payload is the image descriptor; set the loading flag
@@ -44,11 +43,15 @@ export default (state = {}, { type, payload }) => {
       const id = makeImageId(imageDescriptor);
       return {
         ...state,
-        [id]: imageReducer(state[id], url)
+        [id]: imageLoadedReducer(state[id], url)
       };
     }
 
     default:
       return state;
   }
+};
+
+export default {
+  images: imageReducer
 };

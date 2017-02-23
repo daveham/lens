@@ -3,20 +3,18 @@ import { Link } from 'react-router';
 
 import styles from './CatalogView.scss';
 
-const sourcePropType = PropTypes.shape({
-  id: PropTypes.string.isRequired,
-  file: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
-});
-
 export class CatalogView extends Component {
   static propTypes = {
     children: PropTypes.node,
     catalog: PropTypes.shape({
       loading: PropTypes.bool.isRequired,
-      name: PropTypes.string.isRequired,
-      sources: PropTypes.arrayOf(sourcePropType).isRequired
+      name: PropTypes.string.isRequired
     }).isRequired,
+    sources: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      file: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    })).isRequired,
     thumbnailImageDescriptors: PropTypes.arrayOf(
       PropTypes.shape({
         source: PropTypes.shape({
@@ -44,7 +42,7 @@ export class CatalogView extends Component {
   }
 
   renderDynamicImages() {
-    const { sources } = this.props.catalog;
+    const { sources } = this.props;
     const thumbnailElements = this.props.thumbnailImageUrls.map((url, index) => {
       const source = sources[index];
       return (

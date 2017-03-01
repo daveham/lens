@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import sources from './sources';
+import images from './images';
 
 import { ACTIONS } from './constants';
 
@@ -29,5 +30,6 @@ export default {
     loading,
     name
   }),
-  sources
+  sources,
+  images
 };

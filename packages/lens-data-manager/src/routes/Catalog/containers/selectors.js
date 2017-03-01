@@ -20,17 +20,14 @@ export const thumbnailImageIdsSelector = createSelector(
   descriptors => descriptors.map(makeImageId)
 );
 
-export const imagesSelector = state => state.images;
-
-export const thumbnailImagesSelector = createSelector(
-  [thumbnailImageIdsSelector, imagesSelector],
-  (ids, images) => ids.map(id => images[id])
-);
-
 const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';
-export const thumbnailImageUrlsSelector = createSelector(
-  thumbnailImagesSelector,
-  images => images.map((image) => {
+
+export const thumbnailImageUrlsSelector = ({ images }) => {
+  const { ids, byIds } = images;
+  const thumbnailIds = ids['thumbnails'] || [];
+  const thumbnailByIds = byIds['thumbnails'] || {};
+  return thumbnailIds.map(id => {
+    const image = thumbnailByIds[id];
     if (image) {
       if (image.loading) {
         return THUMBNAIL_IMAGE_LOADING_URL;
@@ -40,5 +37,5 @@ export const thumbnailImageUrlsSelector = createSelector(
     } else {
       return THUMBNAIL_IMAGE_LOADING_URL;
     }
-  })
-);
+  });
+};

@@ -5,10 +5,10 @@ const initialState = {
   byIds: {}
 };
 
-export default function sources (state = initialState, action) {
-  switch (action.type) {
+export default (state = initialState, { type, payload }) => {
+  switch (type) {
     case ACTIONS.RECEIVE_CATALOG: {
-      const { sources } = action.payload;
+      const { sources } = payload;
       const ids = sources.map(source => source.id);
       const byIds = {};
       sources.forEach(source => byIds[source.id] = source);
@@ -17,4 +17,4 @@ export default function sources (state = initialState, action) {
     default:
       return state;
   }
-}
+};

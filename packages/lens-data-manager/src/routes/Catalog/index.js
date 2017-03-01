@@ -12,7 +12,6 @@ export default (store) => ({
 
       const reducers = {
         ...require('./modules/catalog').default,
-        ...require('./modules/images').default,
         ...require('./modules/stats').default
       };
       injectReducers(store, reducers);

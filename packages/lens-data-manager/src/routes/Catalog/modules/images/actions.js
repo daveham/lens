@@ -1,5 +1,5 @@
 import { makeImageId } from '@lens/image-descriptors';
-import { ACTIONS } from './constants';
+import { ACTIONS } from '../catalog/constants';
 
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
@@ -7,10 +7,25 @@ import fetch from 'isomorphic-fetch';
 import debugLib from 'debug';
 const debug = debugLib('app:module:images-acitons');
 
+const actionPayloadFromImageDescriptor = (payload) => {
+  const { imageDescriptor } = payload;
+  let listKey;
+  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
+    listKey = 'thumbnails';
+  } else {
+    listKey = 'images';
+  }
+  debug('actionPayloadFromImageDescriptor', { imageDescriptor, listKey });
+  return {
+    ...payload,
+    listKey
+  };
+};
+
 // action creators
-const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE);
-export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE);
-export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE);
+const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE, actionPayloadFromImageDescriptor);
+export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE, actionPayloadFromImageDescriptor);
+export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE, actionPayloadFromImageDescriptor);
 
 // actions
 export const ensureImage = (imageDescriptor, force) => {
@@ -28,7 +43,7 @@ export const ensureImage = (imageDescriptor, force) => {
     };
 
     // mark image request in progress
-    dispatch(requestImageAction(imageDescriptor));
+    dispatch(requestImageAction({ imageDescriptor }));
 
     // invoke api to check/generate the file
     debug('ensureImage: Invoking fetch', { body, headers });
@@ -41,7 +56,7 @@ export const ensureImage = (imageDescriptor, force) => {
       }).then(({ url, jobId, error }) => {
         if (url) {
           // image already exists in file system
-          debug('ensureImage - exists', { url });
+          debug('ensureImage - exists', { imageDescriptor, url });
           dispatch(receiveImageAction({ imageDescriptor, url }));
         } else if (jobId) {
           // task has been enqueued to generate the image
@@ -57,7 +72,7 @@ export const ensureImage = (imageDescriptor, force) => {
       .catch(reason => {
         // request failed, clear the 'in progress' state for image
         debug('ensureImage: Error', reason);
-        dispatch(clearRequestImageAction(imageDescriptor));
+        dispatch(clearRequestImageAction({ imageDescriptor }));
       });
   };
 };

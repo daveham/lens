@@ -1,7 +1,7 @@
 import _debug from 'debug';
 const debug = _debug('app:catalog-commands-image');
 
-import { receiveImageAction } from 'routes/Catalog/modules/images/actions';
+import { receiveImageAction } from 'routes/Catalog/modules/catalog/images/actions';
 
 export default (payload, dispatch) => {
   debug('imageCommandHandler', { payload });

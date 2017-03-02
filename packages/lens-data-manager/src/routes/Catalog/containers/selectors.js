@@ -21,11 +21,12 @@ export const thumbnailImageIdsSelector = createSelector(
 );
 
 const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';
+const THUMBNAILS_LIST_KEY = 'thumbnails';
 
 export const thumbnailImageUrlsSelector = ({ images }) => {
   const { ids, byIds } = images;
-  const thumbnailIds = ids['thumbnails'] || [];
-  const thumbnailByIds = byIds['thumbnails'] || {};
+  const thumbnailIds = ids[THUMBNAILS_LIST_KEY] || [];
+  const thumbnailByIds = byIds[THUMBNAILS_LIST_KEY] || {};
   return thumbnailIds.map(id => {
     const image = thumbnailByIds[id];
     if (image) {

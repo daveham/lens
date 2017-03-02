@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { fetchCatalog } from '../modules/catalog/actions';
-import { ensureImage } from '../modules/images/actions';
+import { ensureImage } from '../modules/catalog/images/actions';
 
 import {
   sourcesSelector as sources,

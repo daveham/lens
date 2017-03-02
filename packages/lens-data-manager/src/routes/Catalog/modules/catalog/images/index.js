@@ -1,5 +1,5 @@
 import { makeImageId } from '@lens/image-descriptors';
-import { ACTIONS } from './constants';
+import { ACTIONS } from '../constants';
 import debugLib from 'debug';
 const debug = debugLib('app:module:catalog-images-reducers');
 

@@ -1,19 +1,19 @@
 import { makeImageId } from '@lens/image-descriptors';
-import { ACTIONS } from '../catalog/constants';
+import { ACTIONS, IMAGE_LIST_KEYS } from '../constants';
 
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
 import debugLib from 'debug';
-const debug = debugLib('app:module:images-acitons');
+const debug = debugLib('app:module:catalog-images-actions');
 
 const actionPayloadFromImageDescriptor = (payload) => {
   const { imageDescriptor } = payload;
   let listKey;
   if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
-    listKey = 'thumbnails';
+    listKey = IMAGE_LIST_KEYS.THUMBNAILS;
   } else {
-    listKey = 'images';
+    listKey = IMAGE_LIST_KEYS.DEFAULT;
   }
   debug('actionPayloadFromImageDescriptor', { imageDescriptor, listKey });
   return {

@@ -1,24 +1,34 @@
-import { makeStatsId } from '@lens/image-descriptors';
-import { ACTIONS } from './constants';
-
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
+import { makeStatsId } from '@lens/image-descriptors';
+
+import { ACTIONS } from '../constants';
+import { listKeyFromStatsDescriptor } from '../utils';
+
 import debugLib from 'debug';
-const debug = debugLib('app:module:stats-acitons');
+const debug = debugLib('app:module:catalog-stats-acitons');
+
+const actionPayloadFromStatsDescriptor = (payload) => {
+  return {
+    ...payload,
+    listKey: listKeyFromStatsDescriptor(payload.statsDescriptor)
+  };
+};
 
 // action creators
-const requestStatsAction = createAction(ACTIONS.REQUEST_STATS);
-export const clearRequestStatsAction = createAction(ACTIONS.CLEAR_REQUEST_STATS);
-export const receiveStatsAction = createAction(ACTIONS.RECEIVE_STATS);
+const requestStatsAction = createAction(ACTIONS.REQUEST_STATS, actionPayloadFromStatsDescriptor);
+const clearRequestStatsAction = createAction(ACTIONS.CLEAR_REQUEST_STATS, actionPayloadFromStatsDescriptor);
+export const receiveStatsAction = createAction(ACTIONS.RECEIVE_STATS, actionPayloadFromStatsDescriptor);
 
 // actions
 export const ensureStats = (statsDescriptor, force) => {
   return (dispatch, getstate) => {
+    const listKey = listKeyFromStatsDescriptor(statsDescriptor);
+    const byIds = getstate().stats.byIds[listKey] || {};
     const id = makeStatsId(statsDescriptor);
-    const stats = getstate().stats[id];
+    const stats = byIds[id];
     const notNeeded = stats && (stats.loading || (stats.data && !force));
-    debug('ensureStats', { statsDescriptor, id, force, notNeeded });
     if (notNeeded) return;
 
     const body = JSON.stringify(statsDescriptor);
@@ -28,10 +38,9 @@ export const ensureStats = (statsDescriptor, force) => {
     };
 
     // mark image request in progress
-    dispatch(requestStatsAction(statsDescriptor));
+    dispatch(requestStatsAction({ statsDescriptor }));
 
     // invoke api to generate the stats
-    debug('ensureStats: Invoking fetch', { body, headers });
     return fetch('/api/stats/', { method: 'POST', body, headers })
       .then((response) => {
         if (response.status >= 400) {
@@ -53,7 +62,7 @@ export const ensureStats = (statsDescriptor, force) => {
       .catch(reason => {
         // request failed, clear the 'in progress' state for image
         debug('ensureStats: Error', reason);
-        dispatch(clearRequestStatsAction(statsDescriptor));
+        dispatch(clearRequestStatsAction({ statsDescriptor }));
       });
   };
 };

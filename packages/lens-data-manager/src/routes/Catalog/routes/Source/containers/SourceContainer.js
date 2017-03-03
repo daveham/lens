@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { makeSourceStatsDescriptor, makeSourceImageDescriptor } from '@lens/image-descriptors';
 
-import { ensureStats } from 'routes/Catalog/modules/stats/actions';
+import { ensureStats } from 'routes/Catalog/modules/catalog/stats/actions';
 
 import SourceView from '../components/SourceView.js';
 

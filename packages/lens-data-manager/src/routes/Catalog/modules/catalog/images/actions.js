@@ -1,24 +1,18 @@
-import { makeImageId } from '@lens/image-descriptors';
-import { ACTIONS, IMAGE_LIST_KEYS } from '../constants';
-
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
+
+import { makeImageId } from '@lens/image-descriptors';
+
+import { ACTIONS } from '../constants';
+import { listKeyFromImageDescriptor } from '../utils';
 
 import debugLib from 'debug';
 const debug = debugLib('app:module:catalog-images-actions');
 
-const actionPayloadFromImageDescriptor = (payload) => {
-  const { imageDescriptor } = payload;
-  let listKey;
-  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
-    listKey = IMAGE_LIST_KEYS.THUMBNAILS;
-  } else {
-    listKey = IMAGE_LIST_KEYS.DEFAULT;
-  }
-  debug('actionPayloadFromImageDescriptor', { imageDescriptor, listKey });
+const actionPayloadFromImageDescriptor = payload => {
   return {
     ...payload,
-    listKey
+    listKey: listKeyFromImageDescriptor(payload.imageDescriptor)
   };
 };
 
@@ -30,10 +24,11 @@ export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE, actionPayl
 // actions
 export const ensureImage = (imageDescriptor, force) => {
   return (dispatch, getstate) => {
+    const listKey = listKeyFromImageDescriptor(imageDescriptor);
+    const byIds = getstate().images.byIds[listKey] || {};
     const id = makeImageId(imageDescriptor);
-    const image = getstate().images[id];
+    const image = byIds[id];
     const notNeeded = image && (image.loading || (image.url && !force));
-    debug('ensureImage', { imageDescriptor, id, force, notNeeded });
     if (notNeeded) return;
 
     const body = JSON.stringify(imageDescriptor);
@@ -46,7 +41,6 @@ export const ensureImage = (imageDescriptor, force) => {
     dispatch(requestImageAction({ imageDescriptor }));
 
     // invoke api to check/generate the file
-    debug('ensureImage: Invoking fetch', { body, headers });
     return fetch('/api/images/', { method: 'POST', body, headers })
       .then((response) => {
         if (response.status >= 400) {

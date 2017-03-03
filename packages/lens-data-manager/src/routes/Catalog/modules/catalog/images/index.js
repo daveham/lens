@@ -1,7 +1,5 @@
 import { makeImageId } from '@lens/image-descriptors';
 import { ACTIONS } from '../constants';
-import debugLib from 'debug';
-const debug = debugLib('app:module:catalog-images-reducers');
 
 const imageLoadedReducer = (state = {}, url) => {
   // add the url to the image object and reset the loading flag
@@ -99,7 +97,6 @@ const receiveImageHandler = (state, { imageDescriptor, url, listKey }) => {
 };
 
 export default (state = initialState, { type, payload }) => {
-  debug('reducer', { type, payload });
   switch (type) {
     case ACTIONS.REQUEST_IMAGE:
       return requestImageHandler(state, payload);

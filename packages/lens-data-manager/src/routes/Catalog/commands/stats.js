@@ -1,7 +1,7 @@
 import _debug from 'debug';
 const debug = _debug('app:catalog-commands-stats');
 
-import { receiveStatsAction } from 'routes/Catalog/modules/stats/actions';
+import { receiveStatsAction } from 'routes/Catalog/modules/catalog/stats/actions';
 
 export default (payload, dispatch) => {
   debug('statsCommandHandler', { payload });

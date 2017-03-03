@@ -11,8 +11,7 @@ export default (store) => ({
       const Catalog = require('./containers/CatalogContainer').default;
 
       const reducers = {
-        ...require('./modules/catalog').default,
-        ...require('./modules/stats').default
+        ...require('./modules/catalog').default
       };
       injectReducers(store, reducers);
 

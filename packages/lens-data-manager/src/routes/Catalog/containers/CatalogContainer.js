@@ -8,7 +8,7 @@ import {
   sourcesSelector as sources,
   thumbnailImageDescriptorsSelector as thumbnailImageDescriptors,
   thumbnailImageUrlsSelector as thumbnailImageUrls
-} from './selectors';
+} from '../modules/catalog/selectors';
 
 import CatalogView from '../components/CatalogView.js';
 

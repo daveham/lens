@@ -1,5 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 
+import debugLib from 'debug';
+const debug = debugLib('app:module:source-view');
+
 import styles from './SourceView.scss';
 
 export class SourceView extends Component {
@@ -24,11 +27,15 @@ export class SourceView extends Component {
   }
 
   renderThumbnail() {
-    const { id } = this.props;
+    const { id, stats } = this.props;
+    debug('renderThumbnail', { stats });
     if (this.props.catalogLoaded) {
       return (
         <div className={styles.container}>
           test-{id}
+          <p>
+            {JSON.stringify(stats)}
+          </p>
         </div>
       );
     } else {

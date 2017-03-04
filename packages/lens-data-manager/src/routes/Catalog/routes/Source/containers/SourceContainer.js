@@ -1,8 +1,12 @@
 import { connect } from 'react-redux';
-import { sourceStatsDescriptorsSelector } from './selectors';
+import { makeStatsId } from '@lens/image-descriptors';
+import { sourceStatsDescriptorSelector } from './selectors';
 import { ensureStats } from 'routes/Catalog/modules/catalog/stats/actions';
 
 import SourceView from '../components/SourceView.js';
+
+import debugLib from 'debug';
+const debug = debugLib('app:module:source-container');
 
 const mapDispatchToProps = {
   ensureStats
@@ -11,9 +15,17 @@ const mapDispatchToProps = {
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.params;
   const catalogLoaded = !state.catalog.loading && state.sources.ids.length > 0;
-  const sourceStatsDescriptor = sourceStatsDescriptorsSelector(state, id);
+  const sourceStatsDescriptor = sourceStatsDescriptorSelector(state, id);
+  const statsId = makeStatsId(sourceStatsDescriptor);
   let stats;
-  if (catalogLoaded) stats = state.stats[sourceStatsDescriptor];
+  if (catalogLoaded) {
+    const byIds = state.stats.byIds['sources'];
+    if (byIds) {
+      stats = byIds[statsId].data;
+    }
+  }
+  debug('mapStateToProps', { stats });
+
   return {
     id,
     catalogLoaded,

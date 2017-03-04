@@ -1,29 +1,17 @@
 const debug = require('debug')('svc:jobs-stats');
-import app from 'server/app';
+import { reportResults } from './utils';
 
 const defineJob = (jobs) => {
   jobs.stats = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
-      debug('stats perform', { jobId, timestamp });
+      debug('stats perform', { job, jobId, timestamp });
+      debug(`I want to generate stats data for source with id ${job.sd.imageDescriptor.input.id} and file ${job.sd.imageDescriptor.input.file}`);
 
-      if (app) {
-        const socket = app.get('socket');
-        const result = {
-          ...job,
-          timestamp: Date.now()
-        };
-        debug('stats job duration', result.timestamp - timestamp);
-
-        result.status = 'complete';
-        result.data = { xyzzy: 1 };
-
-        socket.emit('job', result);
-        cb();
-      } else {
-        debug('oops: no socket to use');
-        cb();
-      }
+      const result = {
+        data: { xyzzy: 1 }
+      };
+      reportResults(job, null, result, cb);
     }
   };
 };

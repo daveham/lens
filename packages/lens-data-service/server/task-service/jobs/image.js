@@ -1,8 +1,10 @@
 import gm from 'gm';
 import config from 'config';
 import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
-const debug = require('debug')('svc:jobs-image');
-import app from 'server/app';
+import { reportResults } from './utils';
+
+import debugLib from 'debug';
+const debug = debugLib('svc:jobs-image');
 
 const defineJob = (jobs) => {
   jobs.image = {
@@ -17,28 +19,14 @@ const defineJob = (jobs) => {
       debug(`source file should be ${sourceFile} and dest file should be ${destFile}`);
 
       gm(sourceFile).thumb(100, 100, destFile, 80, (err, gmdata) => {
-        if (app) {
-          const socket = app.get('socket');
-          const result = {
-            ...job,
-            timestamp: Date.now()
+        let result;
+        if (!err) {
+          debug('gm thumb success', { gmdata });
+          result = {
+            url: urlFromImageDescriptor(job.id)
           };
-          debug('thumbnail job duration', result.timestamp - timestamp);
-
-          if (err) {
-            debug('gm thumb error', { err });
-            result.status = 'error';
-          } else {
-            debug('gm thumb success', { gmdata });
-            result.status = 'complete';
-            result.url = urlFromImageDescriptor(job.id);
-          }
-          socket.emit('job', result);
-          cb();
-        } else {
-          debug('oops: no socket to use');
-          cb();
         }
+        reportResults(job, err, result, cb);
       });
     }
   };

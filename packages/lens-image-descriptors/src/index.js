@@ -16,9 +16,8 @@ import config from './config';
     }
   }
 */
-
-// an image id is used as a key into an image cache
-export const makeImageId = ({ input, output }) => {
+// used as a key into an image cache
+export const makeImageKey = ({ input, output }) => {
   const params = output || input;
   const id = params.id || input.id;
   const { purpose } = params;
@@ -72,11 +71,10 @@ export const makeSourceStatsDescriptor = (imageDescriptor) => {
     imageDescriptor
   };
 };
-
-// a stats id is used as a key into a stats cache
-// the stats id is a superset of an image id
-export const makeStatsId = ({ analysis, imageDescriptor }) => {
-  const imageId = makeImageId(imageDescriptor);
+// used as a key into a stats cache
+// the stats key is a superset of an image key
+export const makeStatsKey = ({ analysis, imageDescriptor }) => {
+  const imageId = makeImageKey(imageDescriptor);
   if (analysis) {
     return `${analysis}_${imageId}`;
   }

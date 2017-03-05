@@ -1,36 +1,34 @@
 import { connect } from 'react-redux';
-import { makeStatsId } from '@lens/image-descriptors';
+import { makeStatsKey } from '@lens/image-descriptors';
 import { sourceStatsDescriptorSelector } from './selectors';
 import { ensureStats } from 'routes/Catalog/modules/catalog/stats/actions';
 
 import SourceView from '../components/SourceView.js';
 
-import debugLib from 'debug';
-const debug = debugLib('app:module:source-container');
-
 const mapDispatchToProps = {
   ensureStats
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const { id } = ownProps.params;
-  const catalogLoaded = !state.catalog.loading && state.sources.ids.length > 0;
-  const sourceStatsDescriptor = sourceStatsDescriptorSelector(state, id);
-  const statsId = makeStatsId(sourceStatsDescriptor);
-  let stats;
-  if (catalogLoaded) {
-    const byIds = state.stats.byIds['sources'];
-    if (byIds) {
-      stats = byIds[statsId].data;
+const selectStats = ({ stats }, key) => {
+  const byIds = stats.byIds['sources'];
+  if (byIds) {
+    const statsItem = byIds[key];
+    if (statsItem) {
+      return statsItem.data;
     }
   }
-  debug('mapStateToProps', { stats });
+};
+
+const mapStateToProps = (state, ownProps) => {
+  const { id } = ownProps.params;
+  const sourceStatsDescriptor = sourceStatsDescriptorSelector(state, id);
+  const key = makeStatsKey(sourceStatsDescriptor);
 
   return {
     id,
-    catalogLoaded,
+    catalogLoaded: !state.catalog.loading && state.sources.ids.length > 0,
     sourceStatsDescriptor,
-    stats
+    stats: selectStats(state, key)
   };
 };
 

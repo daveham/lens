@@ -1,5 +1,8 @@
-import { makeStatsId } from '@lens/image-descriptors';
+import { makeStatsKey } from '@lens/image-descriptors';
 import { ACTIONS } from '../constants';
+
+import debugLib from 'debug';
+const debug = debugLib('app:module:catalog-stats-reducers');
 
 const statsLoadedReducer = (state = {}, data) => {
   // add the data to the stats object and reset the loading flag
@@ -24,6 +27,7 @@ const initialState = {
 };
 
 const statsIdsReducer = (state = [], id) => {
+  debug('statsIdsReducer', { id, state });
   // add an id to the list of ids
   return [
     ...state,
@@ -32,6 +36,7 @@ const statsIdsReducer = (state = [], id) => {
 };
 
 const statsByIdsReducer = (state = {}, id, stats) => {
+  debug('statsByIdsReducer', { id, stats, state });
   // add the stats
   return {
     ...state,
@@ -40,7 +45,7 @@ const statsByIdsReducer = (state = {}, id, stats) => {
 };
 
 const requestStatsHandler = (state, { statsDescriptor, listKey }) => {
-  const id = makeStatsId(statsDescriptor);
+  const id = makeStatsKey(statsDescriptor);
 
   const existingIds = state.ids[listKey] || [];
   const existingByIds = state.byIds[listKey] || {};
@@ -63,7 +68,7 @@ const requestStatsHandler = (state, { statsDescriptor, listKey }) => {
 };
 
 const clearRequestStatsHandler = (state, { statsDescriptor, listKey }) => {
-  const id = makeStatsId(statsDescriptor);
+  const id = makeStatsKey(statsDescriptor);
 
   const existingByIds = state.byIds[listKey];
   const existingItem = existingByIds[id];
@@ -80,7 +85,7 @@ const clearRequestStatsHandler = (state, { statsDescriptor, listKey }) => {
 };
 
 const receiveStatsHandler = (state, { statsDescriptor, data, listKey }) => {
-  const id = makeStatsId(statsDescriptor);
+  const id = makeStatsKey(statsDescriptor);
 
   const existingByIds = state.byIds[listKey];
   const existingItem = existingByIds[id];
@@ -99,10 +104,13 @@ const receiveStatsHandler = (state, { statsDescriptor, data, listKey }) => {
 export default (state = initialState, { type, payload }) => {
   switch (type) {
     case ACTIONS.REQUEST_STATS:
+      debug('REQUEST_STATS', { stamp: Date.now() });
       return requestStatsHandler(state, payload);
     case ACTIONS.CLEAR_REQUEST_STATS:
+      debug('CLEAR_REQUEST_STATS');
       return clearRequestStatsHandler(state, payload);
     case ACTIONS.RECEIVE_STATS:
+      debug('RECEIVE_STATS');
       return receiveStatsHandler(state, payload);
 
     default:

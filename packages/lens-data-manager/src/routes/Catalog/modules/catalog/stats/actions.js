@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
-import { makeStatsId } from '@lens/image-descriptors';
+import { makeStatsKey } from '@lens/image-descriptors';
 
 import { ACTIONS } from '../constants';
 import { listKeyFromStatsDescriptor } from '../utils';
@@ -24,9 +24,10 @@ export const receiveStatsAction = createAction(ACTIONS.RECEIVE_STATS, actionPayl
 // actions
 export const ensureStats = (statsDescriptor, force) => {
   return (dispatch, getstate) => {
+    debug('ensureStats', { statsDescriptor });
     const listKey = listKeyFromStatsDescriptor(statsDescriptor);
     const byIds = getstate().stats.byIds[listKey] || {};
-    const id = makeStatsId(statsDescriptor);
+    const id = makeStatsKey(statsDescriptor);
     const stats = byIds[id];
     const notNeeded = stats && (stats.loading || (stats.data && !force));
     if (notNeeded) return;
@@ -37,7 +38,7 @@ export const ensureStats = (statsDescriptor, force) => {
       Accept: 'application/json'
     };
 
-    // mark image request in progress
+    // mark stats request in progress
     dispatch(requestStatsAction({ statsDescriptor }));
 
     // invoke api to generate the stats

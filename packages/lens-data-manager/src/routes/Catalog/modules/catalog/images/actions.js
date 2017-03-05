@@ -1,7 +1,7 @@
 import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 
-import { makeImageId } from '@lens/image-descriptors';
+import { makeImageKey } from '@lens/image-descriptors';
 
 import { ACTIONS } from '../constants';
 import { listKeyFromImageDescriptor } from '../utils';
@@ -26,7 +26,7 @@ export const ensureImage = (imageDescriptor, force) => {
   return (dispatch, getstate) => {
     const listKey = listKeyFromImageDescriptor(imageDescriptor);
     const byIds = getstate().images.byIds[listKey] || {};
-    const id = makeImageId(imageDescriptor);
+    const id = makeImageKey(imageDescriptor);
     const image = byIds[id];
     const notNeeded = image && (image.loading || (image.url && !force));
     if (notNeeded) return;

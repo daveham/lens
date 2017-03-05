@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import debugLib from 'debug';
 const debug = debugLib('app:module:source-view');
@@ -31,7 +32,7 @@ export class SourceView extends Component {
     debug('renderThumbnail', { stats });
     if (this.props.catalogLoaded) {
       return (
-        <div className={styles.container}>
+        <div className={styles.source}>
           test-{id}
           <p>
             {JSON.stringify(stats)}
@@ -40,7 +41,7 @@ export class SourceView extends Component {
       );
     } else {
       return (
-        <div className={styles.container}>
+        <div className={styles.source}>
           loading test-{id}
         </div>
       );
@@ -48,7 +49,12 @@ export class SourceView extends Component {
   }
 
   render() {
-    return this.renderThumbnail();
+    return (
+      <div className={styles.container}>
+        { this.renderThumbnail() }
+        <Link to={'/catalog'}>back to catalog</Link>
+      </div>
+    );
   }
 }
 

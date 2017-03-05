@@ -1,4 +1,4 @@
-import { makeImageId } from '@lens/image-descriptors';
+import { makeImageKey } from '@lens/image-descriptors';
 import { ACTIONS } from '../constants';
 
 const imageLoadedReducer = (state = {}, url) => {
@@ -40,7 +40,7 @@ const initialState = {
 };
 
 const requestImageHandler = (state, { imageDescriptor, listKey }) => {
-  const id = makeImageId(imageDescriptor);
+  const id = makeImageKey(imageDescriptor);
 
   const existingIds = state.ids[listKey] || [];
   const existingByIds = state.byIds[listKey] || {};
@@ -63,7 +63,7 @@ const requestImageHandler = (state, { imageDescriptor, listKey }) => {
 };
 
 const clearRequestImageHandler = (state, { imageDescriptor, listKey }) => {
-  const id = makeImageId(imageDescriptor);
+  const id = makeImageKey(imageDescriptor);
 
   const existingByIds = state.byIds[listKey];
   const existingItem = existingByIds[id];
@@ -80,7 +80,7 @@ const clearRequestImageHandler = (state, { imageDescriptor, listKey }) => {
 };
 
 const receiveImageHandler = (state, { imageDescriptor, url, listKey }) => {
-  const id = makeImageId(imageDescriptor);
+  const id = makeImageKey(imageDescriptor);
 
   const existingByIds = state.byIds[listKey];
   const existingItem = existingByIds[id];

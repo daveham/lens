@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { makeThumbnailImageDescriptor, makeImageId } from '@lens/image-descriptors';
+import { makeThumbnailImageDescriptor, makeImageKey } from '@lens/image-descriptors';
 
 export const sourcesSelector = ({ sources }) => {
   const { ids, byIds } = sources;
@@ -17,7 +17,7 @@ export const thumbnailImageDescriptorsSelector = ({ sources }) => {
 
 export const thumbnailImageIdsSelector = createSelector(
   thumbnailImageDescriptorsSelector,
-  descriptors => descriptors.map(makeImageId)
+  descriptors => descriptors.map(makeImageKey)
 );
 
 const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';

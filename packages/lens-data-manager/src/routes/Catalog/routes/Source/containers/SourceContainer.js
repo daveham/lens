@@ -10,9 +10,9 @@ const mapDispatchToProps = {
 };
 
 const selectStats = ({ stats }, key) => {
-  const byIds = stats.byIds['sources'];
-  if (byIds) {
-    const statsItem = byIds[key];
+  const byKeys = stats.byKeys['sources'];
+  if (byKeys) {
+    const statsItem = byKeys[key];
     if (statsItem) {
       return statsItem.data;
     }

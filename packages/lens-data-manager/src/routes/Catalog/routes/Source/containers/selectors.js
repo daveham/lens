@@ -1,11 +1,11 @@
 import { makeSourceStatsDescriptor, makeSourceImageDescriptor } from '@lens/image-descriptors';
 
 export const sourceStatsDescriptorSelector = (state, id) => {
-  const { sources } = state;
-  const desc = makeSourceImageDescriptor(id);
-  const image = sources.byIds[id];
-  if (image) {
-    desc.input.file = image.file;
+  const imageDescriptor = makeSourceImageDescriptor(id);
+  const source = state.sources.byIds[id];
+
+  if (source) {
+    imageDescriptor.input.file = source.file;
   }
-  return makeSourceStatsDescriptor(desc);
+  return makeSourceStatsDescriptor(imageDescriptor);
 };

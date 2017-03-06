@@ -10,13 +10,13 @@ export default function configureApi(router) {
 
   router.route('/stats')
     .post((req, res /*, next */) => {
-      const sd = req.body;
-      debug('POST body (sd)', { sd });
+      const statsDescriptor = req.body;
+      debug('POST body', { statsDescriptor });
 
       const queue = new Queue({ connection: config.queue_connection });
       queue.on('error', (error) => { debug(error); });
       queue.connect(() => {
-        const payload = createStats(sd);
+        const payload = createStats(statsDescriptor);
         debug('enqueuing job', { payload });
         queue.enqueue(config.queue_name, payload.command, payload);
         res.json(payload);

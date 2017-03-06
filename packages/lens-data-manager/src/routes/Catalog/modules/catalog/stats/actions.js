@@ -26,9 +26,9 @@ export const ensureStats = (statsDescriptor, force) => {
   return (dispatch, getstate) => {
     debug('ensureStats', { statsDescriptor });
     const listKey = listKeyFromStatsDescriptor(statsDescriptor);
-    const byIds = getstate().stats.byIds[listKey] || {};
-    const id = makeStatsKey(statsDescriptor);
-    const stats = byIds[id];
+    const byKeys = getstate().stats.byKeys[listKey] || {};
+    const key = makeStatsKey(statsDescriptor);
+    const stats = byKeys[key];
     const notNeeded = stats && (stats.loading || (stats.data && !force));
     if (notNeeded) return;
 

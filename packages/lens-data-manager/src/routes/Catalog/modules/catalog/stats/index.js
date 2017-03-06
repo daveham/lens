@@ -21,83 +21,81 @@ const statsLoadingReducer = (state = {}, loading) => {
   };
 };
 
-const initialState = {
-  ids: {},
-  byIds: {}
-};
-
-const statsIdsReducer = (state = [], id) => {
-  debug('statsIdsReducer', { id, state });
-  // add an id to the list of ids
+const statsKeysReducer = (state = [], key) => {
+  // add a key to the list of keys
   return [
     ...state,
-    id
+    key
   ];
 };
 
-const statsByIdsReducer = (state = {}, id, stats) => {
-  debug('statsByIdsReducer', { id, stats, state });
+const statsByKeysReducer = (state = {}, key, stats) => {
   // add the stats
   return {
     ...state,
-    [id]: stats
+    [key]: stats
   };
 };
 
+const initialState = {
+  keys: {},
+  byKeys: {}
+};
+
 const requestStatsHandler = (state, { statsDescriptor, listKey }) => {
-  const id = makeStatsKey(statsDescriptor);
+  const key = makeStatsKey(statsDescriptor);
 
-  const existingIds = state.ids[listKey] || [];
-  const existingByIds = state.byIds[listKey] || {};
-  const existingItem = existingByIds[id];
+  const existingKeys = state.keys[listKey] || [];
+  const existingByKeys = state.byKeys[listKey] || {};
+  const existingItem = existingByKeys[key];
 
-  const ids = existingItem ? state.ids : {
-    ...state.ids,
-    [listKey]: statsIdsReducer(existingIds, id)
+  const keys = existingItem ? state.keys : {
+    ...state.keys,
+    [listKey]: statsKeysReducer(existingKeys, key)
   };
-  const byIds = {
-    ...state.byIds,
-    [listKey]: statsByIdsReducer(existingByIds, id, statsLoadingReducer(existingItem, true))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: statsByKeysReducer(existingByKeys, key, statsLoadingReducer(existingItem, true))
   };
 
   return {
     ...state,
-    ids,
-    byIds
+    keys,
+    byKeys
   };
 };
 
 const clearRequestStatsHandler = (state, { statsDescriptor, listKey }) => {
-  const id = makeStatsKey(statsDescriptor);
+  const key = makeStatsKey(statsDescriptor);
 
-  const existingByIds = state.byIds[listKey];
-  const existingItem = existingByIds[id];
+  const existingByKeys = state.byKeys[listKey];
+  const existingItem = existingByKeys[key];
 
-  const byIds = {
-    ...state.byIds,
-    [listKey]: statsByIdsReducer(existingByIds, id, statsLoadingReducer(existingItem, false))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: statsByKeysReducer(existingByKeys, key, statsLoadingReducer(existingItem, false))
   };
 
   return {
     ...state,
-    byIds
+    byKeys
   };
 };
 
 const receiveStatsHandler = (state, { statsDescriptor, data, listKey }) => {
-  const id = makeStatsKey(statsDescriptor);
+  const key = makeStatsKey(statsDescriptor);
 
-  const existingByIds = state.byIds[listKey];
-  const existingItem = existingByIds[id];
+  const existingByKeys = state.byKeys[listKey];
+  const existingItem = existingByKeys[key];
 
-  const byIds = {
-    ...state.byIds,
-    [listKey]: statsByIdsReducer(existingByIds, id, statsLoadedReducer(existingItem, data))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: statsByKeysReducer(existingByKeys, key, statsLoadedReducer(existingItem, data))
   };
 
   return {
     ...state,
-    byIds
+    byKeys
   };
 };
 

@@ -1,9 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
 
-import debugLib from 'debug';
-const debug = debugLib('app:module:source-view');
-
 import styles from './SourceView.scss';
 
 export class SourceView extends Component {
@@ -29,7 +26,6 @@ export class SourceView extends Component {
 
   renderThumbnail() {
     const { id, stats } = this.props;
-    debug('renderThumbnail', { stats });
     if (this.props.catalogLoaded) {
       return (
         <div className={styles.source}>

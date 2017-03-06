@@ -5,11 +5,12 @@ const defineJob = (jobs) => {
   jobs.stats = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
+      const { input } = job.statsDescriptor.imageDescriptor;
       debug('stats perform', { job, jobId, timestamp });
-      debug(`I want to generate stats data for source with id ${job.sd.imageDescriptor.input.id} and file ${job.sd.imageDescriptor.input.file}`);
+      debug(`I want to generate stats data for source with id ${input.id} and file ${input.file}`);
 
       const result = {
-        data: { xyzzy: 1 }
+        data: { xyzzy: input.id }
       };
       reportResults(job, null, result, cb);
     }

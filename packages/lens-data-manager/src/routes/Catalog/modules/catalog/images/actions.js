@@ -25,9 +25,9 @@ export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE, actionPayl
 export const ensureImage = (imageDescriptor, force) => {
   return (dispatch, getstate) => {
     const listKey = listKeyFromImageDescriptor(imageDescriptor);
-    const byIds = getstate().images.byIds[listKey] || {};
-    const id = makeImageKey(imageDescriptor);
-    const image = byIds[id];
+    const byKeys = getstate().images.byKeys[listKey] || {};
+    const key = makeImageKey(imageDescriptor);
+    const image = byKeys[key];
     const notNeeded = image && (image.loading || (image.url && !force));
     if (notNeeded) return;
 

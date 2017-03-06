@@ -5,10 +5,10 @@ import { receiveStatsAction } from 'routes/Catalog/modules/catalog/stats/actions
 
 export default (payload, dispatch) => {
   debug('statsCommandHandler', { payload });
-  const { sd, data } = payload;
+  const { statsDescriptor, data } = payload;
   if (data) {
     debug('stats have been generated', { data });
-    dispatch(receiveStatsAction({ statsDescriptor: sd, data }));
+    dispatch(receiveStatsAction({ statsDescriptor: statsDescriptor, data }));
   } else {
     debug('stats were not generated');
   }

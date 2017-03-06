@@ -18,81 +18,81 @@ const imageLoadingReducer = (state = {}, loading) => {
   };
 };
 
-const imageIdsReducer = (state = [], id) => {
-  // add an id to the list of ids
+const imageKeysReducer = (state = [], key) => {
+  // add a key to the list of keys
   return [
     ...state,
-    id
+    key
   ];
 };
 
-const imageByIdsReducer = (state = {}, id, image) => {
+const imageByKeysReducer = (state = {}, key, image) => {
   // add the image
   return {
     ...state,
-    [id]: image
+    [key]: image
   };
 };
 
 const initialState = {
-  ids: {},
-  byIds: {}
+  keys: {},
+  byKeys: {}
 };
 
-const requestImageHandler = (state, { imageDescriptor, listKey }) => {
-  const id = makeImageKey(imageDescriptor);
+const requestImageHandler = (state, { listKey, imageDescriptor }) => {
+  const key = makeImageKey(imageDescriptor);
 
-  const existingIds = state.ids[listKey] || [];
-  const existingByIds = state.byIds[listKey] || {};
-  const existingItem = existingByIds[id];
+  const existingKeys = state.keys[listKey] || [];
+  const existingByKeys = state.byKeys[listKey] || {};
+  const existingItem = existingByKeys[key];
 
-  const ids = existingItem ? state.ids : {
-    ...state.ids,
-    [listKey]: imageIdsReducer(existingIds, id)
+  const keys = existingItem ? state.keys : {
+    ...state.keys,
+    [listKey]: imageKeysReducer(existingKeys, key)
   };
-  const byIds = {
-    ...state.byIds,
-    [listKey]: imageByIdsReducer(existingByIds, id, imageLoadingReducer(existingItem, true))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: imageByKeysReducer(existingByKeys, key, imageLoadingReducer(existingItem, true))
   };
 
   return {
     ...state,
-    ids,
-    byIds
+    keys,
+    byKeys
   };
 };
 
-const clearRequestImageHandler = (state, { imageDescriptor, listKey }) => {
-  const id = makeImageKey(imageDescriptor);
+const clearRequestImageHandler = (state, { listKey, imageDescriptor }) => {
+  const key = makeImageKey(imageDescriptor);
 
-  const existingByIds = state.byIds[listKey];
-  const existingItem = existingByIds[id];
+  const existingByKeys = state.byKeys[listKey];
+  const existingItem = existingByKeys[key];
 
-  const byIds = {
-    ...state.byIds,
-    [listKey]: imageByIdsReducer(existingByIds, id, imageLoadingReducer(existingItem, false))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: imageByKeysReducer(existingByKeys, key, imageLoadingReducer(existingItem, false))
   };
 
   return {
     ...state,
-    byIds
+    byKeys
   };
 };
 
-const receiveImageHandler = (state, { imageDescriptor, url, listKey }) => {
-  const id = makeImageKey(imageDescriptor);
+const receiveImageHandler = (state, { listKey, imageDescriptor, url }) => {
+  const key = makeImageKey(imageDescriptor);
 
-  const existingByIds = state.byIds[listKey];
-  const existingItem = existingByIds[id];
+  const existingByKeys = state.byKeys[listKey];
+  const existingItem = existingByKeys[key];
 
-  const byIds = {
-    ...state.byIds,
-    [listKey]: imageByIdsReducer(existingByIds, id, imageLoadedReducer(existingItem, url))
+  const byKeys = {
+    ...state.byKeys,
+    [listKey]: imageByKeysReducer(existingByKeys, key, imageLoadedReducer(existingItem, url))
   };
 
   return {
     ...state,
-    byIds
+    byKeys
   };
 };
 

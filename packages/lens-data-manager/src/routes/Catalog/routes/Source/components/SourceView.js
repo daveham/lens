@@ -8,6 +8,7 @@ export class SourceView extends Component {
     id: PropTypes.string.isRequired,
     catalogLoaded: PropTypes.bool.isRequired,
     sourceStatsDescriptor: PropTypes.object.isRequired,
+    thumbnailImageUrl: PropTypes.string.isRequired,
     stats: PropTypes.object,
     ensureStats: PropTypes.func.isRequired
   };
@@ -47,6 +48,7 @@ export class SourceView extends Component {
   render() {
     return (
       <div className={styles.container}>
+        <img className={styles.thumbnail} src={this.props.thumbnailImageUrl}/>
         { this.renderThumbnail() }
         <Link to={'/catalog'}>back to catalog</Link>
       </div>

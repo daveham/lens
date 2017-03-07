@@ -52,7 +52,7 @@ export const pathFromImageDescriptor = ({ input, output }) => {
 // return ulr to reference image through web server
 export const urlFromImageDescriptor = ({ input, output }) => {
   if (output && output.purpose === 't') {
-    return path.join(config.dir_thumbs, thumbnailFileName(input.id));
+    return path.join('/', config.dir_thumbs, thumbnailFileName(input.id));
   }
   // TODO: every other case
 };

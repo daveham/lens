@@ -1,4 +1,4 @@
-import { reportResults } from './utils';
+import { reportResults } from '../utils';
 
 import debugLib from 'debug';
 const debug = debugLib('svc:jobs-stats');

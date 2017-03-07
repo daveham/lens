@@ -1,10 +1,10 @@
-import addPing from './ping';
-import addImage from './image';
-import addStats from './stats';
+import defineAdminJobs from './admin';
+import defineImageJobs from './image';
+import defineStatsJobs from './stats';
 
 const jobs = {};
-addPing(jobs);
-addImage(jobs);
-addStats(jobs);
+defineAdminJobs(jobs);
+defineImageJobs(jobs);
+defineStatsJobs(jobs);
 
 export default jobs;

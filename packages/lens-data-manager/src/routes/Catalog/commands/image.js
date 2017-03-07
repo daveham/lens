@@ -5,10 +5,10 @@ import { receiveImageAction } from 'routes/Catalog/modules/catalog/images/action
 
 export default (payload, dispatch) => {
   debug('imageCommandHandler', { payload });
-  const { id, url } = payload;
+  const { imageDescriptor, url } = payload;
   if (url) {
     debug('image has been generated', { url });
-    dispatch(receiveImageAction({ imageDescriptor: id, url }));
+    dispatch(receiveImageAction({ imageDescriptor: imageDescriptor, url }));
   } else {
     debug('image was not generated');
   }

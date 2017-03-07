@@ -9,9 +9,9 @@ export const sourcesSelector = ({ sources }) => {
 export const thumbnailImageDescriptorsSelector = ({ sources }) => {
   const { ids, byIds } = sources;
   return ids.map(id => {
-    const desc = makeThumbnailImageDescriptor(id);
-    desc.input.file = byIds[id].file;
-    return desc;
+    const imageDescriptor = makeThumbnailImageDescriptor(id);
+    imageDescriptor.input.file = byIds[id].file;
+    return imageDescriptor;
   });
 };
 

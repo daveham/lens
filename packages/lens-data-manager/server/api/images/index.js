@@ -12,9 +12,9 @@ export default function configureApi(router) {
 
   router.route('/images')
     .post((req, res /*, next */) => {
-      const id = req.body;
-      debug('POST body (id)', { id });
-      const path = pathFromImageDescriptor(id);
+      const imageDescriptor = req.body;
+      debug('POST body (imageDescriptor)', { imageDescriptor });
+      const path = pathFromImageDescriptor(imageDescriptor);
       debug('POST images', { path });
 
       fs.access(path, fs.constants.R_OK, (err) => {
@@ -24,7 +24,7 @@ export default function configureApi(router) {
             const queue = new Queue({ connection: config.queue_connection });
             queue.on('error', (error) => { debug(error); });
             queue.connect(() => {
-              const payload = createImage(id);
+              const payload = createImage(imageDescriptor);
               debug('enqueuing job', { payload });
               queue.enqueue(config.queue_name, payload.command, payload);
               res.json(payload);
@@ -35,7 +35,7 @@ export default function configureApi(router) {
           }
         } else {
           debug('file exists');
-          res.json({ url: urlFromImageDescriptor(id) });
+          res.json({ url: urlFromImageDescriptor(imageDescriptor) });
         }
       });
     });

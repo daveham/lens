@@ -1,7 +1,9 @@
-const debug = require('debug')('svc:jobs-ping');
 import app from 'server/app';
 
-const defineJob = (jobs) => {
+import debugLib from 'debug';
+const debug = debugLib('svc:jobs-ping');
+
+export default (jobs) => {
   jobs.ping = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
@@ -20,5 +22,3 @@ const defineJob = (jobs) => {
     }
   };
 };
-
-export default defineJob;

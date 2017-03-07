@@ -1,7 +1,9 @@
-const debug = require('debug')('svc:jobs-stats');
 import { reportResults } from './utils';
 
-const defineJob = (jobs) => {
+import debugLib from 'debug';
+const debug = debugLib('svc:jobs-stats');
+
+export default (jobs) => {
   jobs.stats = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
@@ -16,5 +18,3 @@ const defineJob = (jobs) => {
     }
   };
 };
-
-export default defineJob;

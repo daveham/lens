@@ -6,7 +6,7 @@ import { reportResults } from './utils';
 import debugLib from 'debug';
 const debug = debugLib('svc:jobs-image');
 
-const defineJob = (jobs) => {
+export default (jobs) => {
   jobs.image = {
     perform: (job, cb) => {
       const { jobId, timestamp } = job;
@@ -31,5 +31,3 @@ const defineJob = (jobs) => {
     }
   };
 };
-
-export default defineJob;

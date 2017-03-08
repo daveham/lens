@@ -5,7 +5,7 @@ import {
   makeSourceStatsDescriptor,
   makeSourceImageDescriptor
 } from '@lens/image-descriptors';
-import { IMAGE_LIST_KEYS } from 'routes/Catalog/constants';
+import { IMAGE_LIST_KEYS, STATS_LIST_KEYS } from 'routes/Catalog/constants';
 
 export const sourcesSelector = ({ sources }) => {
   const { ids, byIds } = sources;
@@ -59,3 +59,12 @@ export const sourceStatsDescriptorSelector = (state, id) => {
   }
   return makeSourceStatsDescriptor(imageDescriptor);
 };
+
+export const statsByKeySelector = ({ stats }, key) => {
+  const byKeys = stats.byKeys[STATS_LIST_KEYS.SOURCES] || {};
+  const statsItem = byKeys[key];
+  if (statsItem) {
+    return statsItem.data;
+  }
+};
+

@@ -1,5 +1,11 @@
 import { createSelector } from 'reselect';
-import { makeThumbnailImageDescriptor, makeImageKey } from '@lens/image-descriptors';
+import {
+  makeImageKey,
+  makeThumbnailImageDescriptor,
+  makeSourceStatsDescriptor,
+  makeSourceImageDescriptor
+} from '@lens/image-descriptors';
+import { IMAGE_LIST_KEYS } from 'routes/Catalog/constants';
 
 export const sourcesSelector = ({ sources }) => {
   const { ids, byIds } = sources;
@@ -21,22 +27,35 @@ export const thumbnailImageKeysSelector = createSelector(
 );
 
 const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';
-const THUMBNAILS_LIST_KEY = 'thumbnails';
+const thumbnailUrlFromImage = image => {
+  return (image && !image.loading) ? image.url : THUMBNAIL_IMAGE_LOADING_URL;
+};
 
-export const thumbnailImageUrlsSelector = ({ images }) => {
-  const { keys, byKeys } = images;
-  const thumbnailkeys = keys[THUMBNAILS_LIST_KEY] || [];
-  const thumbnailByKeys = byKeys[THUMBNAILS_LIST_KEY] || {};
-  return thumbnailkeys.map(key => {
-    const image = thumbnailByKeys[key];
-    if (image) {
-      if (image.loading) {
-        return THUMBNAIL_IMAGE_LOADING_URL;
-      } else {
-        return image.url;
-      }
-    } else {
-      return THUMBNAIL_IMAGE_LOADING_URL;
-    }
-  });
+export const thumbnailUrlFromKeySelector = (state, key) => {
+  const thumbnailByKeys = state.images.byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  const image = thumbnailByKeys[key];
+  return thumbnailUrlFromImage(image);
+};
+
+export const thumbnailUrlFromIdSelector = (state, id) => {
+  const imageDescriptor = makeThumbnailImageDescriptor(id);
+  const key = makeImageKey(imageDescriptor);
+  return thumbnailUrlFromKeySelector(state, key);
+};
+
+export const thumbnailUrlsSelector = state => {
+  const { keys, byKeys } = state.images;
+  const thumbnailkeys = keys[IMAGE_LIST_KEYS.THUMBNAILS] || [];
+  const thumbnailByKeys = byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  return thumbnailkeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
+};
+
+export const sourceStatsDescriptorSelector = (state, id) => {
+  const imageDescriptor = makeSourceImageDescriptor(id);
+  const source = state.sources.byIds[id];
+
+  if (source) {
+    imageDescriptor.input.file = source.file;
+  }
+  return makeSourceStatsDescriptor(imageDescriptor);
 };

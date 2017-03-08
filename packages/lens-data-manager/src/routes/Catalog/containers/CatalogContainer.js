@@ -7,7 +7,7 @@ import { ensureImage } from '../modules/catalog/images/actions';
 import {
   sourcesSelector as sources,
   thumbnailImageDescriptorsSelector as thumbnailImageDescriptors,
-  thumbnailImageUrlsSelector as thumbnailImageUrls
+  thumbnailUrlsSelector as thumbnailImageUrls
 } from '../modules/catalog/selectors';
 
 import CatalogView from '../components/CatalogView.js';

@@ -11,13 +11,3 @@ export const ACTIONS = {
   CLEAR_REQUEST_STATS: 'CLEAR_REQUEST_STATS',
   RECEIVE_STATS: 'RECEIVE_STATS'
 };
-
-export const IMAGE_LIST_KEYS = {
-  DEFAULT: 'images',
-  THUMBNAILS: 'thumbnails'
-};
-
-export const STATS_LIST_KEYS = {
-  DEFAULT: 'stats',
-  SOURCES: 'sources'
-};

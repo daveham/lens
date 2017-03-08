@@ -1,4 +1,4 @@
-import { IMAGE_LIST_KEYS, STATS_LIST_KEYS } from './constants';
+import { IMAGE_LIST_KEYS, STATS_LIST_KEYS } from 'routes/Catalog/constants';
 
 export const listKeyFromImageDescriptor = imageDescriptor => {
   let listKey = IMAGE_LIST_KEYS.DEFAULT;
@@ -8,7 +8,7 @@ export const listKeyFromImageDescriptor = imageDescriptor => {
   return listKey;
 };
 
-export const listKeyFromStatsDescriptor = (statsDescriptor) => {
+export const listKeyFromStatsDescriptor = statsDescriptor => {
   let listKey = STATS_LIST_KEYS.DEFAULT;
   if (statsDescriptor) {
     const { imageDescriptor } = statsDescriptor;

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { makeStatsKey, makeImageKey, makeThumbnailImageDescriptor } from '@lens/image-descriptors';
-import { sourceStatsDescriptorSelector } from './selectors';
+import { makeStatsKey } from '@lens/image-descriptors';
+import { sourceStatsDescriptorSelector, thumbnailUrlFromIdSelector } from 'routes/Catalog/modules/catalog/selectors';
 import { ensureStats } from 'routes/Catalog/modules/catalog/stats/actions';
 
 import SourceView from '../components/SourceView.js';
@@ -19,18 +19,11 @@ const selectStats = ({ stats }, key) => {
   }
 };
 
-const THUMBNAIL_IMAGE_LOADING_URL = '/thumbloading.png';
-const THUMBNAILS_LIST_KEY = 'thumbnails';
-
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.params;
   const sourceStatsDescriptor = sourceStatsDescriptorSelector(state, id);
   const statsKey = makeStatsKey(sourceStatsDescriptor);
-  const imageDescriptor = makeThumbnailImageDescriptor(id);
-  const imageKey = makeImageKey(imageDescriptor);
-  const thumbnailByKeys = state.images.byKeys[THUMBNAILS_LIST_KEY] || {};
-  const image = thumbnailByKeys[imageKey];
-  const thumbnailImageUrl = (image && !image.loading) ? image.url : THUMBNAIL_IMAGE_LOADING_URL;
+  const thumbnailImageUrl = thumbnailUrlFromIdSelector(state, id);
 
   return {
     id,

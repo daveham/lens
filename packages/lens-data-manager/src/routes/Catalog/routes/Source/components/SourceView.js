@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-router';
-import moment from 'moment';
+import Details from './Details';
 
 import styles from './SourceView.scss';
 
@@ -34,43 +34,6 @@ export class SourceView extends Component {
     );
   }
 
-  renderDetails() {
-    const stats = this.props.stats || {};
-    const loading = '...';
-    const details = [
-      { l: 'Modified', v: 'ctime', c: (v) =>  moment(v).format('h:mm a, MM/DD/YY') },
-      { l: 'Size', v: 'size', c: (v) => v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') },
-      { l: 'Format', v: 'format' },
-      { l: 'Width', v: 'width' },
-      { l: 'Height', v: 'height' },
-      { l: 'Depth', v: 'depth' },
-      { l: 'Resolution', v: 'resolution' },
-      { l: 'File Size', v: 'filesize' }
-    ];
-
-    const rows = details.map((detail, index) => {
-      let value = stats[detail.v];
-      if (value) {
-        if (detail.c) {
-          value = detail.c(value);
-        }
-      } else {
-        value = loading;
-      }
-      return (
-        <div key={index} className={styles.detailsRow}>
-          <div className={styles.detailsLabel}>{ detail.l }</div><div className={styles.detail}>{ value }</div>
-        </div>
-      );
-    });
-
-    return (
-      <div className={styles.detailsSection}>
-        { rows }
-      </div>
-    );
-  }
-
   renderExplorer() {
     return (
       <div>
@@ -87,7 +50,9 @@ export class SourceView extends Component {
             <Link to={'/catalog'}><span className='glyphicon glyphicon-circle-arrow-left'></span></Link>
           </div>
           { this.renderThumbnail() }
-          {this.renderDetails() }
+          <Details
+            stats={this.props.stats || {}}
+          />
         </div>
         <div className={styles.exploreSection}>
           { this.renderExplorer() }

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import { Link } from 'react-router';
-import Details from './Details';
+import Explorer from './Explorer';
+import Summary from './Summary';
 
 import styles from './SourceView.scss';
 
@@ -14,6 +14,15 @@ export class SourceView extends Component {
     ensureStats: PropTypes.func.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentRow: 0,
+      currentCol: 0,
+      currentRes: 64
+    };
+  }
+
   componentDidMount() {
     if (this.props.catalogLoaded) {
       this.props.ensureStats(this.props.sourceStatsDescriptor);
@@ -26,36 +35,35 @@ export class SourceView extends Component {
     }
   }
 
-  renderThumbnail() {
-    return (
-      <div className={styles.thumbnailSection}>
-        <img className={styles.thumbnail} src={this.props.thumbnailImageUrl}/>
-      </div>
-    );
-  }
-
-  renderExplorer() {
-    return (
-      <div>
-        { 'To Do...' }
-      </div>
-    );
+  handleMoveToTile(row, column) {
+    const newState = {};
+    if (row !== this.state.currentRow) newState.currentRow = row;
+    if (column !== this.state.currentCol) newState.currentCol = column;
+    this.setState(newState);
   }
 
   render() {
+    const stats = this.props.stats || {};
+    const { currentRow, currentCol, currentRes } = this.state;
+
     return (
       <div className={styles.container}>
         <div className={styles.summarySection}>
-          <div className={styles.returnToCatalog}>
-            <Link to={'/catalog'}><span className='glyphicon glyphicon-circle-arrow-left'></span></Link>
-          </div>
-          { this.renderThumbnail() }
-          <Details
-            stats={this.props.stats || {}}
+          <Summary
+            stats={stats}
+            thumbnailImageUrl={this.props.thumbnailImageUrl}
           />
         </div>
-        <div className={styles.exploreSection}>
-          { this.renderExplorer() }
+        <div className={styles.explorerSection}>
+          <Explorer
+            width={parseInt(stats.width)}
+            height={parseInt(stats.height)}
+            row={currentRow}
+            column={currentCol}
+            tileWidth={currentRes}
+            tileHeight={currentRes}
+            onMove={this.handleMoveToTile.bind(this)}
+          />
         </div>
       </div>
     );

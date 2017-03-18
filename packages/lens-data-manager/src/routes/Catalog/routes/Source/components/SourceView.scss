@@ -1,5 +1,4 @@
 .container {
-  align-items: left;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -8,22 +7,9 @@
 }
 
 .summarySection {
-  align-items: top;
-  display: flex;
-  justify-content: flex-start;
-  margin: 1em 0;
   width: 100%;
 }
 
-.returnToCatalog {
-  margin-top: 1em;
-  padding-left: .5em;
-}
-
-.thumbnailSection {
-  padding-left: 1em;
-}
-
-.exploreSection {
-  padding: 10em;
+.explorerSection {
+  flex: 1;
 }

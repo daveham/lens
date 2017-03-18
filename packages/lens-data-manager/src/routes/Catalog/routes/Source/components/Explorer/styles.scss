@@ -1,0 +1,53 @@
+@import 'variables';
+
+.container {
+  align-content: center;
+  display: flex;
+  height: 100%;
+  padding: 1em;
+  width: 100%;
+}
+
+%sideSection {
+  border: 1px solid $gray-darker;
+  flex-grow: 1;
+  margin: 2px;
+  padding: .5em;
+  text-align: center;
+}
+
+.leftSection {
+  @extend %sideSection;
+}
+
+.rightSection {
+  @extend %sideSection;
+}
+
+.navSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.navigator {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1em;
+  text-align: center;
+}
+
+.navMiddle {
+  align-items: center;
+  display: flex;
+}
+
+.navTarget {
+  border: 16px solid $gray-darker;
+  border-radius: 12px;
+  margin: 3px;
+  padding: 1px;
+}

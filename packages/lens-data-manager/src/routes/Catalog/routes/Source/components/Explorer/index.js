@@ -1,72 +1,21 @@
 import React, { PropTypes } from 'react';
-import Tile from './Tile';
+import Navigator from './Navigator';
 
 import styles from './styles.scss';
 
-const renderNavContext = () => {
-  return <div>nav context</div>;
-};
-
-const renderNav = (id, width, height, moveFuncs) => {
+const renderNavContext = (width, height, tilesWide, tilesHigh, tileWidth, tileHeight, lastWidth, lastHeight) => {
   return (
-    <div className={styles.navigator}>
-      <div className={styles.navNorth}>
-        <Tile
-          onMove={moveFuncs[0]}
-          id={'N'}
-          width={width}
-          height={height}
-        />
-      </div>
-      <div className={styles.navMiddle}>
-        <div className={styles.navEast}>
-          <Tile
-            onMove={moveFuncs[3]}
-            id={'W'}
-            width={width}
-            height={height}
-          />
-        </div>
-        <div className={styles.navTarget}>
-          <Tile
-            id={id}
-            width={width}
-            height={height}
-          />
-        </div>
-        <div className={styles.navWest}>
-          <Tile
-            onMove={moveFuncs[1]}
-            id={'E'}
-            width={width}
-            height={height}
-          />
-        </div>
-      </div>
-      <div className={styles.navSouth}>
-        <Tile
-          onMove={moveFuncs[2]}
-          id={'S'}
-          width={width}
-          height={height}
-        />
-      </div>
+    <div className={styles.context}>
+      Image { width } wide, { height } high<br/>
+      Tile {tileWidth} wide, {tileHeight} high<br/>
+      Tiles {tilesWide} wide, {tilesHigh} high<br/>
+      Last width {lastWidth}, height {lastHeight}
     </div>
   );
 };
 
-const renderNavCaption = () => {
-  return <div>nav context</div>;
-};
-
-const renderNavSection = (width, height, row, column, moveFuncs) => {
-  return (
-    <div className={styles.navSection}>
-      {renderNavContext()}
-      {renderNav(`${row}.${column}`, width, height, moveFuncs)}
-      {renderNavCaption()}
-    </div>
-  );
+const renderNavCaption = (row, column) => {
+  return <div className={styles.caption}>{`row ${row} column ${column}`}</div>;
 };
 
 const renderLeftSection = () => {
@@ -82,15 +31,28 @@ const Explorer = (props) => {
 
   let tilesWide = Math.floor(width / tileWidth);
   let tilesHigh = Math.floor(height / tileHeight);
-  const lastWidth = width - tilesWide * tileWidth;
-  const lastHeight = height - tilesHigh * tileHeight;
-  if (lastWidth > 0) tilesWide += 1;
-  if (lastHeight > 0) tilesHigh += 1;
+  let lastWidth = width - tilesWide * tileWidth;
+  let lastHeight = height - tilesHigh * tileHeight;
+  if (lastWidth > 0) {
+    tilesWide += 1;
+  } else {
+    lastWidth = tileWidth;
+  }
+  if (lastHeight > 0) {
+    tilesHigh += 1;
+  } else {
+    lastHeight = tileHeight;
+  }
+
+  const isLastRow = row === tilesHigh - 1;
+  const isLastCol = column === tilesWide - 1;
+  const isNextToLastRow = row === tilesHigh - 2;
+  const isNextToLastCol = column === tilesWide - 2;
 
   const moveFuncs = [];
   moveFuncs.push(row > 0 ? onMove.bind(null, row - 1, column) : undefined);
-  moveFuncs.push(column < tilesWide ? onMove.bind(null, row, column + 1) : undefined);
-  moveFuncs.push(row < tilesHigh ? onMove.bind(null, row + 1, column) : undefined);
+  moveFuncs.push(isLastCol ? undefined : onMove.bind(null, row, column + 1));
+  moveFuncs.push(isLastRow ? undefined : onMove.bind(null, row + 1, column));
   moveFuncs.push(column > 0 ? onMove.bind(null, row, column - 1) : undefined);
 
   if (!width || !height) {
@@ -100,19 +62,25 @@ const Explorer = (props) => {
   return (
     <div className={styles.container}>
       {renderLeftSection()}
-      {renderNavSection(tileWidth, tileHeight, row, column, moveFuncs)}
+      <div className={styles.navSection}>
+        {renderNavContext(width, height, tilesWide, tilesHigh, tileWidth, tileHeight, lastWidth, lastHeight)}
+        <Navigator
+          id={`${row}.${column}`}
+          width={tileWidth}
+          height={tileHeight}
+          currentWidth={isLastCol ? lastWidth : tileWidth}
+          currentHeight={isLastRow ? lastHeight : tileHeight}
+          lastWidth={isNextToLastCol ? lastWidth : tileWidth}
+          lastHeight={isNextToLastRow ? lastHeight : tileHeight}
+          moveFuncs={moveFuncs}
+        />
+        {renderNavCaption(row, column)}
+      </div>
       {renderRightSection()}
     </div>
   );
 };
-/*
-      <div className={styles.calcs}>
-        Image width { width }, height { height }<br/>
-        Tile width {tileWidth}, height {tileHeight}<br/>
-        Tiles wide {tilesWide}, high {tilesHigh}<br/>
-        Last wide {lastWidth}, high {lastHeight}
-      </div>
-*/
+
 Explorer.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,

@@ -27,27 +27,16 @@
 .navSection {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
 }
 
-.navigator {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 1em;
-  text-align: center;
+.caption {
+  padding-bottom: 1em;
+  font-size: .8em;
 }
 
-.navMiddle {
-  align-items: center;
-  display: flex;
-}
-
-.navTarget {
-  border: 16px solid $gray-darker;
-  border-radius: 12px;
-  margin: 3px;
-  padding: 1px;
+.context {
+  padding-top: 1em;
+  font-size: .8em;
 }

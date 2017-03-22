@@ -27,21 +27,11 @@ const renderRightSection = () => {
 };
 
 const Explorer = (props) => {
-  const { width, height, row, column, tileWidth, tileHeight, onMove } = props;
+  const { row, column, onMove } = props;
+  const { width, height, tileWidth, tileHeight, tilesWide, tilesHigh, lastWidth, lastHeight } = props.sourceSpec;
 
-  let tilesWide = Math.floor(width / tileWidth);
-  let tilesHigh = Math.floor(height / tileHeight);
-  let lastWidth = width - tilesWide * tileWidth;
-  let lastHeight = height - tilesHigh * tileHeight;
-  if (lastWidth > 0) {
-    tilesWide += 1;
-  } else {
-    lastWidth = tileWidth;
-  }
-  if (lastHeight > 0) {
-    tilesHigh += 1;
-  } else {
-    lastHeight = tileHeight;
+  if (!width || !height) {
+    return <div className={styles.container} />;
   }
 
   const isLastRow = row === tilesHigh - 1;
@@ -55,9 +45,14 @@ const Explorer = (props) => {
   moveFuncs.push(isLastRow ? undefined : onMove.bind(null, row + 1, column));
   moveFuncs.push(column > 0 ? onMove.bind(null, row, column - 1) : undefined);
 
-  if (!width || !height) {
-    return <div className={styles.container} />;
-  }
+  const navSpec = {
+    width: tileWidth,
+    height: tileHeight,
+    currentWidth: isLastCol ? lastWidth : tileWidth,
+    currentHeight: isLastRow ? lastHeight : tileHeight,
+    lastWidth : isNextToLastCol ? lastWidth : tileWidth,
+    lastHeight : isNextToLastRow ? lastHeight : tileHeight
+  };
 
   return (
     <div className={styles.container}>
@@ -66,12 +61,7 @@ const Explorer = (props) => {
         {renderNavContext(width, height, tilesWide, tilesHigh, tileWidth, tileHeight, lastWidth, lastHeight)}
         <Navigator
           id={`${row}.${column}`}
-          width={tileWidth}
-          height={tileHeight}
-          currentWidth={isLastCol ? lastWidth : tileWidth}
-          currentHeight={isLastRow ? lastHeight : tileHeight}
-          lastWidth={isNextToLastCol ? lastWidth : tileWidth}
-          lastHeight={isNextToLastRow ? lastHeight : tileHeight}
+          spec={navSpec}
           moveFuncs={moveFuncs}
         />
         {renderNavCaption(row, column)}
@@ -82,12 +72,18 @@ const Explorer = (props) => {
 };
 
 Explorer.propTypes = {
-  width: PropTypes.number,
-  height: PropTypes.number,
   row: PropTypes.number,
   column: PropTypes.number,
-  tileWidth: PropTypes.number.isRequired,
-  tileHeight: PropTypes.number.isRequired,
+  sourceSpec: PropTypes.shape({
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    tileWidth: PropTypes.number.isRequired,
+    tileHeight: PropTypes.number.isRequired,
+    tilesWide: PropTypes.number.isRequired,
+    tilesHigh: PropTypes.number.isRequired,
+    lastWidth: PropTypes.number.isRequired,
+    lastHeight: PropTypes.number.isRequired
+  }).isRequired,
   onMove: PropTypes.func.isRequired
 };
 

@@ -46,6 +46,29 @@ export class SourceView extends Component {
     const stats = this.props.stats || {};
     const { currentRow, currentCol, currentRes } = this.state;
 
+    const width = parseInt(stats.width);
+    const height = parseInt(stats.height);
+    const tileWidth = currentRes;
+    const tileHeight = currentRes;
+    let tilesWide = Math.floor(width / tileWidth);
+    let tilesHigh = Math.floor(height / tileHeight);
+    let lastWidth = width - tilesWide * tileWidth;
+    let lastHeight = height - tilesHigh * tileHeight;
+    if (lastWidth > 0) {
+      tilesWide += 1;
+    } else {
+      lastWidth = tileWidth;
+    }
+    if (lastHeight > 0) {
+      tilesHigh += 1;
+    } else {
+      lastHeight = tileHeight;
+    }
+
+    const sourceSpec = {
+      width, height, tileWidth, tileHeight, tilesWide, tilesHigh, lastWidth, lastHeight
+    };
+
     return (
       <div className={styles.container}>
         <div className={styles.summarySection}>
@@ -56,12 +79,9 @@ export class SourceView extends Component {
         </div>
         <div className={styles.explorerSection}>
           <Explorer
-            width={parseInt(stats.width)}
-            height={parseInt(stats.height)}
             row={currentRow}
             column={currentCol}
-            tileWidth={currentRes}
-            tileHeight={currentRes}
+            sourceSpec={sourceSpec}
             onMove={this.handleMoveToTile.bind(this)}
           />
         </div>

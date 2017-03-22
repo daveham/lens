@@ -4,7 +4,8 @@ import Tile from './Tile';
 import styles from './Navigator.scss';
 
 const Navigator = (props) => {
-  const {width, height, moveFuncs} = props;
+  const { id, moveFuncs } = props;
+  const { width, height, currentWidth, currentHeight, lastWidth, lastHeight } = props.spec;
 
   return (
     <div className={styles.navigator}>
@@ -12,7 +13,7 @@ const Navigator = (props) => {
         <Tile
           onMove={moveFuncs[0]}
           id={'N'}
-          width={props.currentWidth}
+          width={currentWidth}
           height={height}
         />
       </div>
@@ -22,22 +23,22 @@ const Navigator = (props) => {
             onMove={moveFuncs[3]}
             id={'W'}
             width={width}
-            height={props.currentHeight}
+            height={currentHeight}
           />
         </div>
         <div className={styles.navTarget}>
           <Tile
-            id={props.id}
-            width={props.currentWidth}
-            height={props.currentHeight}
+            id={id}
+            width={currentWidth}
+            height={currentHeight}
           />
         </div>
         <div className={styles.navWest}>
           <Tile
             onMove={moveFuncs[1]}
             id={'E'}
-            width={props.lastWidth}
-            height={props.currentHeight}
+            width={lastWidth}
+            height={currentHeight}
           />
         </div>
       </div>
@@ -45,8 +46,8 @@ const Navigator = (props) => {
         <Tile
           onMove={moveFuncs[2]}
           id={'S'}
-          width={props.currentWidth}
-          height={props.lastHeight}
+          width={currentWidth}
+          height={lastHeight}
         />
       </div>
     </div>
@@ -55,12 +56,14 @@ const Navigator = (props) => {
 
 Navigator.propTypes = {
   id: PropTypes.string.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  currentWidth: PropTypes.number.isRequired,
-  currentHeight: PropTypes.number.isRequired,
-  lastWidth: PropTypes.number.isRequired,
-  lastHeight: PropTypes.number.isRequired,
+  spec: PropTypes.shape({
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    currentWidth: PropTypes.number.isRequired,
+    currentHeight: PropTypes.number.isRequired,
+    lastWidth: PropTypes.number.isRequired,
+    lastHeight: PropTypes.number.isRequired
+  }).isRequired,
   moveFuncs: PropTypes.arrayOf(PropTypes.func).isRequired
 };
 

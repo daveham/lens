@@ -39,7 +39,7 @@
       "command": "node bin/register-compile"
     },
     "dev": {
-      "command": "nodemon bin/register-server"
+      "command": "nodemon --debug=192.168.20.20:5859 bin/register-server"
     },
     "deploy": {
       "command": "npm run clean && npm run compile",

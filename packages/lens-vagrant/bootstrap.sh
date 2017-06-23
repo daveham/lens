@@ -55,6 +55,9 @@ sudo firewall-cmd --zone=public --permanent --add-port=3000/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=3001/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=4443/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=8081/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=5857/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=5858/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=5859/tcp
 
 # These units will be started if not running or restart if running
 sudo systemctl restart firewalld

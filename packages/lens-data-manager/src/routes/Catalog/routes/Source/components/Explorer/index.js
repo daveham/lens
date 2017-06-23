@@ -1,5 +1,11 @@
 import React, { PropTypes } from 'react';
 import Navigator from './Navigator';
+import {
+  makeTileImageDescriptor,
+  makeImageKey,
+  pathFromImageDescriptor,
+  urlFromImageDescriptor
+} from '@lens/image-descriptors';
 
 import styles from './styles.scss';
 
@@ -22,8 +28,19 @@ const renderLeftSection = () => {
   return <div className={styles.leftSection}>Left</div>;
 };
 
-const renderRightSection = () => {
-  return <div className={styles.rightSection}>Right</div>;
+const renderRightSection = (id, group, x, y, width, height) => {
+  const imageDescriptor = makeTileImageDescriptor(id, group, x, y, width, height);
+  const imageKey = makeImageKey(imageDescriptor);
+  const imagePath = pathFromImageDescriptor(imageDescriptor);
+  const imageUrl = urlFromImageDescriptor(imageDescriptor);
+  return (
+    <div className={styles.rightSection}>
+      <div>image descriptor: <pre>{JSON.stringify(imageDescriptor, null, '  ')}</pre></div>
+      <div>image key: {imageKey}</div>
+      <div>image path: {imagePath}</div>
+      <div>image url: {imageUrl}</div>
+    </div>
+  );
 };
 
 const Explorer = (props) => {
@@ -66,14 +83,17 @@ const Explorer = (props) => {
         />
         {renderNavCaption(row, column)}
       </div>
-      {renderRightSection()}
+      {renderRightSection(props.id,
+        tileWidth, column * tileWidth, row * tileHeight,
+        navSpec.currentWidth, navSpec.currentHeight)}
     </div>
   );
 };
 
 Explorer.propTypes = {
-  row: PropTypes.number,
-  column: PropTypes.number,
+  id: PropTypes.string.isRequired,
+  row: PropTypes.number.isRequired,
+  column: PropTypes.number.isRequired,
   sourceSpec: PropTypes.shape({
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,

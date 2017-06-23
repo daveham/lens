@@ -79,6 +79,7 @@ export class SourceView extends Component {
         </div>
         <div className={styles.explorerSection}>
           <Explorer
+            id={this.props.id}
             row={currentRow}
             column={currentCol}
             sourceSpec={sourceSpec}

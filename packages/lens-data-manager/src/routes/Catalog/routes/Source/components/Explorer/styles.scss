@@ -3,6 +3,7 @@
 .container {
   align-content: center;
   display: flex;
+  justify-content: stretch;
   height: 100%;
   padding: 1em;
   width: 100%;
@@ -11,6 +12,8 @@
 %sideSection {
   border: 1px solid $gray-darker;
   flex-grow: 1;
+  flex-shrink: 0;
+  font-size: .8em;
   margin: 2px;
   padding: .5em;
   text-align: center;
@@ -22,6 +25,16 @@
 
 .rightSection {
   @extend %sideSection;
+  text-align: left;
+  padding-left: 1em;
+
+  pre {
+    color: $gray-lighter;
+    background-color: inherit;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .navSection {

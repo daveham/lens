@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
+
+# adjust how environment variable is handled when sudo over ssh
+sudo echo "Defaults:vagrant env_keep=HOME" >> /etc/sudoers.d/10_vagrant
+
+# create a folder for the project and data
+project='lens'
+projectfolder="/${project}"
+sudo mkdir ${projectfolder}
+sudo chmod 777 ${projectfolder}
+
+projectdata='data'
+projectdatafolder="/${projectdata}"
+sudo mkdir ${projectdatafolder}
+sudo chmod 777 ${projectdatafolder}
+
 #install packages
-sudo curl --silent --location https://rpm.nodesource.com/setup | bash -
+sudo curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
 #Add repo for nginx, for some reason yum's base package is broked
 #rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
 #sudo yum -y update
@@ -9,23 +24,57 @@ sudo yum -y groupinstall 'Development Tools'
 sudo yum -y install ctags ctags-etags
 #sudo yum -y install nginx
 sudo yum -y install vim
-sudo npm install -g n
-sudo n 6.9.4
-sudo npm install -g npm
-sudo npm install -g gulp
-sudo npm install -g webpack
-sudo npm install -g nodemon
-sudo npm install -g mocha
-sudo npm install -g redis-commander
-sudo npm install -g lerna
+sudo yum -y install GraphicsMagick
+sudo yum -y install redis
+
+# prepare a custom folder for installing npm packages globally without requiring sudo
+# idea for how to handle this came from https://github.com/glenpike/npm-g_nosudo
+vagrantuser="vagrant"
+vagranthome="/home/${vagrantuser}"
+npmdir="${vagranthome}/.npm-packages"
+
+mkdir -p ${npmdir}
+npm config set prefix "${npmdir}"
+chown -R ${vagrantuser}:${vagrantuser} ${npmdir}
+chmod g+s ${npmdir}
+
+envfix='
+export NPM_PACKAGES="%s"
+export NODE_PATH="$NPM_PACKAGES/lib/node_modules${NODE_PATH:+:$NODE_PATH}"
+export PATH="$NPM_PACKAGES/bin:$PATH"
+# Unset manpath so we can inherit from /etc/manpath via the `manpath` command
+unset MANPATH  # delete if you already modified MANPATH elsewhere in your config
+export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+'
+
+printf "${envfix}" ${npmdir} >> ${vagranthome}/.bashrc
+
+printf "npm config set prefix %s" ${npmdir} >> ${vagranthome}/.bashrc
+
+npmglobalscript='/vagrant/bootstrap-npm.sh'
+if test -e ${npmglobalscript}; then
+    sudo su - vagrant -c "sh ${npmglobalscript}"
+else
+    echo "did not find ${npmglobalscript}"
+fi
+
+# Add custom environment variable to .bashrc
+echo 'export VAGRANT_BOX=true' >> /home/vagrant/.bashrc
+
+# Use local dot files if they exist
+for file in /.bash_profile /.bash_prompt; do
+    if test -e /vagrant/vagrantfiles/${file}; then
+        cp -f /vagrant/vagrantfiles/${file} ${vagranthome}
+    fi
+done;
 
 # install unison from source
 cd ~
-wget http://download.opensuse.org/repositories/home:ocaml/CentOS_7/home:ocaml.repo
-sudo mv home:ocaml.repo /etc/yum.repos.d/
 sudo yum -y install ocaml
 
-wget http://www.seas.upenn.edu/~bcpierce/unison/download/releases/unison-2.48.3/unison-2.48.3.tar.gz
+# using local copy, but you can find it here
+# wget http://www.seas.upenn.edu/~bcpierce/unison/download/releases/unison-2.48.3/unison-2.48.3.tar.gz
+cp -v /vagrant/vagrantfiles/unison-2.48.3.tar.gz .
 tar xvfz unison-2.48.3.tar.gz
 cd unison-2.48.3
 make
@@ -34,21 +83,7 @@ sudo cp -v unison /usr/bin
 cd ~
 rm -fr unison-2.48.3
 
-sudo yum -y install GraphicsMagick
-sudo yum -y install redis
-
-# adjust how environment variable is handled when sudo over ssh
-sudo echo "Defaults:vagrant env_keep=HOME" >> /etc/sudoers.d/10_vagrant
-sudo mkdir /lens
-sudo chmod 777 /lens
-sudo mkdir /data
-sudo chmod 777 /data
-
-# Use local dot files if they exist
-for file in /.{bash_profile,bash_prompt}; do
-    cp -f /vagrant/vagrantfiles/"$file"   /home/vagrant
-done;
-
+# configure firewall
 sudo firewall-cmd --zone=public --permanent --add-service=http
 sudo firewall-cmd --zone=public --permanent --add-service=https
 sudo firewall-cmd --zone=public --permanent --add-port=3000/tcp
@@ -69,6 +104,3 @@ sudo systemctl restart redis.service
 sudo systemctl enable redis.service
 
 sudo /opt/VBoxGuestAdditions-*/init/vboxadd setup
-
-# Add custom environment variable to .bashrc
-echo 'export VAGRANT_BOX=true' >> /home/vagrant/.bashrc

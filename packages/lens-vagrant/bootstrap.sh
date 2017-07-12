@@ -68,20 +68,36 @@ for file in /.bash_profile /.bash_prompt; do
     fi
 done;
 
-# install unison from source
+# install ocaml & unison from source
 cd ~
-sudo yum -y install ocaml
+ocamlsource='ocaml-4.02.2'
+ocamltar="${ocamlsource}.tar.gz"
+cp -v "/vagrant/vagrantfiles/${ocamltar}" .
+tar xvfz "${ocamltar}"
+cd "${ocamlsource}"
+./configure
+make world
+make opt
+sudo umask 022
+sudo make install
+sudo make clean
+sudo cp -v ocaml /usr/local/sbin/
+sudo cp -v ocaml /usr/bin
+cd ~
+rm -fr "${ocamlsource}"
 
 # using local copy, but you can find it here
 # wget http://www.seas.upenn.edu/~bcpierce/unison/download/releases/unison-2.48.3/unison-2.48.3.tar.gz
-cp -v /vagrant/vagrantfiles/unison-2.48.3.tar.gz .
-tar xvfz unison-2.48.3.tar.gz
-cd unison-2.48.3
+unisonsource='unison-2.48.4'
+unisontar="${unisonsource}.tar.gz"
+cp -v "/vagrant/vagrantfiles/${unisontar}" .
+tar xvfz "${unisontar}"
+cd src
 make
 sudo cp -v unison /usr/local/sbin/
 sudo cp -v unison /usr/bin
 cd ~
-rm -fr unison-2.48.3
+rm -fr src
 
 # configure firewall
 sudo firewall-cmd --zone=public --permanent --add-service=http

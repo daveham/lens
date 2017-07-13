@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Footer from 'components/Footer';
 import 'styles/core.scss';
 import styles from './styles.scss';
@@ -15,7 +16,7 @@ export const CoreLayout = ({ children }) => {
 };
 
 CoreLayout.propTypes = {
-  children: React.PropTypes.element
+  children: PropTypes.element
 };
 
 export default CoreLayout;

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import styles from './Details.scss';
@@ -7,7 +8,7 @@ const addCommas = (v) => v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const formatDate =  (v) => moment(v).format('h:mm a, MM/DD/YY');
 
 const detailsTemplate = [
-  { l: 'Modified', k: 'ctime', c: formatDate },
+  { l: 'ModifiedX', k: 'ctime', c: formatDate },
   { g: [
     { l: 'Size', k: 'size', c: addCommas },
     { l: 'File Size', k: 'filesize' }

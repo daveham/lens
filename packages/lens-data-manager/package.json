@@ -25,7 +25,8 @@
     "start": "better-npm-run start",
     "dev": "better-npm-run dev",
     "dev:no-debug": "npm run dev -- --no_debug",
-    "test": "better-npm-run test",
+    "testx": "better-npm-run test",
+    "test": "jest",
     "test:dev": "npm run test -- --watch",
     "deploy": "better-npm-run deploy",
     "deploy:dev": "better-npm-run deploy:dev",
@@ -34,7 +35,6 @@
     "flow:check": "node bin/flow-check"
   },
   "betterScripts": {
-
     "compile": {
       "command": "node bin/register-compile"
     },
@@ -68,10 +68,12 @@
       }
     },
     "test": {
-      "command": "babel-node ./node_modules/karma/bin/karma start build/karma.conf",
+      "command": "jest"
+    },
+    "xtest": {
+      "command": "node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js",
       "env": {
-        "NODE_ENV": "test",
-        "DEBUG": "app:*"
+        "NODE_ENV": "test"
       }
     },
     "xdev": {
@@ -88,12 +90,6 @@
     },
     "xstart": {
       "command": "node -r dotenv/config bin/register"
-    },
-    "xtest": {
-      "command": "node -r dotenv/config ./node_modules/karma/bin/karma start bin/karma.js",
-      "env": {
-        "NODE_ENV": "test"
-      }
     }
   },
   "dependencies": {
@@ -110,5 +106,17 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
+    "babel-jest": "^20.0.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "jest": "^20.0.4",
+    "jest-css-modules": "^1.1.0",
+    "react-test-renderer": "^15.6.1"
+  },
+  "jest": {
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|xspec))\\.jsx?$",
+    "moduleNameMapper": {
+      "\\.(scss)$": "<rootDir>/node_modules/jest-css-modules"
+    }
   }
 }

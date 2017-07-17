@@ -18,7 +18,7 @@ import config from './config';
   }
 */
 
-const PURPOSE = {
+export const PURPOSE = {
   THUMBNAIL: 't',
   TILE: 'i'
 };

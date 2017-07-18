@@ -108,7 +108,7 @@ export const urlFromImageDescriptor = ({ input, output }) => {
   }
 */
 
-const ANALYSIS = {
+export const ANALYSIS = {
   IDENTIFY: 'i'
 };
 

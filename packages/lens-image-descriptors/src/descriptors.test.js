@@ -5,7 +5,10 @@ import {
   makeThumbnailImageDescriptor,
   makeTileImageDescriptor,
   pathFromImageDescriptor,
-  urlFromImageDescriptor
+  urlFromImageDescriptor,
+  ANALYSIS,
+  makeSourceStatsDescriptor,
+  makeStatsKey
 } from './index';
 
 describe('makeImageKey', () => {
@@ -150,5 +153,33 @@ describe('urlFromImageDescriptor', () => {
     const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
     const tileUrl = urlFromImageDescriptor(imgd);
     expect(tileUrl).toMatchSnapshot();
+  });
+});
+
+describe('makeStatsKey', () => {
+  test('from imageDescriptor', () => {
+    const imgd = makeSourceImageDescriptor('test-image');
+    const imgKey = makeImageKey(imgd);
+    const statsKey = makeStatsKey({ imageDescriptor: imgd });
+
+    expect(statsKey).toEqual(imgKey);
+  });
+
+  test('from imageDescriptor with analysis tag', () => {
+    const imgd = makeSourceImageDescriptor('test-image');
+    const imgKey = makeImageKey(imgd);
+    const statsKey = makeStatsKey({ analysis: 'analysis-tag', imageDescriptor: imgd });
+
+    expect(statsKey).toEqual(`analysis-tag_${imgKey}`);
+  });
+});
+
+describe('makeSourceStatsDescriptor', () => {
+  test('from source imageDescriptor', () => {
+    const imgd = makeSourceImageDescriptor('test-image');
+    const statsd = makeSourceStatsDescriptor(imgd);
+
+    expect(statsd.analysis).toEqual(ANALYSIS.IDENTIFY);
+    expect(statsd.imageDescriptor).toMatchObject(imgd);
   });
 });

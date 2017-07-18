@@ -3,3 +3,7 @@
 exports[`pathFromImageDescriptor for thumbnail 1`] = `"/data/thumbs/test-image_thumb.jpg"`;
 
 exports[`pathFromImageDescriptor for tile 1`] = `"/data/tiles/test-image/abc/2/abc_2_1.jpg"`;
+
+exports[`urlFromImageDescriptor for thumbnail 1`] = `"/thumbs/test-image_thumb.jpg"`;
+
+exports[`urlFromImageDescriptor for tile 1`] = `"/tiles/test-image/abc/2/abc_2_1.jpg"`;

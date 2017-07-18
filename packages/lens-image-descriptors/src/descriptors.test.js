@@ -5,6 +5,7 @@ import {
   makeThumbnailImageDescriptor,
   makeTileImageDescriptor,
   pathFromImageDescriptor,
+  urlFromImageDescriptor
 } from './index';
 
 describe('makeImageKey', () => {
@@ -128,5 +129,26 @@ describe('pathFromImageDescriptor', () => {
     const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
     const tilePath = pathFromImageDescriptor(imgd);
     expect(tilePath).toMatchSnapshot();
+  });
+});
+
+describe('urlFromImageDescriptor', () => {
+  test('for source', () => {
+    const imgd = makeSourceImageDescriptor('test-image');
+    const sourceUrl = urlFromImageDescriptor(imgd);
+    // url from source image descriptor not currently supported
+    expect(sourceUrl).toBeFalsy();
+  });
+
+  test('for thumbnail', () => {
+    const imgd = makeThumbnailImageDescriptor('test-image');
+    const thumbnailUrl = urlFromImageDescriptor(imgd);
+    expect(thumbnailUrl).toMatchSnapshot();
+  });
+
+  test('for tile', () => {
+    const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
+    const tileUrl = urlFromImageDescriptor(imgd);
+    expect(tileUrl).toMatchSnapshot();
   });
 });

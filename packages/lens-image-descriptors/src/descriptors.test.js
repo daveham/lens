@@ -3,7 +3,8 @@ import {
   PURPOSE,
   makeSourceImageDescriptor,
   makeThumbnailImageDescriptor,
-  makeTileImageDescriptor
+  makeTileImageDescriptor,
+  pathFromImageDescriptor,
 } from './index';
 
 describe('makeImageKey', () => {
@@ -77,26 +78,26 @@ describe('makeImageKey', () => {
 
 describe('makeImageDescriptors', () => {
   test('for source', () => {
-    const imgd = makeSourceImageDescriptor(1001);
+    const imgd = makeSourceImageDescriptor('test-image');
 
     expect(imgd.input).toBeTruthy();
-    expect(imgd.input.id).toEqual(1001);
+    expect(imgd.input.id).toEqual('test-image');
   });
 
   test('for thumbnail', () => {
-    const imgd = makeThumbnailImageDescriptor(1001);
+    const imgd = makeThumbnailImageDescriptor('test-image');
 
     expect(imgd.input).toBeTruthy();
-    expect(imgd.input.id).toEqual(1001);
+    expect(imgd.input.id).toEqual('test-image');
     expect(imgd.output).toBeTruthy();
     expect(imgd.output.purpose).toEqual(PURPOSE.THUMBNAIL);
   });
 
   test('for tile', () => {
-    const imgd = makeTileImageDescriptor(1001, 100, 1, 2, 10, 20);
+    const imgd = makeTileImageDescriptor('test-image', 100, 1, 2, 10, 20);
 
     expect(imgd.input).toBeTruthy();
-    expect(imgd.input.id).toEqual(1001);
+    expect(imgd.input.id).toEqual('test-image');
     expect(imgd.input.group).toEqual(100);
     expect(imgd.input.location).toBeTruthy();
     expect(imgd.input.location.x).toEqual(1);
@@ -106,5 +107,26 @@ describe('makeImageDescriptors', () => {
     expect(imgd.input.size.height).toEqual(20);
     expect(imgd.output).toBeTruthy();
     expect(imgd.output.purpose).toEqual(PURPOSE.TILE);
+  });
+});
+
+describe('pathFromImageDescriptor', () => {
+  test('for source', () => {
+    const imgd = makeSourceImageDescriptor('test-image');
+    const sourcePath = pathFromImageDescriptor(imgd);
+    // path from source image descriptor not currently supported
+    expect(sourcePath).toBeFalsy();
+  });
+
+  test('for thumbnail', () => {
+    const imgd = makeThumbnailImageDescriptor('test-image');
+    const thumbnailPath = pathFromImageDescriptor(imgd);
+    expect(thumbnailPath).toMatchSnapshot();
+  });
+
+  test('for tile', () => {
+    const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
+    const tilePath = pathFromImageDescriptor(imgd);
+    expect(tilePath).toMatchSnapshot();
   });
 });

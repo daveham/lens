@@ -14,7 +14,9 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:updateSnapshot": "jest --updateSnapshot"
   },
   "devDependencies": {
     "babel-jest": "^20.0.3",

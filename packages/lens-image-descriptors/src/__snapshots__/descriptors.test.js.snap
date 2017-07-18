@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pathFromImageDescriptor for thumbnail 1`] = `"/data/thumbs/test-image_thumb.jpg"`;
+
+exports[`pathFromImageDescriptor for tile 1`] = `"/data/tiles/test-image/abc/2/abc_2_1.jpg"`;

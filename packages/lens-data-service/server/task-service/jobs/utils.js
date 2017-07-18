@@ -24,9 +24,9 @@ export const reportResults = (job, err, result, cb) => {
         timestamp,
         status: 'complete'
       };
-      socket.emit('job', payload);
-      cb();
     }
+    socket.emit('job', payload);
+    cb();
   } else {
     debug('oops: no socket to use');
     cb();

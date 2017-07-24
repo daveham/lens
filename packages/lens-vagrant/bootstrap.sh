@@ -122,4 +122,8 @@ sudo systemctl restart redis.service
 #sudo systemctl enable nginx
 sudo systemctl enable redis.service
 
+# change this if necessary to the appropriate time zone
+sudo mv /etc/localtime /etc/localtime.bak
+sudo ln -s /usr/share/zoneinfo/America/Chicago /etc/localtime
+
 sudo /opt/VBoxGuestAdditions-*/init/vboxadd setup

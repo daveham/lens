@@ -14,5 +14,6 @@ npm install -g mocha
 npm install -g webpack
 npm install -g redis-commander
 npm install -g lerna
+npm install -g create-react-app
 
 echo "Finished installing global npm packages"

@@ -33,6 +33,9 @@ vagrantuser="vagrant"
 vagranthome="/home/${vagrantuser}"
 npmdir="${vagranthome}/.npm-packages"
 
+vagrantip="192.168.20.20"
+printf "\nHOST=%s\n" ${vagrantip} >> ${vagranthome}/.bashrc
+
 mkdir -p ${npmdir}
 npm config set prefix "${npmdir}"
 chown -R ${vagrantuser}:${vagrantuser} ${npmdir}
@@ -49,7 +52,7 @@ export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
 
 printf "${envfix}" ${npmdir} >> ${vagranthome}/.bashrc
 
-printf "npm config set prefix %s" ${npmdir} >> ${vagranthome}/.bashrc
+printf "npm config set prefix %s\n" ${npmdir} >> ${vagranthome}/.bashrc
 
 npmglobalscript='/vagrant/bootstrap-npm.sh'
 if test -e ${npmglobalscript}; then
@@ -59,7 +62,7 @@ else
 fi
 
 # Add custom environment variable to .bashrc
-echo 'export VAGRANT_BOX=true' >> /home/vagrant/.bashrc
+printf "export VAGRANT_BOX=true\n" >> ${vagranthome}/.bashrc
 
 # Use local dot files if they exist
 for file in /.bash_profile /.bash_prompt; do

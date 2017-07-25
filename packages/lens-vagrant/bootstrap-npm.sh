@@ -7,6 +7,7 @@ node --version
 npm --version
 npm config get prefix
 
+npm install -g yarn
 npm install -g gulp
 npm install -g nodemon
 npm install -g mocha

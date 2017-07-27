@@ -1,10 +1,15 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Switch } from 'react-router-dom';
+import asyncRoute from './asyncroute';
 import Home from '../home';
-import FeatureA from '../featureA';
-import FeatureB from '../featureB';
+//import FeatureA from '../featureA';
+//import FeatureB from '../featureB';
 import logo from '../../logo.svg';
 import '../../App.css';
+
+//const homeRoute = asyncRoute(() => import('../home'));
+const featureARoute = asyncRoute(() => import('../featureA'), () => import('../featureA/reducer'));
+const featureBRoute = asyncRoute(() => import('../featureB'), () => import('../featureB/reducer'));
 
 export default () => {
   return (
@@ -19,9 +24,11 @@ export default () => {
         </header>
       </div>
       <main>
-        <Route exact path='/' component={Home} />
-        <Route exact path='/FeatureA' component={FeatureA} />
-        <Route exact path='/FeatureB' component={FeatureB} />
+        <Switch>
+          <Route exact path='/' component={Home} />
+          <Route exact path='/FeatureA' component={featureARoute} />
+          <Route exact path='/FeatureB' component={featureBRoute} />
+        </Switch>
       </main>
     </div>
   );

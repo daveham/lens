@@ -1,14 +1,12 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import createHistory from 'history/createBrowserHistory';
-import { routerMiddleware, routerReducer } from 'react-router-redux';
+import { routerMiddleware } from 'react-router-redux';
 import thunk from 'redux-thunk';
 import Registry from './registry';
 import registryMiddleware from './registry/middleware';
+import baseReducers from '../modules';
 
-const rootReducer = {
-  router: routerReducer
-};
-const registry = new Registry(rootReducer);
+const registry = new Registry(baseReducers);
 
 export const history = createHistory();
 

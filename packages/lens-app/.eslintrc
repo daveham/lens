@@ -36,6 +36,7 @@
     "space-before-function-paren": 0,
     "jsx-quotes": [2, "prefer-single"],
     "flowtype/define-flow-type": 1,
-    "flowtype/use-flow-type": 1
+    "flowtype/use-flow-type": 1,
+    "no-console": 0
   }
 }

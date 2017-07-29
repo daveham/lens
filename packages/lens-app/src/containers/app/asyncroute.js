@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { injectReducers } from '../../store/registry/actions';
@@ -38,7 +37,6 @@ export default function asyncRoute(getComponent, getReducers) {
           getComponent().then(module => {
             const component = esModule(module);
             AsyncRoute.Component = component;
-            console.log('loaded component', { component });
             return component;
           }) :
           Component;
@@ -46,7 +44,6 @@ export default function asyncRoute(getComponent, getReducers) {
         const getReducersPromise = !ReducersLoaded &&
           getReducers().then(module => {
             const reducers = esModule(module, true);
-            console.log('loaded reducers', { reducers });
             this.context.store.dispatch(injectReducers(reducers));
             AsyncRoute.ReducersLoaded = true;
           });

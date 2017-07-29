@@ -1,8 +1,9 @@
-//import { combineReducers } from 'redux';
-//import { routerReducer } from 'react-router-redux';
+import { routerReducer } from 'react-router-redux';
+import common from './common';
 
-//export default combineReducers({
-//export default {
-//  dummy: (a = {}) => a,
-//  router: routerReducer
-//};
+export default {
+  router: routerReducer,
+  // other top-level reducers go here
+  common,
+  dummy: (state = {}) => state
+};

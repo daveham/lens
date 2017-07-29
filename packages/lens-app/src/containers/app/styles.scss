@@ -1,0 +1,43 @@
+.appContainer {
+  text-align: center;
+}
+
+.appLogo {
+  animation: appLogoSpin infinite 20s linear;
+  height: 80px;
+}
+
+.appHeader {
+  background-color: #222;
+  height: 180px;
+  padding: 20px;
+  color: white;
+}
+
+.appHeader h2 {
+  margin: 10px 0;
+}
+
+.appIntro {
+  font-size: large;
+}
+
+@keyframes appLogoSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.details {
+  padding-top: 1em;
+  font-size: .7em;
+}
+
+.menu a {
+  color: #fff;
+  text-decoration: none;
+  padding: .5em 1em;
+}
+
+.menu a:hover {
+  color: #66f;
+}

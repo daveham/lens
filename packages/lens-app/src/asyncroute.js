@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { injectReducers } from '../../store/registry/actions';
+import { injectReducers } from './store/registry/actions';
 
 const moduleDefaultExport = module => module.default || module;
 

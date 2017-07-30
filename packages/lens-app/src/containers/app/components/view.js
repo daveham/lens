@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router-dom';
-import asyncRoute from './asyncroute';
 import Menu from './menu';
 import Header from './header';
-import Home from '../home';
+import Home from '../../home';
+import { featureARoute, featureBRoute } from '../../../routes';
 import styles from './styles.scss';
-
-const featureARoute = asyncRoute(() => import('../featureA'), () => import('../featureA/reducer'));
-const featureBRoute = asyncRoute(() => import('../featureB'), () => import('../featureB/reducer'));
 
 class View extends Component {
   static propTypes = {

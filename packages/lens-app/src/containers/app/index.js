@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 
-import View from './view';
+import View from './components/view';
 
 import {
   testOneAction as fetchTestOne,

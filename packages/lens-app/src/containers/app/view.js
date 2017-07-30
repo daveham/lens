@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Link, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import asyncRoute from './asyncroute';
+import Menu from './menu';
+import Header from './header';
 import Home from '../home';
-import logo from './logo.svg';
 import styles from './styles.scss';
 
 const featureARoute = asyncRoute(() => import('../featureA'), () => import('../featureA/reducer'));
@@ -27,37 +28,12 @@ class View extends Component {
     }, 3000);
   }
 
-  renderTestOne() {
-    return (
-      this.props.one &&
-        <span>One: [{this.props.one}] </span>
-    );
-  }
-
-  renderTestTwo() {
-    return (
-      this.props.two &&
-        <span>Two: [{this.props.two}] </span>
-    );
-  }
-
   render() {
     return (
       <div className={styles.appContainer}>
-        <div className={styles.appHeader}>
-          <img src={logo} className={styles.appLogo} alt='logo'/>
-          <h2>Welcome to React</h2>
-          <header className={styles.menu}>
-            <Link to='/'>Home</Link>
-            <Link to='/FeatureA'>Feature A</Link>
-            <Link to='/FeatureB'>Feature B</Link>
-          </header>
-          <div className={styles.details}>
-            {this.renderTestOne()}
-            {this.renderTestTwo()}
-          </div>
-        </div>
-        <main>
+        <Menu />
+        <Header one={this.props.one} two={this.props.two} />
+        <main className={styles.featureContainer}>
           <Switch>
             <Route exact path='/' component={Home}/>
             <Route exact path='/FeatureA' component={featureARoute}/>

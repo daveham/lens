@@ -1,0 +1,31 @@
+.container {
+  padding: 10px 0 2px;
+  color: white;
+  text-align: center;
+  border-bottom: solid 8px #333;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+}
+
+.title h2 {
+  margin: 10px 0;
+}
+
+.appLogo {
+  animation: appLogoSpin infinite 20s linear;
+  height: 40px;
+}
+
+@keyframes appLogoSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.details {
+  padding: 8px 0 2px;
+  height: 20px;
+  font-size: 9pt;
+}

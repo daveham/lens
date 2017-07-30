@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Link, Switch } from 'react-router-dom';
 import asyncRoute from './asyncroute';
 import Home from '../home';
-import logo from '../../logo.svg';
+import logo from './logo.svg';
 import styles from './styles.scss';
 
 const featureARoute = asyncRoute(() => import('../featureA'), () => import('../featureA/reducer'));

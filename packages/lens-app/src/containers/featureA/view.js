@@ -9,7 +9,8 @@ class View extends Component {
   };
 
   componentDidMount() {
-    if (!(this.props.loading || this.props.greeting)) {
+    const alreadyFetched = this.props.loading || this.props.greeting;
+    if (!alreadyFetched) {
       setTimeout(() => {
         this.props.fetchHello();
       }, 500);

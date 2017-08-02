@@ -1,10 +1,19 @@
-import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { createStructuredSelector } from 'reselect';
+import View from './view';
+import { fetchHello } from './reducer';
 
-export default () => {
-  return (
-    <div>
-      <h1>Feature A</h1>
-      <div>This is feature A.</div>
-    </div>
-  );
+const mapDispatchToProps = {
+  fetchHello
 };
+
+const greeting = ({ featureA }) => featureA.greeting;
+const loading = ({ featureA }) => featureA.loading;
+
+const mapStateToProps = createStructuredSelector({
+  loading,
+  greeting
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(View));

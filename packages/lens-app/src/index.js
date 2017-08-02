@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import store, { history } from './store';
 import App from './containers/app';
+import 'isomorphic-fetch';
+import 'normalize.css';
 import styles from './styles.scss';
 
 import registerServiceWorker from './registerServiceWorker';

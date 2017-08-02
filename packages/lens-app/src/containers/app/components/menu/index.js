@@ -7,6 +7,7 @@ export default () => {
     <div className={styles.container}>
       <nav className={styles.menu}>
         <Link to='/'>Home</Link>
+        <Link to='/Catalog'>Catalog</Link>
         <Link to='/FeatureA'>Feature A</Link>
         <Link to='/FeatureB'>Feature B</Link>
       </nav>

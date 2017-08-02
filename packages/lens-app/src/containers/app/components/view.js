@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import Menu from './menu';
 import Header from './header';
 import Home from '../../home';
-import { featureARoute, featureBRoute } from '../../../routes';
+import { catalogRoute, featureARoute, featureBRoute } from '../../../routes';
 import styles from './styles.scss';
 
 class View extends Component {
@@ -33,6 +33,7 @@ class View extends Component {
         <main className={styles.featureContainer}>
           <Switch>
             <Route exact path='/' component={Home}/>
+            <Route exact path='/Catalog' component={catalogRoute}/>
             <Route exact path='/FeatureA' component={featureARoute}/>
             <Route exact path='/FeatureB' component={featureBRoute}/>
           </Switch>

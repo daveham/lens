@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@lens/app",
+  "homepage": "/lensapp",
   "version": "0.1.0",
   "description": "inference lens generative image system - manager app",
   "main": "index.js",

@@ -8,7 +8,7 @@ import baseReducers from '../modules';
 
 const registry = new Registry(baseReducers);
 
-export const history = createHistory();
+export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
 
 const middleware = [
   thunk,

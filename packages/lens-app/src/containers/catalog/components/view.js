@@ -5,7 +5,11 @@ class View extends Component {
   static propTypes = {
     catalog: PropTypes.shape({
       loading: PropTypes.bool,
-      name: PropTypes.string
+      name: PropTypes.string,
+      sources: PropTypes.shape({
+        ids: PropTypes.arrayOf(PropTypes.string),
+        byIds: PropTypes.object
+      })
     }),
     fetchCatalog: PropTypes.func.isRequired
   };
@@ -32,7 +36,15 @@ class View extends Component {
     const { catalog } = this.props;
     return (
       catalog && catalog.name &&
-      <div>{catalog.name}</div>
+        <div>
+          <div>{catalog.name}</div>
+          <div>{catalog.sources.ids.map(id => {
+            const source = catalog.sources.byIds[id];
+            return (
+              <div key={source.id}>{source.id} - {source.name} ({source.file})</div>
+            );
+          })}</div>
+        </div>
     );
   }
 

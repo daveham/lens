@@ -49,8 +49,8 @@ export const actions = {
 };
 
 // reducers
-const loading = (state = false, action) => {
-  switch (action.type) {
+const loading = (state = false, { type }) => {
+  switch (type) {
     case ACTIONS.REQUEST_CATALOG:
       return true;
     case ACTIONS.RECEIVE_CATALOG:
@@ -61,10 +61,24 @@ const loading = (state = false, action) => {
   }
 };
 
-const name = (state = '', action) => {
-  switch (action.type) {
+const name = (state = '', { type, payload }) => {
+  switch (type) {
     case ACTIONS.RECEIVE_CATALOG:
-      return action.payload.name;
+      return payload.name;
+    default:
+      return state;
+  }
+};
+
+const sources = (state = {  ids: [], byIds: {} }, { type, payload}) => {
+  switch (type) {
+    case ACTIONS.RECEIVE_CATALOG: {
+      const { sources } = payload;
+      const ids = sources.map(source => source.id);
+      const byIds = {};
+      sources.forEach(source => byIds[source.id] = source);
+      return { ids, byIds };
+    }
     default:
       return state;
   }
@@ -72,7 +86,8 @@ const name = (state = '', action) => {
 
 const catalogReducer = combineReducers({
   loading,
-  name
+  name,
+  sources
 });
 
 catalogReducer.reducer = 'catalog';

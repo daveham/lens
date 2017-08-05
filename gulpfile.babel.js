@@ -14,6 +14,7 @@ const env = require('gulp-env');
 const packagesPath = 'packages';
 const excludedPackages = [
   'lens-app',
+  'lens-api',
   'lens-data-manager',
   'lens-data-service',
   'lens-vagrant'

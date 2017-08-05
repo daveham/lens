@@ -6,7 +6,7 @@ import Registry from './registry';
 import registryMiddleware from './registry/middleware';
 import baseReducers from '../modules';
 
-const registry = new Registry(baseReducers);
+const registry = new Registry({ reducers: baseReducers });
 
 export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
 

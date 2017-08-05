@@ -6,9 +6,9 @@
   ],
   "version": "0.0.0",
   "bootstrapConfig": {
-    "ignore": ["@lens/vagrant", "@lens/app"]
+    "ignore": ["@lens/vagrant", "@lens/api"]
   },
   "cleanConfig": {
-    "ignore": ["@lens/vagrant", "@lens/app"]
+    "ignore": ["@lens/vagrant", "@lens/api"]
   }
 }

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { fetchCatalog } from '../modules/catalog/actions';
+import { requestCatalog } from '../modules/catalog/actions';
 import { ensureImage } from '../modules/catalog/images/actions';
 
 import {
@@ -13,7 +13,7 @@ import {
 import CatalogView from '../components/CatalogView.js';
 
 const mapDispatchToProps = {
-  fetchCatalog,
+  fetchCatalog: requestCatalog,
   ensureImage
 };
 

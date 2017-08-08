@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import View from './components/view';
-import { fetchCatalog } from './modules';
+import { requestCatalog } from './modules';
 
 const mapDispatchToProps = {
-  fetchCatalog
+  fetchCatalog: requestCatalog
 };
 
 const catalog = ({ catalog }) => catalog;

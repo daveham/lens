@@ -11,6 +11,7 @@ export default class Registry {
   }
 
   store = null;
+  sagaMiddleware = null;
 
   inject({ reducers, sagas, commands }) {
     if (reducers) {
@@ -27,8 +28,9 @@ export default class Registry {
     }
 
     if (sagas) {
-      debug('replacing sagas');
+      debug('injecting sagas', sagas);
       // TODO: manage sagas
+      this.sagaMiddleware.run(sagas.saga);
     }
 
     if (commands) {

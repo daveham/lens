@@ -69,7 +69,7 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
         loaderPromises.push(
           getSagas()
           .then(module => {
-            const sagas = esModule(module, true);
+            const sagas = esModule(module);
             this.context.store.dispatch(injectSagas(sagas));
             AsyncRoute.SagasLoaded = true;
           })
@@ -80,7 +80,7 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
         loaderPromises.push(
           getCommands()
           .then(module => {
-            const commands = esModule(module, true);
+            const commands = esModule(module);
             this.context.store.dispatch(injectCommands(commands));
             AsyncRoute.CommandsLoaded = true;
           })

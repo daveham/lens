@@ -1,9 +1,6 @@
 import { combineReducers } from 'redux';
 import { createAction } from 'redux-actions';
 
-import _debug from 'debug';
-const debug = _debug('app:catalog');
-
 // constants
 export const ACTIONS = {
   REQUEST_CATALOG: 'REQUEST_CATALOG',
@@ -16,8 +13,9 @@ export const requestCatalog = createAction(ACTIONS.REQUEST_CATALOG);
 export const receiveCatalog = createAction(ACTIONS.RECEIVE_CATALOG);
 export const requestCatalogFailed = createAction(ACTIONS.REQUEST_CATALOG_FAILED);
 
+/*
 export const fetchCatalog = () => {
-  return (dispatch /*, getState */) => {
+return (dispatch / *, getState * /) => {
     dispatch(requestCatalog());
 
     const apiServer = process.env.REACT_APP_REST_SERVER || 'http://localhost:3001';
@@ -40,12 +38,13 @@ export const fetchCatalog = () => {
     });
   };
 };
+*/
 
 export const actions = {
   requestCatalog,
   receiveCatalog,
-  requestCatalogFailed,
-  fetchCatalog
+  requestCatalogFailed
+//  fetchCatalog
 };
 
 // reducers

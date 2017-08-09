@@ -5,14 +5,14 @@ class View extends Component {
   static propTypes = {
     loading: PropTypes.bool,
     greeting: PropTypes.string,
-    fetchHello: PropTypes.func.isRequired
+    requestHello: PropTypes.func.isRequired
   };
 
   componentDidMount() {
     const alreadyFetched = this.props.loading || this.props.greeting;
     if (!alreadyFetched) {
       setTimeout(() => {
-        this.props.fetchHello();
+        this.props.requestHello();
       }, 500);
     }
   }

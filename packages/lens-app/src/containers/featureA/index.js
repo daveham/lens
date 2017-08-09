@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import View from './view';
-import { fetchHello } from './reducer';
+import { requestHello } from './reducer';
 
 const mapDispatchToProps = {
-  fetchHello
+  requestHello
 };
 
 const greeting = ({ featureA }) => featureA.greeting;

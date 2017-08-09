@@ -19,8 +19,8 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "dependencies": {
-    "@lens/image-descriptors": "^0.1.0",
     "@lens/data-jobs": "^0.1.0",
+    "@lens/image-descriptors": "^0.1.0",
     "autoprefixer": "7.1.1",
     "babel-core": "6.25.0",
     "babel-eslint": "7.2.3",
@@ -64,7 +64,6 @@
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-saga": "^0.15.4",
-    "redux-thunk": "^2.2.0",
     "reselect": "^3.0.1",
     "sass-loader": "^6.0.6",
     "style-loader": "0.18.2",

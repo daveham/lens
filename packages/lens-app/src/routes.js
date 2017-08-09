@@ -11,8 +11,8 @@ export const catalogRoute = asyncRoute({
 
 export const featureARoute = asyncRoute({
   getComponent: () => import('./containers/featureA'),
-  getReducers: () => import('./containers/featureA/reducer')
-  // getSagas
+  getReducers: () => import('./containers/featureA/reducer'),
+  getSagas: () => import('./containers/featureA/sagas')
   // getCommands
 });
 

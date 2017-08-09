@@ -4,7 +4,7 @@ import View from './components/view';
 import { requestCatalog } from './modules';
 
 const mapDispatchToProps = {
-  fetchCatalog: requestCatalog
+  requestCatalog
 };
 
 const catalog = ({ catalog }) => catalog;

@@ -11,7 +11,7 @@ class View extends Component {
         byIds: PropTypes.object
       })
     }),
-    fetchCatalog: PropTypes.func.isRequired
+    requestCatalog: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -19,7 +19,7 @@ class View extends Component {
     const alreadyFetched = catalog && !catalog.loading && catalog.name;
     if (!alreadyFetched) {
       setTimeout(() => {
-        this.props.fetchCatalog();
+        this.props.requestCatalog();
       }, 500);
     }
   }

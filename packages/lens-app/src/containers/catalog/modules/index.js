@@ -13,38 +13,10 @@ export const requestCatalog = createAction(ACTIONS.REQUEST_CATALOG);
 export const receiveCatalog = createAction(ACTIONS.RECEIVE_CATALOG);
 export const requestCatalogFailed = createAction(ACTIONS.REQUEST_CATALOG_FAILED);
 
-/*
-export const fetchCatalog = () => {
-return (dispatch / *, getState * /) => {
-    dispatch(requestCatalog());
-
-    const apiServer = process.env.REACT_APP_REST_SERVER || 'http://localhost:3001';
-
-    return fetch(apiServer + '/catalog', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.json())
-    .then(json => {
-      debug('fetch response', json);
-      dispatch(receiveCatalog(json));
-    })
-    .catch(reason => {
-      debug('fetch error', reason);
-      dispatch(requestCatalogFailed(reason));
-    });
-  };
-};
-*/
-
 export const actions = {
   requestCatalog,
   receiveCatalog,
   requestCatalogFailed
-//  fetchCatalog
 };
 
 // reducers

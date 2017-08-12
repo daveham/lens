@@ -3,22 +3,22 @@ import asyncRoute from './asyncroute';
 // these routes drive code splitting of: react components, redux reducers, sagas and commands
 
 export const catalogRoute = asyncRoute({
-  getComponent: () => import('./containers/catalog'),
-  getReducers: () => import('./containers/catalog/modules'),
-  getSagas: () => import('./containers/catalog/sagas')
+  getComponent: () => import(/* webpackChunkName: "catalogUI" */ './containers/catalog'),
+  getReducers: () => import(/* webpackChunkName: "catalogReducers" */ './containers/catalog/modules'),
+  getSagas: () => import(/* webpackChunkName: "catalogSagas" */ './containers/catalog/sagas')
   // getCommands
 });
 
 export const featureARoute = asyncRoute({
-  getComponent: () => import('./containers/featureA'),
-  getReducers: () => import('./containers/featureA/reducer'),
-  getSagas: () => import('./containers/featureA/sagas')
+  getComponent: () => import(/* webpackChunkName: "featureAUI" */ './containers/featureA'),
+  getReducers: () => import(/* webpackChunkName: "featureAReducers" */ './containers/featureA/reducer'),
+  getSagas: () => import(/* webpackChunkName: "featureASagas" */ './containers/featureA/sagas')
   // getCommands
 });
 
 export const featureBRoute = asyncRoute({
-  getComponent: () => import('./containers/featureB'),
-  getReducers: () => import('./containers/featureB/reducer')
+  getComponent: () => import(/* webpackChunkName: "featureBUI" */ './containers/featureB'),
+  getReducers: () => import(/* webpackChunkName: "featureBReducers" */ './containers/featureB/reducer')
   // getSagas
   // getCommands
 });

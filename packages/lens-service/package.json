@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "@lens/api",
+  "name": "@lens/service",
   "version": "0.1.0",
-  "description": "inference lens generative image system - data rest api",
+  "description": "inference lens generative image system - socket io server",
   "main": "index.js",
   "engines": {
     "node": ">=4.2.0",
@@ -22,13 +22,13 @@
     "bunyan": "^1.8.12",
     "debug": "^2.6.8",
     "dotenv": "^4.0.0",
-    "dtrace-provider": "^0.8.3",
+    "socket.io": "^2.0.3",
     "restify": "^5.0.1",
     "restify-cors-middleware": "^1.0.1"
   },
   "scripts": {
-    "start": "nodemon --debug=192.168.20.20:5858 bin/register.js",
-    "dev": "nodemon --debug=192.168.20.20:5858 bin/register.js",
+    "start": "nodemon --debug=192.168.20.20:5859 bin/register.js",
+    "dev": "nodemon --debug=192.168.20.20:5859 bin/register.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {}

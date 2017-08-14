@@ -107,6 +107,7 @@ sudo firewall-cmd --zone=public --permanent --add-service=http
 sudo firewall-cmd --zone=public --permanent --add-service=https
 sudo firewall-cmd --zone=public --permanent --add-port=3000/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=3001/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=3002/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=4443/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=8081/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=5857/tcp

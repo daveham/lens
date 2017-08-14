@@ -5,11 +5,13 @@ import { withRouter } from 'react-router-dom';
 import View from './components/view';
 
 import {
+  requestSocket as connectSocket,
   testOneAction as fetchTestOne,
   testTwoAction as fetchTestTwo
 } from '../../modules/common';
 
 const mapDispatchToProps = {
+  connectSocket,
   fetchTestOne,
   fetchTestTwo
 };

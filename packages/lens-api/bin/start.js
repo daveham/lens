@@ -1,6 +1,8 @@
 import restify from 'restify';
 import corsMiddleware from 'restify-cors-middleware';
 
+import config from '../config';
+
 import routes from '../routes';
 
 import bunyan from 'bunyan';
@@ -28,10 +30,6 @@ server.use(cors.actual);
 
 routes(server);
 
-const port = process.env.REST_PORT || 3001;
-const host = process.env.REST_SERVER ||
-  process.env.USER === 'vagrant' ? '192.168.20.20' : '0.0.0.0';
-
-server.listen(port, host, () => {
+server.listen(config.server_port, config.server_host, () => {
   debug(`${server.name} listening at ${server.url}`);
 });

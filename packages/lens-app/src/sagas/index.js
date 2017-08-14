@@ -1,4 +1,6 @@
-import { call, put } from 'redux-saga/effects';
+import { call, put, takeEvery, all } from 'redux-saga/effects';
+import { ACTIONS } from '../modules/common';
+import { connectSocket, watchSocketChannel } from './socket';
 import _debug from 'debug';
 const debug = _debug('lens');
 
@@ -32,3 +34,12 @@ export function* apiSaga(fn, args, successAction, errorAction) {
     yield put(errorAction(error));
   }
 }
+
+export function* rootSaga() {
+  yield all([
+    takeEvery(ACTIONS.REQUEST_SOCKET, connectSocket),
+    call(watchSocketChannel)
+  ]);
+}
+
+export default { key: 'base', saga: rootSaga };

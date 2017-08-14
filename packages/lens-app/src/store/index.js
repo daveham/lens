@@ -5,6 +5,7 @@ import createSagaMiddleware from 'redux-saga';
 import Registry from './registry';
 import registryMiddleware from './registry/middleware';
 import baseReducers from '../modules';
+import baseSagas from '../sagas';
 
 const registry = new Registry({ reducers: baseReducers });
 
@@ -27,5 +28,7 @@ const store = createStore(
 
 registry.store = store;
 registry.sagaMiddleware = sagaMiddleware;
+
+registry.inject({ sagas: baseSagas });
 
 export default store;

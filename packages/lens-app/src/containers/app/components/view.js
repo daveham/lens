@@ -11,11 +11,16 @@ class View extends Component {
   static propTypes = {
     one: PropTypes.string,
     two: PropTypes.string,
+    connectSocket: PropTypes.func.isRequired,
     fetchTestOne: PropTypes.func.isRequired,
     fetchTestTwo: PropTypes.func.isRequired
   };
 
   componentDidMount() {
+    setTimeout(() => {
+      this.props.connectSocket();
+    }, 1000);
+
     setTimeout(() => {
       this.props.fetchTestOne();
     }, 2000);

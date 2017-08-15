@@ -1,5 +1,5 @@
 import { takeEvery, all } from 'redux-saga/effects';
-import { invokeRestService, apiSaga } from '../../sagas';
+import { invokeRestService, apiSaga } from '../../sagas/utils';
 import { ACTIONS, receiveHello, requestHelloFailed } from './reducer';
 
 export function* loadHello() {

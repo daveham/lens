@@ -1,6 +1,6 @@
 
 import { channel } from 'redux-saga';
-import { put, take } from 'redux-saga/effects';
+import { put, take, select } from 'redux-saga/effects';
 import { receiveSocket, requestSocketFailed } from '../modules/common';
 
 import io from 'socket.io-client';
@@ -24,43 +24,50 @@ export function* watchSocketChannel() {
 export function* connectSocket() {
   debug('connectSocket saga called');
 
-  // if (typeof io === 'undefined') {
-  //   debug('io not defined, service probably not running');
-  //   yield put(requestSocketFailed('io not defined'));
-  //   //dispatch(serviceFailed());
-  //   return;
-  // }
-
-  // connect to lens-data-service, primarily for socket notifications
   debug(`connecting to '${socketHost}'`);
   const socket = io(socketHost);
+
   socket.on('connect', () => {
     debug('connected');
     socketChannel.put(receiveSocket(socket));
-    //dispatch(receiveServiceConnected({ socket }));
   });
+
   socket.on('disconnect', () => {
     debug('disconnected');
   });
+
   socket.on('reconnect', () => {
     debug('reconnected');
   });
+
   socket.on('error', err => {
     debug('error', err);
-    socketChannel.put(requestSocketFailed(err));
+    socketChannel.put(requestSocketFailed(err)); // TODO: is this the right action to take here?
   });
 
   yield socket;
 
-//  socket.on('flash', payload => {
-//    debug('socket flash message', { payload });
+  socket.on('flash', payload => {
+    debug('socket received flash message', payload);
 //    dispatch(receiveServiceCommand(payload));
-//  });
+  });
 
 //  socket.on('job', payload => {
 //    debug('socket job message', { payload });
 //    dispatch(receiveServiceCommand(payload));
 //  });
 
+}
+
+const socketSelector = (state) => state.common.socket;
+
+export function* socketSend({ payload }) {
+  const socket = yield select(socketSelector);
+  if (socket) {
+    debug('sending flash message on socket', payload);
+    socket.emit('flash', payload);
+  } else {
+    debug('no socket to send on');
+  }
 }
 

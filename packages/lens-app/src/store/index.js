@@ -4,10 +4,10 @@ import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import Registry from './registry';
 import registryMiddleware from './registry/middleware';
-import baseReducers from '../modules';
-import baseSagas from '../sagas';
+import reducers from '../modules';
+import sagas from '../sagas';
 
-const registry = new Registry({ reducers: baseReducers });
+const registry = new Registry({ reducers });
 
 export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
 
@@ -29,6 +29,6 @@ const store = createStore(
 registry.store = store;
 registry.sagaMiddleware = sagaMiddleware;
 
-registry.inject({ sagas: baseSagas });
+registry.inject({ sagas });
 
 export default store;

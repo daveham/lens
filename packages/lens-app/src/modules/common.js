@@ -7,7 +7,11 @@ export const ACTIONS = {
 
   REQUEST_SOCKET: 'REQUEST_SOCKET',
   RECEIVE_SOCKET: 'RECEIVE_SOCKET',
-  REQUEST_SOCKET_FAILED: 'REQUEST_SOCKET_FAILED'
+  REQUEST_SOCKET_FAILED: 'REQUEST_SOCKET_FAILED',
+
+  SEND_SOCKET_COMMAND: 'SEND_SOCKET_COMMAND',
+  RECEIVE_SOCKET_COMMAND: 'RECEIVE_SOCKET_COMMAND',
+  SEND_SOCKET_COMMAND_FAILED: 'SEND_SOCKET_COMMAND_FAILED'
 };
 
 // actions (action creators)
@@ -18,10 +22,17 @@ export const requestSocket = createAction(ACTIONS.REQUEST_SOCKET);
 export const receiveSocket = createAction(ACTIONS.RECEIVE_SOCKET);
 export const requestSocketFailed = createAction(ACTIONS.REQUEST_SOCKET_FAILED);
 
+export const sendSocketCommand = createAction(ACTIONS.SEND_SOCKET_COMMAND);
+export const receiveSocketCommand = createAction(ACTIONS.RECEIVE_SOCKET_COMMAND);
+export const sendSocketCommandFailed = createAction(ACTIONS.SEND_SOCKET_COMMAND_FAILED);
+
 export const actions = {
   requestSocket,
   receiveSocket,
-  requestSocketFailed
+  requestSocketFailed,
+  sendSocketCommand,
+  receiveSocketCommand,
+  sendSocketCommandFailed
 };
 
 // reducers

@@ -1,43 +1,11 @@
-import { call, put, takeEvery, all } from 'redux-saga/effects';
+import { call, takeEvery, all } from 'redux-saga/effects';
 import { ACTIONS } from '../modules/common';
-import { connectSocket, watchSocketChannel } from './socket';
-import _debug from 'debug';
-const debug = _debug('lens');
-
-const apiServer = process.env.REACT_APP_REST_SERVER || 'http://localhost:3001';
-
-const defaultHeaders = {
-  'Accept': 'application/json',
-  'Content-Type': 'application/json'
-};
-
-export const invokeRestService = (url, options = {}) => {
-  const method = options.method || 'GET';
-  const headers = options.headers || defaultHeaders;
-
-  return fetch(apiServer + url, { method, headers })
-  .then(response => response.json())
-  .then(payload => {
-    return payload;
-  })
-  .catch(error => {
-    debug('getAPI error', { url, error });
-    throw error;
-  });
-};
-
-export function* apiSaga(fn, args, successAction, errorAction) {
-  try {
-    const payload = yield call(fn, ...args);
-    yield put(successAction(payload));
-  } catch (error) {
-    yield put(errorAction(error));
-  }
-}
+import { connectSocket, watchSocketChannel, socketSend } from './socket';
 
 export function* rootSaga() {
   yield all([
     takeEvery(ACTIONS.REQUEST_SOCKET, connectSocket),
+    takeEvery(ACTIONS.SEND_SOCKET_COMMAND, socketSend),
     call(watchSocketChannel)
   ]);
 }

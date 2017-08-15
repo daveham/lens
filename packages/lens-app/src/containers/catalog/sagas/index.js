@@ -1,5 +1,5 @@
 import { takeEvery, all, select } from 'redux-saga/effects';
-import { invokeRestService, apiSaga } from '../../../sagas';
+import { invokeRestService, apiSaga } from '../../../sagas/utils';
 import { ACTIONS, receiveCatalog, requestCatalogFailed } from '../modules';
 import { listKeyFromImageDescriptor } from '../modules/images';
 import { makeImageKey } from '@lens/image-descriptors';

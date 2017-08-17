@@ -1,5 +1,9 @@
 # lens: The Inference Lens - Data Manager
 
+
+**Deprecated: will be replaced by lens-app and lens-api**
+
+
 ````
 +----------+           +----------+               +----------+
 |          |           |          |     data      |          |

@@ -1,7 +1,8 @@
 # lens: The Inference Lens - Data Manager
 
 
-**Deprecated: will be replaced by lens-app and lens-api**
+**Deprecated:** This package will be replaced by packages
+ *lens-app* and *lens-api*.
 
 
 ````

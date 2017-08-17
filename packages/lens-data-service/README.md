@@ -1,6 +1,6 @@
 # lens: The Inference Lens - Data Service
 
-**Deprecated: will be replaced by lens-service**
+**Deprecated:** This package will be replaced by package *lens-service*.
 
 ````
 +----------+           +----------+               +----------+

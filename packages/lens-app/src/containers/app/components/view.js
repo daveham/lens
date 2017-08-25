@@ -8,41 +8,48 @@ import Home from '../../home';
 import { catalogRoute, featureARoute, featureBRoute } from '../../../routes';
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:view');
-
 class View extends Component {
   static propTypes = {
+    connected: PropTypes.bool,
+    connecting: PropTypes.bool,
     one: PropTypes.string,
     two: PropTypes.string,
     connectSocket: PropTypes.func.isRequired,
     fetchTestOne: PropTypes.func.isRequired,
     fetchTestTwo: PropTypes.func.isRequired,
-    sendSocketCommand: PropTypes.func.isRequired
+    sendSocketCommand: PropTypes.func.isRequired,
+    sendPing: PropTypes.func.isRequired
   };
 
   componentDidMount() {
-    setTimeout(() => {
-      this.props.connectSocket();
-    }, 1000);
+    if (!(this.props.connected || this.props.connecting)) {
+      setTimeout(() => {
+        this.props.connectSocket();
+      }, 0);
+    }
 
     setTimeout(() => {
       this.props.fetchTestOne();
-    }, 2000);
+    }, 2000); // demo
 
     setTimeout(() => {
       this.props.fetchTestTwo();
-    }, 3000);
+    }, 3000); // demo
   }
 
-  sendPing() {
-    debug('sendPing');
-    const command = 'ping';
-    const flashId = 0;
-    const body = {};
-    const payload = { flashId, command, timestamp: Date.now(), body };
-    this.props.sendSocketCommand(payload);
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.connecting && !this.props.connecting) {
+      this.props.sendSocketCommand({ command: 'register' });
+    }
   }
+
+  sendFlashPing = () => {
+    this.props.sendSocketCommand({ command: 'ping' });
+  };
+
+  sendCommandPing = () => {
+    this.props.sendPing();
+  };
 
   render() {
     return (
@@ -57,7 +64,10 @@ class View extends Component {
             <Route exact path='/FeatureB' component={featureBRoute}/>
           </Switch>
         </main>
-        <Footer ping={this.sendPing.bind(this)}/>
+        <Footer
+          pingFlash={this.sendFlashPing}
+          pingJob={this.sendCommandPing}
+        />
       </div>
     );
   }

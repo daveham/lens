@@ -28,6 +28,8 @@ const server = restify.createServer({ name, log });
 server.pre(cors.preflight);
 server.use(cors.actual);
 
+server.use(restify.plugins.bodyParser());
+
 routes(server);
 
 server.listen(config.server_port, config.server_host, () => {

@@ -18,11 +18,12 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "dependencies": {
+    "@lens/data-jobs": "^0.1.0",
     "babel-register": "^6.24.1",
     "bunyan": "^1.8.12",
     "debug": "^2.6.8",
     "dotenv": "^4.0.0",
-    "dtrace-provider": "^0.8.3",
+    "node-resque": "^4.0.7",
     "restify": "^5.0.1",
     "restify-cors-middleware": "^1.0.1"
   },

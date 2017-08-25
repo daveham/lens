@@ -1,7 +1,11 @@
 
 import { channel } from 'redux-saga';
 import { put, take, select } from 'redux-saga/effects';
-import { receiveSocket, requestSocketFailed } from '../modules/common';
+import {
+  receiveSocket,
+  requestSocketFailed,
+  receiveServiceCommand
+} from '../modules/common';
 
 import io from 'socket.io-client';
 
@@ -49,23 +53,32 @@ export function* connectSocket() {
 
   socket.on('flash', payload => {
     debug('socket received flash message', payload);
-//    dispatch(receiveServiceCommand(payload));
+    socketChannel.put(receiveServiceCommand(payload));
   });
 
-//  socket.on('job', payload => {
-//    debug('socket job message', { payload });
-//    dispatch(receiveServiceCommand(payload));
-//  });
+ socket.on('job', payload => {
+   debug('socket received job message', { payload });
+   socketChannel.put(receiveServiceCommand(payload));
+ });
 
 }
 
-const socketSelector = (state) => state.common.socket;
+export const socketSelector = (state) => state.common.socket;
+export const clientIdSelector = (state) => state.common.clientId;
+
+let flashCounter = 0;
 
 export function* socketSend({ payload }) {
+  debug('socketSend', payload);
   const socket = yield select(socketSelector);
   if (socket) {
-    debug('sending flash message on socket', payload);
-    socket.emit('flash', payload);
+    const data = {
+      flashId: flashCounter++,
+      timestamp: Date.now(),
+      ...payload
+    };
+    debug('sending flash message on socket', data);
+    socket.emit('flash', data);
   } else {
     debug('no socket to send on');
   }

@@ -8,7 +8,16 @@ const server_port = process.env.SERVICE_PORT || process.env.PORT || 3002;
 const config = {
   env: process.env.NODE_ENV,
   server_host,
-  server_port
+  server_port,
+
+  queue_connection: {
+    pkg: 'ioredis',
+    host: '127.0.0.1',
+    password: null,
+    port: 6379,
+    database: 0
+  },
+  queue_name: 'il'
 };
 
 export default config;

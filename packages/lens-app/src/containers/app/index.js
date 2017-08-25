@@ -8,19 +8,23 @@ import {
   requestSocket as connectSocket,
   testOneAction as fetchTestOne,
   testTwoAction as fetchTestTwo,
-  sendSocketCommand
+  sendSocketCommand,
+  sendPing
 } from '../../modules/common';
 
 const mapDispatchToProps = {
   connectSocket,
   fetchTestOne,
   fetchTestTwo,
-  sendSocketCommand
+  sendSocketCommand,
+  sendPing
 };
 
+const connected = ({ common }) => Boolean(common.socket);
+const connecting = ({ common }) => common.connecting;
 const one = ({ common }) => common.testOne;
 const two = ({ common }) => common.testTwo;
 
-const mapStateToProps = createStructuredSelector({ one, two });
+const mapStateToProps = createStructuredSelector({ connected, connecting, one, two });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(View));

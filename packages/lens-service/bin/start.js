@@ -2,6 +2,7 @@ import restify from 'restify';
 import socketio from 'socket.io';
 
 import config from '../config';
+import start from '../service';
 
 import bunyan from 'bunyan';
 import _debug from 'debug';
@@ -25,11 +26,39 @@ server.get('/', (req, res, next) => {
   next();
 });
 
+let clientIdCounter = 0;
+const connectionsBySocketId = {};
+const connectionsByClientId = {};
+
+const getResponseSocket = (clientId) => {
+  debug('getResponseSocket', clientId);
+  const connection = connectionsByClientId[clientId];
+  if (connection) {
+    return connection.socket;
+  }
+};
+
+
+let serviceStarted = false;
 io.sockets.on('connect', (socket) => {
-  debug('user connected');
+  debug('socket connected', socket.id);
+  connectionsBySocketId[socket.id] = { socket, clientId: -1 };
+
+  if (!serviceStarted) {
+    serviceStarted = true;
+
+    start(getResponseSocket, () => {
+      debug('Task service is running.');
+    });
+  }
 
   socket.on('disconnect', () => {
-    debug('user disconnected');
+    debug('socket disconnected', socket.id);
+    const connection = connectionsBySocketId[socket.id];
+    delete connectionsBySocketId[socket.id];
+    if (connection.clientId >= 0) {
+      delete connectionsByClientId[connection.clientId];
+    }
   });
 
   socket.on('flash', (data) => {
@@ -38,6 +67,20 @@ io.sockets.on('connect', (socket) => {
       const result = {
         ...data,
         command: 'pong',
+        timestamp: Date.now()
+      };
+      socket.emit('flash', result);
+    } else if (data.command === 'register') {
+      const clientId = ++clientIdCounter;
+      debug('adding connection for socket', socket.id);
+      const connection = connectionsBySocketId[socket.id];
+      connection.clientId = clientId;
+      debug('adding connection for client', clientId);
+      connectionsByClientId[clientId] = connection;
+      const result = {
+        ...data,
+        clientId,
+        command: 'registered',
         timestamp: Date.now()
       };
       socket.emit('flash', result);

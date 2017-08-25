@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import { createAction } from 'redux-actions';
+import _debug from 'debug';
+const debug = _debug('lens:sagas:common');
 
 export const ACTIONS = {
   TEST_ACTION_ONE: 'TEST_ACTION_ONE',
@@ -9,9 +11,17 @@ export const ACTIONS = {
   RECEIVE_SOCKET: 'RECEIVE_SOCKET',
   REQUEST_SOCKET_FAILED: 'REQUEST_SOCKET_FAILED',
 
+  REGISTERED: 'REGISTERED',
+
   SEND_SOCKET_COMMAND: 'SEND_SOCKET_COMMAND',
   RECEIVE_SOCKET_COMMAND: 'RECEIVE_SOCKET_COMMAND',
-  SEND_SOCKET_COMMAND_FAILED: 'SEND_SOCKET_COMMAND_FAILED'
+  SEND_SOCKET_COMMAND_FAILED: 'SEND_SOCKET_COMMAND_FAILED',
+
+  SEND_PING: 'SEND_PING',
+  PING_SENT: 'PING_SENT',
+  PING_SEND_FAILED: 'PING_SEND_FAILED',
+
+  RECEIVE_SERVICE_COMMAND: 'RECEIVE_SERVICE_COMMAND'
 };
 
 // actions (action creators)
@@ -22,9 +32,17 @@ export const requestSocket = createAction(ACTIONS.REQUEST_SOCKET);
 export const receiveSocket = createAction(ACTIONS.RECEIVE_SOCKET);
 export const requestSocketFailed = createAction(ACTIONS.REQUEST_SOCKET_FAILED);
 
+export const registered = createAction(ACTIONS.REGISTERED);
+
+export const sendPing = createAction(ACTIONS.SEND_PING);
+export const pingSent = createAction(ACTIONS.PING_SENT);
+export const pingSendFailed = createAction(ACTIONS.PING_SEND_FAILED);
+
 export const sendSocketCommand = createAction(ACTIONS.SEND_SOCKET_COMMAND);
 export const receiveSocketCommand = createAction(ACTIONS.RECEIVE_SOCKET_COMMAND);
 export const sendSocketCommandFailed = createAction(ACTIONS.SEND_SOCKET_COMMAND_FAILED);
+
+export const receiveServiceCommand = createAction(ACTIONS.RECEIVE_SERVICE_COMMAND);
 
 export const actions = {
   requestSocket,
@@ -32,7 +50,8 @@ export const actions = {
   requestSocketFailed,
   sendSocketCommand,
   receiveSocketCommand,
-  sendSocketCommandFailed
+  sendSocketCommandFailed,
+  receiveServiceCommand
 };
 
 // reducers
@@ -64,6 +83,24 @@ const connecting = (state = false, { type }) => {
 
 const socket = (state = null, { type, payload }) => {
   if (type === ACTIONS.RECEIVE_SOCKET) {
+    debug('receive socket', payload.id);
+    return payload;
+  }
+  return state;
+};
+
+const clientId = (state = -1, { type, payload }) => {
+  if (type === ACTIONS.RECEIVE_SERVICE_COMMAND) {
+    if (payload.command === 'registered') {
+      debug('registered', payload);
+      return payload.clientId;
+    }
+  }
+  return state;
+};
+
+const command = (state = null, { type, payload }) => {
+  if (type === ACTIONS.RECEIVE_SERVICE_COMMAND) {
     return payload;
   }
   return state;
@@ -72,6 +109,8 @@ const socket = (state = null, { type, payload }) => {
 export default combineReducers({
   connecting,
   socket,
+  clientId,
+  command,
   testOne,
   testTwo
 });

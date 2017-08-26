@@ -1,26 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import CommandButton from './command-button';
 
 import styles from './styles.scss';
 
-const Footer = ({ pingFlash, pingJob }) => {
+const Footer = ({ connected, pingFlash, pingJob }) => {
+
   return (
     <div className={styles.container}>
       <div>
-        <button
-          className={styles.button}
-          onClick={pingFlash}>ping(f)</button>
+        <CommandButton
+          title={'ping(f)'}
+          connected={true}
+          clickHandler={pingFlash}/>
       </div>
       <div>
-        <button
-          className={styles.button}
-          onClick={pingJob}>ping(j)</button>
+        <CommandButton
+          title={'ping(j)'}
+          connected={connected}
+          clickHandler={pingJob}/>
       </div>
     </div>
   );
 };
 
 Footer.propTypes = {
+  connected: PropTypes.bool,
   pingFlash: PropTypes.func.isRequired,
   pingJob: PropTypes.func.isRequired
 };

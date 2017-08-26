@@ -68,6 +68,7 @@ class View extends Component {
           </Switch>
         </main>
         <Footer
+          connected={this.props.connected}
           pingFlash={this.sendFlashPing}
           pingJob={this.sendCommandPing}
         />

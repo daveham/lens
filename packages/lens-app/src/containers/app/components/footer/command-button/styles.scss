@@ -1,0 +1,17 @@
+.button {
+  padding: 4px;
+  margin: 2px 8px;
+  font-size: 9pt;
+  color: #eee;
+  background-color: #333;
+  border-radius: 2px;
+  border: solid 1px #222;
+}
+
+.disabled {
+  color: black;
+}
+
+.button:hover:enabled {
+  background-color: #666;
+}

@@ -11,14 +11,16 @@ const defaultHeaders = {
 };
 
 export const invokeRestService = (url, options = {}) => {
-  debug('invokeRestService', options);
   const method = options.method || 'GET';
   const headers = options.headers || defaultHeaders;
-  const rawBody = options.body || {};
-  const body = JSON.stringify(rawBody);
-  debug('invokeRestService json body', body);
 
-  return fetch(apiServer + url, { method, headers, body })
+  const fetchParams = { method, headers };
+  if (method !== 'GET') {
+    const rawBody = options.body || {};
+    fetchParams.body = JSON.stringify(rawBody);
+  }
+
+  return fetch(apiServer + url, fetchParams)
   .then(response => response.json())
   .then(payload => {
     return payload;
@@ -37,4 +39,3 @@ export function* apiSaga(fn, args, successAction, errorAction) {
     yield put(errorAction(error));
   }
 }
-

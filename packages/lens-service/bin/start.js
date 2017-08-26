@@ -4,6 +4,8 @@ import socketio from 'socket.io';
 import config from '../config';
 import start from '../service';
 
+import connections from '../service/connections';
+
 import bunyan from 'bunyan';
 import _debug from 'debug';
 const debug = _debug('lens:service');
@@ -26,23 +28,15 @@ server.get('/', (req, res, next) => {
   next();
 });
 
-let clientIdCounter = 0;
-const connectionsBySocketId = {};
-const connectionsByClientId = {};
-
 const getResponseSocket = (clientId) => {
-  debug('getResponseSocket', clientId);
-  const connection = connectionsByClientId[clientId];
-  if (connection) {
-    return connection.socket;
-  }
+  return connections.getConnectionByClientId(clientId);
 };
 
 
 let serviceStarted = false;
 io.sockets.on('connect', (socket) => {
   debug('socket connected', socket.id);
-  connectionsBySocketId[socket.id] = { socket, clientId: -1 };
+  connections.addConnectionForSocket(socket);
 
   if (!serviceStarted) {
     serviceStarted = true;
@@ -52,38 +46,15 @@ io.sockets.on('connect', (socket) => {
     });
   }
 
-  socket.on('disconnect', () => {
-    debug('socket disconnected', socket.id);
-    const connection = connectionsBySocketId[socket.id];
-    delete connectionsBySocketId[socket.id];
-    if (connection.clientId >= 0) {
-      delete connectionsByClientId[connection.clientId];
-    }
-  });
-
   socket.on('flash', (data) => {
     debug('socket on flash', { data });
     if (data.command === 'ping') {
-      const result = {
+      const response = {
         ...data,
         command: 'pong',
         timestamp: Date.now()
       };
-      socket.emit('flash', result);
-    } else if (data.command === 'register') {
-      const clientId = ++clientIdCounter;
-      debug('adding connection for socket', socket.id);
-      const connection = connectionsBySocketId[socket.id];
-      connection.clientId = clientId;
-      debug('adding connection for client', clientId);
-      connectionsByClientId[clientId] = connection;
-      const result = {
-        ...data,
-        clientId,
-        command: 'registered',
-        timestamp: Date.now()
-      };
-      socket.emit('flash', result);
+      socket.emit('flash', response);
     }
   });
 });

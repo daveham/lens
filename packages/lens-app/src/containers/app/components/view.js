@@ -12,6 +12,7 @@ class View extends Component {
   static propTypes = {
     connected: PropTypes.bool,
     connecting: PropTypes.bool,
+    socketId: PropTypes.string,
     one: PropTypes.string,
     two: PropTypes.string,
     connectSocket: PropTypes.func.isRequired,
@@ -37,8 +38,10 @@ class View extends Component {
     }, 3000); // demo
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.connecting && !this.props.connecting) {
+  componentDidUpdate(prevProps /*, prevState */) {
+    const nowConnected = this.props.connected && prevProps.connecting && !this.props.connecting;
+    const socketIdChanged = prevProps.socketId && this.props.socketId && prevProps.socketId !== this.props.socketId;
+    if (nowConnected || socketIdChanged) {
       this.props.sendSocketCommand({ command: 'register' });
     }
   }

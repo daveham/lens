@@ -13,6 +13,7 @@ class View extends Component {
     connected: PropTypes.bool,
     connecting: PropTypes.bool,
     socketId: PropTypes.string,
+    command: PropTypes.object,
     one: PropTypes.string,
     two: PropTypes.string,
     connectSocket: PropTypes.func.isRequired,
@@ -71,6 +72,7 @@ class View extends Component {
           connected={this.props.connected}
           pingFlash={this.sendFlashPing}
           pingJob={this.sendCommandPing}
+          command={this.props.command}
         />
       </div>
     );

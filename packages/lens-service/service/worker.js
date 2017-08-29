@@ -3,10 +3,10 @@ const debug = _debug('lens:worker');
 
 import { worker as Worker } from 'node-resque';
 
-let getSocketFn = null;
+let serviceContext = null;
 
-const start = (connection, queues, getSocket, jobs, cb) => {
-  getSocketFn = getSocket;
+const start = (connection, queues, context, jobs, cb) => {
+  serviceContext = context;
   const worker = new Worker({connection, queues}, jobs);
 
   worker.on('start',
@@ -72,8 +72,22 @@ const start = (connection, queues, getSocket, jobs, cb) => {
   });
 };
 
-export const getResponseSocket = (clientId) => {
-  return getSocketFn(clientId);
+export const sendResponse = (result) => {
+  const { clientId } = result;
+  const socket = serviceContext.connections.getConnectionByClientId(clientId);
+  if (socket) {
+    const timestamp = Date.now();
+    const duration = timestamp - result.timestamp;
+    const response = {
+      ...result,
+      timestamp,
+      duration
+    };
+    debug(`job ${response.jobId} ${response.command} duration ${duration}`);
+    socket.emit('job', response);
+  } else {
+    debug(`no socket available for response for client ${clientId}`);
+  }
 };
 
 export default start;

@@ -28,20 +28,20 @@ server.get('/', (req, res, next) => {
   next();
 });
 
-const getResponseSocket = (clientId) => {
-  return connections.getConnectionByClientId(clientId);
+const serviceContext = {
+  connections
 };
 
 
 let serviceStarted = false;
 io.sockets.on('connect', (socket) => {
   debug('socket connected', socket.id);
-  connections.addConnectionForSocket(socket);
+  serviceContext.connections.addConnectionForSocket(socket);
 
   if (!serviceStarted) {
     serviceStarted = true;
 
-    start(getResponseSocket, () => {
+    start(serviceContext, () => {
       debug('Task service is running.');
     });
   }

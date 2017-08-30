@@ -3,21 +3,22 @@ import PropTypes from 'prop-types';
 
 class View extends Component {
   static propTypes = {
-    catalog: PropTypes.shape({
-      loading: PropTypes.bool,
-      name: PropTypes.string,
-      sources: PropTypes.shape({
-        ids: PropTypes.arrayOf(PropTypes.string),
-        byIds: PropTypes.object
+    loading: PropTypes.bool,
+    loaded: PropTypes.bool,
+    name: PropTypes.string,
+    sources: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        file: PropTypes.string.isRequired
       })
-    }),
+    ),
     requestCatalog: PropTypes.func.isRequired
   };
 
   componentDidMount() {
-    const { catalog } = this.props;
-    const alreadyFetched = catalog && !catalog.loading && catalog.name;
-    if (!alreadyFetched) {
+    const { loading, loaded } = this.props;
+    if (!(loaded || loading)) {
       setTimeout(() => {
         this.props.requestCatalog();
       }, 500);
@@ -25,21 +26,20 @@ class View extends Component {
   }
 
   renderLoading() {
-    const { catalog } = this.props;
+    const { loading } = this.props;
     return (
-      catalog && catalog.loading &&
-      <div>loading...</div>
+      loading &&
+        <div>loading...</div>
     );
   }
 
   renderCatalog() {
-    const { catalog } = this.props;
+    const { loaded, name, sources } = this.props;
     return (
-      catalog && catalog.name &&
+      loaded &&
         <div>
-          <div>{catalog.name}</div>
-          <div>{catalog.sources.ids.map(id => {
-            const source = catalog.sources.byIds[id];
+          <div>{name}</div>
+          <div>{sources.map(source => {
             return (
               <div key={source.id}>{source.id} - {source.name} ({source.file})</div>
             );
@@ -52,7 +52,7 @@ class View extends Component {
     return (
       <div>
         <h1>Catalog</h1>
-        <div>This is data catalog.</div>
+        <div>This is the data catalog.</div>
         {this.renderLoading()}
         {this.renderCatalog()}
       </div>

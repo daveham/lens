@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 
 import View from './components/view';
@@ -20,12 +20,15 @@ const mapDispatchToProps = {
   sendPing
 };
 
-const connected = ({ common }) => Boolean(common.socket);
-const connecting = ({ common }) => common.connecting;
-const socketId = ({ common }) => common.socket ? common.socket.id : null;
-const command = ({ common }) => common.command;
-const one = ({ common }) => common.testOne;
-const two = ({ common }) => common.testTwo;
+const commonSelector = ({ common }) => common;
+const connecting = createSelector(commonSelector, common => common.connecting);
+const socketSelector = createSelector(commonSelector, ({ socket }) => socket);
+const connected = createSelector(socketSelector, socket => Boolean(socket));
+const socketId = createSelector(socketSelector, socket => socket ? socket.id : null);
+const command = createSelector(commonSelector, ({ command }) => command);
+
+const one = createSelector(commonSelector, ({ testOne }) => testOne);
+const two = createSelector(commonSelector, ({ testTwo }) => testTwo);
 
 const mapStateToProps = createStructuredSelector({ connected, connecting, socketId, command, one, two });
 

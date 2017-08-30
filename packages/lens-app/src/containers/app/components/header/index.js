@@ -10,7 +10,7 @@ const renderTitle = () => {
         <img src={logo} className={styles.appLogo} alt='logo'/>
       </div>
       <div>
-        <h2>Welcome to My App</h2>
+        <h2>The Inference Lens</h2>
       </div>
     </div>
   );

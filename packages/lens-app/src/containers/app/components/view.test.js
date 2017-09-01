@@ -9,8 +9,11 @@ it('renders without crashing', () => {
   ReactDOM.render(
     <MemoryRouter>
       <View
+        connectSocket={() => {}}
         fetchTestOne={() => {}}
         fetchTestTwo={() => {}}
+        sendSocketCommand={() => {}}
+        sendPing={() => {}}
       />
     </MemoryRouter>,
     div

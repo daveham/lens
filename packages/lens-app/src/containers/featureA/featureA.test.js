@@ -8,7 +8,7 @@ it('renders without crashing', () => {
   ReactDOM.render(
     <MemoryRouter>
       <View
-        fetchHello={() => {}}
+        requestHello={() => {}}
       />
     </MemoryRouter>,
     div

@@ -13,6 +13,14 @@ class View extends Component {
         file: PropTypes.string.isRequired
       })
     ),
+    thumbnailImageDescriptors: PropTypes.arrayOf(
+      PropTypes.shape({
+        source: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          file: PropTypes.string.isRequired
+        })
+      })
+    ),
     requestCatalog: PropTypes.func.isRequired
   };
 

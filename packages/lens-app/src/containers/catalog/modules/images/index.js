@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+//import { combineReducers } from 'redux';
 import { createAction } from 'redux-actions';
 
 import { makeImageKey } from '@lens/image-descriptors';
@@ -48,10 +48,10 @@ export const ensureImage = (imageDescriptor, force) => {
     if (notNeeded) return;
 
     const body = JSON.stringify(imageDescriptor);
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    };
+    // const headers = {
+    //   'Content-Type': 'application/json',
+    //   Accept: 'application/json'
+    // };
 
     // mark image request in progress
     dispatch(requestImageAction({ imageDescriptor }));

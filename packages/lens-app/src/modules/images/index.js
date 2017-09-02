@@ -46,7 +46,7 @@ const imageByKeysReducer = (state = {}, key, image) => {
   };
 };
 
-const requestImageHandler = (state, { listKey, imageDescriptor }) => {
+const addOrUpdateImageItem = (state, listKey, imageDescriptor, reducerFn) => {
   const key = makeImageKey(imageDescriptor);
 
   const existingKeys = state.keys[listKey] || [];
@@ -59,7 +59,7 @@ const requestImageHandler = (state, { listKey, imageDescriptor }) => {
   };
   const byKeys = {
     ...state.byKeys,
-    [listKey]: imageByKeysReducer(existingByKeys, key, imageLoadingReducer(existingItem, true))
+    [listKey]: imageByKeysReducer(existingByKeys, key, reducerFn(existingItem))
   };
 
   return {
@@ -67,6 +67,21 @@ const requestImageHandler = (state, { listKey, imageDescriptor }) => {
     keys,
     byKeys
   };
+};
+
+const requestImageHandler = (state, { listKey, imageDescriptor }) => {
+  const imageReducerFn = (item) => imageLoadingReducer(item, true);
+  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
+};
+
+const clearRequestImageHandler = (state, { listKey, imageDescriptor }) => {
+  const imageReducerFn = (item) => imageLoadingReducer(item, false);
+  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
+};
+
+const receiveImageHandler = (state, { listKey, imageDescriptor, url }) => {
+  const imageReducerFn = (item) => imageLoadedReducer(item, url);
+  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
 };
 
 const initialState = {
@@ -77,8 +92,8 @@ const initialState = {
 const imageActionHandlers = {};
 const defaultHandler = (state) => state;
 imageActionHandlers[ACTIONS.REQUEST_IMAGE] = requestImageHandler;
-imageActionHandlers[ACTIONS.CLEAR_REQUEST_IMAGE] = defaultHandler;
-imageActionHandlers[ACTIONS.RECEIVE_IMAGE] = defaultHandler;
+imageActionHandlers[ACTIONS.CLEAR_REQUEST_IMAGE] = clearRequestImageHandler;
+imageActionHandlers[ACTIONS.RECEIVE_IMAGE] = receiveImageHandler;
 const getActionHandler = (type) => imageActionHandlers[type] || defaultHandler;
 
 const imagesReducer = (state = initialState, action) => {

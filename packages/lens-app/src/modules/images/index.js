@@ -1,6 +1,11 @@
 //import { combineReducers } from 'redux';
 import { createAction } from 'redux-actions';
 import { makeImageKey } from '@lens/image-descriptors';
+import {
+  itemLoadedReducer,
+  itemLoadingReducer,
+  addOrUpdateItem
+} from '../utils';
 
 export const ACTIONS = {
   REQUEST_IMAGE: 'REQUEST_IMAGE',
@@ -13,75 +18,22 @@ export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE/
 export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE/* , actionPayloadFromImageDescriptor*/);
 
 
-const imageLoadedReducer = (state = {}, url) => {
-  // add the url to the image object and reset the loading flag
-  return {
-    ...state,
-    url,
-    loading: false
-  };
-};
-
-const imageLoadingReducer = (state = {}, loading) => {
-  // set or reset the loading flag
-  return {
-    ...state,
-    loading
-  };
-};
-
-const imageKeysReducer = (state = [], key) => {
-  // add a key to the list of keys
-  return [
-    ...state,
-    key
-  ];
-};
-
-const imageByKeysReducer = (state = {}, key, image) => {
-  // add the image
-  return {
-    ...state,
-    [key]: image
-  };
-};
-
-const addOrUpdateImageItem = (state, listKey, imageDescriptor, reducerFn) => {
-  const key = makeImageKey(imageDescriptor);
-
-  const existingKeys = state.keys[listKey] || [];
-  const existingByKeys = state.byKeys[listKey] || {};
-  const existingItem = existingByKeys[key];
-
-  const keys = existingItem ? state.keys : {
-    ...state.keys,
-    [listKey]: imageKeysReducer(existingKeys, key)
-  };
-  const byKeys = {
-    ...state.byKeys,
-    [listKey]: imageByKeysReducer(existingByKeys, key, reducerFn(existingItem))
-  };
-
-  return {
-    ...state,
-    keys,
-    byKeys
-  };
-};
-
 const requestImageHandler = (state, { listKey, imageDescriptor }) => {
-  const imageReducerFn = (item) => imageLoadingReducer(item, true);
-  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
+  const key = makeImageKey(imageDescriptor);
+  const imageReducerFn = (item) => itemLoadingReducer(item, true);
+  return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
 const clearRequestImageHandler = (state, { listKey, imageDescriptor }) => {
-  const imageReducerFn = (item) => imageLoadingReducer(item, false);
-  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
+  const key = makeImageKey(imageDescriptor);
+  const imageReducerFn = (item) => itemLoadingReducer(item, false);
+  return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
 const receiveImageHandler = (state, { listKey, imageDescriptor, url }) => {
-  const imageReducerFn = (item) => imageLoadedReducer(item, url);
-  return addOrUpdateImageItem(state, listKey, imageDescriptor, imageReducerFn);
+  const key = makeImageKey(imageDescriptor);
+  const imageReducerFn = (item) => itemLoadedReducer(item, url);
+  return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
 const initialState = {

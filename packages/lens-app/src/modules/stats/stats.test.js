@@ -1,53 +1,55 @@
-import images from './index';
+import stats from './index';
 import {
-  requestImageAction,
-  clearRequestImageAction,
-  receiveImageAction
+  requestStatsAction,
+  clearRequestStatsAction,
+  receiveStatsAction
 } from './index';
 
-describe('images reducers', () => {
+describe('stats reducers', () => {
   test('should return default state with empty keys', () => {
-    const state = images();
+    const state = stats();
     expect(state).toHaveProperty('keys', {});
     expect(state).toHaveProperty('byKeys', {});
   });
 
   const initialState = { keys: {}, byKeys: {} };
   const listKey = 'list';
-  const id = 'image1';
+  const id = 'stats1';
+  const analysis = 'i';
   const imageDescriptor = { input: { id } };
+  const statsDescriptor = { analysis, imageDescriptor };
   const url = 'image1.jpg';
 
-  const expectedKey = `${id}`;
+  const expectedKey = `${analysis}_${id}`;
   const expectedListKeyProperty = `keys.${listKey}`;
   const expectedLoadingProperty = `byKeys.${listKey}.${expectedKey}.loading`;
   const expectedUrlProperty = `byKeys.${listKey}.${expectedKey}.url`;
 
-  describe('in a new list with a new image', () => {
+  describe('in a new list with a new image stat', () => {
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
-      expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
+      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
+      expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
-      expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
+      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
+      expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
-      expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
+      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
+      expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
     });
   });
 
-  describe('in an existing list with a new image', () => {
-    const existingKey = 'image0';
+  describe('in an existing list with a new image stat', () => {
+    const existingKey = `${analysis}_stats0`;
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
     inputState.keys[listKey] = [ existingKey ];
     inputState.byKeys[listKey] = { [ existingKey ]: { loading: false } };
@@ -55,44 +57,44 @@ describe('images reducers', () => {
     const expectedKeys = [ existingKey, expectedKey ];
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
+      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
+      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
+      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
     });
   });
 
-  describe('in an existing list with an existing image', () => {
+  describe('in an existing list with an existing image stat', () => {
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
     inputState.keys[listKey] = [ expectedKey ];
     inputState.byKeys[listKey] = { [ expectedKey ]: { loading: false } };
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
+      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
+      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
+      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);

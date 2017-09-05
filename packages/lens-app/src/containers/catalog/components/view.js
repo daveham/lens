@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import debugLib from 'debug';
+const debug = debugLib('lens:catalog:view');
+
 class View extends Component {
   static propTypes = {
     loading: PropTypes.bool,
@@ -42,7 +45,8 @@ class View extends Component {
   }
 
   renderCatalog() {
-    const { loaded, name, sources } = this.props;
+    const { loaded, name, sources, thumbnailImageDescriptors } = this.props;
+    debug('renderCatalog', { thumbnailImageDescriptors });
     return (
       loaded &&
         <div>

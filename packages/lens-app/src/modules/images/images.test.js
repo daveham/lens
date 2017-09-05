@@ -1,8 +1,8 @@
 import images from './index';
 import {
-  requestImageAction,
-  clearRequestImageAction,
-  receiveImageAction
+  requestImage,
+  clearRequestImage,
+  receiveImage
 } from './index';
 
 describe('images reducers', () => {
@@ -13,7 +13,7 @@ describe('images reducers', () => {
   });
 
   const initialState = { keys: {}, byKeys: {} };
-  const listKey = 'list';
+  const listKey = 'images';
   const id = 'image1';
   const imageDescriptor = { input: { id } };
   const url = 'image1.jpg';
@@ -27,19 +27,19 @@ describe('images reducers', () => {
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, requestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, clearRequestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
+      const state = images(inputState, receiveImage({ listKey, imageDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ id ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
@@ -55,19 +55,19 @@ describe('images reducers', () => {
     const expectedKeys = [ existingKey, expectedKey ];
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, requestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, clearRequestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
+      const state = images(inputState, receiveImage({ listKey, imageDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
@@ -80,19 +80,19 @@ describe('images reducers', () => {
     inputState.byKeys[listKey] = { [ expectedKey ]: { loading: false } };
 
     test('should record loading', () => {
-      const state = images(inputState, requestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, requestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = images(inputState, clearRequestImageAction({ listKey, imageDescriptor }));
+      const state = images(inputState, clearRequestImage({ listKey, imageDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = images(inputState, receiveImageAction({ listKey, imageDescriptor, url }));
+      const state = images(inputState, receiveImage({ listKey, imageDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);

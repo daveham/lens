@@ -13,9 +13,29 @@ export const ACTIONS = {
   RECEIVE_IMAGE: 'RECEIVE_IMAGE',
 };
 
-export const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE/* , actionPayloadFromImageDescriptor */);
-export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE/* , actionPayloadFromImageDescriptor */);
-export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE/* , actionPayloadFromImageDescriptor*/);
+export const IMAGE_LIST_KEYS = {
+  DEFAULT: 'images',
+  THUMBNAILS: 'thumbnails'
+};
+
+// action creators
+export const listKeyFromImageDescriptor = imageDescriptor => {
+  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
+    return IMAGE_LIST_KEYS.THUMBNAILS;
+  }
+  return IMAGE_LIST_KEYS.DEFAULT;
+};
+
+const actionPayloadFromImageDescriptor = payload => {
+  return {
+    ...payload,
+    listKey: listKeyFromImageDescriptor(payload.imageDescriptor)
+  };
+};
+
+export const requestImage = createAction(ACTIONS.REQUEST_IMAGE, actionPayloadFromImageDescriptor);
+export const clearRequestImage = createAction(ACTIONS.CLEAR_REQUEST_IMAGE, actionPayloadFromImageDescriptor);
+export const receiveImage = createAction(ACTIONS.RECEIVE_IMAGE, actionPayloadFromImageDescriptor);
 
 
 const requestImageHandler = (state, { listKey, imageDescriptor }) => {

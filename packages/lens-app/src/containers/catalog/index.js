@@ -12,13 +12,13 @@ const loading = ({ catalog }) => catalog.loading;
 const loaded = ({ catalog }) => Boolean(catalog.name);
 const name = ({ catalog }) => catalog.name;
 const sources = ({ catalog }) => catalog.sources;
-const sourcesAsArray = createSelector(sources, sources => {
+const sourcesArray = createSelector(sources, sources => {
   if (sources) {
     const { ids, byIds } = sources;
     return ids.map(id => byIds[id]);
   }
 });
-const thumbnailImageDescriptorsSelector = createSelector(sources, sources => {
+const thumbnailImageDescriptorsArray = createSelector(sources, sources => {
   if (sources) {
     const { ids, byIds } = sources;
     return ids.map(id => {
@@ -33,8 +33,8 @@ const mapStateToProps = createStructuredSelector({
   loading,
   loaded,
   name,
-  sources: sourcesAsArray,
-  thumbnailImageDescriptors: thumbnailImageDescriptorsSelector
+  sources: sourcesArray,
+  thumbnailImageDescriptors: thumbnailImageDescriptorsArray
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

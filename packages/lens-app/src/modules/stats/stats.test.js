@@ -1,8 +1,8 @@
 import stats from './index';
 import {
-  requestStatsAction,
-  clearRequestStatsAction,
-  receiveStatsAction
+  statsLoading,
+  statsNotLoading,
+  statsLoaded
 } from './index';
 
 describe('stats reducers', () => {
@@ -29,19 +29,19 @@ describe('stats reducers', () => {
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
 
     test('should record loading', () => {
-      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsNotLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
@@ -57,19 +57,19 @@ describe('stats reducers', () => {
     const expectedKeys = [ existingKey, expectedKey ];
 
     test('should record loading', () => {
-      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsNotLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);
@@ -82,19 +82,19 @@ describe('stats reducers', () => {
     inputState.byKeys[listKey] = { [ expectedKey ]: { loading: false } };
 
     test('should record loading', () => {
-      const state = stats(inputState, requestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, true);
     });
 
     test('should record not loading', () => {
-      const state = stats(inputState, clearRequestStatsAction({ listKey, statsDescriptor }));
+      const state = stats(inputState, statsNotLoading({ listKey, statsDescriptor }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
     test('should record url', () => {
-      const state = stats(inputState, receiveStatsAction({ listKey, statsDescriptor, url }));
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
       expect(state).toHaveProperty(expectedUrlProperty, url);

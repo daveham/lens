@@ -1,12 +1,11 @@
-import { select } from 'redux-saga/effects';
+import { takeEvery, select, all, call /*, put */ } from 'redux-saga/effects';
 import { makeImageKey } from '@lens/image-descriptors';
-import { invokeRestService, apiSaga } from './utils';
-import {
-  receiveImage,
-  clearRequestImage,
-  listKeyFromImageDescriptor
-} from '../modules/images';
+import { invokeRestService } from './utils';
+import { clientIdSelector } from './socket';
+import { ACTIONS, listKeyFromImageDescriptor } from '../modules/images';
 
+import _debug from 'debug';
+const debug = _debug('lens:saga-image');
 
 const imageSelector = (state, imageDescriptor) => {
   const listKey = listKeyFromImageDescriptor(imageDescriptor);
@@ -15,16 +14,37 @@ const imageSelector = (state, imageDescriptor) => {
   return byKeys[key];
 };
 
-export function* ensureImage(imageDescriptor, force) {
+export function* loadImageSaga({ payload }) {
+  debug('loadImageSaga payload', payload);
+  const { imageDescriptor, force } = payload;
   const image = yield select(imageSelector, imageDescriptor);
-  const notNeeded = image && (image.loading || (image.url && !force));
-  if (notNeeded) return;
+  const notNeeded = image && (image.url && !force);
+  if (notNeeded) {
+    debug('not needed', image);
+    return;
+  }
 
-  yield* apiSaga(invokeRestService,
-    [ '/api/images/', { method: 'POST' } ],
-    receiveImage.bind(null, imageDescriptor), // TODO
-    clearRequestImage.bind(null, imageDescriptor) // TODO
-  );
+  const clientId = yield select(clientIdSelector);
+  try {
+    const body = { clientId, imageDescriptor };
+    const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
+    // TODO
+    if (payload.url) {
+      debug('image api returned url', payload.url);
+      // yield put(imageLoaded(imageDescriptor, payload.url));
+    } else {
+      debug('image api did not return url');
+      // yield put(imageLoading(imageDescriptor));
+    }
+  } catch (error) {
+    debug('image api exception', error);
+    // yield put(imageNotLoading(imageDescriptor));
+  }
+}
 
+export default function* imagesSaga() {
+  yield all([
+    takeEvery(ACTIONS.IMAGE_LOADING, loadImageSaga)
+  ]);
 }
 

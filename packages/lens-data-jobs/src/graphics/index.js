@@ -1,5 +1,5 @@
 import { createJob } from '../utils';
 
-export const createImage = (imageDescriptor) => {
-  return createJob('image', { imageDescriptor });
+export const createImage = (clientId, imageDescriptor) => {
+  return createJob('image', { clientId, imageDescriptor });
 };

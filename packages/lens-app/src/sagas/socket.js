@@ -1,7 +1,7 @@
-
 import { channel } from 'redux-saga';
-import { put, take, select } from 'redux-saga/effects';
+import { call, takeEvery, all, put, take, select } from 'redux-saga/effects';
 import {
+  ACTIONS,
   receiveSocket,
   requestSocketFailed,
   receiveServiceCommand
@@ -84,3 +84,10 @@ export function* socketSend({ payload }) {
   }
 }
 
+export default function* socketSaga() {
+  yield all([
+    takeEvery(ACTIONS.REQUEST_SOCKET, connectSocket),
+    takeEvery(ACTIONS.SEND_SOCKET_COMMAND, socketSend),
+    call(watchSocketChannel)
+  ]);
+}

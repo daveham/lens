@@ -1,19 +1,15 @@
-import { call, takeEvery, all, select } from 'redux-saga/effects';
-import { ACTIONS, pingSent, pingSendFailed } from '../modules/common';
-import { invokeRestService, apiSaga } from './utils';
-import { connectSocket, watchSocketChannel, socketSend, clientIdSelector } from './socket';
-
-export function* sendPingSaga() {
-  const clientId = yield select(clientIdSelector);
-  yield* apiSaga(invokeRestService, [ '/ping', { method: 'POST', body: { clientId }} ], pingSent, pingSendFailed);
-}
+import { all } from 'redux-saga/effects';
+import socketSaga from './socket';
+import pingSaga from './ping';
+import imagesSaga from './images';
+//import statsSaga from './stats';
 
 export function* rootSaga() {
   yield all([
-    takeEvery(ACTIONS.REQUEST_SOCKET, connectSocket),
-    takeEvery(ACTIONS.SEND_SOCKET_COMMAND, socketSend),
-    takeEvery(ACTIONS.SEND_PING, sendPingSaga),
-    call(watchSocketChannel)
+    socketSaga(),
+    imagesSaga(),
+//    statsSaga(),
+    pingSaga()
   ]);
 }
 

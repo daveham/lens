@@ -9,6 +9,8 @@ export function* loadCatalog() {
 export function* rootSaga() {
   yield all([
     takeEvery(ACTIONS.REQUEST_CATALOG, loadCatalog)
+    // TODO: ensure images based on ACTIONS.REQUEST_IMAGE (disambiguate catalog ACTIONS from image ACTIONS
+    // takeEvery(ACTIONS.REQUEST_IMAGE, ensureImage) - parameter of imageDescriptor flows through?
   ]);
 }
 

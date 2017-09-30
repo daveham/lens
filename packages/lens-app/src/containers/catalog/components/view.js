@@ -24,7 +24,8 @@ class View extends Component {
         })
       })
     ),
-    requestCatalog: PropTypes.func.isRequired
+    requestCatalog: PropTypes.func.isRequired,
+    imageLoading: PropTypes.func.isRequired
   };
 
   componentDidMount() {
@@ -33,6 +34,17 @@ class View extends Component {
       setTimeout(() => {
         this.props.requestCatalog();
       }, 500);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const idsLoaded = (!(prevProps.thumbnailImageDescriptors && prevProps.thumbnailImageDescriptors.length > 0) &&
+      (this.props.thumbnailImageDescriptors && this.props.thumbnailImageDescriptors.length > 0));
+    if (idsLoaded) {
+      this.props.thumbnailImageDescriptors.forEach((imageDescriptor) => {
+        debug('start loading', imageDescriptor);
+        this.props.imageLoading({ imageDescriptor });
+      });
     }
   }
 

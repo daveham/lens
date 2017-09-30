@@ -37,6 +37,7 @@ const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE, actionPayloadFrom
 export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE, actionPayloadFromImageDescriptor);
 export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE, actionPayloadFromImageDescriptor);
 
+// TODO: convert this thunk implementation into a saga implementation
 // actions
 export const ensureImage = (imageDescriptor, force) => {
   return (dispatch, getstate) => {

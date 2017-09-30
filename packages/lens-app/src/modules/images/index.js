@@ -6,6 +6,10 @@ import {
   addOrUpdateItem
 } from '../utils';
 
+import debugLib from 'debug';
+const debug = debugLib('lens:modules:images');
+
+
 export const ACTIONS = {
   IMAGE_LOADING: 'IMAGE_LOADING',
   IMAGE_NOT_LOADING: 'IMAGE_NOT_LOADING',
@@ -19,6 +23,7 @@ export const IMAGE_LIST_KEYS = {
 
 // action creators
 export const listKeyFromImageDescriptor = imageDescriptor => {
+  debug('listKeyFromImageDescriptor', imageDescriptor);
   if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
     return IMAGE_LIST_KEYS.THUMBNAILS;
   }

@@ -3,9 +3,11 @@ import { createSelector, createStructuredSelector } from 'reselect';
 import { makeThumbnailImageDescriptor } from '@lens/image-descriptors';
 import View from './components/view';
 import { requestCatalog } from './modules';
+import { imageLoading } from '../../modules/images';
 
 const mapDispatchToProps = {
-  requestCatalog
+  requestCatalog,
+  imageLoading
 };
 
 const loading = ({ catalog }) => catalog.loading;

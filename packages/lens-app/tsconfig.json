@@ -1,0 +1,23 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "sourceMap": true,
+    "module": "ES6",
+    "target": "ES6",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "Preserve",
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "lib": [
+      "ES6",
+      "ES7",
+      "ES2017",
+      "DOM"
+    ]
+  },
+  "exclude": [
+    "dist",
+    "public",
+    "node_modules"
+  ]
+}

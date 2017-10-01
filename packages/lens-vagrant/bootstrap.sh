@@ -15,6 +15,7 @@ sudo mkdir ${projectdatafolder}
 sudo chmod 777 ${projectdatafolder}
 
 #install packages
+sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
 sudo curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
 #Add repo for nginx, for some reason yum's base package is broked
 #rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm

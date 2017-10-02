@@ -25,7 +25,7 @@ interface IProps {
   sources: ReadonlyArray<ISourceDescriptor>;
   thumbnailImageDescriptors: ReadonlyArray<IThumbnailDescriptor>;
   requestCatalog: () => void;
-  imageLoading: (payload: IEnsureImageLoadedPayload) => void;
+  ensureImage: (payload: IEnsureImageLoadedPayload) => void;
 }
 
 class View extends React.Component<IProps, any> {
@@ -44,7 +44,7 @@ class View extends React.Component<IProps, any> {
     if (idsLoaded) {
       this.props.thumbnailImageDescriptors.forEach((imageDescriptor) => {
         debug('start loading', imageDescriptor);
-        this.props.imageLoading({ imageDescriptor });
+        this.props.ensureImage({ imageDescriptor });
       });
     }
   }

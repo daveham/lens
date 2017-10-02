@@ -1,8 +1,8 @@
-import { takeEvery, select, all, call /*, put */ } from 'redux-saga/effects';
+import { takeEvery, select, all, call, put } from 'redux-saga/effects';
 import { makeImageKey } from '@lens/image-descriptors';
 import { invokeRestService } from './utils';
 import { clientIdSelector } from './socket';
-import { ACTIONS, listKeyFromImageDescriptor } from '../modules/images';
+import { ACTIONS, listKeyFromImageDescriptor, imageLoading } from '../modules/images';
 
 import _debug from 'debug';
 const debug = _debug('lens:saga-image');
@@ -14,8 +14,8 @@ const imageSelector = (state, imageDescriptor) => {
   return byKeys[key];
 };
 
-export function* loadImageSaga({ payload }) {
-  debug('loadImageSaga payload', payload);
+export function* ensureImageSaga({ payload }) {
+  debug('ensureImageSaga payload', payload);
   const { imageDescriptor, force } = payload;
   const image = yield select(imageSelector, imageDescriptor);
   const notNeeded = image && (image.url && !force);
@@ -24,6 +24,7 @@ export function* loadImageSaga({ payload }) {
     return;
   }
 
+  yield put(imageLoading({ imageDescriptor }));
   const clientId = yield select(clientIdSelector);
   try {
     const body = { clientId, imageDescriptor };
@@ -44,7 +45,7 @@ export function* loadImageSaga({ payload }) {
 
 export default function* imagesSaga() {
   yield all([
-    takeEvery(ACTIONS.IMAGE_LOADING, loadImageSaga)
+    takeEvery(ACTIONS.IMAGE_ENSURE, ensureImageSaga)
   ]);
 }
 

@@ -5,9 +5,9 @@
     "module": "ES6",
     "target": "ES6",
     "allowSyntheticDefaultImports": true,
-    "jsx": "Preserve",
+    "jsx": "preserve",
     "skipLibCheck": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "lib": [
       "ES6",
       "ES7",

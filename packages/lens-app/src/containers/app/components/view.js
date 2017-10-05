@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router-dom';
 import Menu from './menu';
 import Header from './header';
-import Footer from './footer';
+import Footer from './footer/index';
 import Home from '../../home';
 import { catalogRoute, featureARoute, featureBRoute } from '../../../routes';
 import styles from './styles.scss';

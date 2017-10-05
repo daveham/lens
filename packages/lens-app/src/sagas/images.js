@@ -2,7 +2,13 @@ import { takeEvery, select, all, call, put } from 'redux-saga/effects';
 import { makeImageKey } from '@lens/image-descriptors';
 import { invokeRestService } from './utils';
 import { clientIdSelector } from './socket';
-import { ACTIONS, listKeyFromImageDescriptor, imageLoading } from '../modules/images';
+import {
+  ACTIONS,
+  listKeyFromImageDescriptor,
+  imageLoading,
+  imageLoaded,
+  imageNotLoading
+} from '../modules/images';
 
 import _debug from 'debug';
 const debug = _debug('lens:saga-image');
@@ -30,16 +36,18 @@ export function* ensureImageSaga({ payload }) {
     const body = { clientId, imageDescriptor };
     const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
     // TODO
-    if (payload.url) {
-      debug('image api returned url', payload.url);
-      // yield put(imageLoaded(imageDescriptor, payload.url));
+    const { url } = payload;
+    if (url) {
+      debug('image api returned url', url);
+      yield put(imageLoaded({ imageDescriptor, url} ));
     } else {
       debug('image api did not return url');
-      // yield put(imageLoading(imageDescriptor));
+      // TODO: replace this with no-op since job should be enqueued
+      yield put(imageNotLoading({ imageDescriptor }));
     }
   } catch (error) {
     debug('image api exception', error);
-    // yield put(imageNotLoading(imageDescriptor));
+    yield put(imageNotLoading({ imageDescriptor }));
   }
 }
 

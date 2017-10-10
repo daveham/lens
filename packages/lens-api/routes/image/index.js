@@ -1,3 +1,5 @@
+import fs from 'fs';
+import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 import { createImage } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
 
@@ -7,11 +9,28 @@ const debug = _debug('lens:api-image');
 export default {
   post: (req, res, next) => {
     const { clientId, imageDescriptor } = req.body;
-    debug('image request ', clientId, imageDescriptor);
+    debug('POST image', { clientId, imageDescriptor });
+    const path = pathFromImageDescriptor(imageDescriptor);
+    debug('POST image', { path });
 
-    enqueueJob(createImage(clientId, imageDescriptor), (status) => {
-      res.send(status);
-      next();
+    fs.access(path, fs.constants.R_OK, (err) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          debug('file does not exist - creating task');
+          enqueueJob(createImage(clientId, imageDescriptor), (status) => {
+            res.send(status);
+            next();
+          });
+        } else {
+          debug('file access error', err);
+          res.send({ error: err });
+          next();
+        }
+      } else {
+        debug('file exists');
+        res.send({ url: urlFromImageDescriptor(imageDescriptor) });
+        next();
+      }
     });
   }
 };

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@lens/data-jobs": "^0.1.0",
+    "@lens/image-descriptors": "^0.1.0",
     "babel-register": "^6.24.1",
     "bunyan": "^1.8.12",
     "debug": "^2.6.8",

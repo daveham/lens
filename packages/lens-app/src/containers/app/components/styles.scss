@@ -1,17 +1,20 @@
+@import '../../../variables';
+
 .appContainer {
-  background-color: #222;
+  background-color: $lens-app-header-background-color;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
 .featureContainer {
-  background-color: white;
-  text-align: center;
+  background-color: $lens-page-background-color;
+  display: flex;
   flex-grow: 1;
 }
 
 .featureContainer h1 {
+  font-family: $lens-title-font;
   margin: 0;
   padding: 0;
 }

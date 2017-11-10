@@ -1,48 +1,10 @@
-import { createAction } from 'redux-actions';
 import { makeImageKey } from '@lens/image-descriptors';
 import {
   itemLoadedReducer,
   itemLoadingReducer,
   addOrUpdateItem
 } from '../utils';
-
-import debugLib from 'debug';
-const debug = debugLib('lens:modules:images');
-
-
-export const ACTIONS = {
-  IMAGE_ENSURE: 'IMAGE_ENSURE',
-  IMAGE_LOADING: 'IMAGE_LOADING',
-  IMAGE_NOT_LOADING: 'IMAGE_NOT_LOADING',
-  IMAGE_LOADED: 'IMAGE_LOADED',
-};
-
-export const IMAGE_LIST_KEYS = {
-  DEFAULT: 'images',
-  THUMBNAILS: 'thumbnails'
-};
-
-// action creators
-export const listKeyFromImageDescriptor = imageDescriptor => {
-  debug('listKeyFromImageDescriptor', imageDescriptor);
-  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
-    return IMAGE_LIST_KEYS.THUMBNAILS;
-  }
-  return IMAGE_LIST_KEYS.DEFAULT;
-};
-
-const actionPayloadFromImageDescriptor = payload => {
-  return {
-    ...payload,
-    listKey: listKeyFromImageDescriptor(payload.imageDescriptor)
-  };
-};
-
-export const ensureImage = createAction(ACTIONS.IMAGE_ENSURE, actionPayloadFromImageDescriptor);
-export const imageLoading = createAction(ACTIONS.IMAGE_LOADING, actionPayloadFromImageDescriptor);
-export const imageNotLoading = createAction(ACTIONS.IMAGE_NOT_LOADING, actionPayloadFromImageDescriptor);
-export const imageLoaded = createAction(ACTIONS.IMAGE_LOADED, actionPayloadFromImageDescriptor);
-
+import { ACTIONS } from './actions';
 
 const imageLoadingHandler = (state, { listKey, imageDescriptor }) => {
   const key = makeImageKey(imageDescriptor);

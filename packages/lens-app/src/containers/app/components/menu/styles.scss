@@ -1,3 +1,5 @@
+@import '../../../../variables';
+
 .container {
   padding: 4px 0 6px;
   height: 16px;
@@ -8,11 +10,11 @@
 }
 
 .menu a {
-  color: #fff;
+  color: $lens-app-header-color;
   text-decoration: none;
   padding: .5em 1em;
 }
 
 .menu a:hover {
-  color: #66f;
+  color: $lens-app-menu-hover-color;
 }

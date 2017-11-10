@@ -8,7 +8,7 @@ import {
   imageLoading,
   imageLoaded,
   imageNotLoading
-} from '../modules/images';
+} from '../modules/images/actions';
 
 import _debug from 'debug';
 const debug = _debug('lens:saga-image');

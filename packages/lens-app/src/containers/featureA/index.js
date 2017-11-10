@@ -2,14 +2,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import View from './view';
-import { requestHello } from './reducer';
+import { requestHello } from './actions';
+import { greeting, loading } from './selectors';
 
 const mapDispatchToProps = {
   requestHello
 };
-
-const greeting = ({ featureA }) => featureA.greeting;
-const loading = ({ featureA }) => featureA.loading;
 
 const mapStateToProps = createStructuredSelector({
   loading,

@@ -22,9 +22,7 @@ export const invokeRestService = (url, options = {}) => {
 
   return fetch(apiServer + url, fetchParams)
   .then(response => response.json())
-  .then(payload => {
-    return payload;
-  })
+  .then(payload => payload)
   .catch(error => {
     debug('getAPI error', { url, error });
     throw error;

@@ -7,10 +7,10 @@ const renderTitle = () => {
   return (
     <div className={styles.title}>
       <div>
-        <img src={logo} className={styles.appLogo} alt='logo'/>
-      </div>
-      <div>
         <h2>The Inference Lens</h2>
+      </div>
+      <div className={styles.logoContainer}>
+        <img src={logo} className={styles.appLogo} alt='logo'/>
       </div>
     </div>
   );

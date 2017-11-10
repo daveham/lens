@@ -1,8 +1,10 @@
+@import '../../../../variables';
+
 .container {
-  padding: 10px 0 2px;
-  color: white;
+  padding: 2px 0;
+  color: $lens-app-header-color;
   text-align: center;
-  border-bottom: solid 4px #666;
+  border-bottom: solid 2px $lens-app-header-button-border-color;
 }
 
 .title {
@@ -11,7 +13,14 @@
 }
 
 .title h2 {
-  margin: 10px 0;
+  font-family: $lens-title-font;
+  margin: 10px 0 0 60px;
+}
+
+.logoContainer {
+  position: relative;
+  left: -15px;
+  top: -10px;
 }
 
 .appLogo {

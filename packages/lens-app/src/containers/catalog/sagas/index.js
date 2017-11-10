@@ -1,6 +1,6 @@
 import { takeEvery, all } from 'redux-saga/effects';
 import { invokeRestService, apiSaga } from '../../../sagas/utils';
-import { ACTIONS, receiveCatalog, requestCatalogFailed } from '../modules';
+import { ACTIONS, receiveCatalog, requestCatalogFailed } from '../modules/actions';
 
 export function* loadCatalog() {
   yield* apiSaga(invokeRestService, [ '/catalog' ], receiveCatalog, requestCatalogFailed);

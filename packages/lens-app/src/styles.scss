@@ -1,16 +1,18 @@
-html {
-  box-sizing: border-box;
-  height: 100%;
-}
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import './_variables';
 
+html,
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
 }
 
 .container {
-  font-family: sans-serif;
+  font-family: $lens-page-font;
   height: 100%;
   width: 100%;
+  color: $lens-page-color;
+  background-color: $lens-page-background-color;
 }

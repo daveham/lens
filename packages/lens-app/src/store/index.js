@@ -11,7 +11,7 @@ const registry = new Registry({ reducers });
 
 export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = createSagaMiddleware(registry);
 
 const middleware = [
   sagaMiddleware,

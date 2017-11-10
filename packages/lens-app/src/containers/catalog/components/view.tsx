@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styles from './styles.scss';
 
 import debugLib from 'debug';
 const debug = debugLib('lens:catalog:view');
@@ -51,11 +52,13 @@ class View extends React.Component<IProps, any> {
 
   public render() {
     return (
-      <div>
-        <h1>Catalog</h1>
-        <div>This is the data catalog.</div>
-        {this.renderLoading()}
-        {this.renderCatalog()}
+      <div className={styles.container}>
+        <div className={styles.data}>
+          <h1>Catalog</h1>
+          <div>This is the data catalog.</div>
+          {this.renderLoading()}
+          {this.renderCatalog()}
+        </div>
       </div>
     );
   }

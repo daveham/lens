@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styles from './styles.scss';
 
 interface IProps {
   loading?: boolean;
@@ -18,11 +19,13 @@ class View extends React.Component<IProps, any> {
 
   public render() {
     return (
-      <div>
-        <h1>Feature A</h1>
-        <div>This is feature A.</div>
-        {this.renderLoading()}
-        {this.renderGreeting()}
+      <div className={styles.container}>
+        <div className={styles.data}>
+          <h1>Feature A</h1>
+          <div>This is feature A.</div>
+          {this.renderLoading()}
+          {this.renderGreeting()}
+        </div>
       </div>
     );
   }

@@ -1,41 +1,16 @@
 //import { combineReducers } from 'redux';
-import { createAction } from 'redux-actions';
 
 import { makeImageKey } from '@lens/image-descriptors';
+import {
+  listKeyFromImageDescriptor,
+  requestImageAction,
+  clearRequestImageAction,
+  receiveImageAction
+} from './actions';
 
 import _debug from 'debug';
 const debug = _debug('app:catalogimages');
 
-// constants
-export const ACTIONS = {
-  REQUEST_IMAGE: 'REQUEST_IMAGE',
-  CLEAR_REQUEST_IMAGE: 'CLEAR_REQUEST_IMAGE',
-  RECEIVE_IMAGE: 'RECEIVE_IMAGE',
-};
-
-export const IMAGE_LIST_KEYS = {
-  DEFAULT: 'images',
-  THUMBNAILS: 'thumbnails'
-};
-
-// action creators
-export const listKeyFromImageDescriptor = imageDescriptor => {
-  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
-    return IMAGE_LIST_KEYS.THUMBNAILS;
-  }
-  return IMAGE_LIST_KEYS.DEFAULT;
-};
-
-const actionPayloadFromImageDescriptor = payload => {
-  return {
-    ...payload,
-    listKey: listKeyFromImageDescriptor(payload.imageDescriptor)
-  };
-};
-
-const requestImageAction = createAction(ACTIONS.REQUEST_IMAGE, actionPayloadFromImageDescriptor);
-export const clearRequestImageAction = createAction(ACTIONS.CLEAR_REQUEST_IMAGE, actionPayloadFromImageDescriptor);
-export const receiveImageAction = createAction(ACTIONS.RECEIVE_IMAGE, actionPayloadFromImageDescriptor);
 
 // TODO: convert this thunk implementation into a saga implementation
 // actions

@@ -1,13 +1,16 @@
+@import '../../../../variables';
+
 .container {
   padding: 10px 5px;
-  color: white;
-  background-color: black;
+  color: $lens-page-color;
+  background-color: $lens-app-header-background-color;
   display: flex;
   align-items: baseline;
   font-size: 9pt;
 }
 
 .commandStatus {
+  color: $lens-app-header-button-background-hover-color;
   margin-left: auto;
   padding: 0 4px;
 }

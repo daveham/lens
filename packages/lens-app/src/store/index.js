@@ -5,9 +5,10 @@ import createSagaMiddleware from 'redux-saga';
 import Registry from './registry';
 import registryMiddleware from './registry/middleware';
 import reducers from '../modules';
+import commands from '../modules/commands';
 import sagas from '../sagas';
 
-const registry = new Registry({ reducers });
+export const registry = new Registry({ reducers, commands });
 
 export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
 

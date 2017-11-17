@@ -22,3 +22,24 @@ export const thumbnailImageDescriptorsArray = createSelector(sources, sources =>
   }
 });
 
+export const IMAGE_LIST_KEYS = {
+  DEFAULT: 'images',
+  THUMBNAILS: 'thumbnails'
+};
+
+export const STATS_LIST_KEYS = {
+  DEFAULT: 'stats',
+  SOURCES: 'sources'
+};
+
+const THUMBNAIL_IMAGE_LOADING_URL = null; // '/thumbloading.png';
+const thumbnailUrlFromImage = image => {
+  return (image && !image.loading) ? image.url : THUMBNAIL_IMAGE_LOADING_URL;
+};
+
+export const thumbnailUrlsSelector = state => {
+  const { keys, byKeys } = state.images;
+  const thumbnailKeys = keys[IMAGE_LIST_KEYS.THUMBNAILS] || [];
+  const thumbnailByKeys = byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  return thumbnailKeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
+};

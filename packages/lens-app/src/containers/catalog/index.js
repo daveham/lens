@@ -8,7 +8,8 @@ import {
   loaded,
   name,
   sourcesArray,
-  thumbnailImageDescriptorsArray
+  thumbnailImageDescriptorsArray,
+  thumbnailUrlsSelector as thumbnailImageUrls
 } from './selectors';
 
 const mapDispatchToProps = {
@@ -21,7 +22,8 @@ const mapStateToProps = createStructuredSelector({
   loaded,
   name,
   sources: sourcesArray,
-  thumbnailImageDescriptors: thumbnailImageDescriptorsArray
+  thumbnailImageDescriptors: thumbnailImageDescriptorsArray,
+  thumbnailImageUrls
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

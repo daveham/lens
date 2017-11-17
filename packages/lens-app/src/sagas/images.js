@@ -11,7 +11,7 @@ import {
 } from '../modules/images/actions';
 
 import _debug from 'debug';
-const debug = _debug('lens:saga-image');
+const debug = _debug('lens:saga:image');
 
 const imageSelector = (state, imageDescriptor) => {
   const listKey = listKeyFromImageDescriptor(imageDescriptor);
@@ -21,12 +21,10 @@ const imageSelector = (state, imageDescriptor) => {
 };
 
 export function* ensureImageSaga({ payload }) {
-  debug('ensureImageSaga payload', payload);
   const { imageDescriptor, force } = payload;
   const image = yield select(imageSelector, imageDescriptor);
   const notNeeded = image && (image.url && !force);
   if (notNeeded) {
-    debug('not needed', image);
     return;
   }
 
@@ -38,12 +36,12 @@ export function* ensureImageSaga({ payload }) {
     // TODO
     const { url } = payload;
     if (url) {
-      debug('image api returned url', url);
+      // debug('image api returned url', url);
       yield put(imageLoaded({ imageDescriptor, url} ));
-    } else {
-      debug('image api did not return url');
-      // TODO: replace this with no-op since job should be enqueued
-      yield put(imageNotLoading({ imageDescriptor }));
+    // } else {
+    //   debug('image api did not return url');
+    //   // TODO: replace this with no-op since job should be enqueued
+    //   yield put(imageNotLoading({ imageDescriptor }));
     }
   } catch (error) {
     debug('image api exception', error);
@@ -56,4 +54,3 @@ export default function* imagesSaga() {
     takeEvery(ACTIONS.IMAGE_ENSURE, ensureImageSaga)
   ]);
 }
-

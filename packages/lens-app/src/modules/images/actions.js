@@ -1,6 +1,6 @@
 import { createAction } from 'redux-actions';
-import debugLib from 'debug';
-const debug = debugLib('lens:modules:images:actions');
+// import debugLib from 'debug';
+// const debug = debugLib('lens:modules:images:actions');
 
 export const ACTIONS = {
   IMAGE_ENSURE: 'IMAGE_ENSURE',
@@ -16,7 +16,7 @@ export const IMAGE_LIST_KEYS = {
 
 // action creators
 export const listKeyFromImageDescriptor = imageDescriptor => {
-  debug('listKeyFromImageDescriptor', imageDescriptor);
+  // debug('listKeyFromImageDescriptor', imageDescriptor);
   if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
     return IMAGE_LIST_KEYS.THUMBNAILS;
   }

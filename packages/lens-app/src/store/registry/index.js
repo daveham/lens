@@ -6,8 +6,13 @@ const debug = _debug('lens:registry');
 export default class Registry {
   constructor({ reducers, sagas, commands }) {
     this._reducers = reducers;
-    this._sagas = sagas;
-    this._commands = commands;
+    this._commands = {
+      ...commands
+    };
+    this._sagas = { };
+    if (sagas) {
+      this._sagas[sagas.key] = sagas.saga;
+    }
   }
 
   store = null;
@@ -29,13 +34,16 @@ export default class Registry {
 
     if (sagas) {
       debug('injecting sagas', sagas);
-      // TODO: manage sagas
+      this._sagas[sagas.key] = sagas.saga;
       this.sagaMiddleware.run(sagas.saga);
     }
 
     if (commands) {
       debug('replacing commands');
-      // TODO: manage commands
+      this._commands = {
+        ...this._commands,
+        ...commands
+      };
     }
   }
 

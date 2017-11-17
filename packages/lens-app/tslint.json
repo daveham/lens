@@ -4,6 +4,13 @@
     "tslint-react"
   ],
   "rules": {
-    "quotemark": [true, "single", "avoid-escape", "avoid-template"]
+    "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+    "trailing-comma": false,
+    "no-submodule-imports": false,
+    "ordered-imports": false,
+    "jsx-no-multiline-js": false,
+    "jsx-boolean-value": false,
+    "interface-name": false,
+    "semicolon": [true, "always", "ignore-bound-class-methods"]
   }
 }

@@ -42,16 +42,18 @@ Vagrant.configure(2) do |config|
   # Note that when the triggers execute, they will prompt you on the command line to enter your
   # machine's admin password which is required to manipulate the firewall.
 
-  # Vagrant triggers are used to forward host ports 80 and 443 up to 8080 and 4443.
-  config.trigger.after [:provision, :up, :reload] do
-    system('echo "
-      rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 80 -> 192.168.20.20 port 8080
-      rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 192.168.20.20 port 4443
+  if defined? VagrantPlugins::Triggers
+    # Vagrant triggers are used to forward host ports 80 and 443 up to 8080 and 4443.
+    config.trigger.after [:provision, :up, :reload] do
+      system('echo "
+        rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 80 -> 192.168.20.20 port 8080
+        rdr pass on lo0 inet proto tcp from any to 127.0.0.1 port 443 -> 192.168.20.20 port 4443
 "     | sudo pfctl -f - > /dev/null 2>&1; echo "==> Fowarding Ports: 80 -> 8080, 443 -> 4443"')
-  end
+    end
 
-  # Vagrant triggers are used to cancel the forwarding of host ports.
-  config.trigger.after [:halt, :destroy] do
-    system("sudo pfctl -f /etc/pf.conf > /dev/null 2>&1; echo '==> Removing Port Forwarding'")
+    # Vagrant triggers are used to cancel the forwarding of host ports.
+    config.trigger.after [:halt, :destroy] do
+      system("sudo pfctl -f /etc/pf.conf > /dev/null 2>&1; echo '==> Removing Port Forwarding'")
+    end
   end
 end

@@ -17,8 +17,6 @@ class View extends Component {
     one: PropTypes.string,
     two: PropTypes.string,
     connectSocket: PropTypes.func.isRequired,
-    fetchTestOne: PropTypes.func.isRequired,
-    fetchTestTwo: PropTypes.func.isRequired,
     sendSocketCommand: PropTypes.func.isRequired,
     sendPing: PropTypes.func.isRequired
   };
@@ -29,14 +27,6 @@ class View extends Component {
         this.props.connectSocket();
       }, 0);
     }
-
-    setTimeout(() => {
-      this.props.fetchTestOne();
-    }, 2000); // demo
-
-    setTimeout(() => {
-      this.props.fetchTestTwo();
-    }, 3000); // demo
   }
 
   componentDidUpdate(prevProps /*, prevState */) {

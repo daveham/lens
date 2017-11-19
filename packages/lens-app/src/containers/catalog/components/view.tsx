@@ -1,33 +1,12 @@
 import * as React from 'react';
 import faStyles from 'font-awesome/scss/font-awesome.scss';
 import FontAwesome from 'react-fontawesome';
+import { default as getConfig } from '../../../config';
+import { ISourceDescriptor, IThumbnailDescriptor } from '../../../interfaces';
 import styles from './styles.scss';
 
 import debugLib from 'debug';
 const debug = debugLib('lens:catalog:view');
-
-interface IConfig {
-  dataHost: string;
-}
-
-const config: IConfig = {
-  dataHost: process.env.REACT_APP_REST_SERVER
-};
-
-interface ISourceDescriptor {
-  id: string;
-  name: string;
-  file: string;
-}
-
-interface IThumbnailDescriptor {
-  id: string;
-  file: string;
-}
-
-interface IEnsureImageLoadedPayload {
-  [name: string]: IThumbnailDescriptor;
-}
 
 interface IProps {
   loading?: boolean;
@@ -37,16 +16,15 @@ interface IProps {
   thumbnailImageDescriptors: ReadonlyArray<IThumbnailDescriptor>;
   thumbnailImageUrls: ReadonlyArray<string>;
   requestCatalog: () => void;
-  ensureImage: (payload: IEnsureImageLoadedPayload) => void;
+  ensureImage: (descriptors: {[name: string]: IThumbnailDescriptor}) => void;
 }
 
 class View extends React.Component<IProps, any> {
   public componentDidMount() {
-    const { loading, loaded } = this.props;
-    if (!(loaded || loading)) {
+    if (!(this.props.loaded || this.props.loading)) {
       setTimeout(() => {
         this.props.requestCatalog();
-      }, 500);
+      }, 0);
     }
   }
 
@@ -55,22 +33,16 @@ class View extends React.Component<IProps, any> {
       (this.props.thumbnailImageDescriptors && this.props.thumbnailImageDescriptors.length > 0));
     if (idsLoaded) {
       this.props.thumbnailImageDescriptors.forEach((imageDescriptor) => {
-        debug('ensure image', imageDescriptor);
         this.props.ensureImage({ imageDescriptor });
       });
     }
   }
 
   public render() {
-    debug('render');
     return (
       <div className={styles.container}>
-        <div className={styles.data}>
-          <h1>Catalog</h1>
-          <div>This is the data catalog.</div>
-          {this.renderLoading()}
-          {this.renderCatalog()}
-        </div>
+        {this.renderLoading()}
+        {this.renderCatalog()}
       </div>
     );
   }
@@ -79,18 +51,17 @@ class View extends React.Component<IProps, any> {
     const { loading } = this.props;
     return (
       loading &&
-        <div>loading...</div>
+        <FontAwesome name='spinner' cssModule={faStyles} pulse />
     );
   }
 
   private renderCatalog() {
-    const {loaded, name, thumbnailImageDescriptors} = this.props;
-    debug('renderCatalog', {thumbnailImageDescriptors, loaded});
+    const { loaded, name } = this.props;
     return (
       loaded &&
       (
-        <div>
-          <div>{name}</div>
+        <div className={styles.content}>
+          <div className={styles.catalogName}>{name}</div>
           {this.renderThumbnails()}
         </div>
       )
@@ -101,35 +72,35 @@ class View extends React.Component<IProps, any> {
     const { thumbnailImageUrls, sources } = this.props;
     return (
       <div className={styles.sourceListContainer}>
-        {thumbnailImageUrls.map((url, index) => this.renderThumbnail(url, sources[index].id))}
+        {thumbnailImageUrls.map((url, index) => {
+          const source = sources[index];
+          const { id, name } = source;
+          return this.renderThumbnail(url, id, name);
+        })}
       </div>
     );
   }
 
-  private renderThumbnail(url, id) {
-    debug('renderSource', url);
+  private renderThumbnail(url, id, name) {
     if (url) {
-      const restUrl = `${config.dataHost}${url}`;
+      const dataHost = getConfig().dataHost;
+      const restUrl = `${dataHost}${url}`;
       return (
-        <div key={id} className={styles.url} onClick={this.handleImageClicked(id)}>
-          <img src={restUrl}/>
+        <div key={id} className={styles.thumbnailItem} onClick={this.handleImageClicked(id)}>
+          <img className={styles.thumbnailImage} src={restUrl}/>
+          <figcaption className={styles.thumbnailImageLabel}>{name}</figcaption>
         </div>
       );
     } else {
       return (
-        <div key={id} className={styles.url} onClick={this.handleImageClicked(id)}>
+        <div key={id} className={styles.thumbnailLoading} onClick={this.handleImageClicked(id)}>
           <FontAwesome name='spinner' cssModule={faStyles} pulse />
         </div>
       );
     }
-    // return (
-    //   <div key={source.id} className={styles.source}>
-    //     {source.id} - {source.name} ({source.file})
-    //   </div>
-    // );
   }
 
-  private handleImageClicked = (id) => (e) => {
+  private handleImageClicked = (id) => (ignore) => {
     debug('handleImageClicked', { id });
   }
 }

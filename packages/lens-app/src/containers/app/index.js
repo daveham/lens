@@ -6,16 +6,12 @@ import View from './components/view';
 
 import {
   requestSocket as connectSocket,
-  testOneAction as fetchTestOne,
-  testTwoAction as fetchTestTwo,
   sendSocketCommand,
   sendPing
 } from '../../modules/common';
 
 const mapDispatchToProps = {
   connectSocket,
-  fetchTestOne,
-  fetchTestTwo,
   sendSocketCommand,
   sendPing
 };
@@ -27,9 +23,6 @@ const connected = createSelector(socketSelector, socket => Boolean(socket));
 const socketId = createSelector(socketSelector, socket => socket ? socket.id : null);
 const command = createSelector(commonSelector, ({ command }) => command);
 
-const one = createSelector(commonSelector, ({ testOne }) => testOne);
-const two = createSelector(commonSelector, ({ testTwo }) => testTwo);
-
-const mapStateToProps = createStructuredSelector({ connected, connecting, socketId, command, one, two });
+const mapStateToProps = createStructuredSelector({ connected, connecting, socketId, command });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(View));

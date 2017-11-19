@@ -8,10 +8,12 @@
   background-color: $lens-app-header-button-background-color;
   border-radius: 2px;
   border: solid 1px $lens-app-header-button-border-color;
+  cursor: pointer;
 }
 
 .disabled {
   color: $lens-app-header-button-background-disabled-color;
+  cursor: default;
 }
 
 .button:hover:enabled {

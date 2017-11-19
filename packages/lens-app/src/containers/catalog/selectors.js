@@ -32,9 +32,8 @@ export const STATS_LIST_KEYS = {
   SOURCES: 'sources'
 };
 
-const THUMBNAIL_IMAGE_LOADING_URL = null; // '/thumbloading.png';
 const thumbnailUrlFromImage = image => {
-  return (image && !image.loading) ? image.url : THUMBNAIL_IMAGE_LOADING_URL;
+  return (image && !image.loading) ? image.url : null;
 };
 
 export const thumbnailUrlsSelector = state => {

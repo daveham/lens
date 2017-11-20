@@ -53,7 +53,7 @@ class View extends Component {
         <main className={styles.featureContainer}>
           <Switch>
             <Route exact path='/' component={Home}/>
-            <Route exact path='/Catalog' component={catalogRoute}/>
+            <Route path='/Catalog' component={catalogRoute}/>
             <Route exact path='/FeatureA' component={featureARoute}/>
             <Route exact path='/FeatureB' component={featureBRoute}/>
           </Switch>

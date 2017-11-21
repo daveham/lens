@@ -6,25 +6,6 @@ $thumbnailImageBorderColor: #eee;
 
 .container {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px;
-}
-
-.content {
-  padding-top: 20px;
-  text-align: center;
-}
-
-.catalogName {
-  font-family: $lens-title-font;
-  font-size: 36pt;
-}
-
-.sourceListContainer {
-  display: flex;
   justify-content: space-between;
   padding: 20px 0;
 }

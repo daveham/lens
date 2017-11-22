@@ -1,16 +1,20 @@
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
+import { default as getConfig } from '../../../../config';
+import { thumbnailUrlsSelector } from '../../../../modules/images/selectors';
+import { sourcesArray } from '../../selectors';
 import View from './view';
-import {
-  sourcesArray,
-  thumbnailUrlsSelector as thumbnailImageUrls
-} from '../../selectors';
 
 const mapDispatchToProps = {};
 
-const mapStateToProps = createStructuredSelector({
-  sources: sourcesArray,
-  thumbnailImageUrls
-});
+const mapStateToProps = (state, ownProps) => {
+  const sources = sourcesArray(state);
+  const thumbnailImageUrls = thumbnailUrlsSelector(state);
+  const { id } = ownProps.match.params;
+  const index = sources.findIndex((source) => source.id === id);
+  const dataHost = getConfig().dataHost;
+  const sourceThumbnailUrl = `${dataHost}${thumbnailImageUrls[index]}`;
+
+  return { sourceThumbnailUrl  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

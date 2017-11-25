@@ -1,5 +1,7 @@
 import imageCommands from './images/commands';
+import statsCommands from './stats/commands';
 
 export default {
-  ...imageCommands
+  ...imageCommands,
+  ...statsCommands
 };

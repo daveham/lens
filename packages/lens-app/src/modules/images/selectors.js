@@ -1,3 +1,6 @@
+import { makeImageKey } from '@lens/image-descriptors';
+import { listKeyFromImageDescriptor } from './actions';
+
 export const IMAGE_LIST_KEYS = {
   DEFAULT: 'images',
   THUMBNAILS: 'thumbnails'
@@ -12,4 +15,11 @@ export const thumbnailUrlsSelector = ({ images }) => {
   const thumbnailKeys = keys[IMAGE_LIST_KEYS.THUMBNAILS] || [];
   const thumbnailByKeys = byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
   return thumbnailKeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
+};
+
+export const imageSelector = (state, imageDescriptor) => {
+  const listKey = listKeyFromImageDescriptor(imageDescriptor);
+  const byKeys = state.images.byKeys[listKey] || {};
+  const key = makeImageKey(imageDescriptor);
+  return byKeys[key];
 };

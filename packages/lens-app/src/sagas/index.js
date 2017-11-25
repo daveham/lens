@@ -3,14 +3,14 @@ import socketSaga from './socket';
 import commandSaga from './command';
 import pingSaga from './ping';
 import imagesSaga from './images';
-//import statsSaga from './stats';
+import statsSaga from './stats';
 
 export function* rootSaga() {
   yield all([
     socketSaga(),
     commandSaga(),
     imagesSaga(),
-//    statsSaga(),
+    statsSaga(),
     pingSaga()
   ]);
 }

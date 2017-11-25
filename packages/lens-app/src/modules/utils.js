@@ -1,8 +1,17 @@
-export const itemLoadedReducer = (state = {}, url) => {
+export const itemLoadedWithUrlReducer = (state = {}, url) => {
   // add the url to the object and reset the loading flag
   return {
     ...state,
     url,
+    loading: false
+  };
+};
+
+export const itemLoadedWithDataReducer = (state = {}, data) => {
+  // add the data to the object and reset the loading flag
+  return {
+    ...state,
+    data,
     loading: false
   };
 };

@@ -1,6 +1,6 @@
 import { makeImageKey } from '@lens/image-descriptors';
 import {
-  itemLoadedReducer,
+  itemLoadedWithUrlReducer,
   itemLoadingReducer,
   addOrUpdateItem
 } from '../utils';
@@ -20,7 +20,7 @@ const imageNotLoadingHandler = (state, { listKey, imageDescriptor }) => {
 
 const imageLoadedHandler = (state, { listKey, imageDescriptor, url }) => {
   const key = makeImageKey(imageDescriptor);
-  const imageReducerFn = (item) => itemLoadedReducer(item, url);
+  const imageReducerFn = (item) => itemLoadedWithUrlReducer(item, url);
   return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 

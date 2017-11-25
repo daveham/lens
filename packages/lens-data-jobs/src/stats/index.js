@@ -1,5 +1,5 @@
 import { createJob } from '../utils';
 
-export const createStats = (statsDescriptor) => {
-  return createJob('stats', { statsDescriptor });
+export const createStats = (clientId, statsDescriptor) => {
+  return createJob('stats', { clientId, statsDescriptor });
 };

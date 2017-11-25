@@ -1,5 +1,5 @@
 import { put } from 'redux-saga/effects';
-import { imageLoaded } from '../../modules/images/actions';
+import { imageLoaded } from './actions';
 
 import _debug from 'debug';
 const debug = _debug('lens:image:commands');

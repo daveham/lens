@@ -1,48 +1,13 @@
 @import '../../../../variables';
 
-$thumbnailImageHighlightColor: #111;
-$thumbnailLabelColor: #ddd;
-$thumbnailImageBorderColor: #eee;
-
 .container {
   display: flex;
   justify-content: space-between;
   padding: 20px 0;
 }
 
-.thumbnailItem {
-  margin: 5px 20px;
-  cursor: pointer;
-
-  &:hover .thumbnailImage {
-    border-color: $thumbnailImageHighlightColor;
-    opacity: 1;
-    transform: scale(1.1);
-    transition: opacity .2s ease-in, transform .2s ease-in, border-color .2s ease-in;
-  }
-
-  &:hover .thumbnailImageLabel {
-    color: $thumbnailImageHighlightColor;
-    transition: color .2s ease-in;
-  }
-}
-
-.thumbnailImage {
-  border: solid 20px $thumbnailImageBorderColor;
-  border-radius: 4px;
-  opacity: .8;
-  transition: opacity .2s ease-in, transform .2s ease-in, border-color .2s ease-in;
-}
-
-.thumbnailImageLabel {
-  color: $thumbnailLabelColor;
-  text-align: center;
-  transition: color .2s ease-in;
-  margin-top: 5px;
-}
-
 .thumbnailLoading {
-  color: $thumbnailLabelColor;
+  color: $lens-accent-color;
   text-align: center;
   margin-top: 30px;
 }

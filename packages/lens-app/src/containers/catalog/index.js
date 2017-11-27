@@ -7,7 +7,6 @@ import { thumbnailUrlsSelector as thumbnailImageUrls } from '../../modules/image
 import {
   loading,
   loaded,
-  name,
   sourcesArray,
   thumbnailImageDescriptorsArray
 } from './selectors';
@@ -20,7 +19,6 @@ const mapDispatchToProps = {
 const mapStateToProps = createStructuredSelector({
   loading,
   loaded,
-  name,
   sources: sourcesArray,
   thumbnailImageDescriptors: thumbnailImageDescriptorsArray,
   thumbnailImageUrls

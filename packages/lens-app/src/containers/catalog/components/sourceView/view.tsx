@@ -1,9 +1,12 @@
 import * as React from 'react';
-import * as ReactRouterDom from 'react-router-dom';
-import faStyles from 'font-awesome/scss/font-awesome.scss';
-import FontAwesome from 'react-fontawesome';
+import SourceThumbnail from '../sourceThumbnail';
 import { IStatsDescriptor } from '../../../../interfaces';
+import Loading from '../../../../components/loading';
+import Details from './components/details';
 import styles from './styles.scss';
+
+import _debug from 'debug';
+const debug = _debug('lens:sourceView');
 
 interface IProps {
   sourceThumbnailUrl: string;
@@ -13,24 +16,6 @@ interface IProps {
 }
 
 class View extends React.Component<IProps, any> {
-  private static renderThumbnail(url) {
-    if (url) {
-      return (
-        <div className={styles.thumbnailItem}>
-          <ReactRouterDom.Link to={'/Catalog'}>
-            <img className={styles.thumbnailImage} src={url}/>
-          </ReactRouterDom.Link>
-        </div>
-      );
-    } else {
-      return (
-        <div className={styles.thumbnailLoading}>
-          <FontAwesome name='spinner' cssModule={faStyles} pulse />
-        </div>
-      );
-    }
-  }
-
   public componentDidMount(): any {
     if (!(this.props.sourceStats && this.props.sourceStats.data)) {
       setTimeout(() => {
@@ -42,7 +27,10 @@ class View extends React.Component<IProps, any> {
   public render() {
     return (
       <div className={styles.container}>
-        {View.renderThumbnail(this.props.sourceThumbnailUrl)}
+        <SourceThumbnail
+          thumbnailUrl={this.props.sourceThumbnailUrl}
+          link={'/Catalog'}
+        />
         {this.renderStats()}
       </div>
     );
@@ -50,15 +38,21 @@ class View extends React.Component<IProps, any> {
 
   private renderStats() {
     const { sourceStats } = this.props;
-    if (sourceStats && sourceStats.loading) {
+    debug('renderStats', { sourceStats });
+    if (sourceStats && !sourceStats.loading && sourceStats.data) {
+      debug('stats', { sourceStats });
       return (
-        <div className={styles.thumbnailLoading}>
-          <FontAwesome name='spinner' cssModule={faStyles} pulse />
+        <div>
+          <Details
+            stats={sourceStats.data}
+          />
         </div>
       );
     } else {
       return (
-        <div>stats go here</div>
+        <div className={styles.thumbnailLoading}>
+          <Loading pulse={true}/>
+        </div>
       );
     }
   }

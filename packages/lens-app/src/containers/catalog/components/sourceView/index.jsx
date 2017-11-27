@@ -3,7 +3,6 @@ import {
   makeSourceImageDescriptor,
   makeSourceStatsDescriptor
 } from '@lens/image-descriptors';
-import { default as getConfig } from '../../../../config';
 import { thumbnailUrlsSelector } from '../../../../modules/images/selectors';
 import { statsSelector } from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
@@ -19,8 +18,7 @@ const mapStateToProps = (state, ownProps) => {
   const index = sources.findIndex((source) => source.id === id);
 
   const thumbnailImageUrls = thumbnailUrlsSelector(state);
-  const dataHost = getConfig().dataHost;
-  const sourceThumbnailUrl = `${dataHost}${thumbnailImageUrls[index]}`;
+  const sourceThumbnailUrl = thumbnailImageUrls[index];
 
   const imageDescriptor = makeSourceImageDescriptor(id);
   imageDescriptor.input.file = sources[index].file;

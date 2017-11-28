@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { ACTIONS } from './actions';
+import { InsertableReducer } from '../../../modules/types';
 
 // reducers
 const loading = (state = false, { type }) => {
@@ -27,9 +28,9 @@ const sources = (state = {  ids: [], byIds: {} }, { type, payload}) => {
   switch (type) {
     case ACTIONS.RECEIVE_CATALOG: {
       const { sources } = payload;
-      const ids = sources.map(source => source.id);
+      const ids = sources.map((source) => source.id);
       const byIds = {};
-      sources.forEach(source => byIds[source.id] = source);
+      sources.forEach((source) => byIds[source.id] = source);
       return { ids, byIds };
     }
     default:
@@ -37,7 +38,7 @@ const sources = (state = {  ids: [], byIds: {} }, { type, payload}) => {
   }
 };
 
-const catalogReducer = combineReducers({
+const catalogReducer: InsertableReducer = combineReducers({
   loading,
   name,
   sources

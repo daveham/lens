@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
+import { InsertableReducer } from '../../modules/types';
 import { ACTIONS } from './actions';
 
-// reducers
 const loading = (state = false, action) => {
   switch (action.type) {
     case ACTIONS.REQUEST_HELLO:
@@ -23,9 +23,9 @@ const greeting = (state = '', action) => {
   }
 };
 
-const featureAReducer = combineReducers({
-  loading,
-  greeting
+const featureAReducer: InsertableReducer = combineReducers({
+  greeting,
+  loading
 });
 
 featureAReducer.reducer = 'featureA';

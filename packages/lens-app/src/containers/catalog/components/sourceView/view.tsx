@@ -17,7 +17,7 @@ interface IProps {
 
 class View extends React.Component<IProps, any> {
   public componentDidMount(): any {
-    if (!(this.props.sourceStats && this.props.sourceStats.data)) {
+    if (!this.props.sourceStats) {
       setTimeout(() => {
         this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
       }, 0);
@@ -38,13 +38,12 @@ class View extends React.Component<IProps, any> {
 
   private renderStats() {
     const { sourceStats } = this.props;
-    debug('renderStats', { sourceStats });
-    if (sourceStats && !sourceStats.loading && sourceStats.data) {
+    if (sourceStats && !sourceStats.loading) {
       debug('stats', { sourceStats });
       return (
         <div>
           <Details
-            stats={sourceStats.data}
+            stats={sourceStats}
           />
         </div>
       );

@@ -3,6 +3,7 @@ import SourceThumbnail from '../sourceThumbnail';
 import { IStatsDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import Details from './components/details';
+import AutoScroll from '../../../../components/autoScroll';
 import styles from './styles.scss';
 
 import _debug from 'debug';
@@ -27,11 +28,16 @@ class View extends React.Component<IProps, any> {
   public render() {
     return (
       <div className={styles.container}>
-        <SourceThumbnail
-          thumbnailUrl={this.props.sourceThumbnailUrl}
-          link={'/Catalog'}
-        />
-        {this.renderStats()}
+        <div className={styles.divider}>
+          <div className={styles.statsHeader}>
+            <SourceThumbnail
+              thumbnailUrl={this.props.sourceThumbnailUrl}
+              link={'/Catalog'}
+            />
+            {this.renderStats()}
+          </div>
+          {this.renderTiles()}
+        </div>
       </div>
     );
   }
@@ -54,6 +60,16 @@ class View extends React.Component<IProps, any> {
         </div>
       );
     }
+  }
+
+  private renderTiles() {
+    return (
+      <div className={styles.tilesContainer}>
+        <AutoScroll>
+          <div>text</div>
+        </AutoScroll>
+      </div>
+    );
   }
 }
 

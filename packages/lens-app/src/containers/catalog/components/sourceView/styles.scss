@@ -3,11 +3,28 @@
 .container {
   display: flex;
   justify-content: space-between;
-  padding: 20px 0;
+  width: 100%;
+  height: 100%;
+}
+
+.divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.statsHeader {
+  display: flex;
 }
 
 .thumbnailLoading {
   color: $lens-accent-color;
   text-align: center;
   margin-top: 30px;
+}
+
+.tilesContainer {
+  flex: 1;
 }

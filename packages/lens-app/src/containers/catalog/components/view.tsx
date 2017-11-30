@@ -64,12 +64,10 @@ class View extends React.Component<IProps, any> {
       this.props.loaded &&
       (
         <div className={styles.content}>
-          <div>
-            <ReactRouterDom.Switch>
-              <ReactRouterDom.Route path='/Catalog/Source/:id' component={SourceView}/>
-              <ReactRouterDom.Route component={SourcesView}/>
-            </ReactRouterDom.Switch>
-          </div>
+          <ReactRouterDom.Switch>
+            <ReactRouterDom.Route path='/Catalog/Source/:id' component={SourceView}/>
+            <ReactRouterDom.Route component={SourcesView}/>
+          </ReactRouterDom.Switch>
         </div>
       )
     );

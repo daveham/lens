@@ -7,19 +7,17 @@ const formatDate =  (v) => moment(v).format('h:mm a, MM/DD/YY');
 
 const detailsTemplate = [
   { l: 'Modified', k: 'ctime', c: formatDate },
+  { l: 'Format', k: 'format' },
   { g: [
     { l: 'Size', k: 'size', c: addCommas },
     { l: 'File Size', k: 'filesize' }
   ]},
-  { l: 'Format', k: 'format' },
   { g: [
     { l: 'Width', k: 'width', c: addCommas },
-    { l: 'Height', k: 'height', c: addCommas }
+    { l: 'Height', k: 'height', c: addCommas },
+    { l: 'Depth', k: 'depth' }
   ]},
-  { g: [
-    { l: 'Resolution', k: 'resolution' },
-    { l: 'Depth', k: 'depth' },
-  ]}
+  { l: 'Resolution', k: 'resolution' }
 ];
 
 const createValueFromDetail = (value, converter) => {

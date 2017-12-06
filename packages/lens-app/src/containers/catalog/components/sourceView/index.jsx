@@ -16,6 +16,7 @@ const mapStateToProps = (state, ownProps) => {
   const sourceStats = statsSelector(state, sourceStatsDescriptor);
 
   return {
+    sourceId: id,
     sourceStatsDescriptor,
     sourceThumbnailUrl,
     sourceStats

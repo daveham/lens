@@ -1,0 +1,1866 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/view.tsx" line="65" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bc8b0e43-1817-44d9-a97c-f82b6dc9e2a7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/details.tsx" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/details.tsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/styles.scss" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/styles.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/styles.scss" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/styles.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/view.tsx" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/view.tsx" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/styles.scss" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/styles.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/styles.scss" afterPath="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/styles.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/packages/lens-app/tslint.json" afterPath="$PROJECT_DIR$/packages/lens-app/tslint.json" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.tmp/" />
+    <ignored path="$PROJECT_DIR$/temp/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="false" />
+  <component name="FavoritesManager">
+    <favorites_list name="lens" />
+  </component>
+  <component name="FileColors">
+    <fileColor scope="Non-Project Files (Material Default)" color="293841" />
+    <fileColor scope="Non-Project Files (Material Darker)" color="474747" />
+    <fileColor scope="Non-Project Files (Material Lighter)" color="D2D4D5" />
+    <fileColor scope="Non-Project Files (Material Palenight)" color="4E5579" />
+    <fileColor scope="Non-Project Files (Material Default)" color="2E3C43" />
+    <fileColor scope="Non-Project Files (Material Darker)" color="323232" />
+    <fileColor scope="Non-Project Files (Material Lighter)" color="eae8e8" />
+    <fileColor scope="Non-Project Files (Material Palenight)" color="2f2e43" />
+    <fileColor scope="Non-Project Files (Material Oceanic)" color="2E3C43" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/packages/lens-image-descriptors/src/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="539">
+              <caret line="56" column="29" lean-forward="true" selection-start-line="56" selection-start-column="29" selection-end-line="56" selection-end-column="29" />
+              <folding>
+                <element signature="e#0#24#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="descriptors.test.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/packages/lens-image-descriptors/src/descriptors.test.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="666">
+              <caret line="94" column="48" lean-forward="true" selection-start-line="94" selection-start-column="48" selection-end-line="94" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#250#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="SCSS File" />
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>scss</find>
+      <find>tsload</find>
+      <find>listKeyFrom</find>
+      <find>REACT_APP_REST_SERVER</find>
+      <find>REACT_APP_SERVICE_SERVER</find>
+      <find>vbguest</find>
+      <find>guest</find>
+      <find>$thumbnailImageBorderHoverColor</find>
+      <find>REQUEST_CATALOG</find>
+      <find>CLEAR_REQUEST_IMAGE</find>
+      <find>$thumbnailLabelColor</find>
+      <find>$thumbnailImageBorderColor</find>
+      <find>thumbnailImageUrls</find>
+      <find>sources</find>
+      <find>thumbnailImageDescriptors</find>
+      <find>styles.</find>
+      <find>setOfCachedUrls</find>
+      <find>STATS_LIST_KEYS</find>
+      <find>url</find>
+      <find>FontAwesome</find>
+      <find>name</find>
+      <find>renderThumbnail</find>
+      <find>default</find>
+      <find>(node)</find>
+      <find>.reducer</find>
+      <find>listKeyFromImageDescriptor</find>
+      <find>post</find>
+      <find>Explorer</find>
+      <find>Details</find>
+      <find>makeTileImageDescriptor</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>statsDescriptor</replace>
+      <replace>imageLoadedHandler</replace>
+      <replace>imageLoaded</replace>
+      <replace>STATS_LOADED</replace>
+      <replace>statsLoadedHandler</replace>
+      <replace>statsNotLoading</replace>
+      <replace>statsLoaded</replace>
+      <replace>$thumbnailImageHighlightColor</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/packages/lens-data-manager/src/layouts</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="webstorm" />
+      </map>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/modules/images/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/tsconfig.json" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/app/components/view.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/build/service-worker.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/sagas/images.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/sagas/stats.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/utils.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/images/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/stats/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/sagas/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/selectors.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/interfaces.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-api/routes/stats/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-api/routes/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-service/service/jobs/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-data-jobs/src/stats/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-service/service/jobs/stats/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/images/commands.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/commands.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/stats/commands.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/components/loading/index.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/components/loading/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/components/loading/index.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/index.jsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/index.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/_variables.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceThumbnail/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceThumbnail/index.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/view.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/declaration.d.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/types.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/modules/index.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/featureB/reducer.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/featureA/reducer.ts" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/stats/actions.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/stats/selectors.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/index.jsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/images/selectors.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/modules/images/actions.js" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/components/autoScroll/index.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/view.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/components/autoScroll/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/details.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/styles.scss" />
+        <option value="$PROJECT_DIR$/packages/lens-app/tslint.json" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/view.tsx" />
+        <option value="$PROJECT_DIR$/packages/lens-app/src/containers/catalog/utils.ts" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
+    <package-json value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <gulpfiles>
+      <GulpfileState>
+        <gulpfile-path>$PROJECT_DIR$/gulpfile.babel.js</gulpfile-path>
+      </GulpfileState>
+    </gulpfiles>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NamedScopeManager">
+    <scope name="data-manager" pattern="file[lens]:packages/lens-data-manager//*" />
+    <scope name="data-service" pattern="file[lens]:packages/lens-data-service//*" />
+    <scope name="vagrant" pattern="file[lens]:packages/lens-vagrant//*" />
+    <scope name="common" pattern="file[lens]:packages/lens-data-jobs//*||file[lens]:packages/lens-image-descriptors//*" />
+    <scope name="app" pattern="file[lens]:packages/lens-app//*" />
+    <scope name="rest-api" pattern="file[lens]:packages/lens-api//*" />
+    <scope name="queued service" pattern="file[lens]:packages/lens-service//*" />
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-api/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-app/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-data-jobs/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-data-manager/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-data-service/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-image-descriptors/node_modules" />
+    <handled-path value="$PROJECT_DIR$/packages/lens-service/node_modules" />
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/package.json" />
+    <dismissed value="$PROJECT_DIR$/packages/lens-api/package.json" />
+    <dismissed value="$PROJECT_DIR$/packages/lens-app/package.json" />
+    <dismissed value="$PROJECT_DIR$/packages/lens-image-descriptors/package.json" />
+    <dismissed value="$PROJECT_DIR$/packages/lens-service/package.json" />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="5" />
+    <option name="y" value="22" />
+    <option name="width" value="1429" />
+    <option name="height" value="873" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>CSS</id>
+          </State>
+          <State>
+            <id>Code quality toolsCSS</id>
+          </State>
+          <State>
+            <id>Code style issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Flow type checkerJavaScript</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
+            <id>HTML</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>Node.jsJavaScript</id>
+          </State>
+          <State>
+            <id>Probable bugsJavaScript</id>
+          </State>
+          <State>
+            <id>TypeScript</id>
+          </State>
+          <State>
+            <id>XML</id>
+          </State>
+          <State>
+            <id>XPath</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Stylelint</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="Scope">
+        <subPane subId="app">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="containers" type="cbb8eebc:String" user="containers" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="containers" type="cbb8eebc:String" user="containers" />
+              <item name="catalog" type="cbb8eebc:String" user="catalog" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="containers" type="cbb8eebc:String" user="containers" />
+              <item name="catalog" type="cbb8eebc:String" user="catalog" />
+              <item name="components" type="cbb8eebc:String" user="components" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="modules" type="cbb8eebc:String" user="modules" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="modules" type="cbb8eebc:String" user="modules" />
+              <item name="images" type="cbb8eebc:String" user="images" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="modules" type="cbb8eebc:String" user="modules" />
+              <item name="stats" type="cbb8eebc:String" user="stats" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-app" type="cbb8eebc:String" user="lens-app" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="sagas" type="cbb8eebc:String" user="sagas" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="rest-api">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+              <item name="config" type="cbb8eebc:String" user="config" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+              <item name="routes" type="cbb8eebc:String" user="routes" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+              <item name="routes" type="cbb8eebc:String" user="routes" />
+              <item name="ping" type="cbb8eebc:String" user="ping" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-api" type="cbb8eebc:String" user="lens-api" />
+              <item name="routes" type="cbb8eebc:String" user="routes" />
+              <item name="utils" type="cbb8eebc:String" user="utils" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="data-manager">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-data-manager" type="cbb8eebc:String" user="lens-data-manager" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-data-manager" type="cbb8eebc:String" user="lens-data-manager" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="vagrant">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-vagrant" type="cbb8eebc:String" user="lens-vagrant" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <subPane subId="queued service">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-service" type="cbb8eebc:String" user="lens-service" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-service" type="cbb8eebc:String" user="lens-service" />
+              <item name="bin" type="cbb8eebc:String" user="bin" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-service" type="cbb8eebc:String" user="lens-service" />
+              <item name="service" type="cbb8eebc:String" user="service" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-service" type="cbb8eebc:String" user="lens-service" />
+              <item name="service" type="cbb8eebc:String" user="service" />
+              <item name="jobs" type="cbb8eebc:String" user="jobs" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="lens" type="cbb8eebc:String" user="lens" />
+              <item name="packages" type="cbb8eebc:String" user="packages" />
+              <item name="lens-service" type="cbb8eebc:String" user="lens-service" />
+              <item name="service" type="cbb8eebc:String" user="service" />
+              <item name="jobs" type="cbb8eebc:String" user="jobs" />
+              <item name="admin" type="cbb8eebc:String" user="admin" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="lens" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lens" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lens" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lens" type="462c0819:PsiDirectoryNode" />
+              <item name="packages" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lens" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lens" type="462c0819:PsiDirectoryNode" />
+              <item name="packages" type="462c0819:PsiDirectoryNode" />
+              <item name="lens-image-descriptors" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="lens" type="b2602c69:ProjectViewProjectNode" />
+              <item name="lens" type="462c0819:PsiDirectoryNode" />
+              <item name="packages" type="462c0819:PsiDirectoryNode" />
+              <item name="lens-image-descriptors" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="nodejs_interpreter_path" value="$USER_HOME$/.nvm/versions/node/v6.11.2/bin/node" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/packages/lens-app/node_modules/eslint" />
+    <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
+    <property name="nodejs.mocha.mocha_node_package_dir" value="" />
+    <property name="javascript.nodejs.core.library.configured.version" value="6.11.2" />
+    <property name="node.js.path.for.package.standard" value="project" />
+    <property name="node.js.detected.package.standard" value="true" />
+    <property name="node.js.selected.package.standard" value="$PROJECT_DIR$/packages/lens-app/node_modules/eslint" />
+    <property name="nodejs.jest.jest_package" value="$PROJECT_DIR$/packages/lens-data-manager/node_modules/jest" />
+    <property name="add_unversioned_files" value="true&#10;/Users/daveham/Projects/lens/packages/lens-api/.env&#10;/Users/daveham/Projects/lens/packages/lens-service/.env&#10;/Users/daveham/Projects/lens/packages/lens-app/.env.local" />
+    <property name="node.js.path.for.package.stylelint" value="project" />
+    <property name="node.js.detected.package.stylelint" value="true" />
+    <property name="node.js.selected.package.stylelint" value="$PROJECT_DIR$/node_modules/stylelint" />
+    <property name="list.type.of.created.stylesheet" value="SCSS" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.tslint" value="$PROJECT_DIR$/node_modules/tslint" />
+    <property name="JavaScriptPreferStrict" value="false" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="node.js.path.for.package.jscs" value="project" />
+    <property name="node.js.detected.package.jscs" value="true" />
+    <property name="node.js.selected.package.jscs" value="" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/lens-app/src" />
+      <recent name="$PROJECT_DIR$/packages/lens-image-descriptors/src" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JavaScript Debug.lens">
+    <configuration name="(Framework) Karma Plugins" type="mocha-javascript-test-runner" factoryName="Mocha" temporary="true" nameIsGenerated="true">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>SUITE</test-kind>
+      <test-file>$PROJECT_DIR$/packages/lens-data-manager/tests/framework.spec.js</test-file>
+      <test-names>
+        <name value="(Framework) Karma Plugins" />
+      </test-names>
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" uri="http://dev.local:3000/catalog">
+      <method>
+        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_unison-lens" />
+        <option name="RemoteToolBeforeRunTask" enabled="true" actionId="RemoteTool_Lens External Tools_lens-gulp-dev" />
+        <option name="RemoteToolBeforeRunTask" enabled="true" actionId="RemoteTool_Lens External Tools_lens-data-service" />
+        <option name="RemoteToolBeforeRunTask" enabled="true" actionId="RemoteTool_Lens External Tools_lens-data-manager" />
+      </method>
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+    </configuration>
+    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
+      <method />
+    </configuration>
+    <configuration default="true" type="DartTestRunConfigurationType" factoryName="Dart Test">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerKarma" factoryName="Karma">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSRemoteDebug" factoryName="Node.js Remote Debug">
+      <node-js-remote-debug />
+      <method />
+    </configuration>
+    <configuration default="true" type="cucumber.js" factoryName="Cucumber.js">
+      <option name="cucumberJsArguments" value="" />
+      <option name="executablePath" />
+      <option name="filePath" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration name="createJob.provides default" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/lens-data-jobs/src/utils/utils.test.js" />
+      <test-names>
+        <test-name value="createJob" />
+        <test-name value="provides default" />
+      </test-names>
+    </configuration>
+    <configuration name="lens-data-service" type="NodeJSRemoteDebug" factoryName="Node.js Remote Debug">
+      <node-js-remote-debug host="dev.local" />
+    </configuration>
+    <configuration name="lens" type="JavascriptDebugType" factoryName="JavaScript Debug" engineId="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" uri="http://dev.local:3000/catalog">
+      <method>
+        <option name="ToolBeforeRunTask" enabled="false" actionId="Tool_External Tools_unison-lens" />
+        <option name="RemoteToolBeforeRunTask" enabled="false" actionId="RemoteTool_Lens External Tools_lens-gulp-dev" />
+        <option name="RemoteToolBeforeRunTask" enabled="false" actionId="RemoteTool_Lens External Tools_lens-data-service" />
+        <option name="RemoteToolBeforeRunTask" enabled="false" actionId="RemoteTool_Lens External Tools_lens-data-manager" />
+      </method>
+    </configuration>
+    <configuration name="makeImageKey" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/lens-image-descriptors/src/descriptors.test.js" />
+      <test-names>
+        <test-name value="makeImageKey" />
+      </test-names>
+    </configuration>
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.lens" />
+      <item index="1" class="java.lang.String" itemvalue="Node.js Remote Debug.lens-data-service" />
+      <item index="2" class="java.lang.String" itemvalue="Jest.createJob.provides default" />
+      <item index="3" class="java.lang.String" itemvalue="Jest.makeImageKey" />
+      <item index="4" class="java.lang.String" itemvalue="Mocha.(Framework) Karma Plugins" />
+    </list>
+    <recent_temporary>
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Jest.makeImageKey" />
+        <item index="1" class="java.lang.String" itemvalue="Jest.createJob.provides default" />
+        <item index="2" class="java.lang.String" itemvalue="Mocha.(Framework) Karma Plugins" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="CURRENT_VAGRANT" />
+    <option name="myConnectionId" value="" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bc8b0e43-1817-44d9-a97c-f82b6dc9e2a7" name="Default" comment="" />
+      <created>1494991793883</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1494991793883</updated>
+      <workItem from="1494991795652" duration="2793000" />
+      <workItem from="1495066650220" duration="46000" />
+      <workItem from="1495066710837" duration="4579000" />
+      <workItem from="1495077495256" duration="2724000" />
+      <workItem from="1495158219414" duration="5437000" />
+      <workItem from="1495243888981" duration="5693000" />
+      <workItem from="1497926531510" duration="773000" />
+      <workItem from="1497929215433" duration="20000" />
+      <workItem from="1497929250476" duration="782000" />
+      <workItem from="1498017537899" duration="641000" />
+      <workItem from="1498018189172" duration="55000" />
+      <workItem from="1498096255960" duration="2353000" />
+      <workItem from="1498168944776" duration="3650000" />
+      <workItem from="1498237601088" duration="553000" />
+      <workItem from="1498248051849" duration="2131000" />
+      <workItem from="1498514647577" duration="787000" />
+      <workItem from="1498515446229" duration="556000" />
+      <workItem from="1499091580345" duration="205000" />
+      <workItem from="1499092565604" duration="4000" />
+      <workItem from="1499485875533" duration="22093000" />
+      <workItem from="1499784036476" duration="3240000" />
+      <workItem from="1499812632245" duration="5986000" />
+      <workItem from="1499831637140" duration="36136000" />
+      <workItem from="1500304457570" duration="104000" />
+      <workItem from="1500305561184" duration="12806000" />
+      <workItem from="1500430029693" duration="11188000" />
+      <workItem from="1500602589147" duration="5586000" />
+      <workItem from="1500858799955" duration="8486000" />
+      <workItem from="1500942202773" duration="7050000" />
+      <workItem from="1501035683560" duration="1812000" />
+      <workItem from="1501039556587" duration="83818000" />
+      <workItem from="1501558155877" duration="47066000" />
+      <workItem from="1501853482312" duration="26777000" />
+      <workItem from="1502244508869" duration="7198000" />
+      <workItem from="1502313214561" duration="641000" />
+      <workItem from="1502313988367" duration="31328000" />
+      <workItem from="1502765076950" duration="9841000" />
+      <workItem from="1503022563197" duration="861000" />
+      <workItem from="1503110830643" duration="65229000" />
+      <workItem from="1504129837745" duration="82000" />
+      <workItem from="1504129936687" duration="2737000" />
+      <workItem from="1504144637469" duration="11045000" />
+      <workItem from="1504272507950" duration="26289000" />
+      <workItem from="1505578944904" duration="67000" />
+      <workItem from="1505579028919" duration="2567000" />
+      <workItem from="1505757154304" duration="24543000" />
+      <workItem from="1506565513466" duration="8000" />
+      <workItem from="1506566045657" duration="3238000" />
+      <workItem from="1506732425901" duration="67951000" />
+      <workItem from="1507557140982" duration="8459000" />
+      <workItem from="1508270320653" duration="55000" />
+      <workItem from="1508270385476" duration="1448000" />
+      <workItem from="1508525976501" duration="125000" />
+      <workItem from="1508526420569" duration="3802000" />
+      <workItem from="1508888052554" duration="13672000" />
+      <workItem from="1509113607506" duration="4413000" />
+      <workItem from="1509374811819" duration="2455000" />
+      <workItem from="1509572672085" duration="4986000" />
+      <workItem from="1509984444119" duration="21354000" />
+      <workItem from="1510361736669" duration="8357000" />
+      <workItem from="1510608616148" duration="112000" />
+      <workItem from="1510608738599" duration="29363000" />
+      <workItem from="1510971441511" duration="152041000" />
+    </task>
+    <task id="LOCAL-00013" summary="Adding global install of create-react-app. Fixing newlines for bashrc.">
+      <created>1500861342431</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1500861342431</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Setting timezone during bootstrap.">
+      <created>1500862810747</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1500862810747</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Adopting yarn.">
+      <created>1500955053614</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1500955053615</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Adopting yarn - one more.">
+      <created>1500955332172</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1500955332172</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Adding code-splitting for react components and redux reducers.">
+      <created>1501128860946</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1501128860946</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Adding SCSS. Adding example actions, recucers, etc.">
+      <created>1501303469451</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1501303469451</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Adding simple tests.">
+      <created>1501363421748</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1501363421748</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Small cleanup.">
+      <created>1501381928736</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1501381928736</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Decompose components. Styling.">
+      <created>1501390811311</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1501390811311</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Organizing for code splitting.">
+      <created>1501449579715</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1501449579716</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Catalog work.">
+      <created>1501731105401</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1501731105401</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Removed redux-thunk. All now using redux-saga.">
+      <created>1502247792190</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1502247792190</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Webpack magic comments to name split chunks.">
+      <created>1502502324665</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1502502324665</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Adding stylelint.">
+      <created>1502502407293</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1502502407293</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Added deprecation notices to readmes.">
+      <created>1502934954467</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1502934954467</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Fixing formatting in readmes.">
+      <created>1502935282896</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1502935282896</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Client registration for socket communication, socket ping loop.">
+      <created>1503635378128</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1503635378129</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Encapsulating client registration over socket.">
+      <created>1503716772676</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1503716772676</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Factored out command button from footer.">
+      <created>1503781009428</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1503781009428</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Added command status to footer.">
+      <created>1503782369378</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1503782369378</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Adding debug ports to readmes.">
+      <created>1503855798764</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1503855798764</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Cleanup common code around submitting and responding to queued jobs.">
+      <created>1503976893533</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1503976893533</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Using reselect on common selectors.">
+      <created>1504060296988</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1504060296988</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Using reselect on catalog selectors. Simpler props into catalog view.">
+      <created>1504062201019</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1504062201019</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Progress on images held in redux store. Fixed broken tests.">
+      <created>1504238651033</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1504238651033</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Reducers for handling lists of images in store. Includes tests.">
+      <created>1504323968020</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1504323968020</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Refactored common reducers for images and stats. Unit tests for images and stats.">
+      <created>1504567030619</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1504567030619</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Working towards image request/handling saga.">
+      <created>1504585125241</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1504585125241</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Naming changes to images and stats redux items.">
+      <created>1505962185645</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1505962185645</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Basic functionality of image saga.">
+      <created>1506734261210</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1506734261211</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Enabling typescript in lens-app.">
+      <created>1506824240800</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1506824240800</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Converted catalog view to typescript. Added support for typescript with jest.">
+      <created>1506914716733</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1506914716733</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Higher order action to kick off load image saga.">
+      <created>1506917483770</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1506917483770</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Fixes to image saga. Porting more react components to typescript. More (webstorm-related) typescript config.">
+      <created>1507176694048</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1507176694049</updated>
+    </task>
+    <task id="LOCAL-00047" summary="More typescript conversions.">
+      <created>1507178308205</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1507178308205</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Generate thumbnail job.">
+      <created>1507608450032</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1507608450032</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Fixing webpack config issue, removing trailing commas.">
+      <created>1510281096364</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1510281096364</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Mix of improvements - styles, actions, code organization.">
+      <created>1510289362515</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1510289362515</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Progress on commands with saga and image command.">
+      <created>1510897127888</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1510897127889</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Cosmetic changes to catalog view.">
+      <created>1511057058616</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1511057058617</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Removing dead code.">
+      <created>1511058238335</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1511058238335</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Implementing nested routing switches for view navigation.">
+      <created>1511155386376</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1511155386377</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Cleaning up catalog views.">
+      <created>1511240320174</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1511240320175</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Improving connect usage for catalog views.">
+      <created>1511328834171</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1511328834171</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Image stats from UI through api, service and back.">
+      <created>1511625469762</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1511625469762</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Factored out common components - loading, source thumbnail.">
+      <created>1511754198260</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1511754198261</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Converting feature reducers to typescript.">
+      <created>1511840344271</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1511840344271</updated>
+    </task>
+    <task id="LOCAL-00060" summary="More refactoring of selectors.">
+      <created>1511848286162</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1511848286162</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Resetting and cleaning styles, especially around box sizing.">
+      <created>1512018981011</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1512018981011</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="createJob_provides_default - 2017.07.14 at 22h 57m 58s.xml">
+      <configuration name="createJob.provides default" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
+    <history-entry file="makeImageKey - 2017.07.17 at 20h 36m 55s.xml">
+      <configuration name="makeImageKey" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="810197000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="5" y="22" width="1429" height="873" extended-state="0" />
+    <layout>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991013" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32677165" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29790026" sideWeight="0.48414376" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54986876" sideWeight="0.5172657" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.30971128" sideWeight="0.51585627" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3727034" sideWeight="0.57857645" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32904884" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20241477" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.496063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30559006" sideWeight="0.66032416" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24981739" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991013" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3277635" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29820052" sideWeight="0.48414376" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.54986876" sideWeight="0.5172657" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.32283464" sideWeight="0.51585627" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40944883" sideWeight="0.57857645" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Gulp" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32904884" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20241477" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24981739" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32992327" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30559006" sideWeight="0.66032416" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.eslintignore" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="BEK_SORT_TYPE" value="1" />
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
+    <MESSAGE value="Progress on images held in redux store. Fixed broken tests." />
+    <MESSAGE value="Reducers for handling lists of images in store. Includes tests." />
+    <MESSAGE value="Refactored common reducers for images and stats. Unit tests for images and stats." />
+    <MESSAGE value="Working towards image request/handling saga." />
+    <MESSAGE value="Naming changes to images and stats redux items." />
+    <MESSAGE value="Basic functionality of image saga." />
+    <MESSAGE value="Enabling typescript in lens-app." />
+    <MESSAGE value="Converted catalog view to typescript. Added support for typescript with jest." />
+    <MESSAGE value="Higher order action to kick off load image saga." />
+    <MESSAGE value="Fixes to image saga. Porting more react components to typescript. More (webstorm-related) typescript config." />
+    <MESSAGE value="More typescript conversions." />
+    <MESSAGE value="Generate thumbnail job." />
+    <MESSAGE value="Fixing webpack config issue, removing trailing commas." />
+    <MESSAGE value="Mix of improvements - styles, actions, code organization." />
+    <MESSAGE value="Progress on commands with saga and image command." />
+    <MESSAGE value="Cosmetic changes to catalog view." />
+    <MESSAGE value="Removing dead code." />
+    <MESSAGE value="Implementing nested routing switches for view navigation." />
+    <MESSAGE value="Cleaning up catalog views." />
+    <MESSAGE value="Improving connect usage for catalog views." />
+    <MESSAGE value="Image stats from UI through api, service and back." />
+    <MESSAGE value="Factored out common components - loading, source thumbnail." />
+    <MESSAGE value="Converting feature reducers to typescript." />
+    <MESSAGE value="More refactoring of selectors." />
+    <MESSAGE value="Resetting and cleaning styles, especially around box sizing." />
+    <option name="LAST_COMMIT_MESSAGE" value="Resetting and cleaning styles, especially around box sizing." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="16" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/view.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceThumbnail/index.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceThumbnail/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="38" column="0" lean-forward="true" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/_variables.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/images/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="121">
+          <caret line="21" column="44" lean-forward="true" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/asyncroute.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="62" column="30" lean-forward="false" selection-start-line="62" selection-start-column="22" selection-end-line="62" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/store/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#62#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/store/registry/actions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#26#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/store/registry/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#38#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/featureB/reducer.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="0" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/featureA/reducer.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/featureB/index.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="22" lean-forward="true" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#31#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/declaration.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/common.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="61" column="19" lean-forward="true" selection-start-line="61" selection-start-column="19" selection-end-line="61" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#51#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/modules/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="37" column="3" lean-forward="true" selection-start-line="37" selection-start-column="3" selection-end-line="37" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/modules/catalog/selectors.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/images/actions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#45#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/images/selectors.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#89#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/stats/selectors.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="792">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#115#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/stats/actions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#45#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/config/webpack.config.dev.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="205" column="41" lean-forward="false" selection-start-line="205" selection-start-column="37" selection-end-line="205" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/components/loading/index.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="23" column="15" lean-forward="true" selection-start-line="23" selection-start-column="15" selection-end-line="23" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/components/loading/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="16" lean-forward="false" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/view.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="64" column="0" lean-forward="false" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/modules/types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/components/autoScroll/index.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/components/autoScroll/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/components/Explorer/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1144">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/containers/SourceContainer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/components/Summary/Details.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="1" lean-forward="true" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="29" lean-forward="false" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/components/details.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourcesView/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="25" lean-forward="false" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/styles.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/components/Summary/Details.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/components/SourceView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="561">
+          <caret line="66" column="5" lean-forward="true" selection-start-line="49" selection-start-column="4" selection-end-line="66" selection-end-column="5" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-data-manager/src/routes/Catalog/routes/Source/components/Summary/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/index.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/tslint.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="28" lean-forward="true" selection-start-line="13" selection-start-column="28" selection-end-line="13" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="22" column="10" lean-forward="true" selection-start-line="22" selection-start-column="10" selection-end-line="22" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-app/src/containers/catalog/components/sourceView/view.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="54" column="44" lean-forward="true" selection-start-line="54" selection-start-column="44" selection-end-line="54" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-image-descriptors/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-image-descriptors/src/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="56" column="29" lean-forward="true" selection-start-line="56" selection-start-column="29" selection-end-line="56" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/packages/lens-image-descriptors/src/descriptors.test.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="666">
+          <caret line="94" column="48" lean-forward="true" selection-start-line="94" selection-start-column="48" selection-end-line="94" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#250#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <last-edited>data-manager</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+          <order>
+            <scope name="data-manager" />
+            <scope name="data-service" />
+            <scope name="vagrant" />
+            <scope name="common" />
+            <scope name="app" />
+            <scope name="rest-api" />
+            <scope name="queued service" />
+          </order>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

@@ -3,9 +3,9 @@
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  padding-top: .5em;
-  width: 100%;
+  justify-content: center;
+  padding: 5px;
+  font-size: 10pt;
 }
 
 .row {
@@ -17,14 +17,33 @@
 
 .label {
   color: $lens-page-color;
-  font-weight: 400;
+  font-weight: 900;
   padding: 0 .5em;
+
+  &:not(:first-child) {
+    padding-left: 1em;
+  }
 }
 
 .detail {
-  padding-right: .5em;
+  padding: 0 .5em 0 0;
+  text-align: left;
+  color: #aaa;
 
   &:last-child {
     flex-grow: 1;
   }
 }
+
+.tilesContainer {
+  position: relative;
+  height: 100%;
+}
+
+.tile {
+  position: absolute;
+  border-top: solid 1px #fefefe;
+  border-left: solid 1px #fefefe;
+  background-color: #f4f4f8;
+}
+

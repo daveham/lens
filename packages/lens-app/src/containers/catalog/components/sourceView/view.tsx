@@ -3,25 +3,47 @@ import SourceThumbnail from '../sourceThumbnail';
 import { IStatsDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import Details from './components/details';
+import Tiles from './components/tiles';
 import AutoScroll from '../../../../components/autoScroll';
+import { createSourceSpec, IStatsSpec } from '../../utils';
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:sourceView');
+// import _debug from 'debug';
+// const debug = _debug('lens:sourceView');
 
 interface IProps {
+  sourceId: string;
   sourceThumbnailUrl: string;
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
 }
 
-class View extends React.Component<IProps, any> {
+interface IState {
+  statsSpec: IStatsSpec;
+}
+
+class View extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = { statsSpec: null };
+  }
+
   public componentDidMount(): any {
-    if (!this.props.sourceStats) {
+    const { sourceStats } = this.props;
+    if (sourceStats) {
+      this.getStatsSpec(sourceStats);
+    } else {
       setTimeout(() => {
         this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
       }, 0);
+    }
+  }
+
+  public componentWillReceiveProps(nextProps: IProps): any {
+    if (nextProps.sourceStats !== this.props.sourceStats) {
+      this.getStatsSpec(nextProps.sourceStats);
     }
   }
 
@@ -42,17 +64,18 @@ class View extends React.Component<IProps, any> {
     );
   }
 
+  private getStatsSpec(sourceStats) {
+    if (!sourceStats.loading) {
+      const width = parseInt(sourceStats.width, 10);
+      const height = parseInt(sourceStats.height, 10);
+      const res = 32; // TODO: pass res through UI
+      this.setState({statsSpec: createSourceSpec(width, height, res)});
+    }
+  }
+
   private renderStats() {
-    const { sourceStats } = this.props;
-    if (sourceStats && !sourceStats.loading) {
-      debug('stats', { sourceStats });
-      return (
-        <div>
-          <Details
-            stats={sourceStats}
-          />
-        </div>
-      );
+    if (this.state.statsSpec) {
+      return <Details stats={this.props.sourceStats}/>;
     } else {
       return (
         <div className={styles.thumbnailLoading}>
@@ -63,13 +86,20 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderTiles() {
-    return (
-      <div className={styles.tilesContainer}>
-        <AutoScroll>
-          <div>text</div>
-        </AutoScroll>
-      </div>
-    );
+    const { statsSpec } = this.state;
+    if (statsSpec) {
+      return (
+        <div className={styles.tilesWrapper}>
+          <AutoScroll>
+            <Tiles
+              spec={statsSpec}
+              sourceId={this.props.sourceId}
+            />
+          </AutoScroll>
+        </div>
+      );
+    }
+    return null;
   }
 }
 

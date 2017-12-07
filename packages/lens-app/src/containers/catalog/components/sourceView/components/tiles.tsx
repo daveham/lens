@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { throttle } from 'lodash';
+import { makeTileImageDescriptor } from '@lens/image-descriptors';
 import styles from './styles.scss';
 import { IStatsSpec } from '../../../utils';
 import Tile from './tile';
@@ -27,10 +29,15 @@ interface IState {
   x: number;
   y: number;
   tileData: ITileData[];
+  prevX: number;
+  prevY: number;
+  prevLastX: number;
+  prevLastY: number;
 }
 
 class Tiles extends React.Component<IProps, IState> {
   private containerNode: any;
+  private controlledResize: () => void;
 
   constructor(props: IProps) {
     super(props);
@@ -43,12 +50,23 @@ class Tiles extends React.Component<IProps, IState> {
       height: 0,
       x,
       y,
-      tileData: []
+      tileData: [],
+      prevX: -1,
+      prevY: -1,
+      prevLastX: -1,
+      prevLastY: -1
     };
+
+    this.controlledResize = throttle(this.updateSize, 50, { leading: true, trailing: true });
   }
 
   public componentDidMount(): any {
-    this.calculateTiles();
+    window.addEventListener('resize', this.controlledResize, false);
+    this.updateSize();
+  }
+
+  public componentWillUnmount(): any {
+    window.removeEventListener('resize', this.controlledResize);
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState) {
@@ -60,10 +78,7 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { width, height, tileData } = this.state;
-    const { spec, x, y } = this.props;
-    debug('render', { width, height, x, y, spec, tileData });
-
+    const { tileData } = this.state;
     const tiles = tileData.map((data, index) => {
       return (
         <Tile key={index} left={data.left} top={data.top} width={data.width} height={data.height} id={data.id}/>
@@ -80,32 +95,52 @@ class Tiles extends React.Component<IProps, IState> {
     );
   }
 
+  private updateSize = () => {
+    if (this.containerNode) {
+      const { width, height } = this.state;
+      const { offsetWidth, offsetHeight } = this.containerNode;
+      if (width !== offsetWidth || height !== offsetHeight) {
+        this.setState({
+          width: offsetWidth,
+          height: offsetHeight
+        });
+      }
+    }
+  };
+
   private calculateTiles() {
-    const rect = this.containerNode.getBoundingClientRect();
-    const { x, y, width, height } = this.state;
-    if (rect.width !== width || rect.height !== height) {
-      const { res, tilesWide, tilesHigh } = this.props.spec;
-      const viewWide = Math.floor((rect.width + res - 1) / res);
-      const viewHigh = Math.floor((rect.height + res - 1) / res);
-      const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
-      const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
-      let tileIndex = 0;
-      const data = [];
-      for (let yIndex = y; yIndex <= lastY; yIndex++) {
-        for (let xIndex = x; xIndex <= lastX; xIndex++, tileIndex++) {
-          data.push({
-            left: xIndex * res,
-            width: res,
-            top: yIndex * res,
-            height: res,
-            id: tileIndex
-          });
-        }
+    const { x, y, width, height, prevX, prevY, prevLastX, prevLastY } = this.state;
+    const { spec, sourceId } = this.props;
+    const { res, tilesWide, tilesHigh } = spec;
+    const viewWide = Math.floor((width + res - 1) / res);
+    const viewHigh = Math.floor((height + res - 1) / res);
+    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
+    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
+
+    if (x === prevX && y === prevY && lastX === prevLastX && lastY === prevLastY) {
+      return;
+    }
+
+    debug(`y ${y}-${lastY}, x ${x}-${lastX}`);
+    const data = [];
+    for (let yIndex = y; yIndex <= lastY; yIndex++) {
+      for (let xIndex = x; xIndex <= lastX; xIndex++) {
+        const left = xIndex * res;
+        const top = yIndex * res;
+        data.push({
+          left,
+          width: res,
+          top,
+          height: res,
+          id: makeTileImageDescriptor(sourceId, res, left, top, res, res)
+        });
       }
       this.setState({
-        width: rect.width,
-        height: rect.height,
-        tileData: data
+        tileData: data,
+        prevX: x,
+        prevY: y,
+        prevLastX: lastX,
+        prevLastY: lastY
       });
     }
   }

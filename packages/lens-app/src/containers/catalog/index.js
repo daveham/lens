@@ -3,11 +3,10 @@ import { createStructuredSelector } from 'reselect';
 import View from './components/view';
 import { requestCatalog } from './modules/actions';
 import { ensureImage } from '../../modules/images/actions';
-import { thumbnailUrlsSelector as thumbnailImageUrls } from '../../modules/images/selectors';
+import { thumbnailUrlsSelector } from '../../modules/images/selectors';
 import {
   loading,
   loaded,
-  sourcesArray,
   thumbnailImageDescriptorsArray
 } from './selectors';
 
@@ -19,9 +18,8 @@ const mapDispatchToProps = {
 const mapStateToProps = createStructuredSelector({
   loading,
   loaded,
-  sources: sourcesArray,
   thumbnailImageDescriptors: thumbnailImageDescriptorsArray,
-  thumbnailImageUrls
+  thumbnailImageUrls: thumbnailUrlsSelector
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

@@ -3,17 +3,18 @@ import { throttle } from 'lodash';
 import { makeTileImageDescriptor } from '@lens/image-descriptors';
 import styles from './styles.scss';
 import { IStatsSpec } from '../../../utils';
+import { IImageDescriptor } from '../../../../../interfaces';
 import Tile from './tile';
 
 import _debug from 'debug';
-const debug = _debug('lens:sourceview:tiles');
+const debug = _debug('lens:sourceView:tiles');
 
 interface ITileData {
   left: number;
   top: number;
   width: number;
   height: number;
-  id: string;
+  id: IImageDescriptor;
 }
 
 interface IProps {
@@ -21,6 +22,7 @@ interface IProps {
   spec: IStatsSpec;
   x?: number;
   y?: number;
+  ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
 }
 
 interface IState {
@@ -73,7 +75,14 @@ class Tiles extends React.Component<IProps, IState> {
     if (prevState.width !== this.state.width ||
       prevState.height !== this.state.height ||
       prevProps.spec !== this.props.spec) {
+      debug('componentDidUpdate - size changed');
       this.calculateTiles();
+    }
+
+    if (prevState.tileData !== this.state.tileData) {
+      debug('componentDidUpdate - tileData changed');
+      const imageDescriptors = this.state.tileData.map((item) => item.id);
+      this.props.ensureImages({ imageDescriptors });
     }
   }
 
@@ -81,7 +90,13 @@ class Tiles extends React.Component<IProps, IState> {
     const { tileData } = this.state;
     const tiles = tileData.map((data, index) => {
       return (
-        <Tile key={index} left={data.left} top={data.top} width={data.width} height={data.height} id={data.id}/>
+        <Tile
+          key={index}
+          left={data.left}
+          top={data.top}
+          width={data.width}
+          height={data.height}
+        />
       );
     });
 

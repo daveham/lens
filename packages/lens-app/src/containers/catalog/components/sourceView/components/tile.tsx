@@ -6,7 +6,6 @@ interface IProps {
   top: number;
   width: number;
   height: number;
-  id: string;
 }
 
 class Tile extends React.Component<IProps, any> {

@@ -5,9 +5,13 @@ import {
   statsSelector
 } from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
+import { ensureImages } from '../../../../modules/images/actions';
 import View from './view';
 
-const mapDispatchToProps = { ensureStats };
+const mapDispatchToProps = {
+  ensureStats,
+  ensureImages
+};
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;

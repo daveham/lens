@@ -1,6 +1,6 @@
 import * as React from 'react';
 import SourceThumbnail from '../sourceThumbnail';
-import { IStatsDescriptor } from '../../../../interfaces';
+import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import Details from './components/details';
 import Tiles from './components/tiles';
@@ -17,6 +17,7 @@ interface IProps {
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
+  ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
 }
 
 interface IState {
@@ -94,6 +95,7 @@ class View extends React.Component<IProps, IState> {
             <Tiles
               spec={statsSpec}
               sourceId={this.props.sourceId}
+              ensureImages={this.props.ensureImages}
             />
           </AutoScroll>
         </div>

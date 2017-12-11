@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import View from './view';
-import { thumbnailUrlsSelector as thumbnailImageUrls } from '../../../../modules/images/selectors';
+import { thumbnailUrlsSelector } from '../../../../modules/images/selectors';
 import { sourcesArray, name } from '../../selectors';
 
 const mapDispatchToProps = {};
@@ -9,7 +9,7 @@ const mapDispatchToProps = {};
 const mapStateToProps = createStructuredSelector({
   name,
   sources: sourcesArray,
-  thumbnailImageUrls
+  thumbnailImageUrls: thumbnailUrlsSelector
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

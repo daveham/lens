@@ -3,13 +3,12 @@ import * as ReactRouterDom from 'react-router-dom';
 import Loading from '../../../components/loading';
 import SourcesView from './sourcesView';
 import SourceView from './sourceView';
-import { ISourceDescriptor, IThumbnailDescriptor } from '../../../interfaces';
+import { IThumbnailDescriptor } from '../../../interfaces';
 import styles from './styles.scss';
 
 interface IProps {
   loading?: boolean;
   loaded?: boolean;
-  sources: ReadonlyArray<ISourceDescriptor>;
   thumbnailImageDescriptors: ReadonlyArray<IThumbnailDescriptor>;
   thumbnailImageUrls: ReadonlyArray<string>;
   requestCatalog: () => void;

@@ -44,3 +44,18 @@ export const imageSelector = (state, imageDescriptor) => {
   const key = makeImageKey(imageDescriptor);
   return byKeys[key];
 };
+
+export const imageDescriptorsNotLoadedSelector = (state, imageDescriptors) => {
+  if (imageDescriptors.length) {
+    const firstDescriptor = imageDescriptors[0];
+    const firstKey = listKeyFromImageDescriptor(firstDescriptor);
+    const byKeys = state.images.byKeys[firstKey] || {};
+
+    return imageDescriptors.filter((imageDescriptor) => {
+      const key = makeImageKey(imageDescriptor);
+      const image = byKeys[key];
+      return !(image && image.url);
+    });
+  }
+  return imageDescriptors;
+};

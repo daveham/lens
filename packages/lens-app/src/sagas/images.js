@@ -4,13 +4,46 @@ import { clientIdSelector } from './socket';
 import {
   ACTIONS,
   imageLoading,
+  imagesLoading,
   imageLoaded,
-  imageNotLoading
+  imagesLoaded,
+  imageNotLoading,
+  imagesNotLoading
 } from '../modules/images/actions';
-import { imageSelector } from '../modules/images/selectors';
+import {
+  imageSelector,
+  imageDescriptorsNotLoadedSelector
+} from '../modules/images/selectors';
 
 import _debug from 'debug';
 const debug = _debug('lens:saga:image');
+
+export function* ensureImagesSaga({ payload }) {
+  const { imageDescriptors, force } = payload;
+  const filteredDescriptors = force ?
+    imageDescriptors :
+    yield select(imageDescriptorsNotLoadedSelector, imageDescriptors);
+
+  if (filteredDescriptors.length) {
+    debug('ensureImagesSaga', { count: filteredDescriptors.length });
+    yield put(imagesLoading({ imageDescriptors: filteredDescriptors }));
+  }
+  const clientId = yield select(clientIdSelector);
+  try {
+    const body = { clientId, imageDescriptors: filteredDescriptors };
+    const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
+    const { existingUrls, existingImageDescriptors } = payload;
+    if (existingUrls && existingUrls.length) {
+      yield put(imagesLoaded({
+        imageDescriptors: existingImageDescriptors,
+        urls: existingUrls
+      } ));
+    }
+  } catch (error) {
+    debug('ensureImagesSaga image api exception', error);
+    yield put(imagesNotLoading({ imageDescriptors: filteredDescriptors }));
+  }
+}
 
 export function* ensureImageSaga({ payload }) {
   const { imageDescriptor, force } = payload;
@@ -25,24 +58,19 @@ export function* ensureImageSaga({ payload }) {
   try {
     const body = { clientId, imageDescriptor };
     const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
-    // TODO
     const { url } = payload;
     if (url) {
-      // debug('image api returned url', url);
-      yield put(imageLoaded({ imageDescriptor, url} ));
-    // } else {
-    //   debug('image api did not return url');
-    //   // TODO: replace this with no-op since job should be enqueued
-    //   yield put(imageNotLoading({ imageDescriptor }));
+      yield put(imageLoaded({ imageDescriptor, url } ));
     }
   } catch (error) {
-    debug('image api exception', error);
+    debug('ensureImageSaga image api exception', error);
     yield put(imageNotLoading({ imageDescriptor }));
   }
 }
 
 export default function* imagesSaga() {
   yield all([
-    takeEvery(ACTIONS.IMAGE_ENSURE, ensureImageSaga)
+    takeEvery(ACTIONS.IMAGE_ENSURE, ensureImageSaga),
+    takeEvery(ACTIONS.IMAGES_ENSURE, ensureImagesSaga)
   ]);
 }

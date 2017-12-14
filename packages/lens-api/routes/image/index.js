@@ -5,21 +5,39 @@ import {
 } from '@lens/image-descriptors';
 import { createImage } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
+import { loadCatalog } from '../utils';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-image');
 
 function processSingleImage(clientId, imageDescriptor, res, next) {
   const path = pathFromImageDescriptor(imageDescriptor);
-  debug('POST image', { path });
+  debug('processSingleImage', { path });
 
   fs.access(path, fs.constants.R_OK, (err) => {
     if (err) {
       if (err.code === 'ENOENT') {
         debug('file does not exist - creating task');
-        enqueueJob(createImage(clientId, imageDescriptor), (status) => {
-          res.send(status);
-          next();
+
+        loadCatalog((err, catalog) => {
+          if (err) {
+            debug('processSingleImage loadCatalog error', { err });
+            res.send(err);
+            next();
+          } else {
+            const { id } = imageDescriptor.input;
+            const foundSource = catalog.sources.find((source) => source.id === id);
+            if (!foundSource) {
+              debug(`processSingleImage did not find source with id ${id}`);
+              res.send(new Error(`Did not find source with id ${id}`));
+              return next();
+            }
+
+            enqueueJob(createImage(clientId, imageDescriptor, foundSource.file), (status) => {
+              res.send(status);
+              next();
+            });
+          }
         });
       } else {
         debug('file access error', err);
@@ -35,6 +53,8 @@ function processSingleImage(clientId, imageDescriptor, res, next) {
 }
 
 function processMultipleImages(clientId, imageDescriptors, res, next) {
+  // TODO: load catalog, add source file path to imageDescriptors
+
   const enqueuedImageDescriptors = [];
   const enqueuedStatus = [];
   const erroredImageDescriptors = [];

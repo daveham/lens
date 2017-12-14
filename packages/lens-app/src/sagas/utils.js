@@ -21,7 +21,12 @@ export const invokeRestService = (url, options = {}) => {
   }
 
   return fetch(apiServer + url, fetchParams)
-  .then(response => response.json())
+  .then((response) => {
+    if (response.status >= 300) {
+      throw new Error(`Server status ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  })
   .then(payload => payload)
   .catch(error => {
     debug('getAPI error', { url, error });

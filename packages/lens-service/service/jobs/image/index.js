@@ -11,8 +11,15 @@ import paths from '../../../config/paths';
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-image');
 
-function processThumbnail(imageDescriptor, job, cb) {
-  const sourceFile = paths.resolveSourcePath(imageDescriptor.input.file);
+function processThumbnail(imageDescriptor, sourceFilename, job, cb) {
+  debug('processThumbnail', { sourceFilename });
+
+  const file = sourceFilename || imageDescriptor.input.file;
+  if (!file) {
+    return sendResponse({ ...job, error: new Error('missing source filename') });
+  }
+
+  const sourceFile = paths.resolveSourcePath(file);
   const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
   debug('thumbnail perform', { sourceFile, destFile });
   gm(sourceFile).thumb(100, 100, destFile, 80, (error, gmdata) => {
@@ -33,8 +40,12 @@ function processThumbnail(imageDescriptor, job, cb) {
   });
 }
 
-function processTile(imageDescriptor, job, cb) {
+function processTile(imageDescriptor, sourceFilename, job, cb) {
   debug('gm tile success');
+
+  // gm convert -crop 100x100+1024+1024 Ruins.tif crop_1024_1024.png
+  // gm(sourcefile).crop(100, 100, 1024, 1024).write(destFile, (err) => {});
+
   sendResponse({
     ...job,
     url: urlFromImageDescriptor(imageDescriptor)
@@ -45,13 +56,14 @@ function processTile(imageDescriptor, job, cb) {
 export default (jobs) => {
   jobs.image = {
     perform: (job, cb) => {
-      const { imageDescriptor } = job;
+      debug('image perform', { job });
+      const { imageDescriptor, sourceFilename } = job;
 
       switch(imageDescriptor.output.purpose) {
         case PURPOSE.THUMBNAIL:
-          return processThumbnail(imageDescriptor, job, cb);
+          return processThumbnail(imageDescriptor, sourceFilename, job, cb);
         case PURPOSE.TILE:
-          return processTile(imageDescriptor, job, cb);
+          return processTile(imageDescriptor, sourceFilename, job, cb);
         default:
           sendResponse({
             ...job,

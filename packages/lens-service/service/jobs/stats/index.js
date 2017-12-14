@@ -57,7 +57,9 @@ export default (jobs) => {
       debug('stats job', { job });
       const { input } = job.statsDescriptor.imageDescriptor;
       debug('determining input', { imageDescriptor: job.statsDescriptor.imageDescriptor });
-      const sourceFile = paths.resolveSourcePath(input.file);
+
+      const file = job.sourceFilename || input.file;
+      const sourceFile = paths.resolveSourcePath(file);
       debug(`Source file is '${sourceFile}'`);
 
       Promise.all([

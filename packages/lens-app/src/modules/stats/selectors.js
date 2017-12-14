@@ -1,8 +1,4 @@
-import {
-  makeStatsKey,
-  makeSourceImageDescriptor,
-  makeSourceStatsDescriptor
-} from '@lens/image-descriptors';
+import { makeStatsKey } from '@lens/image-descriptors';
 
 export const STATS_LIST_KEYS = {
   DEFAULT: 'stats',
@@ -30,16 +26,6 @@ export const statsSelector = (state, statsDescriptor) => {
   if (statsItem) {
     return statsItem.data;
   }
-};
-
-export const sourceStatsDescriptorSelector = (state, id) => {
-  const imageDescriptor = makeSourceImageDescriptor(id);
-  const source = state.catalog.sources.byIds[id];
-
-  if (source) {
-    imageDescriptor.input.file = source.file;
-  }
-  return makeSourceStatsDescriptor(imageDescriptor);
 };
 
 export const statsByKeySelector = ({ stats }, key) => {

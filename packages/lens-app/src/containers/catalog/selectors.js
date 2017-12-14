@@ -13,11 +13,9 @@ export const sourcesArray = createSelector(sources, sources => {
 });
 export const thumbnailImageDescriptorsArray = createSelector(sources, sources => {
   if (sources) {
-    const { ids, byIds } = sources;
+    const { ids } = sources;
     return ids.map(id => {
-      const imageDescriptor = makeThumbnailImageDescriptor(id);
-      imageDescriptor.input.file = byIds[id].file;
-      return imageDescriptor;
+      return makeThumbnailImageDescriptor(id);
     });
   }
 });

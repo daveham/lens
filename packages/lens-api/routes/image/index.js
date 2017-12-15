@@ -95,20 +95,37 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
 
   function nextItem() {
     if (index < imageDescriptors.length) {
-      processItem(imageDescriptors[index++]).then(nextItem);
+      debug('nextItem', index);
+      return processItem(imageDescriptors[index++]).then(nextItem);
     }
+    return Promise.resolve();
   }
-  nextItem();
 
-  res.send({
-    enqueuedImageDescriptors,
-    enqueuedStatus,
-    erroredImageDescriptors,
-    erroredErrors,
-    existingImageDescriptors,
-    existingUrls
+  loadCatalog((err, catalog) => {
+    if (err) {
+      debug('processMultipleImage loadCatalog error', { err });
+      res.send(err);
+      next();
+    } else {
+      // turn sources into a map to be used from within processItem
+      debug('processMultipleImage', { catalog });
+
+      debug('calling nextItem for first time');
+      nextItem().then(() => {
+        debug('after exhausting nextItems');
+
+        res.send({
+          enqueuedImageDescriptors,
+          enqueuedStatus,
+          erroredImageDescriptors,
+          erroredErrors,
+          existingImageDescriptors,
+          existingUrls
+        });
+        next();
+      });
+    }
   });
-  next();
 }
 
 export default {

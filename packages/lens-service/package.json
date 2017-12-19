@@ -25,6 +25,7 @@
     "dotenv": "^4.0.0",
     "gm": "^1.21.1",
     "node-resque": "^4.0.7",
+    "mkdirp":"^0.5.1",
     "socket.io": "^2.0.3",
     "restify": "^5.0.1",
     "restify-cors-middleware": "^1.0.1"

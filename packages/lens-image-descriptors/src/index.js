@@ -65,7 +65,7 @@ const thumbnailFileName = (id) => {
 };
 
 const tileFileName = (group, y, x) => {
-  return `${group}_${y}_${x}.jpg`;
+  return `${group}_${y}_${x}.png`;
 };
 
 // return where the file would be found if the image file exists

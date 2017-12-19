@@ -1,3 +1,5 @@
+import path from 'path';
+import mkdirp from 'mkdirp';
 import gm from 'gm';
 import {
   pathFromImageDescriptor,
@@ -12,45 +14,92 @@ import debugLib from 'debug';
 const debug = debugLib('lens:jobs-image');
 
 function processThumbnail(imageDescriptor, sourceFilename, job, cb) {
-  debug('processThumbnail', { sourceFilename });
-
   const file = sourceFilename || imageDescriptor.input.file;
   if (!file) {
-    return sendResponse({ ...job, error: new Error('missing source filename') });
+    sendResponse({ ...job, error: new Error('missing source filename') });
+    cb();
+    return;
   }
 
   const sourceFile = paths.resolveSourcePath(file);
   const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
-  debug('thumbnail perform', { sourceFile, destFile });
-  gm(sourceFile).thumb(100, 100, destFile, 80, (error, gmdata) => {
-    if (error) {
-      debug('gm thumb error', { gmdata });
-      sendResponse({
-        ...job,
-        error
-      });
-    } else {
-      debug('gm thumb success', { gmdata });
-      sendResponse({
-        ...job,
-        url: urlFromImageDescriptor(imageDescriptor)
-      });
-    }
+
+  try {
+    gm(sourceFile).thumb(100, 100, destFile, 80, (error) => {
+      if (error) {
+        debug('gm thumb error', { error });
+        sendResponse({
+          ...job,
+          error
+        });
+      } else {
+        sendResponse({
+          ...job,
+          url: urlFromImageDescriptor(imageDescriptor)
+        });
+      }
+      cb();
+    });
+  } catch(err) {
+    debug('gm thumb caught exception', { err });
+    sendResponse({
+      ...job,
+      error: err
+    });
     cb();
-  });
+  }
 }
 
 function processTile(imageDescriptor, sourceFilename, job, cb) {
-  debug('gm tile success');
+  const { input } = imageDescriptor;
+  const file = sourceFilename || input.file;
+  if (!file) {
+    sendResponse({ ...job, error: new Error('missing source filename') });
+    cb();
+    return;
+  }
 
-  // gm convert -crop 100x100+1024+1024 Ruins.tif crop_1024_1024.png
-  // gm(sourcefile).crop(100, 100, 1024, 1024).write(destFile, (err) => {});
+  const sourceFile = paths.resolveSourcePath(file);
+  const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
+  const destPath = path.dirname(destFile);
+  const { x, y } = input.location;
+  const { width, height } = input.size;
 
-  sendResponse({
-    ...job,
-    url: urlFromImageDescriptor(imageDescriptor)
+  mkdirp(destPath, (mkerr) => {
+    if (mkerr) {
+      debug('processTile mkdirp error', { mkerr });
+      sendResponse({
+        ...job,
+        error: mkerr
+      });
+      cb();
+    } else {
+      try {
+        gm(sourceFile).crop(width, height, x, y).write(destFile, (error) => {
+          if (error) {
+            debug('gm crop error', { error });
+            sendResponse({
+              ...job,
+              error
+            });
+          } else {
+            sendResponse({
+              ...job,
+              url: urlFromImageDescriptor(imageDescriptor)
+            });
+          }
+          cb();
+        });
+      } catch(err) {
+        debug('gm crop caught exception', { err });
+        sendResponse({
+          ...job,
+          error: err
+        });
+        cb();
+      }
+    }
   });
-  cb();
 }
 
 export default (jobs) => {
@@ -69,6 +118,7 @@ export default (jobs) => {
             ...job,
             error: new Error('unexpected gm job')
           });
+          cb();
       }
     }
   };

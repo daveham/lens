@@ -62,6 +62,7 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
   const existingImageDescriptors = [];
   const existingUrls = [];
   let index = 0;
+  let sourceFileMap = {};
 
   function processItem(imageDescriptor) {
     const path = pathFromImageDescriptor(imageDescriptor);
@@ -73,10 +74,19 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
           if (err.code === 'ENOENT') {
             debug('file does not exist - creating task');
             enqueuedImageDescriptors.push(imageDescriptor);
-            enqueueJob(createImage(clientId, imageDescriptor), (status) => {
-              enqueuedStatus.push(status);
+            const sourceFile = sourceFileMap[imageDescriptor.input.id];
+            if (sourceFile) {
+              enqueueJob(createImage(clientId, imageDescriptor, sourceFile), (status) => {
+                enqueuedStatus.push(status);
+                resolve();
+              });
+            } else {
+              const missingError = new Error(`Source file not found for id ${imageDescriptor.input.id}`);
+              debug('processMultipleItems', missingError);
+              erroredImageDescriptors.push(imageDescriptor);
+              erroredErrors.push(missingError);
               resolve();
-            });
+            }
           } else {
             debug('file access error', err);
             erroredImageDescriptors.push(imageDescriptor);
@@ -109,6 +119,9 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
     } else {
       // turn sources into a map to be used from within processItem
       debug('processMultipleImage', { catalog });
+      catalog.sources.forEach((source) => {
+        sourceFileMap[source.id] = source.file;
+      });
 
       debug('calling nextItem for first time');
       nextItem().then(() => {

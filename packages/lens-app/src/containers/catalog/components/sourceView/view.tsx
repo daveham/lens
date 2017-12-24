@@ -8,14 +8,16 @@ import AutoScroll from '../../../../components/autoScroll';
 import { createSourceSpec, IStatsSpec } from '../../utils';
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:sourceView');
+import _debug from 'debug';
+const debug = _debug('lens:sourceView');
 
 interface IProps {
   sourceId: string;
-  sourceThumbnailUrl: string;
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
+  thumbnailImageDescriptor: IImageDescriptor;
+  thumbnailUrl: string;
+  ensureImage: (payload: {[name: string]: IImageDescriptor}) => void;
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
   ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
 }
@@ -32,19 +34,22 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(): any {
-    const { sourceStats } = this.props;
+    const { sourceStats, thumbnailUrl } = this.props;
+
     if (sourceStats) {
-      this.getStatsSpec(sourceStats);
+      this.calculateStatsSpec(sourceStats);
     } else {
-      setTimeout(() => {
-        this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
-      }, 0);
+      this.requestSourceStat();
+    }
+
+    if (!thumbnailUrl) {
+      this.requestThumbnailImage();
     }
   }
 
   public componentWillReceiveProps(nextProps: IProps): any {
     if (nextProps.sourceStats !== this.props.sourceStats) {
-      this.getStatsSpec(nextProps.sourceStats);
+      this.calculateStatsSpec(nextProps.sourceStats);
     }
   }
 
@@ -54,7 +59,7 @@ class View extends React.Component<IProps, IState> {
         <div className={styles.divider}>
           <div className={styles.statsHeader}>
             <SourceThumbnail
-              thumbnailUrl={this.props.sourceThumbnailUrl}
+              thumbnailUrl={this.props.thumbnailUrl}
               link={'/Catalog'}
             />
             {this.renderStats()}
@@ -65,7 +70,7 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
-  private getStatsSpec(sourceStats) {
+  private calculateStatsSpec(sourceStats) {
     if (!sourceStats.loading) {
       const width = parseInt(sourceStats.width, 10);
       const height = parseInt(sourceStats.height, 10);
@@ -102,6 +107,20 @@ class View extends React.Component<IProps, IState> {
       );
     }
     return null;
+  }
+
+  private requestSourceStat(): void {
+    setTimeout(() => {
+      debug('requestSourceState', { statsDescriptor: this.props.sourceStatsDescriptor });
+      this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
+    }, 0);
+  }
+
+  private requestThumbnailImage(): void {
+    setTimeout(() => {
+      debug('requestThumbnailImage', { imageDescriptor: this.props.thumbnailImageDescriptor});
+      this.props.ensureImage({ imageDescriptor: this.props.thumbnailImageDescriptor });
+    }, 0);
   }
 }
 

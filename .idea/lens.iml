@@ -13,5 +13,6 @@
     <orderEntry type="library" name="react-test-renderer-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="restify-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="react-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="reselect" level="project" />
   </component>
 </module>

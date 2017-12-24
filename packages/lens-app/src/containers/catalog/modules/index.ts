@@ -24,7 +24,7 @@ const name = (state = '', { type, payload }) => {
   }
 };
 
-const sources = (state = {  ids: [], byIds: {} }, { type, payload}) => {
+const sources = (state = { ids: [], byIds: {} }, { type, payload}) => {
   switch (type) {
     case ACTIONS.RECEIVE_CATALOG: {
       const { sources } = payload;

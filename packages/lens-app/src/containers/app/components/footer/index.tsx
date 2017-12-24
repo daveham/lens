@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import CommandButton from './command-button/index';
 
 import styles from './styles.scss';

@@ -1,21 +1,34 @@
 import { createSelector } from 'reselect';
-import { makeThumbnailImageDescriptor } from '@lens/image-descriptors';
+import { makeThumbnailImageDescriptor, makeImageKey } from '@lens/image-descriptors';
 
-export const loading = ({ catalog }) => catalog.loading;
-export const loaded = ({ catalog }) => Boolean(catalog.name);
-export const name = ({ catalog }) => catalog.name;
-export const sources = ({ catalog }) => catalog.sources;
-export const sourcesArray = createSelector(sources, sources => {
-  if (sources) {
-    const { ids, byIds } = sources;
-    return ids.map(id => byIds[id]);
+export const catalogIsLoading = ({ catalog }) => catalog.loading;
+export const catalogIsLoaded = ({ catalog }) => Boolean(catalog.name);
+export const catalogName = ({ catalog }) => catalog.name;
+export const catalogSources = ({ catalog }) => catalog.sources;
+
+export const sources = createSelector(
+  catalogSources,
+  catalogSources => {
+    if (catalogSources) {
+      const { ids, byIds } = catalogSources;
+      return ids.map(id => byIds[id]);
+    }
+    return [];
   }
-});
-export const thumbnailImageDescriptorsArray = createSelector(sources, sources => {
-  if (sources) {
-    const { ids } = sources;
-    return ids.map(id => {
-      return makeThumbnailImageDescriptor(id);
-    });
+);
+
+export const thumbnailImageDescriptors = createSelector(
+  catalogSources,
+  catalogSources => {
+    if (catalogSources) {
+      const { ids } = catalogSources;
+      return ids.map(id => makeThumbnailImageDescriptor(id));
+    }
+    return [];
   }
-});
+);
+
+export const thumbnailImageKeys = createSelector(
+  thumbnailImageDescriptors,
+  imageDescriptors => imageDescriptors.map(imageDescriptor => makeImageKey(imageDescriptor))
+);

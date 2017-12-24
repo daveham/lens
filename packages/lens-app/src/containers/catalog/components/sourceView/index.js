@@ -1,30 +1,34 @@
 import { connect } from 'react-redux';
 import {
   makeSourceImageDescriptor,
-  makeSourceStatsDescriptor
+  makeSourceStatsDescriptor,
+  makeThumbnailImageDescriptor
 } from '@lens/image-descriptors';
 import { thumbnailUrlFromIdSelector } from '../../../../modules/images/selectors';
 import { statsSelector } from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
-import { ensureImages } from '../../../../modules/images/actions';
+import { ensureImage, ensureImages } from '../../../../modules/images/actions';
 import View from './view';
 
 const mapDispatchToProps = {
   ensureStats,
+  ensureImage,
   ensureImages
 };
 
 const mapStateToProps = (state, ownProps) => {
   const { id } = ownProps.match.params;
   const sourceStatsDescriptor = makeSourceStatsDescriptor(makeSourceImageDescriptor(id));
-  const sourceThumbnailUrl = thumbnailUrlFromIdSelector(state, id);
   const sourceStats = statsSelector(state, sourceStatsDescriptor);
+  const thumbnailImageDescriptor = makeThumbnailImageDescriptor(id);
+  const thumbnailUrl = thumbnailUrlFromIdSelector(state, id);
 
   return {
     sourceId: id,
     sourceStatsDescriptor,
-    sourceThumbnailUrl,
-    sourceStats
+    sourceStats,
+    thumbnailImageDescriptor,
+    thumbnailUrl,
   };
 };
 

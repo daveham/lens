@@ -38,6 +38,10 @@ export const thumbnailUrlsSelector = ({ images }) => {
   return thumbnailKeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
 };
 
+export const thumbnailImages = ({ images }) => {
+  return images.byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+};
+
 export const imageSelector = (state, imageDescriptor) => {
   const listKey = listKeyFromImageDescriptor(imageDescriptor);
   const byKeys = state.images.byKeys[listKey] || {};

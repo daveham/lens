@@ -1,26 +1,26 @@
 import { makeStatsKey } from '@lens/image-descriptors';
 import {
-  itemLoadedWithDataReducer,
+  itemLoadedReducer,
   itemLoadingReducer,
   addOrUpdateItem
 } from '../utils';
 import { ACTIONS } from './actions';
 
-const statsLoadingHandler = (state, { listKey, statsDescriptor }) => {
+const statsLoadingHandler = (state, { listKey, statsDescriptor, data }) => {
   const key = makeStatsKey(statsDescriptor);
-  const statsReducerFn = (item) => itemLoadingReducer(item, true);
+  const statsReducerFn = (item) => itemLoadingReducer(item, data, true);
   return addOrUpdateItem(state, listKey, key, statsReducerFn);
 };
 
-const statsNotLoadingHandler = (state, { listKey, statsDescriptor }) => {
+const statsNotLoadingHandler = (state, { listKey, statsDescriptor, data }) => {
   const key = makeStatsKey(statsDescriptor);
-  const statsReducerFn = (item) => itemLoadingReducer(item, false);
+  const statsReducerFn = (item) => itemLoadingReducer(item, data, false);
   return addOrUpdateItem(state, listKey, key, statsReducerFn);
 };
 
 const statsLoadedHandler = (state, { listKey, statsDescriptor, data }) => {
   const key = makeStatsKey(statsDescriptor);
-  const statsReducerFn = (item) => itemLoadedWithDataReducer(item, data);
+  const statsReducerFn = (item) => itemLoadedReducer(item, { data });
   return addOrUpdateItem(state, listKey, key, statsReducerFn);
 };
 

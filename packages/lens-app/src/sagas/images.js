@@ -36,8 +36,8 @@ export function* ensureImagesSaga({ payload }) {
     if (existingUrls && existingUrls.length) {
       yield put(imagesLoaded({
         imageDescriptors: existingImageDescriptors,
-        urls: existingUrls
-      } ));
+        data: existingUrls.map((url) => ({ url }))
+      }));
     }
   } catch (error) {
     debug('ensureImagesSaga image api exception', error);
@@ -60,7 +60,7 @@ export function* ensureImageSaga({ payload }) {
     const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
     const { url } = payload;
     if (url) {
-      yield put(imageLoaded({ imageDescriptor, url } ));
+      yield put(imageLoaded({ imageDescriptor, data: { url } } ));
     }
   } catch (error) {
     debug('ensureImageSaga image api exception', error);

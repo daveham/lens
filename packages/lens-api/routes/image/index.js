@@ -12,7 +12,7 @@ const debug = _debug('lens:api-image');
 
 function processSingleImage(clientId, imageDescriptor, res, next) {
   const path = pathFromImageDescriptor(imageDescriptor);
-  debug('processSingleImage', { path });
+  debug('processSingleImage', { imageDescriptor, path });
 
   fs.access(path, fs.constants.R_OK, (err) => {
     if (err) {
@@ -53,8 +53,6 @@ function processSingleImage(clientId, imageDescriptor, res, next) {
 }
 
 function processMultipleImages(clientId, imageDescriptors, res, next) {
-  // TODO: load catalog, add source file path to imageDescriptors
-
   const enqueuedImageDescriptors = [];
   const enqueuedStatus = [];
   const erroredImageDescriptors = [];

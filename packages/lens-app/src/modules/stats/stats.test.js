@@ -3,7 +3,7 @@ import {
   statsLoading,
   statsNotLoading,
   statsLoaded
-} from './index';
+} from './actions';
 
 describe('stats reducers', () => {
   test('should return default state with empty keys', () => {
@@ -13,17 +13,17 @@ describe('stats reducers', () => {
   });
 
   const initialState = { keys: {}, byKeys: {} };
-  const listKey = 'list';
+  const listKey = 'sources';
   const id = 'stats1';
   const analysis = 'i';
   const imageDescriptor = { input: { id } };
   const statsDescriptor = { analysis, imageDescriptor };
-  const url = 'image1.jpg';
+  const data = 'image1.jpg';
 
   const expectedKey = `${analysis}_${id}`;
   const expectedListKeyProperty = `keys.${listKey}`;
   const expectedLoadingProperty = `byKeys.${listKey}.${expectedKey}.loading`;
-  const expectedUrlProperty = `byKeys.${listKey}.${expectedKey}.url`;
+  const expectedUrlProperty = `byKeys.${listKey}.${expectedKey}.data`;
 
   describe('in a new list with a new image stat', () => {
     const inputState = { keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } };
@@ -40,11 +40,11 @@ describe('stats reducers', () => {
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
-    test('should record url', () => {
-      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
+    test('should record data', () => {
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, data }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
-      expect(state).toHaveProperty(expectedUrlProperty, url);
+      expect(state).toHaveProperty(expectedUrlProperty, data);
     });
   });
 
@@ -68,11 +68,11 @@ describe('stats reducers', () => {
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
-    test('should record url', () => {
-      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
+    test('should record data', () => {
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, data }));
       expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
-      expect(state).toHaveProperty(expectedUrlProperty, url);
+      expect(state).toHaveProperty(expectedUrlProperty, data);
     });
   });
 
@@ -93,11 +93,11 @@ describe('stats reducers', () => {
       expect(state).toHaveProperty(expectedLoadingProperty, false);
     });
 
-    test('should record url', () => {
-      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, url }));
+    test('should record data', () => {
+      const state = stats(inputState, statsLoaded({ listKey, statsDescriptor, data }));
       expect(state).toHaveProperty(expectedListKeyProperty, [ expectedKey ]);
       expect(state).toHaveProperty(expectedLoadingProperty, false);
-      expect(state).toHaveProperty(expectedUrlProperty, url);
+      expect(state).toHaveProperty(expectedUrlProperty, data);
     });
   });
 });

@@ -1,56 +1,38 @@
-export const itemLoadedWithUrlReducer = (state = {}, url) => {
-  // add the url to the object and reset the loading flag
+export const itemLoadedReducer = (state = {}, data = {}) => {
+  // add the data to the object and reset the loading flag
   return {
     ...state,
-    url,
+    ...data,
     loading: false
   };
 };
 
-export const itemsLoadedWithUrlReducer = (items, itemsUrls) => {
+export const itemsLoadedReducer = (items, data = []) => {
   // add the url to each object and reset the loading flag
   return items.map((item = {}, index) => {
     return {
       ...item,
-      data: itemsUrls[index],
+      ...(data[index] || {}),
       loading: false
     };
   });
 };
 
-export const itemLoadedWithDataReducer = (state = {}, data) => {
-  // add the data to the object and reset the loading flag
-  return {
-    ...state,
-    data,
-    loading: false
-  };
-};
-
-export const itemsLoadedWithDataReducer = (items, itemsData) => {
-  // add each data to each object and reset the loading flag
-  return items.map((item = {}, index) => {
-    return {
-      ...item,
-      data: itemsData[index],
-      loading: false
-    };
-  });
-};
-
-export const itemLoadingReducer = (state = {}, loading) => {
+export const itemLoadingReducer = (state = {}, data = {}, loading) => {
   // set or reset the loading flag
   return {
     ...state,
+    ...data,
     loading
   };
 };
 
-export const itemsLoadingReducer = (items, loading) => {
+export const itemsLoadingReducer = (items, data = [], loading) => {
   // set or reset the loading flag on all items
-  return items.map((item = {}) => {
+  return items.map((item = {}, index) => {
     return {
       ...item,
+      ...(data[index] || {}),
       loading
     };
   });

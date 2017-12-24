@@ -1,7 +1,7 @@
 import { makeImageKey } from '@lens/image-descriptors';
 import {
-  itemLoadedWithUrlReducer,
-  itemsLoadedWithUrlReducer,
+  itemLoadedReducer,
+  itemsLoadedReducer,
   itemLoadingReducer,
   itemsLoadingReducer,
   addOrUpdateItem,
@@ -9,39 +9,55 @@ import {
 } from '../utils';
 import { ACTIONS } from './actions';
 
-const imageLoadingHandler = (state, { listKey, imageDescriptor }) => {
+const imageLoadingHandler = (state, { listKey, imageDescriptor, data }) => {
   const key = makeImageKey(imageDescriptor);
-  const imageReducerFn = (item) => itemLoadingReducer(item, true);
+  const imageReducerFn = (item) => itemLoadingReducer(item, data, true);
   return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
-const imageNotLoadingHandler = (state, { listKey, imageDescriptor }) => {
+const imageNotLoadingHandler = (state, { listKey, imageDescriptor, data }) => {
   const key = makeImageKey(imageDescriptor);
-  const imageReducerFn = (item) => itemLoadingReducer(item, false);
+  const imageReducerFn = (item) => itemLoadingReducer(item, data, false);
   return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
-const imageLoadedHandler = (state, { listKey, imageDescriptor, url }) => {
+const imageLoadedHandler = (state, { listKey, imageDescriptor, data }) => {
   const key = makeImageKey(imageDescriptor);
-  const imageReducerFn = (item) => itemLoadedWithUrlReducer(item, url);
+  const imageReducerFn = (item) => itemLoadedReducer(item, data);
   return addOrUpdateItem(state, listKey, key, imageReducerFn);
 };
 
-const imagesLoadingHandler = (state, { listKey, imageDescriptors }) => {
+const augmentedData = (data, imageDescriptors) => {
+  // if imageDescriptors include location, fold into data as x, y
+  return imageDescriptors.map((imageDescriptor, index) => {
+    const dataItem = data[index] || {};
+    const { location } = imageDescriptor.input;
+    if (location) {
+      dataItem.x = location.x;
+      dataItem.y = location.y;
+    }
+    return dataItem;
+  });
+};
+
+const imagesLoadingHandler = (state, { listKey, imageDescriptors, data = [] }) => {
+  const newData = augmentedData(data, imageDescriptors);
   const keys = imageDescriptors.map((imageDescriptor) => makeImageKey(imageDescriptor));
-  const imageReducerFn = (items) => itemsLoadingReducer(items, true);
+  const imageReducerFn = (items) => itemsLoadingReducer(items, newData, true);
   return addOrUpdateItems(state, listKey, keys, imageReducerFn);
 };
 
-const imagesNotLoadingHandler = (state, { listKey, imageDescriptors }) => {
+const imagesNotLoadingHandler = (state, { listKey, imageDescriptors, data = [] }) => {
+  const newData = augmentedData(data, imageDescriptors);
   const keys = imageDescriptors.map((imageDescriptor) => makeImageKey(imageDescriptor));
-  const imageReducerFn = (items) => itemsLoadingReducer(items, false);
+  const imageReducerFn = (items) => itemsLoadingReducer(items, newData, false);
   return addOrUpdateItems(state, listKey, keys, imageReducerFn);
 };
 
-const imagesLoadedHandler = (state, { listKey, imageDescriptors, urls }) => {
+const imagesLoadedHandler = (state, { listKey, imageDescriptors, data = [] }) => {
+  const newData = augmentedData(data, imageDescriptors);
   const keys = imageDescriptors.map((imageDescriptor) => makeImageKey(imageDescriptor));
-  const imageReducerFn = (items) => itemsLoadedWithUrlReducer(items, urls);
+  const imageReducerFn = (items) => itemsLoadedReducer(items, newData);
   return addOrUpdateItems(state, listKey, keys, imageReducerFn);
 };
 

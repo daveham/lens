@@ -35,6 +35,9 @@ routes(server);
 server.get( /\/thumbs\//, restify.plugins.serveStatic({
   directory: '/data'
 }));
+server.get( /\/tiles\//, restify.plugins.serveStatic({
+  directory: '/data'
+}));
 
 server.listen(config.server_port, config.server_host, () => {
   debug(`${server.name} listening at ${server.url}`);

@@ -1,40 +1,20 @@
 import * as React from 'react';
 import { throttle } from 'lodash';
-import { makeTileImageDescriptor } from '@lens/image-descriptors';
 import styles from './styles.scss';
-import { IStatsSpec } from '../../../utils';
-import { IImageDescriptor } from '../../../../../interfaces';
 import Tile from './tile';
 
 import _debug from 'debug';
 const debug = _debug('lens:sourceView:tiles');
 
-interface ITileData {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-  id: IImageDescriptor;
-}
-
 interface IProps {
-  sourceId: string;
-  spec: IStatsSpec;
-  x?: number;
-  y?: number;
-  ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
+  imageKeys: ReadonlyArray<string>;
+  images: {[id: string]: any};
+  onSizeChanged?: (width: number, height: number) => void;
 }
 
 interface IState {
   width: number;
   height: number;
-  x: number;
-  y: number;
-  tileData: ITileData[];
-  prevX: number;
-  prevY: number;
-  prevLastX: number;
-  prevLastY: number;
 }
 
 class Tiles extends React.Component<IProps, IState> {
@@ -44,19 +24,9 @@ class Tiles extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const x = props.x || 0;
-    const y = props.y || 0;
-
     this.state = {
       width: 0,
-      height: 0,
-      x,
-      y,
-      tileData: [],
-      prevX: -1,
-      prevY: -1,
-      prevLastX: -1,
-      prevLastY: -1
+      height: 0
     };
 
     this.controlledResize = throttle(this.updateSize, 50, { leading: true, trailing: true });
@@ -72,32 +42,31 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState) {
-    if (prevState.width !== this.state.width ||
-      prevState.height !== this.state.height ||
-      prevProps.spec !== this.props.spec) {
-      debug('componentDidUpdate - size changed');
-      this.calculateTiles();
-    }
-
-    if (prevState.tileData !== this.state.tileData) {
-      debug('componentDidUpdate - tileData changed');
-      const imageDescriptors = this.state.tileData.map((item) => item.id);
-      this.props.ensureImages({ imageDescriptors });
+    const { width, height } = this.state;
+    if (prevState.width !== width ||
+      prevState.height !== height) {
+      debug('componentDidUpdate - size changed', { width, height });
+      if (this.props.onSizeChanged) {
+        this.props.onSizeChanged(width, height);
+      }
     }
   }
 
   public render() {
-    const { tileData } = this.state;
-    const tiles = tileData.map((data, index) => {
-      return (
+    const { imageKeys, images } = this.props;
+    const imageElements = imageKeys.map((key) => {
+      const image = images[key];
+      return image ? (
         <Tile
-          key={index}
-          left={data.left}
-          top={data.top}
-          width={data.width}
-          height={data.height}
+          key={key}
+          left={image.x}
+          top={image.y}
+          width={32}
+          height={32}
+          url={image.url}
+          loading={image.loading}
         />
-      );
+      ) : null;
     });
 
     return (
@@ -105,7 +74,7 @@ class Tiles extends React.Component<IProps, IState> {
         className={styles.tilesContainer}
         ref={(node) => this.containerNode = node}
       >
-        {tiles}
+        {imageElements}
       </div>
     );
   }
@@ -122,43 +91,6 @@ class Tiles extends React.Component<IProps, IState> {
       }
     }
   };
-
-  private calculateTiles() {
-    const { x, y, width, height, prevX, prevY, prevLastX, prevLastY } = this.state;
-    const { spec, sourceId } = this.props;
-    const { res, tilesWide, tilesHigh } = spec;
-    const viewWide = Math.floor((width + res - 1) / res);
-    const viewHigh = Math.floor((height + res - 1) / res);
-    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
-    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
-
-    if (x === prevX && y === prevY && lastX === prevLastX && lastY === prevLastY) {
-      return;
-    }
-
-    debug(`y ${y}-${lastY}, x ${x}-${lastX}`);
-    const data = [];
-    for (let yIndex = y; yIndex <= lastY; yIndex++) {
-      for (let xIndex = x; xIndex <= lastX; xIndex++) {
-        const left = xIndex * res;
-        const top = yIndex * res;
-        data.push({
-          left,
-          width: res,
-          top,
-          height: res,
-          id: makeTileImageDescriptor(sourceId, res, left, top, res, res)
-        });
-      }
-      this.setState({
-        tileData: data,
-        prevX: x,
-        prevY: y,
-        prevLastX: lastX,
-        prevLastY: lastY
-      });
-    }
-  }
 }
 
 export default Tiles;

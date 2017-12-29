@@ -13,7 +13,14 @@
     "lib": [
       "es6",
       "dom"
-    ]
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "react": ["node_modules/@types/react"]
+    }
   },
   "include": [
     "src/**/*"

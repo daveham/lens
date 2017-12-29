@@ -4,7 +4,10 @@ import {
   makeSourceStatsDescriptor,
   makeThumbnailImageDescriptor
 } from '@lens/image-descriptors';
-import { thumbnailUrlFromIdSelector } from '../../../../modules/images/selectors';
+import {
+  thumbnailUrlFromIdSelector,
+  tileImagesSelector
+} from '../../../../modules/images/selectors';
 import { statsSelector } from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
 import { ensureImage, ensureImages } from '../../../../modules/images/actions';
@@ -22,11 +25,13 @@ const mapStateToProps = (state, ownProps) => {
   const sourceStats = statsSelector(state, sourceStatsDescriptor);
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(id);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, id);
+  const tileImages = tileImagesSelector(state);
 
   return {
     sourceId: id,
     sourceStatsDescriptor,
     sourceStats,
+    tileImages,
     thumbnailImageDescriptor,
     thumbnailUrl,
   };

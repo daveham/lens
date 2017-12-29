@@ -38,8 +38,12 @@ export const thumbnailUrlsSelector = ({ images }) => {
   return thumbnailKeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
 };
 
-export const thumbnailImages = ({ images }) => {
+export const thumbnailImagesSelector = ({ images }) => {
   return images.byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+};
+
+export const tileImagesSelector = ({ images }) => {
+  return images.byKeys[IMAGE_LIST_KEYS.DEFAULT] || {};
 };
 
 export const imageSelector = (state, imageDescriptor) => {

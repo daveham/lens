@@ -1,11 +1,12 @@
 import * as React from 'react';
-import SourceThumbnail from '../sourceThumbnail';
+import { makeTileImageDescriptor, makeImageKey } from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
-import Details from './components/details';
-import Tiles from './components/tiles';
 import AutoScroll from '../../../../components/autoScroll';
 import { createSourceSpec, IStatsSpec } from '../../utils';
+import SourceThumbnail from '../sourceThumbnail';
+import Details from './components/details';
+import Tiles from './components/tiles';
 import styles from './styles.scss';
 
 import _debug from 'debug';
@@ -15,6 +16,7 @@ interface IProps {
   sourceId: string;
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
+  tileImages: any;
   thumbnailImageDescriptor: IImageDescriptor;
   thumbnailUrl: string;
   ensureImage: (payload: {[name: string]: IImageDescriptor}) => void;
@@ -24,13 +26,17 @@ interface IProps {
 
 interface IState {
   statsSpec: IStatsSpec;
+  tileImageKeys: ReadonlyArray<string>;
 }
 
 class View extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    this.state = { statsSpec: null };
+    this.state = {
+      statsSpec: null,
+      tileImageKeys: []
+    };
   }
 
   public componentDidMount(): any {
@@ -70,12 +76,47 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
+  private handleTilesSizeChanged = (width: number, height: number): void => {
+    debug('handleTilesSizeChanged', { width, height });
+    /*
+      When size changes, recalculate image descriptors that fit the space.
+      From image descriptors, generate image keys and store in component state.
+      From image descriptors, ensure images.
+     */
+
+    const x = 0;
+    const y = 0;
+    const { sourceId } = this.props;
+    const { statsSpec } = this.state;
+    const { res, tilesWide, tilesHigh } = statsSpec;
+    const viewWide = Math.floor((width + res - 1) / res);
+    const viewHigh = Math.floor((height + res - 1) / res);
+    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
+    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
+
+    const imageDescriptors = [];
+    const tileImageKeys = [];
+    for (let yIndex = y; yIndex <= lastY; yIndex++) {
+      for (let xIndex = x; xIndex <= lastX; xIndex++) {
+        const left = xIndex * res;
+        const top = yIndex * res;
+        const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, res, res);
+        tileImageKeys.push(makeImageKey(imageDescriptor));
+        imageDescriptors.push(imageDescriptor);
+      }
+    }
+    this.props.ensureImages({ imageDescriptors });
+    this.setState({ tileImageKeys });
+  };
+
   private calculateStatsSpec(sourceStats) {
     if (!sourceStats.loading) {
       const width = parseInt(sourceStats.width, 10);
       const height = parseInt(sourceStats.height, 10);
       const res = 32; // TODO: pass res through UI
-      this.setState({statsSpec: createSourceSpec(width, height, res)});
+      setTimeout(() => {
+        this.setState({statsSpec: createSourceSpec(width, height, res)});
+      }, 0);
     }
   }
 
@@ -98,9 +139,9 @@ class View extends React.Component<IProps, IState> {
         <div className={styles.tilesWrapper}>
           <AutoScroll>
             <Tiles
-              spec={statsSpec}
-              sourceId={this.props.sourceId}
-              ensureImages={this.props.ensureImages}
+              imageKeys={this.state.tileImageKeys}
+              images={this.props.tileImages}
+              onSizeChanged={this.handleTilesSizeChanged}
             />
           </AutoScroll>
         </div>

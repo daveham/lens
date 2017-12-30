@@ -14,8 +14,8 @@ interface IProps {
 
 class View extends React.Component<IProps, any> {
   public componentDidMount(): any {
-    if (this.props.thumbnailImageDescriptors.length &&
-      !Object.keys(this.props.thumbnailImages).length) {
+    const idCount = this.props.thumbnailImageDescriptors.length;
+    if (idCount && Object.keys(this.props.thumbnailImages).length < idCount) {
       this.requestImages();
     }
   }

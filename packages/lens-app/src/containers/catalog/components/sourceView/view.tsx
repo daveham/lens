@@ -141,6 +141,7 @@ class View extends React.Component<IProps, IState> {
         <div className={styles.tilesWrapper}>
           <AutoScroll>
             <Tiles
+              resolution={this.props.resolution}
               imageKeys={this.state.tileImageKeys}
               images={this.props.tileImages}
               onSizeChanged={this.handleTilesSizeChanged}

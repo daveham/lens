@@ -51,3 +51,9 @@
   position: absolute;
 }
 
+.selection {
+  position: absolute;
+  z-index: 100;
+  border: solid 2px rgba(255, 255, 0, .6);
+  border-radius: 4px;
+}

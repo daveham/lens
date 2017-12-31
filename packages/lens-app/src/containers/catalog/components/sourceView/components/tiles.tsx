@@ -7,15 +7,29 @@ import _debug from 'debug';
 const debug = _debug('lens:sourceView:tiles');
 
 interface IProps {
+  resolution: number;
   imageKeys: ReadonlyArray<string>;
   images: {[id: string]: any};
   onSizeChanged?: (width: number, height: number) => void;
 }
 
+interface ISelectedTile {
+  row: number;
+  col: number;
+}
+
 interface IState {
   width: number;
   height: number;
+  selectedTile: ISelectedTile;
 }
+
+const keyMoves = {
+  ArrowUp: [0, -1],
+  ArrowDown: [0, 1],
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0]
+};
 
 class Tiles extends React.Component<IProps, IState> {
   private containerNode: any;
@@ -26,18 +40,23 @@ class Tiles extends React.Component<IProps, IState> {
 
     this.state = {
       width: 0,
-      height: 0
+      height: 0,
+      selectedTile: { row: 0, col: 0 }
     };
 
     this.controlledResize = throttle(this.updateSize, 50, { leading: true, trailing: true });
   }
 
   public componentDidMount(): any {
+    document.addEventListener('keydown', this.handleKeyDown, false);
+
     window.addEventListener('resize', this.controlledResize, false);
     this.updateSize();
   }
 
   public componentWillUnmount(): any {
+    document.removeEventListener('keydown', this.handleKeyDown);
+
     window.removeEventListener('resize', this.controlledResize);
   }
 
@@ -53,7 +72,7 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { imageKeys, images } = this.props;
+    const { imageKeys, images, resolution } = this.props;
     const imageElements = imageKeys.map((key) => {
       const image = images[key];
       return image ? (
@@ -61,8 +80,8 @@ class Tiles extends React.Component<IProps, IState> {
           key={key}
           left={image.x}
           top={image.y}
-          width={32}
-          height={32}
+          width={resolution}
+          height={resolution}
           url={image.url}
           loading={image.loading}
         />
@@ -75,8 +94,28 @@ class Tiles extends React.Component<IProps, IState> {
         ref={(node) => this.containerNode = node}
       >
         {imageElements}
+        {this.renderSelection()}
       </div>
     );
+  }
+
+  private renderSelection() {
+    const { resolution } = this.props;
+    const { selectedTile } = this.state;
+
+    const inset = 2;
+    const top = selectedTile.row * resolution + inset;
+    const left = selectedTile.col * resolution + inset;
+    const side = resolution - 2 * inset;
+
+    const style = {
+      top,
+      left,
+      width: side,
+      height: side
+    };
+
+    return <div key='selection' className={styles.selection} style={style}/>;
   }
 
   private updateSize = () => {
@@ -91,6 +130,24 @@ class Tiles extends React.Component<IProps, IState> {
       }
     }
   };
+
+  private handleKeyDown = (event) => {
+    const move = keyMoves[event.code];
+    if (move) {
+      this.moveSelection(move[0], move[1]);
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  };
+
+  private moveSelection(deltaX, deltaY) {
+    const { selectedTile } = this.state;
+    const row = selectedTile.row + deltaY;
+    const col = selectedTile.col + deltaX;
+    if (row >= 0 && col >= 0) {
+      this.setState({ selectedTile: { row, col } });
+    }
+  }
 }
 
 export default Tiles;

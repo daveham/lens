@@ -20,15 +20,21 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const { id } = ownProps.match.params;
+  const { id, res } = ownProps.match.params;
+  let resolution = parseInt(res, 10);
+  if (!(resolution === 8 || resolution === 16 || resolution === 32 || resolution === 64)) {
+    resolution = 32;
+  }
+
   const sourceStatsDescriptor = makeSourceStatsDescriptor(makeSourceImageDescriptor(id));
   const sourceStats = statsSelector(state, sourceStatsDescriptor);
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(id);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, id);
-  const tileImages = tileImagesSelector(state);
+  const tileImages = tileImagesSelector(state, id, resolution);
 
   return {
     sourceId: id,
+    resolution,
     sourceStatsDescriptor,
     sourceStats,
     tileImages,

@@ -8,11 +8,15 @@ export const IMAGE_LIST_KEYS = {
   THUMBNAILS: 'thumbnails'
 };
 
+export const thumbnailsListKey = () => IMAGE_LIST_KEYS.THUMBNAILS;
+export const tilesListKey = (id, group) => `${IMAGE_LIST_KEYS.DEFAULT}.${id}.${group}`;
+
 export const listKeyFromImageDescriptor = imageDescriptor => {
   if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
-    return IMAGE_LIST_KEYS.THUMBNAILS;
+    return thumbnailsListKey();
   }
-  return IMAGE_LIST_KEYS.DEFAULT;
+  const { id, group } = imageDescriptor.input;
+  return tilesListKey(id, group);
 };
 
 const thumbnailUrlFromImage = image => {
@@ -20,7 +24,7 @@ const thumbnailUrlFromImage = image => {
 };
 
 export const thumbnailUrlFromKeySelector = ({ images }, key) => {
-  const thumbnailByKeys = images.byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  const thumbnailByKeys = images.byKeys[thumbnailsListKey()] || {};
   const image = thumbnailByKeys[key];
   return thumbnailUrlFromImage(image);
 };
@@ -33,17 +37,17 @@ export const thumbnailUrlFromIdSelector = (state, id) => {
 
 export const thumbnailUrlsSelector = ({ images }) => {
   const { keys, byKeys } = images;
-  const thumbnailKeys = keys[IMAGE_LIST_KEYS.THUMBNAILS] || [];
-  const thumbnailByKeys = byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  const thumbnailKeys = keys[thumbnailsListKey()] || [];
+  const thumbnailByKeys = byKeys[thumbnailsListKey()] || {};
   return thumbnailKeys.map(key => thumbnailUrlFromImage(thumbnailByKeys[key]));
 };
 
 export const thumbnailImagesSelector = ({ images }) => {
-  return images.byKeys[IMAGE_LIST_KEYS.THUMBNAILS] || {};
+  return images.byKeys[thumbnailsListKey()] || {};
 };
 
-export const tileImagesSelector = ({ images }) => {
-  return images.byKeys[IMAGE_LIST_KEYS.DEFAULT] || {};
+export const tileImagesSelector = ({ images }, id, group) => {
+  return images.byKeys[tilesListKey(id, group)] || {};
 };
 
 export const imageSelector = (state, imageDescriptor) => {

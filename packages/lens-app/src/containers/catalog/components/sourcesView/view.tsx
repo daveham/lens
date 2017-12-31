@@ -12,7 +12,19 @@ interface IProps {
   ensureImages: (payload: {[imageDescriptors: string]: ReadonlyArray<IImageDescriptor>}) => void;
 }
 
-class View extends React.Component<IProps, any> {
+interface IState {
+  resolution: number;
+}
+
+class View extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+
+    this.state = {
+      resolution: 32
+    };
+  }
+
   public componentDidMount(): any {
     const idCount = this.props.thumbnailImageDescriptors.length;
     if (idCount && Object.keys(this.props.thumbnailImages).length < idCount) {
@@ -28,6 +40,7 @@ class View extends React.Component<IProps, any> {
 
   public render() {
     const { thumbnailImages, sources, catalogName } = this.props;
+    const { resolution } = this.state;
     return (
       <div className={styles.container}>
         <div className={styles.catalogName}>{catalogName}</div>
@@ -40,7 +53,7 @@ class View extends React.Component<IProps, any> {
                 key={key}
                 thumbnailUrl={thumbnail ? thumbnail.url : null}
                 label={source.name}
-                link={`/Catalog/Source/${source.id}`}
+                link={`/Catalog/Source/${source.id}/${resolution}`}
               />
             );
           })}

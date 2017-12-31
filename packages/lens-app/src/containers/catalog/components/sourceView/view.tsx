@@ -14,6 +14,7 @@ const debug = _debug('lens:sourceView');
 
 interface IProps {
   sourceId: string;
+  resolution: number;
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
   tileImages: any;
@@ -113,9 +114,10 @@ class View extends React.Component<IProps, IState> {
     if (!sourceStats.loading) {
       const width = parseInt(sourceStats.width, 10);
       const height = parseInt(sourceStats.height, 10);
-      const res = 32; // TODO: pass res through UI
       setTimeout(() => {
-        this.setState({statsSpec: createSourceSpec(width, height, res)});
+        this.setState({
+          statsSpec: createSourceSpec(width, height, this.props.resolution)
+        });
       }, 0);
     }
   }

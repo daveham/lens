@@ -77,23 +77,25 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
-  private handleTilesSizeChanged = (width: number, height: number): void => {
-    debug('handleTilesSizeChanged', { width, height });
+  private handleTilesSizeChanged = (left: number, top: number, width: number, height: number): void => {
+    debug('handleTilesSizeChanged', { left, top, width, height });
     /*
       When size changes, recalculate image descriptors that fit the space.
       From image descriptors, generate image keys and store in component state.
       From image descriptors, ensure images.
      */
 
-    const x = 0;
-    const y = 0;
-    const { sourceId } = this.props;
+    const { sourceId, tileImages } = this.props;
     const { statsSpec } = this.state;
     const { res, tilesWide, tilesHigh } = statsSpec;
+
+    const x = left / res;
+    const y = top / res;
     const viewWide = Math.floor((width + res - 1) / res);
     const viewHigh = Math.floor((height + res - 1) / res);
     const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
     const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
+    debug('handleTilesSizeChanged', { x, y, lastX, lastY });
 
     const imageDescriptors = [];
     const tileImageKeys = [];
@@ -102,11 +104,16 @@ class View extends React.Component<IProps, IState> {
         const left = xIndex * res;
         const top = yIndex * res;
         const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, res, res);
-        tileImageKeys.push(makeImageKey(imageDescriptor));
-        imageDescriptors.push(imageDescriptor);
+        const imageKey = makeImageKey(imageDescriptor);
+        tileImageKeys.push(imageKey);
+        if (!tileImages[imageKey]) {
+          imageDescriptors.push(imageDescriptor);
+        }
       }
     }
-    this.props.ensureImages({ imageDescriptors });
+    if (imageDescriptors.length) {
+      this.props.ensureImages({imageDescriptors});
+    }
     this.setState({ tileImageKeys });
   };
 
@@ -141,7 +148,7 @@ class View extends React.Component<IProps, IState> {
         <div className={styles.tilesWrapper}>
           <AutoScroll>
             <Tiles
-              resolution={this.props.resolution}
+              statsSpec={statsSpec}
               imageKeys={this.state.tileImageKeys}
               images={this.props.tileImages}
               onSizeChanged={this.handleTilesSizeChanged}

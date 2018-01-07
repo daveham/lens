@@ -7,7 +7,9 @@ let serviceContext = null;
 
 const start = (connection, queues, context, jobs, cb) => {
   serviceContext = context;
-  const worker = new Worker({connection, queues}, jobs);
+
+  const timeout = process.env.WORKER_TIMEOUT || 1000;
+  const worker = new Worker({ timeout, connection, queues }, jobs);
 
   worker.on('start',
     () => {

@@ -44,6 +44,9 @@ const start = (connection, queues, context, jobs, cb) => {
   worker.on('job',
     (queue, job) => {
       debug(`${job.queue}/${job.class}`);
+      const params = job.args[0];
+      params.started = Date.now();
+      params.waited = params.started - params.created;
     }
   );
 
@@ -73,17 +76,17 @@ const start = (connection, queues, context, jobs, cb) => {
 };
 
 export const sendResponse = (result) => {
-  const { clientId } = result;
+  const { clientId, started, waited } = result;
   const socket = serviceContext.connections.getConnectionByClientId(clientId);
   if (socket) {
-    const timestamp = Date.now();
-    const duration = timestamp - result.timestamp;
+    const finished = Date.now();
+    const duration = finished - started;
     const response = {
       ...result,
-      timestamp,
+      finished,
       duration
     };
-    debug(`job ${response.jobId} ${response.command} duration ${duration}`);
+    debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}`);
     socket.emit('job', response);
   } else {
     debug(`no socket available for response for client ${clientId}`);

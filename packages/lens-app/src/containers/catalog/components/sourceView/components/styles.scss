@@ -35,16 +35,25 @@
   }
 }
 
+$tile-background-color: #222;
+$tile-idle-color: #282828;
+$tile-loading-color: #333;
+
 .tilesContainer {
   position: relative;
   height: 100%;
+  background-color: $tile-background-color;
 }
 
 .tile {
   position: absolute;
-  border-top: solid 1px #fefefe;
-  border-left: solid 1px #fefefe;
-  background-color: #f4f4f8;
+  border-top: solid 1px $tile-idle-color;
+  border-left: solid 1px $tile-idle-color;
+}
+
+.loading {
+  border-top: solid 1px $tile-loading-color;
+  border-left: solid 1px $tile-loading-color;
 }
 
 .image {

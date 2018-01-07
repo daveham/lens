@@ -105,7 +105,7 @@ function processTile(imageDescriptor, sourceFilename, job, cb) {
 export default (jobs) => {
   jobs.image = {
     perform: (job, cb) => {
-      debug('image perform', { job });
+      // debug('image perform', { job });
       const { imageDescriptor, sourceFilename } = job;
 
       switch(imageDescriptor.output.purpose) {

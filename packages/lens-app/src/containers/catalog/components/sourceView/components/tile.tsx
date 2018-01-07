@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import { default as getConfig } from '../../../../../config';
 import styles from './styles.scss';
 
@@ -13,7 +14,7 @@ interface IProps {
 
 class Tile extends React.Component<IProps, any> {
   public render(): any {
-    const { top, left, url, height, width } = this.props;
+    const { top, left, url, height, width, loading } = this.props;
     if (url) {
       const dataHost = getConfig().dataHost;
       const fullUrl = `${dataHost}${url}`;
@@ -26,7 +27,8 @@ class Tile extends React.Component<IProps, any> {
       top,
       left
     };
-    return <div className={styles.tile} style={divStyles}/>;
+    const tileClasses = classNames(styles.tile, loading && styles.loading);
+    return <div className={tileClasses} style={divStyles}/>;
   }
 }
 

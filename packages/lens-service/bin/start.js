@@ -47,13 +47,19 @@ io.sockets.on('connect', (socket) => {
   }
 
   socket.on('flash', (data) => {
-    debug('socket on flash', { data });
+    debug('flash message', { command: data.command });
     if (data.command === 'ping') {
+      const started = Date.now();
+      const waited = started - data.created;
       const response = {
         ...data,
         command: 'pong',
-        timestamp: Date.now()
+        started,
+        finished: started,
+        waited,
+        duration: 0
       };
+      debug('ping', { response });
       socket.emit('flash', response);
     }
   });

@@ -23,7 +23,7 @@ const statPromise = target => {
         ctime: stats.ctime,
         size: stats.size
       };
-      debug('file stats', { data });
+      // debug('file stats', { data });
       resolve(data);
     });
   });
@@ -45,7 +45,7 @@ const identifyPromise = target => {
         resolution: gmdata.Resolution,
         filesize: gmdata.Filesize
       };
-      debug('gm identify', { data });
+      // debug('gm identify', { data });
       resolve(data);
     });
   });
@@ -54,20 +54,20 @@ const identifyPromise = target => {
 export default (jobs) => {
   jobs.stats = {
     perform: (job, cb) => {
-      debug('stats job', { job });
+      // debug('stats job', { job });
       const { input } = job.statsDescriptor.imageDescriptor;
-      debug('determining input', { imageDescriptor: job.statsDescriptor.imageDescriptor });
+      // debug('determining input', { imageDescriptor: job.statsDescriptor.imageDescriptor });
 
       const file = job.sourceFilename || input.file;
       const sourceFile = paths.resolveSourcePath(file);
-      debug(`Source file is '${sourceFile}'`);
+      // debug(`Source file is '${sourceFile}'`);
 
       Promise.all([
         statPromise(sourceFile),
         identifyPromise(sourceFile)
       ])
       .then((results) => {
-        debug('stats success', { results });
+        // debug('stats success', { results });
         sendResponse({
           ...job,
           data: {

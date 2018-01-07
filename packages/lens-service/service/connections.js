@@ -37,11 +37,16 @@ const connections = {
     if (connection) {
       connection.clientId = clientId;
       this.connectionsByClientId[clientId] = connection;
+      const started = Date.now();
+      const waited = started - data.created;
       const response = {
         ...data,
         clientId,
         command: 'registered',
-        timestamp: Date.now()
+        started,
+        finished: started,
+        waited,
+        duration: 0
       };
       socket.emit('flash', response);
       return;

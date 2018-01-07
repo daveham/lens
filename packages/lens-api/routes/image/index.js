@@ -12,7 +12,7 @@ const debug = _debug('lens:api-image');
 
 function processSingleImage(clientId, imageDescriptor, res, next) {
   const path = pathFromImageDescriptor(imageDescriptor);
-  debug('processSingleImage', { imageDescriptor, path });
+  debug('processSingleImage', path);
 
   fs.access(path, fs.constants.R_OK, (err) => {
     if (err) {
@@ -45,7 +45,6 @@ function processSingleImage(clientId, imageDescriptor, res, next) {
         next();
       }
     } else {
-      debug('file exists');
       res.send({ url: urlFromImageDescriptor(imageDescriptor) });
       next();
     }
@@ -53,6 +52,7 @@ function processSingleImage(clientId, imageDescriptor, res, next) {
 }
 
 function processMultipleImages(clientId, imageDescriptors, res, next) {
+  debug('processMultipleImages', { count: imageDescriptors.length });
   const enqueuedImageDescriptors = [];
   const enqueuedStatus = [];
   const erroredImageDescriptors = [];
@@ -64,13 +64,12 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
 
   function processItem(imageDescriptor) {
     const path = pathFromImageDescriptor(imageDescriptor);
-    debug('POST image', { path });
 
     return new Promise((resolve) => {
       fs.access(path, fs.constants.R_OK, (err) => {
         if (err) {
           if (err.code === 'ENOENT') {
-            debug('file does not exist - creating task');
+            debug('file does not exist - creating task', path);
             enqueuedImageDescriptors.push(imageDescriptor);
             const sourceFile = sourceFileMap[imageDescriptor.input.id];
             if (sourceFile) {
@@ -92,7 +91,6 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
             resolve();
           }
         } else {
-          debug('file exists');
           existingImageDescriptors.push(imageDescriptor);
           existingUrls.push(urlFromImageDescriptor(imageDescriptor));
           resolve();
@@ -103,7 +101,6 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
 
   function nextItem() {
     if (index < imageDescriptors.length) {
-      debug('nextItem', index);
       return processItem(imageDescriptors[index++]).then(nextItem);
     }
     return Promise.resolve();
@@ -116,14 +113,16 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
       next();
     } else {
       // turn sources into a map to be used from within processItem
-      debug('processMultipleImage', { catalog });
       catalog.sources.forEach((source) => {
         sourceFileMap[source.id] = source.file;
       });
 
-      debug('calling nextItem for first time');
       nextItem().then(() => {
-        debug('after exhausting nextItems');
+        debug(`processed ${imageDescriptors.length} image descriptors`, {
+          existing: existingImageDescriptors.length,
+          enqueued: enqueuedImageDescriptors.length,
+          errored: erroredImageDescriptors.length
+        });
 
         res.send({
           enqueuedImageDescriptors,
@@ -142,7 +141,6 @@ function processMultipleImages(clientId, imageDescriptors, res, next) {
 export default {
   post: (req, res, next) => {
     const { clientId, imageDescriptor, imageDescriptors } = req.body;
-    debug('POST image', { clientId, imageDescriptor, imageDescriptors });
     if (imageDescriptor) {
       return processSingleImage(clientId, imageDescriptor, res, next);
     } else {

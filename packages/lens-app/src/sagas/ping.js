@@ -5,7 +5,8 @@ import { ACTIONS, pingSent, pingSendFailed } from '../modules/common';
 
 export function* sendPingSaga() {
   const clientId = yield select(clientIdSelector);
-  yield* apiSaga(invokeRestService, [ '/ping', { method: 'POST', body: { clientId }} ], pingSent, pingSendFailed);
+  const body = { clientId, created: Date.now() };
+  yield* apiSaga(invokeRestService, [ '/ping', { method: 'POST', body } ], pingSent, pingSendFailed);
 }
 
 export default function* pingSaga() {

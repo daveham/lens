@@ -1,3 +1,5 @@
+import { makeTileImageDescriptor, makeImageKey } from '@lens/image-descriptors';
+import { tilesListKey } from './selectors';
 import reducer from './index';
 import {
   imageLoading,
@@ -9,6 +11,11 @@ import {
 } from './actions';
 
 describe('images reducers', () => {
+  const initialState = { keys: {}, byKeys: {} };
+  const id = '1001';
+  const group = 32;
+  const listKey = tilesListKey(id, group);
+
   test('should return default state with empty keys', () => {
     const state = reducer();
     expect(state).toHaveProperty('keys', {});
@@ -16,14 +23,11 @@ describe('images reducers', () => {
   });
 
   describe('for single image', () => {
-    const initialState = { keys: {}, byKeys: {} };
-    const listKey = 'images';
-    const id = 'image1';
-    const imageDescriptor = { input: { id } };
+    const imageDescriptor = makeTileImageDescriptor(id, group, 0, 0, 32, 32);
     const url = 'image1.jpg';
     const data = { url };
 
-    const expectedKey = `${id}`;
+    const expectedKey = makeImageKey(imageDescriptor);
     const expectedListKeyProperty = `keys.${listKey}`;
     const expectedLoadingProperty = `byKeys.${listKey}.${expectedKey}.loading`;
     const expectedUrlProperty = `byKeys.${listKey}.${expectedKey}.url`;
@@ -56,7 +60,7 @@ describe('images reducers', () => {
     });
 
     describe('in an existing list with a new image', () => {
-      const existingKey = 'image0';
+      const existingKey = 'existing';
       const expectedKeys = [ existingKey, expectedKey ];
 
       const inputState = () => {
@@ -125,33 +129,42 @@ describe('images reducers', () => {
   });
 
   describe('for a list of images', () => {
-    const initialState = { keys: {}, byKeys: {} };
-    const listKey = 'images';
     const imageDescriptors = [
-      { input: { id: 'image1', location: { x: 10, y: 20 } } },
-      { input: { id: 'image2', location: { x: 11, y: 21 } } },
+      makeTileImageDescriptor(id, group, 10, 20, 32, 32),
+      makeTileImageDescriptor(id, group, 11, 21, 32, 32)
     ];
     const data = [{ url: 'image1.jpg' }, { url: 'image2.jpg' }];
 
+    const expectedKeys = imageDescriptors.map(makeImageKey);
+    const expectedListKeyProperty = `keys.${listKey}`;
+    const expectedLoadingProperties = expectedKeys.map((key) => `byKeys.${listKey}.${key}.loading`);
+    const expectedUrlProperties = expectedKeys.map((key) => `byKeys.${listKey}.${key}.url`);
+
     describe('in a new list with a new list of images', () => {
       const inputState = () => ({ keys: { ...initialState.keys }, byKeys: { ...initialState.byKeys } });
+      const loadingState = () => {
+        const expectedImages = {};
+        expectedKeys.forEach((key, index) => {
+          const { x, y } = imageDescriptors[index].input.location;
+          expectedImages[key] = { x, y, loading: true };
+        });
+        const state = inputState();
+        state.keys[listKey] = expectedKeys;
+        state.byKeys[listKey] = expectedImages;
+        return state;
+      };
 
       function assertState(state, loading = true, withData = false) {
-        expect(state).toHaveProperty('keys.images', [ 'image1', 'image2' ]);
+        expect(state).toHaveProperty(expectedListKeyProperty, expectedKeys);
 
-        expect(state).toHaveProperty('byKeys.images.image1.loading', loading);
-        expect(state).toHaveProperty('byKeys.images.image1.x', 10);
-        expect(state).toHaveProperty('byKeys.images.image1.y', 20);
-        if (withData) {
-          expect(state).toHaveProperty('byKeys.images.image1.url', 'image1.jpg');
-        }
-
-        expect(state).toHaveProperty('byKeys.images.image2.loading', loading);
-        expect(state).toHaveProperty('byKeys.images.image2.x', 11);
-        expect(state).toHaveProperty('byKeys.images.image2.y', 21);
-        if (withData) {
-          expect(state).toHaveProperty('byKeys.images.image2.url', 'image2.jpg');
-        }
+        imageDescriptors.forEach((descriptor, index) => {
+          expect(state).toHaveProperty(expectedLoadingProperties[index], loading);
+          expect(state).toHaveProperty(`byKeys.${listKey}.${expectedKeys[index]}.x`, imageDescriptors[index].input.location.x);
+          expect(state).toHaveProperty(`byKeys.${listKey}.${expectedKeys[index]}.y`, imageDescriptors[index].input.location.y);
+          if (withData) {
+            expect(state).toHaveProperty(expectedUrlProperties[index], data[index].url);
+          }
+        });
       }
 
       test('should record loading with empty data', () => {
@@ -170,20 +183,8 @@ describe('images reducers', () => {
       });
 
       test('should record urls', () => {
-        const loadingState = {
-          keys: {
-            images: [ 'image1', 'image2' ]
-          },
-          byKeys: {
-            images: {
-              image1: { loading: true, x: 10, y: 20 },
-              image2: { loading: true, x: 11, y: 21 }
-            }
-          }
-        };
-
         const action = imagesLoaded({ listKey, imageDescriptors, data });
-        assertState(reducer(loadingState, action), false, true);
+        assertState(reducer(loadingState(), action), false, true);
       });
 
     });

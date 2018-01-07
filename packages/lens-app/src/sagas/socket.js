@@ -74,7 +74,7 @@ export function* socketSend({ payload }) {
   if (socket) {
     const data = {
       flashId: flashCounter++,
-      timestamp: Date.now(),
+      created: Date.now(),
       ...payload
     };
     debug('sending flash message on socket', data);

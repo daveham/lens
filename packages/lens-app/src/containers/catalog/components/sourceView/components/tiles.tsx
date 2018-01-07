@@ -127,19 +127,32 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   private renderSelection() {
-    const { res } = this.props.statsSpec;
-    const { selectedTile } = this.state;
+    if (!(this.state.width && this.state.height)) {
+      return null;
+    }
+
+    const { res, tilesWide, tilesHigh, lastHeight, lastWidth } = this.props.statsSpec;
+    const { selectedTile, tileViewport } = this.state;
+
+    let selectedWidth = res;
+    if (selectedTile.col + tileViewport.left  === tilesWide - 1) {
+      selectedWidth = lastWidth;
+    }
+
+    let selectedHeight = res;
+    if (selectedTile.row + tileViewport.top  === tilesHigh - 1) {
+      selectedHeight = lastHeight;
+    }
 
     const inset = 1;
     const top = selectedTile.row * res + inset;
     const left = selectedTile.col * res + inset;
-    const side = res - 2 * inset;
 
     const style = {
       top,
       left,
-      width: side,
-      height: side
+      width: selectedWidth - 2 * inset,
+      height: selectedHeight - 2 * inset
     };
 
     return <div key='selection' className={styles.selection} style={style}/>;

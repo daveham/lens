@@ -1,0 +1,14 @@
+.infoContainer {
+  position: absolute;
+  z-index: 200;
+  padding: 4px;
+  background-color: #eee;
+  border: solid 4px rgba(250, 250, 250, .1);
+  border-radius: 6px;
+  box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, .2);
+  opacity: .9;
+}
+
+.moving {
+  opacity: .4;
+}

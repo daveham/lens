@@ -2,7 +2,9 @@ import * as React from 'react';
 import { throttle } from 'lodash';
 import { IStatsSpec } from '../../../utils';
 import styles from './styles.scss';
+import MovablePanel from '../../../../../components/movablePanel';
 import Tile from './tile';
+import Info from './info';
 
 import _debug from 'debug';
 const debug = _debug('lens:sourceView:tiles');
@@ -121,16 +123,35 @@ class Tiles extends React.Component<IProps, IState> {
         ref={(node) => this.containerNode = node}
       >
         {tiles}
-        {this.renderSelection()}
+        {this.renderActiveElements()}
       </div>
     );
   }
 
-  private renderSelection() {
-    if (!(this.state.width && this.state.height)) {
-      return null;
+  private renderActiveElements() {
+    if (this.state.width || this.state.height) {
+      return [
+        this.renderSelection(),
+        this.renderInfo()
+      ];
     }
+    return null;
+  }
 
+  private renderInfo() {
+    return (
+      <MovablePanel
+        key='info'
+        initialLeft={200}
+        initialTop={50}
+        parentRect={this.containerNode.getBoundingClientRect()}
+      >
+        <Info/>
+      </MovablePanel>
+    );
+  }
+
+  private renderSelection() {
     const { res, tilesWide, tilesHigh, lastHeight, lastWidth } = this.props.statsSpec;
     const { selectedTile, tileViewport } = this.state;
 

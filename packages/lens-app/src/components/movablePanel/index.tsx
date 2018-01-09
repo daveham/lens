@@ -28,6 +28,18 @@ function nullifyEvent(e: any) {
   }
 }
 
+function coercePosition({ minWidth, minHeight, parentRect }: IProps, position: any): any {
+  const { height, width } = parentRect;
+
+  const checkHeight = minHeight || defaultMinSize;
+  const checkWidth = minWidth || defaultMinSize;
+
+  return {
+    left: Math.min(Math.max(0, position.left), width - checkWidth),
+    top: Math.min(Math.max(0, position.top), height - checkHeight)
+  };
+}
+
 class MovablePanel extends React.Component<IProps, IState> {
   private trackLeft: number;
   private trackTop: number;
@@ -37,11 +49,25 @@ class MovablePanel extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
+    const position = coercePosition(props, { top: props.initialTop, left: props.initialLeft });
+
     this.state = {
-      top: props.initialTop,
-      left: props.initialLeft,
+      top: position.top,
+      left: position.left,
       isMoving: false
     };
+  }
+
+  public componentDidUpdate(prevProps: IProps, prevState: IState): void {
+    const prevRect = prevProps.parentRect;
+    const curRect = this.props.parentRect;
+    if ((prevRect.right !== curRect.right) || (prevRect.bottom !== curRect.bottom)) {
+      const { top, left } = this.state;
+      const position = coercePosition(this.props, { top, left });
+      if (position.top !== top || position.left !== left) {
+        this.setState({ top: position.top, left: position.left });
+      }
+    }
   }
 
   public render(): any {
@@ -96,23 +122,10 @@ class MovablePanel extends React.Component<IProps, IState> {
       left: this.trackLeft + deltaX,
       top: this.trackTop + deltaY
     };
-    const newPosition = this.coerceMove(position);
+    const newPosition = coercePosition(this.props, position);
     if (newPosition.left !== this.state.left || newPosition.top !== this.state.top) {
       this.setState(newPosition);
     }
-  }
-
-  private coerceMove(position: any): any {
-    const { minWidth, minHeight, parentRect } = this.props;
-    const { height, width } = parentRect;
-
-    const checkHeight = minHeight || defaultMinSize;
-    const checkWidth = minWidth || defaultMinSize;
-
-    return {
-      left: Math.min(Math.max(0, position.left), width - checkWidth),
-      top: Math.min(Math.max(0, position.top), height - checkHeight)
-    };
   }
 
   private addMouseEvents() {

@@ -139,6 +139,12 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   private renderInfo() {
+    const { res } = this.props.statsSpec;
+    const { selectedTile, tileViewport } = this.state;
+
+    const selectedRow = selectedTile.row + tileViewport.top;
+    const selectedCol = selectedTile.col + tileViewport.left;
+
     return (
       <MovablePanel
         key='info'
@@ -146,7 +152,12 @@ class Tiles extends React.Component<IProps, IState> {
         initialTop={50}
         parentRect={this.containerNode.getBoundingClientRect()}
       >
-        <Info/>
+        <Info
+          row={selectedRow}
+          col={selectedCol}
+          offsetX={selectedCol * res}
+          offsetY={selectedRow * res}
+        />
       </MovablePanel>
     );
   }

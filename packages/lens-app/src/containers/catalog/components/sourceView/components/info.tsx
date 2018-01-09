@@ -2,11 +2,18 @@ import * as React from 'react';
 import styles from './styles.scss';
 
 interface IProps {
-  title?: string;
+  row: number;
+  col: number;
+  offsetX: number;
+  offsetY: number;
 }
 
 interface IState {
-  title?: string;
+  title: string;
+}
+
+function formatTitle(props: IProps) {
+  return `location: ${props.col}, ${props.row} (${props.offsetX}, ${props.offsetY})`;
 }
 
 class Info extends React.Component<IProps, IState> {
@@ -14,14 +21,24 @@ class Info extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      title: props.title || 'no title'
+      title: formatTitle(props)
     };
+  }
+
+  public componentWillReceiveProps(nextProps: IProps) {
+    if (nextProps.row !== this.props.row || nextProps.col !== this.props.col) {
+      this.setState({
+        title: formatTitle(nextProps)
+      });
+    }
   }
 
   public render(): any {
     return (
       <div className={styles.infoContainer}>
-        {this.state.title}
+        <div className={styles.title}>
+          {this.state.title}
+        </div>
       </div>
     );
   }

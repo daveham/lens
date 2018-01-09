@@ -35,6 +35,12 @@ export const makeImageKey = ({ input, output }) => {
   return purpose ? `${id}_${purpose}` : id;
 };
 
+export const makeTileImageKeyFromPrototype = (prototypeKey, x, y) => {
+  const del1 = prototypeKey.lastIndexOf('_');
+  const del2 = prototypeKey.lastIndexOf('_', del1 - 1);
+  return `${prototypeKey.substring(0, del2)}_${y}_${x}`;
+};
+
 export const makeSourceImageDescriptor = (id) => {
   return {
     input: { id }

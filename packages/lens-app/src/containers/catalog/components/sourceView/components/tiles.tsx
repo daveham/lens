@@ -181,7 +181,7 @@ class Tiles extends React.Component<IProps, IState> {
         key='info'
         initialLeft={200}
         initialTop={50}
-        parentRect={this.containerNode.getBoundingClientRect()}
+        constrainRect={this.containerNode.getBoundingClientRect()}
       >
         <Info
           row={selectedRow}

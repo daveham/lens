@@ -9,7 +9,7 @@ interface IProps {
   initialLeft: number;
   minWidth?: number;
   minHeight?: number;
-  parentRect: any;
+  constrainRect: any;
   children?: any;
 }
 
@@ -28,8 +28,8 @@ function nullifyEvent(e: any) {
   }
 }
 
-function coercePosition({ minWidth, minHeight, parentRect }: IProps, position: any): any {
-  const { height, width } = parentRect;
+function coercePosition({ minWidth, minHeight, constrainRect }: IProps, position: any): any {
+  const { height, width } = constrainRect;
 
   const checkHeight = minHeight || defaultMinSize;
   const checkWidth = minWidth || defaultMinSize;
@@ -59,8 +59,8 @@ class MovablePanel extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
-    const prevRect = prevProps.parentRect;
-    const curRect = this.props.parentRect;
+    const prevRect = prevProps.constrainRect;
+    const curRect = this.props.constrainRect;
     if ((prevRect.right !== curRect.right) || (prevRect.bottom !== curRect.bottom)) {
       const { top, left } = this.state;
       const position = coercePosition(this.props, { top, left });

@@ -8,6 +8,7 @@
   box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, .2);
   opacity: .9;
   cursor: grab;
+  transition: opacity .2s ease-in;
 }
 
 .moving {

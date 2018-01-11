@@ -752,9 +752,9 @@ negotiator@0.6.1, negotiator@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-node-resque@^4.0.7:
-  version "4.0.7"
-  resolved "https://registry.yarnpkg.com/node-resque/-/node-resque-4.0.7.tgz#4c40715f05d3655ac10d3ccfccee85d0ed06bf3d"
+node-resque@^4.0.9:
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/node-resque/-/node-resque-4.0.9.tgz#bbfe53ebc83c027ea221fc73f5a2a4743fc84d7b"
   dependencies:
     async "^2.0.1"
     ioredis "^3.0.0"

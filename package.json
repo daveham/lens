@@ -8,7 +8,8 @@
     "dev": "./node_modules/.bin/gulp dev",
     "lint": "./node_modules/.bin/gulp lint",
     "clean": "./node_modules/.bin/lerna clean",
-    "watch": "./node_modules/.bin/gulp watch"
+    "watch": "./node_modules/.bin/gulp watch",
+    "start": "./node_modules/.bin/lerna run --parallel start"
   },
   "repository": {
     "type": "git",

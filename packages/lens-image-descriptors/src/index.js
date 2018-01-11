@@ -35,6 +35,23 @@ export const makeImageKey = ({ input, output }) => {
   return purpose ? `${id}_${purpose}` : id;
 };
 
+const getPurpose = ({ input, output }) => {
+  const params = output || input;
+  return params.purpose;
+};
+
+export const isTileImageDescriptor = (inputDescriptor) => {
+  return getPurpose(inputDescriptor) === PURPOSE.TILE;
+};
+
+export const isThumbnailImageDescriptor = (inputDescriptor) => {
+  return getPurpose(inputDescriptor) === PURPOSE.THUMBNAIL;
+};
+
+export const isSourceImageDescriptor = (inputDescriptor) => {
+  return !getPurpose(inputDescriptor);
+};
+
 export const makeTileImageKeyFromPrototype = (prototypeKey, x, y) => {
   const del1 = prototypeKey.lastIndexOf('_');
   const del2 = prototypeKey.lastIndexOf('_', del1 - 1);
@@ -116,6 +133,18 @@ export const urlFromImageDescriptor = ({ input, output }) => {
 
 export const ANALYSIS = {
   IDENTIFY: 'i'
+};
+
+export const isTileStatsDescriptor = ({ imageDescriptor }) => {
+  return isTileImageDescriptor(imageDescriptor);
+};
+
+export const isThumbnailStatsDescriptor = ({ imageDescriptor }) => {
+  return isThumbnailImageDescriptor(imageDescriptor);
+};
+
+export const isSourceStatsDescriptor = ({ imageDescriptor }) => {
+  return isSourceImageDescriptor(imageDescriptor);
 };
 
 export const makeSourceStatsDescriptor = (imageDescriptor) => {

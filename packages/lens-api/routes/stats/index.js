@@ -1,6 +1,13 @@
 import { createStats } from '@lens/data-jobs';
+import {
+  isTileStatsDescriptor,
+  isThumbnailStatsDescriptor,
+  isSourceStatsDescriptor,
+  makeStatsKey
+} from '@lens/image-descriptors';
 import { enqueueJob } from '../utils/index';
 import { loadCatalog } from '../utils';
+import config from '../../config';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-stats');
@@ -9,6 +16,23 @@ export default {
   post: (req, res, next) => {
     const { clientId, statsDescriptor } = req.body;
     debug('POST stats', { clientId, statsDescriptor });
+
+    debug('isTileStatsDescriptor',
+      isTileStatsDescriptor(statsDescriptor),
+      isThumbnailStatsDescriptor(statsDescriptor),
+      isSourceStatsDescriptor(statsDescriptor));
+
+    const statsKey = makeStatsKey(statsDescriptor);
+    config.getRedisClient().get(statsKey)
+    .then((data) => {
+      debug('redis get', { statsKey, data });
+      if (!data) {
+        config.getRedisClient().set(statsKey, 'xyzzy')
+        .then((result) => {
+          debug('redis set', { statsKey, result });
+        });
+      }
+    });
 
     loadCatalog((err, catalog) => {
       if (err) {

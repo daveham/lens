@@ -1,5 +1,7 @@
 import fs from 'fs';
 import gm from 'gm';
+import { makeStatsKey } from '@lens/image-descriptors';
+import config from '../../../config';
 import { sendResponse } from '../../worker';
 import paths from '../../../config/paths';
 
@@ -68,14 +70,17 @@ export default (jobs) => {
       ])
       .then((results) => {
         // debug('stats success', { results });
-        sendResponse({
-          ...job,
-          data: {
-            ...results[0],
-            ...results[1]
-          }
+        const data = {
+          ...results[0],
+          ...results[1]
+        };
+        const statsKey = makeStatsKey(job.statsDescriptor);
+        config.getRedisClient().set(statsKey, JSON.stringify(data))
+        .then((result) => {
+          debug('stats redis set result', { result });
+          sendResponse({ ...job, data });
+          cb();
         });
-        cb();
       })
       .catch(error => {
         debug('stats error', { error });

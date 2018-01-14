@@ -28,12 +28,15 @@
     "node-cache":"^4.1.1",
     "node-resque": "^4.0.9",
     "restify": "^5.0.1",
-    "restify-cors-middleware": "^1.0.1"
+    "restify-cors-middleware": "^1.0.1",
+    "restify-errors": "^5.0.0"
   },
   "scripts": {
     "start": "nodemon --debug=192.168.20.20:5858 bin/register.js",
     "dev": "nodemon --debug=192.168.20.20:5858 bin/register.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/restify-errors": "^4.3.2"
+  }
 }

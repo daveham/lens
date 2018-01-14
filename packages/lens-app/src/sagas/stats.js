@@ -25,19 +25,18 @@ export function* ensureStatsSaga({ payload }) {
   try {
     const body = { clientId, statsDescriptor };
     const payload = yield call(invokeRestService, '/stats', { method: 'POST', body });
-    // TODO
-    const { data } = payload;
-    if (data) {
-      debug('stats api returned data', data);
-      yield put(statsLoaded({ statsDescriptor, data } ));
-    // } else {
-    //   debug('stats api did not return url');
-    //   // TODO: replace this with no-op since job should be enqueued
-    //   yield put(statsNotLoading({ statsDescriptor }));
+
+    const { status } = payload;
+    debug('stats api', { status });
+    if (status === 'ok') {
+      yield put(statsLoaded({ statsDescriptor, data: payload.data }));
+    } else if (status === 'bad') {
+      debug('stats api returned error', { error: payload.error });
+      yield put(statsNotLoading({ statsDescriptor, error: payload.error }));
     }
   } catch (error) {
     debug('stats api exception', error);
-    yield put(statsNotLoading({ statsDescriptor }));
+    yield put(statsNotLoading({ statsDescriptor, error }));
   }
 }
 

@@ -1,0 +1,29 @@
+import gm from 'gm';
+
+import debugLib from 'debug';
+const debug = debugLib('lens:image-stats');
+
+export const identify = target => {
+  return new Promise((resolve, reject) => {
+    try {
+      gm(target).identify((err, gmdata) => {
+        if (err) {
+          debug('gm identify error', { err });
+          return reject(new Error(err));
+        }
+
+        const data = {
+          format: gmdata.Format,
+          width: gmdata.size.width,
+          height: gmdata.size.height,
+          depth: gmdata.depth,
+          resolution: gmdata.Resolution,
+          filesize: gmdata.Filesize
+        };
+        resolve(data);
+      });
+    } catch(ex) {
+      reject(ex);
+    }
+  });
+};

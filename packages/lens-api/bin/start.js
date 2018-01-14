@@ -30,6 +30,11 @@ server.use(cors.actual);
 
 server.use(restify.plugins.bodyParser());
 
+server.on('uncaughtException', (req, res, route, err) => {
+  log.error(err.stack);
+  res.send(err);
+});
+
 routes(server);
 
 server.get( /\/thumbs\//, restify.plugins.serveStatic({

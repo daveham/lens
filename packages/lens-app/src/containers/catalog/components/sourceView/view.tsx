@@ -162,7 +162,7 @@ class View extends React.Component<IProps, IState> {
 
   private requestSourceStat(): void {
     setTimeout(() => {
-      debug('requestSourceState', { statsDescriptor: this.props.sourceStatsDescriptor });
+      debug('requestSourceStat', { statsDescriptor: this.props.sourceStatsDescriptor });
       this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
     }, 0);
   }

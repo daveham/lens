@@ -1,3 +1,4 @@
+import errors from 'restify-errors';
 import { createStats } from '@lens/data-jobs';
 import {
   isTileStatsDescriptor,
@@ -12,12 +13,23 @@ import config from '../../config';
 import _debug from 'debug';
 const debug = _debug('lens:api-stats');
 
+function handleStatsError(redis, res, next, statsKey, err) {
+  debug('handleStatsError', { err });
+  const payload = {
+    status: 'bad',
+    error: err
+  };
+  res.send(payload);
+  next();
+  redis.set(statsKey, JSON.stringify({ status: 'bad', error: err }));
+}
+
 export default {
   post: (req, res, next) => {
     const { clientId, statsDescriptor } = req.body;
     debug('POST stats', { clientId, statsDescriptor });
 
-    debug('isTileStatsDescriptor',
+    debug('tile/thumbnail/source',
       isTileStatsDescriptor(statsDescriptor),
       isThumbnailStatsDescriptor(statsDescriptor),
       isSourceStatsDescriptor(statsDescriptor));
@@ -25,45 +37,34 @@ export default {
     const redis = config.getRedisClient();
     const statsKey = makeStatsKey(statsDescriptor);
     redis.get(statsKey)
-    .then((data) => {
-      debug('redis get', { statsKey, data });
-      if (data) {
-        res.send({
-          status: 'ok',
-          data: JSON.parse(data)
-        });
+    .then((statsData) => {
+      debug('redis get', { statsKey, statsData });
+      if (statsData) {
+        debug('parsed', JSON.parse(statsData));
+        res.send(JSON.parse(statsData));
         return next();
       }
 
-      loadCatalog((err, catalog) => {
-        if (err) {
-          debug('createStats loadCatalog error', { err });
-          res.send({
-            status: 'error',
-            data: err
-          });
-          return next();
-        }
+      return redis.set(statsKey, JSON.stringify({ status: 'pending' }))
+      .then((statsPendingResult) => {
+        debug('redis set', { statsPendingResult });
 
-        const { id } = statsDescriptor.imageDescriptor.input;
-        const foundSource = catalog.sources.find((source) => source.id === id);
-        if (!foundSource) {
-          debug(`createStats did not find source with id ${id}`);
-          res.send({
-            status: 'error',
-            data: new Error(`Did not find source with id ${id}`)
-          });
-          return next();
-        }
+        return loadCatalog((err, catalog) => {
+          if (err) {
+            return handleStatsError(redis, res, next, statsKey,
+              new errors.InternalServerError(err, 'load catalog'));
+          }
 
-        enqueueJob(createStats(clientId, statsDescriptor, foundSource.file), (status) => {
-          debug('createStats - enqueueJob', { status });
-          redis.set(statsKey, 'loading')
-          .then((result) => {
-            debug('redis set', { statsKey, result });
-            res.send({
-              status: 'loading'
-            });
+          const { id } = statsDescriptor.imageDescriptor.input;
+          const foundSource = catalog.sources.find((source) => source.id === id);
+          if (!foundSource) {
+            return handleStatsError(redis, res, next, statsKey,
+              new errors.ResourceNotFoundError({ message: `Did not find source with id ${id}` }));
+          }
+
+          return enqueueJob(createStats(clientId, statsDescriptor, foundSource.file), (status) => {
+            debug('createStats - enqueueJob', { status });
+            res.send({ status: 'pending' });
             next();
           });
         });

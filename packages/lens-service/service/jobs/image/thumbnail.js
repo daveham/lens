@@ -4,18 +4,14 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import { sendResponse } from '../../worker';
-
+import { respondWithError } from '../utils';
 import paths from '../../../config/paths';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-image-thumbnail');
-
-export function processThumbnail(imageDescriptor, sourceFilename, job, cb) {
+export function processThumbnail(job, cb) {
+  const { imageDescriptor, sourceFilename } = job;
   const file = sourceFilename || imageDescriptor.input.file;
   if (!file) {
-    sendResponse({ ...job, error: new Error('missing source filename') });
-    cb();
-    return;
+    return respondWithError(new Error('missing source filename'), job, cb);
   }
 
   const sourceFile = paths.resolveSourcePath(file);
@@ -24,25 +20,16 @@ export function processThumbnail(imageDescriptor, sourceFilename, job, cb) {
   try {
     gm(sourceFile).thumb(100, 100, destFile, 80, (error) => {
       if (error) {
-        debug('gm thumb error', { error });
-        sendResponse({
-          ...job,
-          error
-        });
-      } else {
-        sendResponse({
-          ...job,
-          url: urlFromImageDescriptor(imageDescriptor)
-        });
+        return respondWithError(error, job, cb);
       }
+
+      sendResponse({
+        ...job,
+        url: urlFromImageDescriptor(imageDescriptor)
+      });
       cb();
     });
   } catch(err) {
-    debug('gm thumb caught exception', { err });
-    sendResponse({
-      ...job,
-      error: err
-    });
-    cb();
+    respondWithError(err, job, cb);
   }
 }

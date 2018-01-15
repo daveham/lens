@@ -16,7 +16,7 @@
     "node": true
   },
   "globals": {
-    "Promise": false
+    "Promise": true
   },
   "rules": {
     "semi": [2, "always"],

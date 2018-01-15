@@ -2,28 +2,24 @@ import {
   isTileImageDescriptor,
   isThumbnailImageDescriptor
 } from '@lens/image-descriptors';
-import { sendResponse } from '../../worker';
 import { processThumbnail } from './thumbnail';
 import { processTile } from './tile';
+import { respondWithError} from '../utils';
 
 export default (jobs) => {
   jobs.image = {
     perform: (job, cb) => {
-      const { imageDescriptor, sourceFilename } = job;
+      const { imageDescriptor } = job;
 
       if (isTileImageDescriptor(imageDescriptor)) {
-        return processTile(imageDescriptor, sourceFilename, job, cb);
+        return processTile(job, cb);
       }
 
       if (isThumbnailImageDescriptor(imageDescriptor)) {
-        return processThumbnail(imageDescriptor, sourceFilename, job, cb);
+        return processThumbnail(job, cb);
       }
 
-      sendResponse({
-        ...job,
-        error: new Error('unexpected gm job')
-      });
-      cb();
+      respondWithError(new Error('unexpected image job'), job, cb);
     }
   };
 };

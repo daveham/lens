@@ -1,56 +1,21 @@
-import { makeStatsKey } from '@lens/image-descriptors';
-import config from '../../../config';
-import paths from '../../../config/paths';
-import { sendResponse } from '../../worker';
-import { identify } from './imageStats';
-import { fileStats } from './fileStats';
-
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-stats');
+import {
+  isSourceStatsDescriptor,
+  ANALYSIS
+} from '@lens/image-descriptors';
+import { respondWithError} from '../utils';
+import { processSource } from './source';
 
 export default (jobs) => {
   jobs.stats = {
     perform: (job, cb) => {
       const { statsDescriptor } = job;
-      const file = job.sourceFilename || statsDescriptor.imageDescriptor.input.file;
-      const sourceFile = paths.resolveSourcePath(file);
+      if (isSourceStatsDescriptor(statsDescriptor)) {
+        if (statsDescriptor.analysis === ANALYSIS.IDENTIFY) {
+          processSource(job, cb);
+        }
+      }
 
-      Promise.all([
-        fileStats(sourceFile),
-        identify(sourceFile)
-      ])
-      .then((results) => {
-        const payload = {
-          status: 'ok',
-          data: {
-            ...results[0],
-            ...results[1]
-          }
-        };
-        const statsKey = makeStatsKey(statsDescriptor);
-        config.getRedisClient().set(statsKey, JSON.stringify(payload))
-        .then((result) => {
-          if (result !== 'OK') {
-            debug('stats redis.set failed', { result });
-          }
-          sendResponse({ ...job, data: payload.data });
-          cb();
-        });
-      })
-      .catch(error => {
-        debug('stats error', { error });
-        const payload = {
-          status: 'bad',
-          error
-        };
-        const statsKey = makeStatsKey(statsDescriptor);
-        config.getRedisClient().set(statsKey, JSON.stringify(payload));
-        sendResponse({
-          ...job,
-          error
-        });
-        cb();
-      });
+      respondWithError(new Error('unexpected stats job'), job, cb);
     }
   };
 };

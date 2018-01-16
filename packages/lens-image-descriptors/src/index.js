@@ -132,7 +132,8 @@ export const urlFromImageDescriptor = ({ input, output }) => {
 */
 
 export const ANALYSIS = {
-  IDENTIFY: 'i'
+  IDENTIFY: 'i',
+  HISTOGRAM: 'h'
 };
 
 export const isTileStatsDescriptor = ({ imageDescriptor }) => {
@@ -153,6 +154,14 @@ export const makeSourceStatsDescriptor = (imageDescriptor) => {
     imageDescriptor
   };
 };
+
+export const makeTileStatsDescriptor = (imageDescriptor) => {
+  return {
+    analysis: ANALYSIS.HISTOGRAM,
+    imageDescriptor
+  };
+};
+
 // used as a key into a stats cache
 // the stats key is a superset of an image key
 export const makeStatsKey = ({ analysis, imageDescriptor }) => {

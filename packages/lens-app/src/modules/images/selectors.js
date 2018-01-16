@@ -11,11 +11,11 @@ export const IMAGE_LIST_KEYS = {
 export const thumbnailsListKey = () => IMAGE_LIST_KEYS.THUMBNAILS;
 export const tilesListKey = (id, group) => `${IMAGE_LIST_KEYS.DEFAULT}/${id}/${group}`;
 
-export const listKeyFromImageDescriptor = imageDescriptor => {
-  if (imageDescriptor && imageDescriptor.output && imageDescriptor.output.purpose === 't') {
+export const listKeyFromImageDescriptor = ({ input, output }) => {
+  if (output && output.purpose === 't') {
     return thumbnailsListKey();
   }
-  const { id, group } = imageDescriptor.input;
+  const { id, group } = input;
   return tilesListKey(id, group);
 };
 

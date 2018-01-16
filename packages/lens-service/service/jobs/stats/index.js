@@ -1,9 +1,11 @@
 import {
   isSourceStatsDescriptor,
+  isTileStatsDescriptor,
   ANALYSIS
 } from '@lens/image-descriptors';
 import { respondWithError} from '../utils';
 import { processSource } from './source';
+import { processTile } from './tile';
 
 export default (jobs) => {
   jobs.stats = {
@@ -12,6 +14,12 @@ export default (jobs) => {
       if (isSourceStatsDescriptor(statsDescriptor)) {
         if (statsDescriptor.analysis === ANALYSIS.IDENTIFY) {
           processSource(job, cb);
+        }
+      }
+
+      if (isTileStatsDescriptor(statsDescriptor)) {
+        if (statsDescriptor.analysis === ANALYSIS.HISTOGRAM) {
+          processTile(job, cb);
         }
       }
 

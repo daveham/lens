@@ -1,28 +1,17 @@
 import errors from 'restify-errors';
-import { createStats } from '@lens/data-jobs';
 import {
   isTileStatsDescriptor,
   isThumbnailStatsDescriptor,
   isSourceStatsDescriptor,
   makeStatsKey
 } from '@lens/image-descriptors';
-import { enqueueJob } from '../utils/index';
-import { loadCatalog } from '../utils';
 import config from '../../config';
+import { handleStatsError } from './utils';
+import { requestSourceStats } from './source';
+import { requestTileStats} from './tile';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-stats');
-
-function handleStatsError(redis, res, next, statsKey, err) {
-  debug('handleStatsError', { err });
-  const payload = {
-    status: 'bad',
-    error: err
-  };
-  res.send(payload);
-  next();
-  redis.set(statsKey, JSON.stringify({ status: 'bad', error: err }));
-}
 
 export default {
   post: (req, res, next) => {
@@ -47,27 +36,20 @@ export default {
 
       return redis.set(statsKey, JSON.stringify({ status: 'pending' }))
       .then((statsPendingResult) => {
-        debug('redis set', { statsPendingResult });
+        if (statsPendingResult !== 'OK') {
+          debug('redis set', { statsPendingResult });
+        }
 
-        return loadCatalog((err, catalog) => {
-          if (err) {
-            return handleStatsError(redis, res, next, statsKey,
-              new errors.InternalServerError(err, 'load catalog'));
-          }
+        if (isTileStatsDescriptor(statsDescriptor)) {
+          return requestTileStats(clientId, statsDescriptor, statsKey, res, next);
+        }
 
-          const { id } = statsDescriptor.imageDescriptor.input;
-          const foundSource = catalog.sources.find((source) => source.id === id);
-          if (!foundSource) {
-            return handleStatsError(redis, res, next, statsKey,
-              new errors.ResourceNotFoundError({ message: `Did not find source with id ${id}` }));
-          }
+        if (isSourceStatsDescriptor(statsDescriptor)) {
+          return requestSourceStats(clientId, statsDescriptor, statsKey, res, next);
+        }
 
-          return enqueueJob(createStats(clientId, statsDescriptor, foundSource.file), (status) => {
-            debug('createStats - enqueueJob', { status });
-            res.send({ status: 'pending' });
-            next();
-          });
-        });
+        return handleStatsError(redis, res, next, statsKey,
+          new errors.InternalServerError({ message: 'bad stats request' }));
       });
     });
   }

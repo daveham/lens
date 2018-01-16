@@ -7,14 +7,12 @@ import MovablePanel from '../../../../../components/movablePanel';
 import Tile from './tile';
 import Info from './info';
 
-import _debug from 'debug';
-const debug = _debug('lens:sourceView:tiles');
-
 interface IProps {
   statsSpec: IStatsSpec;
   imageKeys: ReadonlyArray<string>;
   images: {[id: string]: any};
   onSizeChanged?: (left: number, top: number, width: number, height: number) => void;
+  onTileSelectionChanged?: (key: string, top: number, left: number) => void;
 }
 
 interface ISelectedTile {
@@ -97,23 +95,24 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState) {
-    const { width, height, tileViewport } = this.state;
+    const { width, height, tileViewport: { left, top } } = this.state;
     if (prevState.width !== width ||
       prevState.height !== height ||
-      prevState.tileViewport.left !== tileViewport.left ||
-      prevState.tileViewport.top !== tileViewport.top) {
+      prevState.tileViewport.left !== left ||
+      prevState.tileViewport.top !== top) {
       // size has changed
       if (this.props.onSizeChanged) {
         const { res } = this.props.statsSpec;
-        const left = tileViewport.left * res;
-        const top = tileViewport.top * res;
-        this.props.onSizeChanged(left, top, width, height);
+        this.props.onSizeChanged(left * res, top * res, width, height);
       }
     }
 
     if (this.state.selectedTile.imageKey !== prevState.selectedTile.imageKey) {
-      // selection has changed
-      debug('componentDidUpdate - selection changed', this.state.selectedTile.imageKey);
+      if (this.props.onTileSelectionChanged) {
+        const { selectedTile: { col, row } } = this.state;
+        const tileDimensions = this.calculateTileDimensions(col + left, row + top);
+        this.props.onTileSelectionChanged(this.state.selectedTile.imageKey, tileDimensions.top, tileDimensions.left);
+      }
     }
   }
 
@@ -193,29 +192,28 @@ class Tiles extends React.Component<IProps, IState> {
     );
   }
 
-  private renderSelection() {
+  private calculateTileDimensions(col: number, row: number): any {
     const { res, tilesWide, tilesHigh, lastHeight, lastWidth } = this.props.statsSpec;
-    const { selectedTile, tileViewport } = this.state;
 
-    let selectedWidth = res;
-    if (selectedTile.col + tileViewport.left === tilesWide - 1) {
-      selectedWidth = lastWidth;
-    }
+    return {
+      left: col * res,
+      top: row * res,
+      width: col === tilesWide - 1 ? lastWidth : res,
+      height: row === tilesHigh - 1 ? lastHeight : res
+    };
+  }
 
-    let selectedHeight = res;
-    if (selectedTile.row + tileViewport.top === tilesHigh - 1) {
-      selectedHeight = lastHeight;
-    }
+  private renderSelection() {
+    const { res } = this.props.statsSpec;
+    const { selectedTile: { col, row }, tileViewport: { left, top } } = this.state;
+    const tileDimensions = this.calculateTileDimensions(col + left, row + top);
 
     const inset = 1;
-    const top = selectedTile.row * res + inset;
-    const left = selectedTile.col * res + inset;
-
     const style = {
-      top,
-      left,
-      width: selectedWidth - 2 * inset,
-      height: selectedHeight - 2 * inset
+      top: row * res + inset,
+      left: col * res + inset,
+      width: tileDimensions.width - 2 * inset,
+      height: tileDimensions.height - 2 * inset
     };
 
     return <div key='selection' className={styles.selection} style={style}/>;
@@ -265,21 +263,20 @@ class Tiles extends React.Component<IProps, IState> {
   };
 
   private moveSelection(deltaX, deltaY) {
-    const { selectedTile, tileViewport } = this.state;
-    const { statsSpec } = this.props;
-    const row = selectedTile.row + deltaY;
-    const col = selectedTile.col + deltaX;
-    const tileRow = row + tileViewport.top;
-    const tileCol = col + tileViewport.left;
+    const { selectedTile: { row, col }, tileViewport } = this.state;
+    const { statsSpec: { tilesWide, tilesHigh, res } } = this.props;
+    const newRow = row + deltaY;
+    const newCol = col + deltaX;
+    const tileRow = newRow + tileViewport.top;
+    const tileCol = newCol + tileViewport.left;
     if (tileRow >= tileViewport.top && tileCol >= tileViewport.left &&
       tileRow < tileViewport.bottom && tileCol < tileViewport.right) {
       // movement is within current viewport
-      const { res } = statsSpec;
       this.setState({
         selectedTile: {
-          row,
-          col,
-          imageKey: generateImageKey(this.props, col * res, row * res)
+          row: newRow,
+          col: newCol,
+          imageKey: generateImageKey(this.props, newCol * res, newRow * res)
         }
       });
     } else {
@@ -287,26 +284,33 @@ class Tiles extends React.Component<IProps, IState> {
       let moveX = 0;
       let moveY = 0;
       if (deltaX !== 0) {
-        if (tileCol >= tileViewport.right && tileCol < statsSpec.tilesWide) {
+        if (tileCol >= tileViewport.right && tileCol < tilesWide) {
           moveX = 1;
         } else if (tileCol < tileViewport.left && tileCol >= 0) {
           moveX = -1;
         }
       }
       if (deltaY !== 0) {
-        if (tileRow >= tileViewport.bottom && tileRow < statsSpec.tilesHigh) {
+        if (tileRow >= tileViewport.bottom && tileRow < tilesHigh) {
           moveY = 1;
         } else if (tileRow < tileViewport.top && tileRow >= 0) {
           moveY = -1;
         }
       }
       if (moveX !== 0 || moveY !== 0) {
-        this.setState({ tileViewport: {
+        this.setState({
+          tileViewport: {
             top: tileViewport.top + moveY,
             bottom: tileViewport.bottom + moveY,
             left: tileViewport.left + moveX,
             right: tileViewport.right + moveX
-          } });
+          },
+          selectedTile: {
+            row,
+            col,
+            imageKey: generateImageKey(this.props, (col + moveX) * res, (row + moveY) * res)
+          }
+        });
       }
     }
   }

@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { makeTileImageDescriptor, makeImageKey } from '@lens/image-descriptors';
+import {
+  makeTileImageDescriptor,
+  makeTileStatsDescriptor,
+  makeImageKey,
+  makeStatsKey
+} from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import AutoScroll from '../../../../components/autoScroll';
@@ -18,6 +23,7 @@ interface IProps {
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
   tileImages: any;
+  tileStats: any;
   thumbnailImageDescriptor: IImageDescriptor;
   thumbnailUrl: string;
   ensureImage: (payload: {[name: string]: IImageDescriptor}) => void;
@@ -77,58 +83,6 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
-  private handleTilesSizeChanged = (left: number, top: number, width: number, height: number): void => {
-    debug('handleTilesSizeChanged', { left, top, width, height });
-    /*
-      When size changes, recalculate image descriptors that fit the space.
-      From image descriptors, generate image keys and store in component state.
-      From image descriptors, ensure images.
-     */
-
-    const { sourceId, tileImages } = this.props;
-    const { statsSpec } = this.state;
-    const { res, tilesWide, tilesHigh } = statsSpec;
-
-    const x = left / res;
-    const y = top / res;
-    const viewWide = Math.floor((width + res - 1) / res);
-    const viewHigh = Math.floor((height + res - 1) / res);
-    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
-    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
-    debug('handleTilesSizeChanged', { x, y, lastX, lastY });
-
-    const imageDescriptors = [];
-    const tileImageKeys = [];
-    for (let yIndex = y; yIndex <= lastY; yIndex++) {
-      for (let xIndex = x; xIndex <= lastX; xIndex++) {
-        const left = xIndex * res;
-        const top = yIndex * res;
-        const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, res, res);
-        const imageKey = makeImageKey(imageDescriptor);
-        tileImageKeys.push(imageKey);
-        if (!tileImages[imageKey]) {
-          imageDescriptors.push(imageDescriptor);
-        }
-      }
-    }
-    if (imageDescriptors.length) {
-      this.props.ensureImages({imageDescriptors});
-    }
-    this.setState({ tileImageKeys });
-  };
-
-  private calculateStatsSpec(sourceStats) {
-    if (!sourceStats.loading) {
-      const width = parseInt(sourceStats.width, 10);
-      const height = parseInt(sourceStats.height, 10);
-      setTimeout(() => {
-        this.setState({
-          statsSpec: createSourceSpec(width, height, this.props.resolution)
-        });
-      }, 0);
-    }
-  }
-
   private renderStats() {
     if (this.state.statsSpec) {
       return <Details stats={this.props.sourceStats}/>;
@@ -152,12 +106,77 @@ class View extends React.Component<IProps, IState> {
               imageKeys={this.state.tileImageKeys}
               images={this.props.tileImages}
               onSizeChanged={this.handleTilesSizeChanged}
+              onTileSelectionChanged={this.handleTileSelectionChanged}
             />
           </AutoScroll>
         </div>
       );
     }
     return null;
+  }
+
+  private handleTilesSizeChanged = (left: number, top: number, width: number, height: number): void => {
+    /*
+      When size changes, recalculate image descriptors that fit the space.
+      From image descriptors, generate image keys and store in component state.
+      From image descriptors, ensure images.
+     */
+
+    const { sourceId, tileImages } = this.props;
+    const { statsSpec } = this.state;
+    const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = statsSpec;
+
+    const x = left / res;
+    const y = top / res;
+    const viewWide = Math.floor((width + res - 1) / res);
+    const viewHigh = Math.floor((height + res - 1) / res);
+    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
+    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
+
+    const imageDescriptors = [];
+    const tileImageKeys = [];
+    for (let yIndex = y; yIndex <= lastY; yIndex++) {
+      const tileHeight = yIndex === tilesHigh - 1 ? lastHeight : res;
+      for (let xIndex = x; xIndex <= lastX; xIndex++) {
+        const left = xIndex * res;
+        const top = yIndex * res;
+        const tileWidth = xIndex === tilesWide - 1 ? lastWidth : res;
+        const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, tileWidth, tileHeight);
+        const imageKey = makeImageKey(imageDescriptor);
+        tileImageKeys.push(imageKey);
+        if (!tileImages[imageKey]) {
+          imageDescriptors.push(imageDescriptor);
+        }
+      }
+    }
+    this.setState({ tileImageKeys });
+    if (imageDescriptors.length) {
+      this.props.ensureImages({imageDescriptors});
+    }
+  };
+
+  private handleTileSelectionChanged = (key: string, top: number, left: number): void => {
+    const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = this.state.statsSpec;
+    const width = Math.floor(left / res) === tilesWide - 1 ? lastWidth : res;
+    const height = Math.floor(top / res) === tilesHigh - 1 ? lastHeight : res;
+    const imageDescriptor = makeTileImageDescriptor(this.props.sourceId, res, left, top, width, height);
+    const statsDescriptor = makeTileStatsDescriptor(imageDescriptor);
+    const statsKey = makeStatsKey(statsDescriptor);
+    if (!this.props.tileStats[statsKey]) {
+      debug('handleTileSelectionChanged - ensure stat', { statsDescriptor });
+      this.props.ensureStats({statsDescriptor});
+    }
+  };
+
+  private calculateStatsSpec(sourceStats) {
+    if (!sourceStats.loading) {
+      const width = parseInt(sourceStats.width, 10);
+      const height = parseInt(sourceStats.height, 10);
+      setTimeout(() => {
+        const statsSpec = createSourceSpec(width, height, this.props.resolution);
+        this.setState({ statsSpec });
+      }, 0);
+    }
   }
 
   private requestSourceStat(): void {

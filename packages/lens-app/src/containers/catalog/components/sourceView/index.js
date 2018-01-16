@@ -8,7 +8,10 @@ import {
   thumbnailUrlFromIdSelector,
   tileImagesSelector
 } from '../../../../modules/images/selectors';
-import { statsSelector } from '../../../../modules/stats/selectors';
+import {
+  statsSelector,
+  tileStatsSelector
+} from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
 import { ensureImage, ensureImages } from '../../../../modules/images/actions';
 import View from './view';
@@ -27,10 +30,12 @@ const mapStateToProps = (state, ownProps) => {
   }
 
   const sourceStatsDescriptor = makeSourceStatsDescriptor(makeSourceImageDescriptor(id));
-  const sourceStats = statsSelector(state, sourceStatsDescriptor);
+  const statsItem = statsSelector(state, sourceStatsDescriptor);
+  const sourceStats = statsItem ? statsItem.data : undefined;
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(id);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, id);
   const tileImages = tileImagesSelector(state, id, resolution);
+  const tileStats = tileStatsSelector(state, id, resolution);
 
   return {
     sourceId: id,
@@ -38,6 +43,7 @@ const mapStateToProps = (state, ownProps) => {
     sourceStatsDescriptor,
     sourceStats,
     tileImages,
+    tileStats,
     thumbnailImageDescriptor,
     thumbnailUrl,
   };

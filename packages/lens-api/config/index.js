@@ -10,6 +10,7 @@ usingVagrant ? '192.168.20.20' : '0.0.0.0';
 const server_port = process.env.REST_PORT || process.env.PORT || 3001;
 
 const redisOptions = {
+  keyPrefix: 'lens:',
   port: 6379,
   host: '127.0.0.1',
   family: 4,
@@ -17,7 +18,6 @@ const redisOptions = {
   db: 0
 };
 let redis = null;
-
 const getRedisClient = () => {
   if (!redis) {
     debug('getRedisClient - creating redis connection');
@@ -26,12 +26,28 @@ const getRedisClient = () => {
   return redis;
 };
 
+const resqueOptions = {
+  port: 6379,
+  host: '127.0.0.1',
+  family: 4,
+  password: null,
+  db: 0
+};
+let resque = null;
+const getResqueClient = () => {
+  if (!resque) {
+    debug('getResqueClient - creating resque connection');
+    resque = new Redis(resqueOptions);
+  }
+  return resque;
+};
+
 const config = {
   env: process.env.NODE_ENV,
   server_host,
   server_port,
   getRedisClient,
-  queue_connection: { redis: getRedisClient() },
+  queue_connection: { redis: getResqueClient() },
 
   queue_name: 'il'
 };

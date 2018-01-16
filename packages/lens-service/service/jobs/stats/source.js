@@ -13,6 +13,7 @@ export function processSource(job, cb) {
   const { statsDescriptor } = job;
   const file = job.sourceFilename || statsDescriptor.imageDescriptor.input.file;
   const sourceFile = paths.resolveSourcePath(file);
+  const statsKey = makeStatsKey(statsDescriptor);
 
   Promise.all([
     fileStats(sourceFile),
@@ -26,7 +27,6 @@ export function processSource(job, cb) {
         ...results[1]
       }
     };
-    const statsKey = makeStatsKey(statsDescriptor);
     config.getRedisClient().set(statsKey, JSON.stringify(payload))
     .then((result) => {
       if (result !== 'OK') {
@@ -42,7 +42,6 @@ export function processSource(job, cb) {
       status: 'bad',
       error
     };
-    const statsKey = makeStatsKey(statsDescriptor);
     config.getRedisClient().set(statsKey, JSON.stringify(payload));
     respondWithError(error, job, cb);
   });

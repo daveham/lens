@@ -67,16 +67,3 @@ $tile-loading-color: #333;
   border-radius: 4px;
 }
 
-$info-text-color: #222;
-
-.infoContainer {
-  color: $info-text-color;
-  font-size: 8pt;
-  display: flex;
-  flex-direction: column;
-  min-width: 200px;
-}
-
-.title {
-  text-align: left;
-}

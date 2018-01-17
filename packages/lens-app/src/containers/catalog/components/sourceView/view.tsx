@@ -8,7 +8,7 @@ import {
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import AutoScroll from '../../../../components/autoScroll';
-import { createSourceSpec, IStatsSpec } from '../../utils';
+import { createSourceSpec, tileSizeFromSourceSpec, IStatsSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
 import Tiles from './components/tiles';
@@ -34,6 +34,7 @@ interface IProps {
 interface IState {
   statsSpec: IStatsSpec;
   tileImageKeys: ReadonlyArray<string>;
+  selectedStatsKey?: string;
 }
 
 class View extends React.Component<IProps, IState> {
@@ -105,6 +106,8 @@ class View extends React.Component<IProps, IState> {
               statsSpec={statsSpec}
               imageKeys={this.state.tileImageKeys}
               images={this.props.tileImages}
+              stats={this.props.tileStats}
+              selectedStatsKey={this.state.selectedStatsKey}
               onSizeChanged={this.handleTilesSizeChanged}
               onTileSelectionChanged={this.handleTileSelectionChanged}
             />
@@ -156,16 +159,15 @@ class View extends React.Component<IProps, IState> {
   };
 
   private handleTileSelectionChanged = (key: string, top: number, left: number): void => {
-    const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = this.state.statsSpec;
-    const width = Math.floor(left / res) === tilesWide - 1 ? lastWidth : res;
-    const height = Math.floor(top / res) === tilesHigh - 1 ? lastHeight : res;
-    const imageDescriptor = makeTileImageDescriptor(this.props.sourceId, res, left, top, width, height);
+    const { width, height } = tileSizeFromSourceSpec(this.state.statsSpec, top, left);
+    const group = this.state.statsSpec.res;
+    const imageDescriptor = makeTileImageDescriptor(this.props.sourceId, group, left, top, width, height);
     const statsDescriptor = makeTileStatsDescriptor(imageDescriptor);
-    const statsKey = makeStatsKey(statsDescriptor);
-    if (!this.props.tileStats[statsKey]) {
-      debug('handleTileSelectionChanged - ensure stat', { statsDescriptor });
-      this.props.ensureStats({statsDescriptor});
+    const selectedStatsKey = makeStatsKey(statsDescriptor);
+    if (!this.props.tileStats[selectedStatsKey]) {
+      this.requestTileStat(statsDescriptor);
     }
+    this.setState({ selectedStatsKey });
   };
 
   private calculateStatsSpec(sourceStats) {
@@ -177,6 +179,13 @@ class View extends React.Component<IProps, IState> {
         this.setState({ statsSpec });
       }, 0);
     }
+  }
+
+  private requestTileStat(statsDescriptor: IStatsDescriptor): void {
+    setTimeout(() => {
+      debug('requestTileStat', { statsDescriptor });
+      this.props.ensureStats({ statsDescriptor });
+    }, 0);
   }
 
   private requestSourceStat(): void {

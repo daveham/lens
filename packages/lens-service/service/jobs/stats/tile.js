@@ -1,4 +1,7 @@
-import { makeStatsKey } from '@lens/image-descriptors';
+import {
+  makeStatsKey,
+  pathFromImageDescriptor
+} from '@lens/image-descriptors';
 import config from '../../../config';
 import { sendResponse } from '../../worker';
 import { respondWithError } from '../utils';
@@ -8,7 +11,7 @@ const debug = debugLib('lens:jobs-stats-tile');
 
 export function processTile(job, cb) {
   const { statsDescriptor } = job;
-  const filename = job.sourceFilename || statsDescriptor.imageDescriptor.input.file;
+  const filename =pathFromImageDescriptor(statsDescriptor.imageDescriptor);
 
   const payload = {
     status: 'ok',

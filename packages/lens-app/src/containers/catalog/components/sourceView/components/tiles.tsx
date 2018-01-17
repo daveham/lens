@@ -5,12 +5,17 @@ import { IStatsSpec } from '../../../utils';
 import styles from './styles.scss';
 import MovablePanel from '../../../../../components/movablePanel';
 import Tile from './tile';
-import Info from './info';
+import TileAnalysis from './tileAnalysis';
+
+import _debug from 'debug';
+const debug = _debug('lens:source-tiles');
 
 interface IProps {
   statsSpec: IStatsSpec;
   imageKeys: ReadonlyArray<string>;
   images: {[id: string]: any};
+  stats: {[id: string]: any};
+  selectedStatsKey?: string;
   onSizeChanged?: (left: number, top: number, width: number, height: number) => void;
   onTileSelectionChanged?: (key: string, top: number, left: number) => void;
 }
@@ -32,6 +37,7 @@ interface IState {
   width: number;
   height: number;
   selectedTile: ISelectedTile;
+  selectedStatsData: any;
   tileViewport: IViewport;
 }
 
@@ -54,6 +60,12 @@ class Tiles extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
+    let selectedStatsData = {};
+    debug('constructor', { selectedStatsKey: props.selectedStatsKey });
+    if (props.selectedStatsKey) {
+      selectedStatsData = props.stats[props.selectedStatsKey] || {};
+    }
+
     this.state = {
       width: 0,
       height: 0,
@@ -62,6 +74,7 @@ class Tiles extends React.Component<IProps, IState> {
         col: 0,
         imageKey: generateImageKey(props)
       },
+      selectedStatsData,
       tileViewport: { top: 0, right: 0, bottom: 0, left: 0 }
     };
 
@@ -91,6 +104,15 @@ class Tiles extends React.Component<IProps, IState> {
           imageKey: generateImageKey(nextProps, col * res, row * res)
         }});
       }
+    }
+    debug('componentWillReceiveProps', {
+      nextSelectedStatsKey: nextProps.selectedStatsKey,
+      curSelectedStatsKey: this.props.selectedStatsKey });
+    if ((nextProps.selectedStatsKey !== this.props.selectedStatsKey) ||
+      (nextProps.selectedStatsKey &&
+        (nextProps.stats[nextProps.selectedStatsKey] !== this.props.stats[nextProps.selectedStatsKey]))) {
+      debug('setState', { selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] });
+      this.setState({ selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] || {} });
     }
   }
 
@@ -170,7 +192,7 @@ class Tiles extends React.Component<IProps, IState> {
 
   private renderInfo() {
     const { res } = this.props.statsSpec;
-    const { selectedTile, tileViewport } = this.state;
+    const { selectedTile, tileViewport, selectedStatsData } = this.state;
 
     const selectedRow = selectedTile.row + tileViewport.top;
     const selectedCol = selectedTile.col + tileViewport.left;
@@ -182,11 +204,12 @@ class Tiles extends React.Component<IProps, IState> {
         initialTop={50}
         constrainRect={this.containerNode.getBoundingClientRect()}
       >
-        <Info
+        <TileAnalysis
           row={selectedRow}
           col={selectedCol}
           offsetX={selectedCol * res}
           offsetY={selectedRow * res}
+          stats={selectedStatsData}
         />
       </MovablePanel>
     );

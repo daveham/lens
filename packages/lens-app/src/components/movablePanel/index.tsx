@@ -75,7 +75,7 @@ class MovablePanel extends React.Component<IProps, IState> {
     const minHeight = this.props.minHeight || defaultMinSize;
     const { top, left, isMoving } = this.state;
     const inlineStyles = { top, left, minWidth, minHeight };
-    const classes = classNames(styles.infoContainer, isMoving && styles.moving);
+    const classes = classNames(styles.container, isMoving && styles.moving);
     return (
       <div
         className={classes}

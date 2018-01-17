@@ -1,4 +1,5 @@
 import * as React from 'react';
+import path from 'path';
 import styles from './styles.scss';
 
 interface IProps {
@@ -6,6 +7,7 @@ interface IProps {
   col: number;
   offsetX: number;
   offsetY: number;
+  stats: any;
 }
 
 interface IState {
@@ -16,7 +18,7 @@ function formatTitle(props: IProps) {
   return `location: ${props.col}, ${props.row} (${props.offsetX}, ${props.offsetY})`;
 }
 
-class Info extends React.Component<IProps, IState> {
+class TileAnalysis extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -34,14 +36,20 @@ class Info extends React.Component<IProps, IState> {
   }
 
   public render(): any {
+    const { loading, data } = this.props.stats;
+    const filename = (!loading && data && data.filename) ?
+      `file: ${path.basename(data.filename)}` : '';
+    const filenameOrLoading = loading ? 'loading...' : filename;
+    const filenameElement = filenameOrLoading ? <div className={styles.statsFilename}>{filenameOrLoading}</div> : null;
     return (
       <div className={styles.infoContainer}>
-        <div className={styles.title}>
+        <div className={styles.statsTitle}>
           {this.state.title}
         </div>
+        {filenameElement}
       </div>
     );
   }
 }
 
-export default Info;
+export default TileAnalysis;

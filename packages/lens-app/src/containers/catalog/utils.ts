@@ -8,6 +8,11 @@ export interface IStatsSpec {
   lastHeight: number;
 }
 
+export interface ITileSize {
+  width: number;
+  height: number;
+}
+
 export function createSourceSpec(width: number, height: number, res: number): IStatsSpec {
   let tilesWide = Math.floor(width / res);
   let tilesHigh = Math.floor(height / res);
@@ -32,5 +37,13 @@ export function createSourceSpec(width: number, height: number, res: number): IS
     tilesHigh,
     lastWidth,
     lastHeight
+  };
+}
+
+export function tileSizeFromSourceSpec(spec: IStatsSpec, top: number, left: number): ITileSize {
+  const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = spec;
+  return {
+    width: Math.floor(left / res) === tilesWide - 1 ? lastWidth : res,
+    height: Math.floor(top / res) === tilesHigh - 1 ? lastHeight : res
   };
 }

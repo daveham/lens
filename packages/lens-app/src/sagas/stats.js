@@ -27,7 +27,6 @@ export function* ensureStatsSaga({ payload }) {
     const payload = yield call(invokeRestService, '/stats', { method: 'POST', body });
 
     const { status } = payload;
-    debug('stats api', { status });
     if (status === 'ok') {
       yield put(statsLoaded({ statsDescriptor, data: payload.data }));
     } else if (status === 'bad') {

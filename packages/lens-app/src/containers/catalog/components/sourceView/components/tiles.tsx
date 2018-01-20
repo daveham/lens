@@ -7,8 +7,8 @@ import MovablePanel from '../../../../../components/movablePanel';
 import Tile from './tile';
 import TileAnalysis from './tileAnalysis';
 
-import _debug from 'debug';
-const debug = _debug('lens:source-tiles');
+// import _debug from 'debug';
+// const debug = _debug('lens:source-tiles');
 
 interface IProps {
   statsSpec: IStatsSpec;
@@ -61,7 +61,6 @@ class Tiles extends React.Component<IProps, IState> {
     super(props);
 
     let selectedStatsData = {};
-    debug('constructor', { selectedStatsKey: props.selectedStatsKey });
     if (props.selectedStatsKey) {
       selectedStatsData = props.stats[props.selectedStatsKey] || {};
     }
@@ -105,13 +104,9 @@ class Tiles extends React.Component<IProps, IState> {
         }});
       }
     }
-    debug('componentWillReceiveProps', {
-      nextSelectedStatsKey: nextProps.selectedStatsKey,
-      curSelectedStatsKey: this.props.selectedStatsKey });
     if ((nextProps.selectedStatsKey !== this.props.selectedStatsKey) ||
       (nextProps.selectedStatsKey &&
         (nextProps.stats[nextProps.selectedStatsKey] !== this.props.stats[nextProps.selectedStatsKey]))) {
-      debug('setState', { selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] });
       this.setState({ selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] || {} });
     }
   }

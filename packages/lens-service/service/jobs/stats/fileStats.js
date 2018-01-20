@@ -8,7 +8,7 @@ export const fileStats = target => {
     fs.stat(target, (err, stats) => {
       if (err) {
         debug('file stat error', { err });
-        return reject(new Error(err));
+        return reject(err);
       }
 
       if (!stats.isFile()) {

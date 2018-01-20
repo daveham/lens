@@ -9,7 +9,7 @@ export const identify = target => {
       gm(target).identify((err, gmdata) => {
         if (err) {
           debug('gm identify error', { err });
-          return reject(new Error(err));
+          return reject(err);
         }
 
         const data = {

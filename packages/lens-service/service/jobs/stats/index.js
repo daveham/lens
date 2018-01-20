@@ -13,13 +13,13 @@ export default (jobs) => {
       const { statsDescriptor } = job;
       if (isSourceStatsDescriptor(statsDescriptor)) {
         if (statsDescriptor.analysis === ANALYSIS.IDENTIFY) {
-          processSource(job, cb);
+          return processSource(job, cb);
         }
       }
 
       if (isTileStatsDescriptor(statsDescriptor)) {
         if (statsDescriptor.analysis === ANALYSIS.HISTOGRAM) {
-          processTile(job, cb);
+          return processTile(job, cb);
         }
       }
 

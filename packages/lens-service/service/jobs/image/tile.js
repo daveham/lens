@@ -1,6 +1,5 @@
 import path from 'path';
-import mkdirp from 'mkdirp';
-import gm from 'gm';
+import co from 'co';
 import {
   pathFromImageDescriptor,
   urlFromImageDescriptor
@@ -8,12 +7,16 @@ import {
 import paths from '../../../config/paths';
 import { sendResponse } from '../../worker';
 import { respondWithError } from '../utils';
+import ensureDir from '../utils/dirMake';
+import crop from '../utils/gmCrop';
 
-export function processTile(job, cb) {
-  const { imageDescriptor, sourceFilename } = job;
+import debugLib from 'debug';
+const debug = debugLib('lens:jobs-image-tile');
+
+function* generator(sourceFilename, imageDescriptor) {
   const file = sourceFilename || imageDescriptor.input.file;
   if (!file) {
-    return respondWithError(new Error('missing source filename'), job, cb);
+    return Promise.reject(new Error('missing source filename'));
   }
 
   const sourceFile = paths.resolveSourcePath(file);
@@ -21,25 +24,21 @@ export function processTile(job, cb) {
   const destPath = path.dirname(destFile);
   const { location: { x, y }, size: { width, height } } = imageDescriptor.input;
 
-  mkdirp(destPath, (mkerr) => {
-    if (mkerr) {
-      return respondWithError(mkerr, job, cb);
-    }
+  yield ensureDir(destPath);
+  yield crop(sourceFile, destFile, width, height,x, y);
+  return urlFromImageDescriptor(imageDescriptor);
+}
 
-    try {
-      gm(sourceFile).crop(width, height, x, y).write(destFile, (error) => {
-        if (error) {
-          return respondWithError(error, job, cb);
-        }
+export function processTile(job, cb) {
+  const { sourceFilename, imageDescriptor } = job;
 
-        sendResponse({
-          ...job,
-          url: urlFromImageDescriptor(imageDescriptor)
-        });
-        cb();
-      });
-    } catch(err) {
-      respondWithError(err, job, cb);
-    }
+  co(generator(sourceFilename, imageDescriptor))
+  .then((url) => {
+    sendResponse({ ...job, url });
+    cb();
+  })
+  .catch((error) => {
+    debug('processTile error', { error });
+    return respondWithError(error, job, cb);
   });
 }

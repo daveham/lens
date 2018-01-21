@@ -1,9 +1,9 @@
 import gm from 'gm';
 
 import debugLib from 'debug';
-const debug = debugLib('lens:image-stats');
+const debug = debugLib('lens:job-utils-identify');
 
-export const identify = target => {
+export default (target) => {
   return new Promise((resolve, reject) => {
     try {
       gm(target).identify((err, gmdata) => {

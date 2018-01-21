@@ -1,4 +1,4 @@
-import { sendResponse } from '../worker';
+import { sendResponse } from '../../worker';
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-utils');
 
@@ -10,4 +10,3 @@ export function respondWithError(error, job, cb) {
   });
   cb();
 }
-

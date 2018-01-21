@@ -4,15 +4,15 @@ import config from '../../../config';
 import paths from '../../../config/paths';
 import { sendResponse } from '../../worker';
 import { respondWithError } from '../utils';
-import { identify } from './imageStats';
-import { fileStats } from './fileStats';
+import identify from '../utils/gmIdentify';
+import fileStat from '../utils/fileStat';
 
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-stats-source');
 
 function* generator(imageDescriptor, key, file, redis) {
   const sourceFile = paths.resolveSourcePath(file);
-  const fileResults = yield fileStats(sourceFile);
+  const fileResults = yield fileStat(sourceFile);
   const identifyResults = yield identify(sourceFile);
   const data = {
     ...fileResults,

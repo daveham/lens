@@ -1,35 +1,38 @@
-import gm from 'gm';
+import co from 'co';
 import {
   pathFromImageDescriptor,
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
+import paths from '../../../config/paths';
 import { sendResponse } from '../../worker';
 import { respondWithError } from '../utils';
-import paths from '../../../config/paths';
+import thumbnail from '../utils/gmThumbnail';
 
-export function processThumbnail(job, cb) {
-  const { imageDescriptor, sourceFilename } = job;
+import debugLib from 'debug';
+const debug = debugLib('lens:jobs-image-thumbnail');
+
+function* generator(sourceFilename, imageDescriptor) {
   const file = sourceFilename || imageDescriptor.input.file;
   if (!file) {
-    return respondWithError(new Error('missing source filename'), job, cb);
+    return Promise.reject(new Error('missing source filename'));
   }
 
   const sourceFile = paths.resolveSourcePath(file);
   const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
+  yield thumbnail(sourceFile, destFile);
+  return urlFromImageDescriptor(imageDescriptor);
+}
 
-  try {
-    gm(sourceFile).thumb(100, 100, destFile, 80, (error) => {
-      if (error) {
-        return respondWithError(error, job, cb);
-      }
+export function processThumbnail(job, cb) {
+  const { imageDescriptor, sourceFilename } = job;
 
-      sendResponse({
-        ...job,
-        url: urlFromImageDescriptor(imageDescriptor)
-      });
-      cb();
-    });
-  } catch(err) {
-    respondWithError(err, job, cb);
-  }
+  co(generator(sourceFilename, imageDescriptor))
+  .then((url) => {
+    sendResponse({ ...job, url });
+    cb();
+  })
+  .catch((error) => {
+    debug('processThumbnail error', { error });
+    return respondWithError(error, job, cb);
+  });
 }

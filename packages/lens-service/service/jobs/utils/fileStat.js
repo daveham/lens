@@ -1,9 +1,9 @@
 import fs from 'fs';
 
 import debugLib from 'debug';
-const debug = debugLib('lens:file-stats');
+const debug = debugLib('lens:job-utils-file-stats');
 
-export const fileStats = target => {
+export default (target) => {
   return new Promise((resolve, reject) => {
     fs.stat(target, (err, stats) => {
       if (err) {

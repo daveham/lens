@@ -610,6 +610,10 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
 
+jStat@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/jStat/-/jStat-1.7.1.tgz#e636dd87d72b305c060dfcc901de1732d15130c1"
+
 js-tokens@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"

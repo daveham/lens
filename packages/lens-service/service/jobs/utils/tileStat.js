@@ -1,4 +1,5 @@
 import jst from 'jStat';
+import chroma from 'chroma-js';
 
 import debugLib from 'debug';
 const debug = debugLib('lens:job-utils-tile-stats');
@@ -34,22 +35,37 @@ export default (buffer) => {
       const r = new Array(length);
       const g = new Array(length);
       const b = new Array(length);
+      const h = new Array(length);
+      const s = new Array(length);
+      const l = new Array(length);
+      let hsl;
       for (let i = 0, j = 0; j < length; i += 3, j += 1) {
         r[j] = buffer[i];
         g[j] = buffer[i + 1];
         b[j] = buffer[i + 2];
+
+        hsl = chroma(r[j], g[j], b[j]).hsl();
+        h[j] = hsl[0];
+        s[j] = hsl[1];
+        l[j] = hsl[2];
       }
 
       return Promise.all([
         runStats(r),
         runStats(g),
-        runStats(b)
+        runStats(b),
+        runStats(h),
+        runStats(s),
+        runStats(l)
       ])
       .then((results) => {
         resolve({
           red: results[0],
           green: results[1],
-          blue: results[2]
+          blue: results[2],
+          hue: results[3],
+          saturation: results[4],
+          luminance: results[5]
         });
       });
     } catch(ex) {

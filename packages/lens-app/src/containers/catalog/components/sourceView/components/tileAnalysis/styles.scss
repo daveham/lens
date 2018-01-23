@@ -1,4 +1,8 @@
 $info-text-color: #222;
+$info-width: 150px;
+$info-height: 200px;
+$svg-width: $info-width - 4px;
+$svg-height: $info-height - 30px;
 
 .infoContainer {
   color: $info-text-color;
@@ -6,15 +10,38 @@ $info-text-color: #222;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 150px;
-  min-height: 200px;
+  align-items: flex-start;
+  min-width: $info-width;
+  min-height: $info-height;
 }
 
 .statsTitle {
-  text-align: left;
+  padding-left: 2px;
 }
 
 .statsFilename {
-  top: auto;
-  text-align: left;
+  padding-left: 2px;
+}
+
+.svgBox {
+  width: $svg-width;
+  height: $svg-height;
+}
+
+.histBarRed {
+  stroke: #fcc;
+  stroke-width: 1px;
+  fill: #ffd8d8;
+}
+
+.histBarGreen {
+  stroke: #ada;
+  stroke-width: 1px;
+  fill: #c8eec8;
+}
+
+.histBarBlue {
+  stroke: #ccf;
+  stroke-width: 1px;
+  fill: #d8d8ff;
 }

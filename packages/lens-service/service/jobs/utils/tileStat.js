@@ -6,16 +6,32 @@ const debug = debugLib('lens:job-utils-tile-stats');
 
 const jStat = jst.jStat;
 
+function absoluteHistogram(arr, binCount = 10) {
+  const binWidth = 256 / binCount;
+  const binLast = binCount - 1;
+  const len = arr.length;
+  const bins = [];
+
+  for (let i = 0; i < binCount; i++)
+    bins[i] = 0;
+
+  for (let i = 0; i < len; i++)
+    bins[Math.min(Math.floor(arr[i] / binWidth), binLast)] += 1;
+
+  return bins;
+}
+
 function runStats(vector) {
   return new Promise((resolve, reject) => {
     try {
       const stat = jStat(vector);
-      const data = {};
+      const data = {
+        histogram: absoluteHistogram(vector)
+      };
 
       stat.mean((val) => { data.mean = val; })
       .min((val) => data.min = val)
       .max((val) => data.max = val)
-      .histogram(10, (val) => data.histogram = val)
       .mode((val) => data.mode = val)
       .coeffvar((val) => {
         data.coeffvar = val;

@@ -1,9 +1,8 @@
 import * as React from 'react';
 import path from 'path';
+import Histogram from './histogram';
+import Menu from './menu';
 import styles from './styles.scss';
-
-import _debug from 'debug';
-const debug = _debug('lens:tile-analysis');
 
 interface IProps {
   row: number;
@@ -14,7 +13,7 @@ interface IProps {
 }
 
 interface IState {
-  title: string;
+  channel: string;
 }
 
 function formatTitle(props: IProps) {
@@ -26,68 +25,101 @@ class TileAnalysis extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
     super(props);
-
-    this.state = {
-      title: formatTitle(props)
-    };
     this.relativeMax = 0;
-  }
-
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.row !== this.props.row || nextProps.col !== this.props.col) {
-      this.setState({
-        title: formatTitle(nextProps)
-      });
-    }
+    this.state = { channel: 'r' };
   }
 
   public render(): any {
     const { loading, data } = this.props.stats;
     const hasData = !loading && data && data.filename;
-    const filename = hasData ? `file: ${path.basename(data.filename)}` : '';
-    const filenameOrLoading = loading ? 'loading...' : filename;
-    const filenameElement = filenameOrLoading ? <div className={styles.statsFilename}>{filenameOrLoading}</div> : null;
     return (
       <div className={styles.infoContainer}>
-        <div className={styles.statsTitle}>
-          {this.state.title}
-        </div>
-        {hasData && this.renderHistogram()}
-        {filenameElement}
+        {this.renderMenu()}
+        {this.renderHistogram(hasData)}
+        {this.renderDetails(hasData)}
       </div>
     );
   }
 
-  private renderHistogram(): any {
-    const barHeight = 14;
-    const { histogram } = this.props.stats.data.red;
-    const barStyle = styles.histBarRed;
+  private renderHistogram(hasData: boolean): any {
+    if (!hasData) {
+      return <div className={styles.histContainer}/>;
+    }
+
+    const histogram = this.channelData();
+    const barStyle = this.channelStyle();
+
     const maxValue = histogram.reduce((a, b) => Math.max(a, b));
     this.relativeMax = Math.max(maxValue, this.relativeMax);
-    debug('renderHistogram', { maxValue });
-    const rects = histogram.reverse().map((value, index) => {
-      return (
-        <rect
-          key={index}
-          className={barStyle}
-          x={0}
-          y={index * (barHeight + 2)}
-          width={`${100 * value / this.relativeMax}%`}
-          height={barHeight}
-        />
-      );
-    });
 
+    return <Histogram data={histogram} barStyle={barStyle} barMax={this.relativeMax} />;
+  }
+
+  private renderDetails(hasData: boolean): any {
+    const filename = hasData ? path.basename(this.props.stats.data.filename) : '...';
+    const filenameOrLoading = `file: ${filename}`;
     return (
-      <div>
-        <svg className={styles.svgBox}>
-          <g transform={`translate(${5},${5}) scale(.95, 1)`}>
-            {rects}
-          </g>
-        </svg>
+      <div className={styles.statsTitle}>
+        <div>{filenameOrLoading}</div>
+        <div>{formatTitle(this.props)}</div>
       </div>
     );
   }
+
+  private renderMenu(): any {
+    return (
+      <Menu
+        initialChannel={this.state.channel}
+        onChannelChanged={this.handleChannelChanged}
+      />
+    );
+  }
+
+  private channelData(): any {
+    const { channel } = this.state;
+    switch (channel) {
+      case 'r':
+        return this.props.stats.data.red.histogram;
+      case 'g':
+        return this.props.stats.data.green.histogram;
+      case 'b':
+        return this.props.stats.data.blue.histogram;
+      case 'h':
+        return this.props.stats.data.hue.histogram;
+      case 's':
+        return this.props.stats.data.saturation.histogram;
+      case 'l':
+        return this.props.stats.data.luminance.histogram;
+      default:
+        return this.props.stats.data.red.histogram;
+    }
+  }
+
+  private channelStyle(): any {
+    const { channel } = this.state;
+    switch (channel) {
+      case 'r':
+        return styles.histBarRed;
+      case 'g':
+        return styles.histBarGreen;
+      case 'b':
+        return styles.histBarBlue;
+      case 'h':
+        return styles.histBarHue;
+      case 's':
+        return styles.histBarSaturation;
+      case 'l':
+        return styles.histBarLuminance;
+      default:
+        return styles.histBarRed;
+    }
+  }
+
+  private handleChannelChanged = (channel) => {
+    if (channel !== this.state.channel) {
+      this.setState({ channel });
+    }
+  };
 }
 
 export default TileAnalysis;

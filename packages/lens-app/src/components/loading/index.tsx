@@ -8,7 +8,7 @@ interface IProps {
   name?: string;
 }
 
-export default ({ name, pulse}: IProps) => {
+export default ({ name, pulse }: IProps) => {
   const iconProps = {
     name: name || 'spinner',
     pulse: Boolean(pulse)

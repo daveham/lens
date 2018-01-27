@@ -1,8 +1,10 @@
 $info-text-color: #222;
 $info-width: 150px;
-$info-height: 200px;
+$info-height: 170px;
 $svg-width: $info-width - 4px;
-$svg-height: $info-height - 30px;
+$svg-height: $info-height - 44px;
+$hist-container-width: $info-width;
+$hist-container-height: $info-height - 40px;
 
 .infoContainer {
   color: $info-text-color;
@@ -17,10 +19,19 @@ $svg-height: $info-height - 30px;
 
 .statsTitle {
   padding-left: 2px;
+  display: flex;
+  min-height: 26px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .statsFilename {
   padding-left: 2px;
+}
+
+.histContainer {
+  width: $hist-container-width;
+  height: $hist-container-height;
 }
 
 .svgBox {
@@ -44,4 +55,43 @@ $svg-height: $info-height - 30px;
   stroke: #ccf;
   stroke-width: 1px;
   fill: #d8d8ff;
+}
+
+.histBarHue {
+  stroke: #cff;
+  stroke-width: 1px;
+  fill: #d8ffff;
+}
+
+.histBarSaturation {
+  stroke: #fcf;
+  stroke-width: 1px;
+  fill: #ffd8ff;
+}
+
+.histBarLuminance {
+  stroke: #ffc;
+  stroke-width: 1px;
+  fill: #ffffd8;
+}
+
+.menuContainer {
+  width: 100%;
+  display: flex;
+}
+
+.menuItem {
+  padding: 4px;
+  margin: 0 4px;
+  border: solid 1px #eee;
+  border-radius: 4px;
+  user-select: none;
+
+  &:hover {
+    border: solid 1px #ccc;
+  }
+
+  &.selected {
+    border-color: #777;
+  }
 }

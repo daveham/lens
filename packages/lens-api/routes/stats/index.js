@@ -1,7 +1,6 @@
 import errors from 'restify-errors';
 import {
   isTileStatsDescriptor,
-  isThumbnailStatsDescriptor,
   isSourceStatsDescriptor,
   makeStatsKey
 } from '@lens/image-descriptors';
@@ -18,18 +17,11 @@ export default {
     const { clientId, statsDescriptor } = req.body;
     debug('POST stats', { clientId, statsDescriptor });
 
-    debug('tile/thumbnail/source',
-      isTileStatsDescriptor(statsDescriptor),
-      isThumbnailStatsDescriptor(statsDescriptor),
-      isSourceStatsDescriptor(statsDescriptor));
-
     const redis = config.getRedisClient();
     const statsKey = makeStatsKey(statsDescriptor);
     redis.get(statsKey)
     .then((statsData) => {
-      debug('redis get', { statsKey, statsData });
       if (statsData) {
-        debug('parsed', JSON.parse(statsData));
         res.send(JSON.parse(statsData));
         return next();
       }

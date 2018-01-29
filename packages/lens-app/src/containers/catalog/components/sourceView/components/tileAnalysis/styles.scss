@@ -52,15 +52,15 @@ $hist-container-height: $info-height - 40px;
 }
 
 .histBarBlue {
-  stroke: #ccf;
+  stroke: #cce;
   stroke-width: 1px;
   fill: #d8d8ff;
 }
 
 .histBarHue {
-  stroke: #cff;
+  stroke: #9dd;
   stroke-width: 1px;
-  fill: #d8ffff;
+  fill: #aee;
 }
 
 .histBarSaturation {
@@ -70,9 +70,9 @@ $hist-container-height: $info-height - 40px;
 }
 
 .histBarLuminance {
-  stroke: #ffc;
+  stroke: #f0e68c;
   stroke-width: 1px;
-  fill: #ffffd8;
+  fill: #fdff62;
 }
 
 .menuContainer {
@@ -81,7 +81,7 @@ $hist-container-height: $info-height - 40px;
 }
 
 .menuItem {
-  padding: 4px;
+  padding: 2px 4px;
   margin: 0 4px;
   border: solid 1px #eee;
   border-radius: 4px;

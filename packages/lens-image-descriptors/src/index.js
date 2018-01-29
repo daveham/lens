@@ -106,7 +106,7 @@ export const pathFromImageDescriptor = ({ input, output }) => {
   // TODO: every other case
 };
 
-// return ulr to reference image through web server
+// return url to reference image through web server
 export const urlFromImageDescriptor = ({ input, output }) => {
   if (output) {
     if (output.purpose === PURPOSE.THUMBNAIL)

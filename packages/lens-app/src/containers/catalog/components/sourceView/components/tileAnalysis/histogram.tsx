@@ -10,7 +10,9 @@ interface IProps {
 export default ({ data, barStyle, barMax }: IProps) => {
   const barHeight = 10;
   const count = data.length - 1;
-  const rects = data.map((value, index) => {
+  const widths = data.map((value, index) => ({ value, index }));
+  const filtered = widths.filter((item) => item.value);
+  const rects = filtered.map(({ value, index }) => {
     const revIndex = count - index;
     return (
       <rect
@@ -27,7 +29,7 @@ export default ({ data, barStyle, barMax }: IProps) => {
   return (
     <div className={styles.histContainer}>
       <svg className={styles.svgBox}>
-        <g transform={`translate(${5},${5}) scale(.95, 1)`}>
+        <g transform={`translate(${0},${0}) scale(.95, 1)`}>
           {rects}
         </g>
       </svg>

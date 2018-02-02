@@ -14,7 +14,7 @@ import {
 } from '../../../../modules/stats/selectors';
 import { ensureStats } from '../../../../modules/stats/actions';
 import { ensureImage, ensureImages } from '../../../../modules/images/actions';
-import View from './view';
+import View, { displayTileResolution } from './view';
 
 const mapDispatchToProps = {
   ensureStats,
@@ -34,7 +34,7 @@ const mapStateToProps = (state, ownProps) => {
   const sourceStats = statsItem ? statsItem.data : undefined;
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(id);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, id);
-  const tileImages = tileImagesSelector(state, id, resolution);
+  const displayImages = tileImagesSelector(state, id, displayTileResolution);
   const tileStats = tileStatsSelector(state, id, resolution);
 
   return {
@@ -42,7 +42,7 @@ const mapStateToProps = (state, ownProps) => {
     resolution,
     sourceStatsDescriptor,
     sourceStats,
-    tileImages,
+    displayImages,
     tileStats,
     thumbnailImageDescriptor,
     thumbnailUrl,

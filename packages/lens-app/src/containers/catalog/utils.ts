@@ -1,4 +1,4 @@
-export interface IStatsSpec {
+export interface ITileSpec {
   res: number;
   height: number;
   width: number;
@@ -13,7 +13,7 @@ export interface ITileSize {
   height: number;
 }
 
-export function createSourceSpec(width: number, height: number, res: number): IStatsSpec {
+export function createTileSpec(width: number, height: number, res: number): ITileSpec {
   let tilesWide = Math.floor(width / res);
   let tilesHigh = Math.floor(height / res);
   let lastWidth = width % res;
@@ -40,7 +40,7 @@ export function createSourceSpec(width: number, height: number, res: number): IS
   };
 }
 
-export function tileSizeFromSourceSpec(spec: IStatsSpec, top: number, left: number): ITileSize {
+export function tileSizeFromSourceSpec(spec: ITileSpec, top: number, left: number): ITileSize {
   const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = spec;
   return {
     width: Math.floor(left / res) === tilesWide - 1 ? lastWidth : res,

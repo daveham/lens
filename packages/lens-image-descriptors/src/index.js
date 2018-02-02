@@ -52,10 +52,9 @@ export const isSourceImageDescriptor = (inputDescriptor) => {
   return !getPurpose(inputDescriptor);
 };
 
-export const makeTileImageKeyFromPrototype = (prototypeKey, x, y) => {
-  const del1 = prototypeKey.lastIndexOf('_');
-  const del2 = prototypeKey.lastIndexOf('_', del1 - 1);
-  return `${prototypeKey.substring(0, del2)}_${y}_${x}`;
+export const makeTileImageKeyFromPrototype = (prototypeKey, group, x, y) => {
+  const parts = prototypeKey.split('_');
+  return `${parts[0]}_${parts[1]}_${group}_${y}_${x}`;
 };
 
 export const makeSourceImageDescriptor = (id) => {

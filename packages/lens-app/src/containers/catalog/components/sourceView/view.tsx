@@ -7,8 +7,8 @@ import {
 } from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
-import AutoScroll from '../../../../components/autoScroll';
-import { createSourceSpec, tileSizeFromSourceSpec, IStatsSpec } from '../../utils';
+// import AutoScroll from '../../../../components/autoScroll';
+import { createTileSpec, tileSizeFromSourceSpec, ITileSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
 import Tiles from './components/tiles';
@@ -17,12 +17,14 @@ import styles from './styles.scss';
 import _debug from 'debug';
 const debug = _debug('lens:sourceView');
 
+export const displayTileResolution = 512;
+
 interface IProps {
   sourceId: string;
   resolution: number;
   sourceStatsDescriptor: IStatsDescriptor;
   sourceStats: any;
-  tileImages: any;
+  displayImages: any;
   tileStats: any;
   thumbnailImageDescriptor: IImageDescriptor;
   thumbnailUrl: string;
@@ -32,8 +34,9 @@ interface IProps {
 }
 
 interface IState {
-  statsSpec: IStatsSpec;
-  tileImageKeys: ReadonlyArray<string>;
+  statsSpec: ITileSpec;
+  displaySpec: ITileSpec;
+  displayImageKeys: ReadonlyArray<string>;
   selectedStatsKey?: string;
 }
 
@@ -43,7 +46,8 @@ class View extends React.Component<IProps, IState> {
 
     this.state = {
       statsSpec: null,
-      tileImageKeys: []
+      displaySpec: null,
+      displayImageKeys: []
     };
   }
 
@@ -51,7 +55,7 @@ class View extends React.Component<IProps, IState> {
     const { sourceStats, thumbnailUrl } = this.props;
 
     if (sourceStats) {
-      this.calculateStatsSpec(sourceStats);
+      this.calculateTileSpecs(sourceStats);
     } else {
       this.requestSourceStat();
     }
@@ -63,7 +67,7 @@ class View extends React.Component<IProps, IState> {
 
   public componentWillReceiveProps(nextProps: IProps): any {
     if (nextProps.sourceStats !== this.props.sourceStats) {
-      this.calculateStatsSpec(nextProps.sourceStats);
+      this.calculateTileSpecs(nextProps.sourceStats);
     }
   }
 
@@ -97,44 +101,43 @@ class View extends React.Component<IProps, IState> {
   }
 
   private renderTiles() {
-    const { statsSpec } = this.state;
+    const { displaySpec, statsSpec } = this.state;
     if (statsSpec) {
       return (
         <div className={styles.tilesWrapper}>
-          <AutoScroll>
-            <Tiles
-              statsSpec={statsSpec}
-              imageKeys={this.state.tileImageKeys}
-              images={this.props.tileImages}
-              stats={this.props.tileStats}
-              selectedStatsKey={this.state.selectedStatsKey}
-              onSizeChanged={this.handleTilesSizeChanged}
-              onTileSelectionChanged={this.handleTileSelectionChanged}
-            />
-          </AutoScroll>
+          <Tiles
+            statsTileSpec={statsSpec}
+            displayTileSpec={displaySpec}
+            imageKeys={this.state.displayImageKeys}
+            images={this.props.displayImages}
+            stats={this.props.tileStats}
+            selectedStatsKey={this.state.selectedStatsKey}
+            onSizeChanged={this.handleTilesViewportSizeChanged}
+            onTileSelectionChanged={this.handleTileSelectionChanged}
+          />
         </div>
       );
     }
     return null;
   }
 
-  private handleTilesSizeChanged = (left: number, top: number, width: number, height: number): void => {
+  private handleTilesViewportSizeChanged = (left: number, top: number, width: number, height: number): void => {
     /*
       When size changes, recalculate image descriptors that fit the space.
       From image descriptors, generate image keys and store in component state.
       From image descriptors, ensure images.
      */
 
-    const { sourceId, tileImages } = this.props;
-    const { statsSpec } = this.state;
-    const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = statsSpec;
+    const { sourceId, displayImages } = this.props;
+    const { displaySpec } = this.state;
+    const { res, tilesWide, tilesHigh, lastWidth, lastHeight } = displaySpec;
 
-    const x = left / res;
-    const y = top / res;
-    const viewWide = Math.floor((width + res - 1) / res);
-    const viewHigh = Math.floor((height + res - 1) / res);
-    const lastX = Math.min(tilesWide - 1, x + viewWide - 1);
-    const lastY = Math.min(tilesHigh - 1, y + viewHigh - 1);
+    const x = Math.floor(left / res);
+    const y = Math.floor(top / res);
+    const maxX = Math.floor((left + width + res - 1) / res);
+    const maxY = Math.floor((top + height + res - 1) / res);
+    const lastX = Math.min(tilesWide, maxX) - 1;
+    const lastY = Math.min(tilesHigh, maxY) - 1;
 
     const imageDescriptors = [];
     const tileImageKeys = [];
@@ -147,12 +150,12 @@ class View extends React.Component<IProps, IState> {
         const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, tileWidth, tileHeight);
         const imageKey = makeImageKey(imageDescriptor);
         tileImageKeys.push(imageKey);
-        if (!tileImages[imageKey]) {
+        if (!displayImages[imageKey]) {
           imageDescriptors.push(imageDescriptor);
         }
       }
     }
-    this.setState({ tileImageKeys });
+    this.setState({ displayImageKeys: tileImageKeys });
     if (imageDescriptors.length) {
       this.props.ensureImages({imageDescriptors});
     }
@@ -170,13 +173,14 @@ class View extends React.Component<IProps, IState> {
     this.setState({ selectedStatsKey });
   };
 
-  private calculateStatsSpec(sourceStats) {
+  private calculateTileSpecs(sourceStats) {
     if (!sourceStats.loading) {
       const width = parseInt(sourceStats.width, 10);
       const height = parseInt(sourceStats.height, 10);
       setTimeout(() => {
-        const statsSpec = createSourceSpec(width, height, this.props.resolution);
-        this.setState({ statsSpec });
+        const displaySpec = createTileSpec(width, height, displayTileResolution);
+        const statsSpec = createTileSpec(width, height, this.props.resolution);
+        this.setState({ displaySpec, statsSpec });
       }, 0);
     }
   }

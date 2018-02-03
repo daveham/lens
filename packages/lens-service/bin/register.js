@@ -11,4 +11,4 @@ require('babel-register')({
   babelrc: false
 });
 
-require('./start');
+require('../server');

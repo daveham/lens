@@ -1,7 +1,3 @@
-import Redis from 'ioredis';
-import _debug from 'debug';
-const debug = _debug('lens:service-config');
-
 const usingVagrant = process.env.USER === 'vagrant';
 
 const server_host = process.env.SERVICE_SERVER ||
@@ -17,14 +13,6 @@ const redisOptions = {
   password: null,
   db: 0
 };
-let redis = null;
-const getRedisClient = () => {
-  if (!redis) {
-    debug('getRedisClient - creating redis connection');
-    redis = new Redis(redisOptions);
-  }
-  return redis;
-};
 
 const resqueOptions = {
   port: 6379,
@@ -33,22 +21,13 @@ const resqueOptions = {
   password: null,
   db: 0
 };
-let resque = null;
-const getResqueClient = () => {
-  if (!resque) {
-    debug('getResqueClient - creating resque connection');
-    resque = new Redis(resqueOptions);
-  }
-  return resque;
-};
 
 const config = {
   env: process.env.NODE_ENV,
   server_host,
   server_port,
-  getRedisClient,
-  queue_connection: { redis: getResqueClient() },
-
+  redisOptions,
+  resqueOptions,
   queue_name: 'il'
 };
 

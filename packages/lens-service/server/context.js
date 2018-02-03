@@ -1,0 +1,61 @@
+import Redis from 'ioredis';
+import config from '../config';
+import connections from './connections';
+
+import _debug from 'debug';
+const debug = _debug('lens:service-context');
+
+let redis = null;
+const getRedisClient = () => {
+  if (!redis) {
+    debug('getRedisClient - creating redis connection');
+    redis = new Redis(config.redisOptions);
+  }
+  return redis;
+};
+
+let resque = null;
+const getResqueClient = () => {
+  if (!resque) {
+    debug('getResqueClient - creating resque connection');
+    resque = new Redis(config.resqueOptions);
+  }
+  return resque;
+};
+
+const sendResponse = (result) => {
+  const { clientId, started, waited } = result;
+  const socket = connections.getConnectionByClientId(clientId);
+  if (socket) {
+    const finished = Date.now();
+    const duration = finished - started;
+    const response = {
+      ...result,
+      finished,
+      duration
+    };
+    debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}`);
+    socket.emit('job', response);
+  } else {
+    debug(`no socket available for response for client ${clientId}`);
+  }
+};
+
+const respondWithError = (error, job, cb) => {
+  debug('respondWithError', { error });
+  sendResponse({
+    ...job,
+    error
+  });
+  cb();
+};
+
+const context = {
+  connections,
+  getRedisClient,
+  sendResponse,
+  respondWithError,
+  queue_connection: { redis: getResqueClient() }
+};
+
+export default context;

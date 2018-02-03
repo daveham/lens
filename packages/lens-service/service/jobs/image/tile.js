@@ -5,8 +5,6 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
-import { sendResponse } from '../../worker';
-import { respondWithError } from '../utils';
 import ensureDir from '../utils/dirMake';
 import crop from '../utils/gmCrop';
 
@@ -29,16 +27,16 @@ function* generator(sourceFilename, imageDescriptor) {
   return urlFromImageDescriptor(imageDescriptor);
 }
 
-export function processTile(job, cb) {
+export function processTile(context, job, cb) {
   const { sourceFilename, imageDescriptor } = job;
 
   co(generator(sourceFilename, imageDescriptor))
   .then((url) => {
-    sendResponse({ ...job, url });
+    context.sendResponse({ ...job, url });
     cb();
   })
   .catch((error) => {
     debug('processTile error', { error });
-    return respondWithError(error, job, cb);
+    return context.respondWithError(error, job, cb);
   });
 }

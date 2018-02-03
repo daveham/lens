@@ -1,14 +1,13 @@
 import restify from 'restify';
 import socketio from 'socket.io';
+import bunyan from 'bunyan';
 
 import config from '../config';
-import start from '../service';
+import service from '../service';
+import context from './context';
 
-import connections from '../service/connections';
-
-import bunyan from 'bunyan';
 import _debug from 'debug';
-const debug = _debug('lens:service');
+const debug = _debug('lens:service-server');
 
 const name = 'lens-service';
 const log = bunyan.createLogger({
@@ -21,28 +20,22 @@ const log = bunyan.createLogger({
 });
 
 const server = restify.createServer({ name, log });
-
 const io = socketio.listen(server.server);
 
 server.get('/', (req, res, next) => {
   next();
 });
 
-const serviceContext = {
-  connections
-};
-
-
 let serviceStarted = false;
 io.sockets.on('connect', (socket) => {
   debug('socket connected', socket.id);
-  serviceContext.connections.addConnectionForSocket(socket);
+  context.connections.addConnectionForSocket(socket);
 
   if (!serviceStarted) {
     serviceStarted = true;
 
-    start(serviceContext, () => {
-      debug('Task service is running.');
+    service(context, () => {
+      debug('Queued job service is running.');
     });
   }
 

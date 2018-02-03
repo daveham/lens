@@ -3,9 +3,6 @@ import {
   pathFromImageDescriptor
 } from '@lens/image-descriptors';
 import co from 'co';
-import config from '../../../config';
-import { sendResponse } from '../../worker';
-import { respondWithError } from '../utils';
 import toBuffer from '../utils/gmBuffer';
 import tileStats from '../utils/tileStat';
 
@@ -30,19 +27,19 @@ function* generator(imageDescriptor, key, redis) {
   return data;
 }
 
-export function processTile(job, cb) {
-  const redis = config.getRedisClient();
+export function processTile(context, job, cb) {
+  const redis = job.worker.options.context.getRedisClient();
   const { statsDescriptor } = job;
   const statsKey = makeStatsKey(statsDescriptor);
 
   co(generator(statsDescriptor.imageDescriptor, statsKey, redis))
   .then((data) => {
-    sendResponse({ ...job, data });
+    context.sendResponse({ ...job, data });
     cb();
   })
   .catch((error) => {
     debug('processTile error', { error });
     redis.set(statsKey, JSON.stringify({ status: 'bad', error }));
-    respondWithError(error, job, cb);
+    context.respondWithError(error, job, cb);
   });
 }

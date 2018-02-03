@@ -1,9 +1,6 @@
 import { makeStatsKey } from '@lens/image-descriptors';
 import co from 'co';
-import config from '../../../config';
 import paths from '../../../config/paths';
-import { sendResponse } from '../../worker';
-import { respondWithError } from '../utils';
 import identify from '../utils/gmIdentify';
 import fileStat from '../utils/fileStat';
 
@@ -26,20 +23,20 @@ function* generator(imageDescriptor, key, file, redis) {
   return data;
 }
 
-export function processSource(job, cb) {
-  const redis = config.getRedisClient();
+export function processSource(context, job, cb) {
+  const redis = context.getRedisClient();
   const { statsDescriptor } = job;
   const statsKey = makeStatsKey(statsDescriptor);
   const file = job.sourceFilename || statsDescriptor.imageDescriptor.input.file;
 
   co(generator(statsDescriptor.imageDescriptor, statsKey, file, redis))
   .then((data) => {
-    sendResponse({ ...job, data });
+    context.sendResponse({ ...job, data });
     cb();
   })
   .catch((error) => {
     debug('processSource error', { error });
     redis.set(statsKey, JSON.stringify({ status: 'bad', error }));
-    respondWithError(error, job, cb);
+    context.respondWithError(error, job, cb);
   });
 }

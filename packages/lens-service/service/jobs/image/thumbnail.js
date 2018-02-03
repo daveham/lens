@@ -4,8 +4,6 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
-import { sendResponse } from '../../worker';
-import { respondWithError } from '../utils';
 import thumbnail from '../utils/gmThumbnail';
 
 import debugLib from 'debug';
@@ -23,16 +21,16 @@ function* generator(sourceFilename, imageDescriptor) {
   return urlFromImageDescriptor(imageDescriptor);
 }
 
-export function processThumbnail(job, cb) {
+export function processThumbnail(context, job, cb) {
   const { imageDescriptor, sourceFilename } = job;
 
   co(generator(sourceFilename, imageDescriptor))
   .then((url) => {
-    sendResponse({ ...job, url });
+    context.sendResponse({ ...job, url });
     cb();
   })
   .catch((error) => {
     debug('processThumbnail error', { error });
-    return respondWithError(error, job, cb);
+    return context.respondWithError(error, job, cb);
   });
 }

@@ -3,27 +3,35 @@ import {
   isTileStatsDescriptor,
   ANALYSIS
 } from '@lens/image-descriptors';
-import { respondWithError} from '../utils';
+import captureContextPlugin from '../utils/captureContextPlugin';
 import { processSource } from './source';
 import { processTile } from './tile';
 
 export default (jobs) => {
+  const capture = {};
+
   jobs.stats = {
+    plugins: [captureContextPlugin],
+    pluginOptions: {
+      captureContextPlugin: { capture }
+    },
     perform: (job, cb) => {
       const { statsDescriptor } = job;
+      const { context } = capture;
+
       if (isSourceStatsDescriptor(statsDescriptor)) {
         if (statsDescriptor.analysis === ANALYSIS.IDENTIFY) {
-          return processSource(job, cb);
+          return processSource(context, job, cb);
         }
       }
 
       if (isTileStatsDescriptor(statsDescriptor)) {
         if (statsDescriptor.analysis === ANALYSIS.HISTOGRAM) {
-          return processTile(job, cb);
+          return processTile(context, job, cb);
         }
       }
 
-      respondWithError(new Error('unexpected stats job'), job, cb);
+      context.respondWithError(new Error('unexpected stats job'), job, cb);
     }
   };
 };

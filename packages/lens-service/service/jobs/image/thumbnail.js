@@ -4,16 +4,12 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
+import loadCatalog from '../utils/loadCatalog';
 import thumbnail from '../utils/gmThumbnail';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-image-thumbnail');
-
-function* generator(sourceFilename, imageDescriptor) {
-  const file = sourceFilename || imageDescriptor.input.file;
-  if (!file) {
-    return Promise.reject(new Error('missing source filename'));
-  }
+function* generator(imageDescriptor, context) {
+  const catalog = yield loadCatalog(context);
+  const { file } = catalog[imageDescriptor.input.id];
 
   const sourceFile = paths.resolveSourcePath(file);
   const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
@@ -22,15 +18,13 @@ function* generator(sourceFilename, imageDescriptor) {
 }
 
 export function processThumbnail(context, job, cb) {
-  const { imageDescriptor, sourceFilename } = job;
-
-  co(generator(sourceFilename, imageDescriptor))
+  co(generator(job.imageDescriptor, context))
   .then((url) => {
-    context.sendResponse({ ...job, url });
+    context.respond({ ...job, url });
     cb();
   })
   .catch((error) => {
-    debug('processThumbnail error', { error });
-    return context.respondWithError(error, job, cb);
+    context.respondWithError(error, job);
+    cb();
   });
 }

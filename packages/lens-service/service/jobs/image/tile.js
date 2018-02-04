@@ -5,17 +5,13 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
+import loadCatalog from '../utils/loadCatalog';
 import ensureDir from '../utils/dirMake';
 import crop from '../utils/gmCrop';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-image-tile');
-
-function* generator(sourceFilename, imageDescriptor) {
-  const file = sourceFilename || imageDescriptor.input.file;
-  if (!file) {
-    return Promise.reject(new Error('missing source filename'));
-  }
+export function* generator(imageDescriptor, context) {
+  const catalog = yield loadCatalog(context);
+  const { file } = catalog[imageDescriptor.input.id];
 
   const sourceFile = paths.resolveSourcePath(file);
   const destFile = paths.resolveThumbnailPath(pathFromImageDescriptor(imageDescriptor));
@@ -28,15 +24,15 @@ function* generator(sourceFilename, imageDescriptor) {
 }
 
 export function processTile(context, job, cb) {
-  const { sourceFilename, imageDescriptor } = job;
+  const { imageDescriptor } = job;
 
-  co(generator(sourceFilename, imageDescriptor))
+  co(generator(imageDescriptor, context))
   .then((url) => {
-    context.sendResponse({ ...job, url });
+    context.respond({ ...job, url });
     cb();
   })
   .catch((error) => {
-    debug('processTile error', { error });
-    return context.respondWithError(error, job, cb);
+    context.respondWithError(error, job);
+    cb();
   });
 }

@@ -33,12 +33,12 @@ export function processSource(context, job, cb) {
 
   co(generator(statsDescriptor.imageDescriptor, statsKey, context))
   .then((data) => {
-    context.sendResponse({ ...job, data });
+    context.respond({ ...job, data });
     cb();
   })
   .catch((error) => {
-    debug('processSource error', { error });
     context.getRedisClient().set(statsKey, JSON.stringify({ status: 'bad', error }));
-    context.respondWithError(error, job, cb);
+    context.respondWithError(error, job);
+    cb();
   });
 }

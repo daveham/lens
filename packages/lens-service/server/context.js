@@ -23,7 +23,7 @@ const getResqueClient = () => {
   return resque;
 };
 
-const sendResponse = (result) => {
+const respond = (result) => {
   const { clientId, started, waited } = result;
   const socket = connections.getConnectionByClientId(clientId);
   if (socket) {
@@ -41,19 +41,18 @@ const sendResponse = (result) => {
   }
 };
 
-const respondWithError = (error, job, cb) => {
+const respondWithError = (error, job) => {
   debug('respondWithError', { error });
-  sendResponse({
+  respond({
     ...job,
     error
   });
-  cb();
 };
 
 const context = {
   connections,
   getRedisClient,
-  sendResponse,
+  respond,
   respondWithError,
   queue_connection: { redis: getResqueClient() }
 };

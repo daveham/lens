@@ -31,7 +31,8 @@ export default (jobs) => {
         }
       }
 
-      context.respondWithError(new Error('unexpected stats job'), job, cb);
+      context.respondWithError(new Error('unexpected stats job'), job);
+      cb();
     }
   };
 };

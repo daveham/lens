@@ -9,7 +9,7 @@ export default (jobs) => {
       captureContextPlugin: { capture }
     },
     perform: (job, cb) => {
-      capture.context.sendResponse({
+      capture.context.respond({
         ...job,
         command: 'pong'
       });

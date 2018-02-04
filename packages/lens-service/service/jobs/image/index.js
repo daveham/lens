@@ -26,7 +26,8 @@ export default (jobs) => {
         return processThumbnail(context, job, cb);
       }
 
-      context.respondWithError(new Error('unexpected image job'), job, cb);
+      context.respondWithError(new Error('unexpected image job'), job);
+      cb();
     }
   };
 };

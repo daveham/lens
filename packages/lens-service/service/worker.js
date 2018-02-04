@@ -1,7 +1,8 @@
+import { worker as Worker } from 'node-resque';
+import loadCatalog from './jobs/utils/loadCatalog';
+
 import _debug from 'debug';
 const debug = _debug('lens:worker');
-
-import { worker as Worker } from 'node-resque';
 
 const start = (connection, queues, context, jobs, cb) => {
   const timeout = process.env.WORKER_TIMEOUT || 1000;
@@ -9,7 +10,8 @@ const start = (connection, queues, context, jobs, cb) => {
 
   worker.on('start',
     () => {
-      debug('started');
+      debug('worker started, loading catalog into redis');
+      loadCatalog(worker.options.context);
     }
   );
 

@@ -298,56 +298,54 @@ class Tiles extends React.Component<IProps, IState> {
   };
 
   private moveSelection(deltaX, deltaY) {
+    if (deltaX === 0 && deltaY === 0) {
+      return;
+    }
+
     const { selectedTile: { x, y }, viewport } = this.state;
-    const { statsTileSpec: { res, width, height, lastWidth, lastHeight } } = this.props;
-    const newSelectionX = x + deltaX * res;
-    const newSelectionY = y + deltaY * res;
-    if (newSelectionY >= viewport.top && newSelectionX >= viewport.left &&
-      newSelectionY + res < viewport.bottom && newSelectionX + res < viewport.right) {
-      // movement is within current viewport
-      this.setState({
-        selectedTile: {
-          x: newSelectionX,
-          y: newSelectionY,
-          imageKey: generateImageKey(this.props, res, newSelectionX, newSelectionY)
-        }
-      });
-    } else {
-      // movement calls for shifting the viewport to contain the selection
-      let moveViewportByX = 0;
-      let moveViewportByY = 0;
-      if (deltaX !== 0) {
-        const triggerX = Math.floor(viewport.right / res) * res;
-        if (newSelectionX >= triggerX && newSelectionX < width - lastWidth) {
-          moveViewportByX = res;
-        } else if (newSelectionX < viewport.left && newSelectionX >= 0) {
-          moveViewportByX = -res;
-        }
-      }
-      if (deltaY !== 0) {
-        const triggerY = Math.floor(viewport.bottom / res) * res;
-        if (newSelectionY >= triggerY && newSelectionY < height - lastHeight) {
-          moveViewportByY = res;
-        } else if (newSelectionY < viewport.top && newSelectionY >= 0) {
-          moveViewportByY = -res;
-        }
-      }
-      if (moveViewportByX !== 0 || moveViewportByY !== 0) {
-        this.setState({
-          viewport: {
-            top: viewport.top + moveViewportByY,
-            bottom: viewport.bottom + moveViewportByY,
-            left: viewport.left + moveViewportByX,
-            right: viewport.right + moveViewportByX
-          },
-          selectedTile: {
-            x: newSelectionX,
-            y: newSelectionY,
-            imageKey: generateImageKey(this.props, res, newSelectionX, newSelectionY)
-          }
-        });
+    if (deltaX < 0 && x <= 0 || deltaY < 0 && y <= 0) {
+      return;
+    }
+
+    const { statsTileSpec: { res, width, height } } = this.props;
+    const nextTile = this.calculateSelectedTileDimensions(x + deltaX * res, y + deltaY * res);
+    if ((deltaX && nextTile.left > width) || (deltaY && nextTile.top > height)) {
+      return;
+    }
+
+    let moveViewportByX = 0;
+    if (deltaX !== 0) {
+      if (nextTile.left + nextTile.width > viewport.right) {
+        moveViewportByX = Math.min(nextTile.left + nextTile.width - viewport.right, width - viewport.right);
+      } else if (nextTile.left < viewport.left) {
+        moveViewportByX = -Math.min(viewport.left - nextTile.left , viewport.left);
       }
     }
+    let moveViewportByY = 0;
+    if (deltaY !== 0) {
+      if (nextTile.top + nextTile.height > viewport.bottom) {
+        moveViewportByY = Math.min(nextTile.top + nextTile.height - viewport.bottom, height - viewport.bottom);
+      } else if (nextTile.top < viewport.top) {
+        moveViewportByY = -Math.min(viewport.top - nextTile.top, viewport.top);
+      }
+    }
+
+    const nextState: any = {
+      selectedTile: {
+        x: nextTile.left,
+        y: nextTile.top,
+        imageKey: generateImageKey(this.props, res, nextTile.left, nextTile.top)
+      }
+    };
+    if (moveViewportByX || moveViewportByY) {
+      nextState.viewport = {
+        top: viewport.top + moveViewportByY,
+        bottom: viewport.bottom + moveViewportByY,
+        left: viewport.left + moveViewportByX,
+        right: viewport.right + moveViewportByX
+      };
+    }
+    this.setState(nextState);
   }
 }
 

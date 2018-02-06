@@ -291,7 +291,19 @@ class Tiles extends React.Component<IProps, IState> {
   private handleKeyDown = (event) => {
     const move = keyMoves[event.code];
     if (move) {
-      this.moveSelection(move[0], move[1]);
+      let moveX = move[0];
+      let moveY = move[1];
+      if (event.shiftKey) {
+        const { viewport } = this.state;
+        const { res } = this.props.statsTileSpec;
+        if (moveX) {
+          moveX = moveX * Math.floor((viewport.right - viewport.left) / res);
+        }
+        if (moveY) {
+          moveY = moveY * Math.floor((viewport.bottom - viewport.top) / res);
+        }
+      }
+      this.moveSelection(moveX, moveY);
       event.stopPropagation();
       event.preventDefault();
     }
@@ -303,16 +315,24 @@ class Tiles extends React.Component<IProps, IState> {
     }
 
     const { selectedTile: { x, y }, viewport } = this.state;
-    if (deltaX < 0 && x <= 0 || deltaY < 0 && y <= 0) {
+    const { statsTileSpec: { res, width, height, lastWidth, lastHeight } } = this.props;
+    let nextX = x;
+    let nextY = y;
+
+    if (deltaX !== 0) {
+      nextX = x + deltaX * res;
+      nextX = Math.min(Math.max(nextX, 0), width - lastWidth);
+    }
+    if (deltaY !== 0) {
+      nextY = y + deltaY * res;
+      nextY = Math.min(Math.max(nextY, 0), height - lastHeight);
+    }
+
+    if (x === nextX && y === nextY) {
       return;
     }
 
-    const { statsTileSpec: { res, width, height } } = this.props;
-    const nextTile = this.calculateSelectedTileDimensions(x + deltaX * res, y + deltaY * res);
-    if ((deltaX && nextTile.left > width) || (deltaY && nextTile.top > height)) {
-      return;
-    }
-
+    const nextTile = this.calculateSelectedTileDimensions(nextX, nextY);
     let moveViewportByX = 0;
     if (deltaX !== 0) {
       if (nextTile.left + nextTile.width > viewport.right) {

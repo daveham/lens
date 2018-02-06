@@ -7,15 +7,14 @@ import {
 } from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
-// import AutoScroll from '../../../../components/autoScroll';
 import { createTileSpec, tileSizeFromSourceSpec, ITileSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
 import Tiles from './components/tiles';
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:sourceView');
+// import _debug from 'debug';
+// const debug = _debug('lens:sourceView');
 
 export const displayTileResolution = 512;
 
@@ -187,21 +186,18 @@ class View extends React.Component<IProps, IState> {
 
   private requestTileStat(statsDescriptor: IStatsDescriptor): void {
     setTimeout(() => {
-      debug('requestTileStat', { statsDescriptor });
       this.props.ensureStats({ statsDescriptor });
     }, 0);
   }
 
   private requestSourceStat(): void {
     setTimeout(() => {
-      debug('requestSourceStat', { statsDescriptor: this.props.sourceStatsDescriptor });
       this.props.ensureStats({ statsDescriptor: this.props.sourceStatsDescriptor });
     }, 0);
   }
 
   private requestThumbnailImage(): void {
     setTimeout(() => {
-      debug('requestThumbnailImage', { imageDescriptor: this.props.thumbnailImageDescriptor});
       this.props.ensureImage({ imageDescriptor: this.props.thumbnailImageDescriptor });
     }, 0);
   }

@@ -182,7 +182,7 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   private renderActiveElements() {
-    if (this.state.width || this.state.height) {
+    if (this.containerNode && (this.state.width || this.state.height)) {
       return [
         this.renderSelection(),
         this.renderInfo()

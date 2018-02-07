@@ -17,7 +17,7 @@ export function* ensureStatsSaga({ payload }) {
   const stats = yield select(statsSelector, statsDescriptor);
   const notNeeded = stats && (stats.data && !force);
   if (notNeeded) {
-    return;
+    return undefined;
   }
 
   yield put(statsLoading({ statsDescriptor }));

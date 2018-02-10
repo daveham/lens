@@ -7,6 +7,7 @@ import {
 } from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
+import ToolButton from '../../../../components/toolButton';
 import { createTileSpec, tileSizeFromSourceSpec, ITileSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
@@ -29,6 +30,7 @@ interface IProps {
   thumbnailUrl: string;
   ensureImage: (payload: {[name: string]: IImageDescriptor}) => void;
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
+  deleteStats: (payload: any) => void;
   ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
 }
 
@@ -80,6 +82,7 @@ class View extends React.Component<IProps, IState> {
               link={'/Catalog'}
             />
             {this.renderStats()}
+            {this.renderTools()}
           </div>
           {this.renderTiles()}
         </div>
@@ -97,6 +100,17 @@ class View extends React.Component<IProps, IState> {
         </div>
       );
     }
+  }
+
+  private renderTools() {
+    if (this.state.statsSpec) {
+      return (
+        <div>
+          <ToolButton title={'Reset Stats'} clickHandler={this.handleResetStats}/>
+        </div>
+      );
+    }
+    return null;
   }
 
   private renderTiles() {
@@ -201,6 +215,14 @@ class View extends React.Component<IProps, IState> {
       this.props.ensureImage({ imageDescriptor: this.props.thumbnailImageDescriptor });
     }, 0);
   }
+
+  private handleResetStats = () => {
+    const { sourceId, resolution } = this.props;
+    this.props.deleteStats({
+      sourceId,
+      group: resolution
+    });
+  };
 }
 
 export default View;

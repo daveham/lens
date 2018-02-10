@@ -1,0 +1,22 @@
+@import '../../variables';
+
+.button {
+  padding: 4px;
+  margin: 2px 8px;
+  font-size: 9pt;
+  color: $lens-app-header-button-background-color;
+  background-color: $lens-app-header-button-color;
+  border-radius: 2px;
+  border: solid 1px $lens-app-header-button-border-color;
+  cursor: pointer;
+}
+
+.disabled {
+  color: $lens-app-header-button-background-disabled-color;
+  cursor: default;
+}
+
+.button:hover:enabled {
+  background-color: $lens-app-header-button-background-color;
+  color: $lens-app-header-button-background-hover-color;
+}

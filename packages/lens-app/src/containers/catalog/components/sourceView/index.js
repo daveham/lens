@@ -12,12 +12,13 @@ import {
   statsSelector,
   tileStatsSelector
 } from '../../../../modules/stats/selectors';
-import { ensureStats } from '../../../../modules/stats/actions';
+import { ensureStats, deleteStats } from '../../../../modules/stats/actions';
 import { ensureImage, ensureImages } from '../../../../modules/images/actions';
 import View, { displayTileResolution } from './view';
 
 const mapDispatchToProps = {
   ensureStats,
+  deleteStats,
   ensureImage,
   ensureImages
 };

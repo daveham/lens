@@ -1,11 +1,13 @@
 import { takeEvery, select, all, call, put } from 'redux-saga/effects';
-import { invokeRestService } from './utils';
+import { apiSaga, invokeRestService } from './utils';
 import { clientIdSelector } from './socket';
 import {
   ACTIONS,
   statsLoading,
   statsLoaded,
-  statsNotLoading
+  statsNotLoading,
+  statsDeleted,
+  statsDeleteFailed
 } from '../modules/stats/actions';
 import { statsSelector } from '../modules/stats/selectors';
 
@@ -39,8 +41,16 @@ export function* ensureStatsSaga({ payload }) {
   }
 }
 
+export function* deleteStatsSaga({ payload }) {
+  const { sourceId, group } = payload;
+  const clientId = yield select(clientIdSelector);
+  const body = { clientId, sourceId, group };
+  yield* apiSaga(invokeRestService, [ '/deleteStats', { method: 'POST', body } ], statsDeleted, statsDeleteFailed);
+}
+
 export default function* statsSaga() {
   yield all([
-    takeEvery(ACTIONS.STATS_ENSURE, ensureStatsSaga)
+    takeEvery(ACTIONS.STATS_ENSURE, ensureStatsSaga),
+    takeEvery(ACTIONS.STATS_REQUEST_DELETE, deleteStatsSaga)
   ]);
 }

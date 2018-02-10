@@ -67,7 +67,7 @@ function compile(watching) {
     .pipe(describeFiles('Compiling'))
     .pipe(renameSrcToLib())
     .pipe(babel({
-      presets: ['es2015', 'stage-0'],
+      presets: ['env', 'stage-0'],
       plugins: ['add-module-exports', 'transform-runtime'],
       babelrc: false
     }))

@@ -9,8 +9,10 @@ usingVagrant ? '192.168.20.20' : '0.0.0.0';
 
 const server_port = process.env.REST_PORT || process.env.PORT || 3001;
 
+const keyPrefix = 'lens:';
+
 const redisOptions = {
-  keyPrefix: 'lens:',
+  keyPrefix,
   port: 6379,
   host: '127.0.0.1',
   family: 4,
@@ -47,6 +49,7 @@ const config = {
   server_host,
   server_port,
   getRedisClient,
+  keyPrefix,
   queue_connection: { redis: getResqueClient() },
 
   queue_name: 'il'

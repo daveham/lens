@@ -1,3 +1,5 @@
+import config from '../../../config';
+
 import debugLib from 'debug';
 const debug = debugLib('lens:service:keysRemove');
 
@@ -10,7 +12,7 @@ export default (redis, pattern) => {
         count += keys.length;
         const pipeline = redis.pipeline();
         keys.forEach((key) => {
-          if (key.startsWith('lens:')) {
+          if (key.startsWith(config.keyPrefix)) {
             key = key.substring(5);
           }
           pipeline.del(key);

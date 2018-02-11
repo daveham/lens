@@ -5,8 +5,10 @@ const server_host = process.env.SERVICE_SERVER ||
 
 const server_port = process.env.SERVICE_PORT || process.env.PORT || 3002;
 
+const keyPrefix = 'lens:';
+
 const redisOptions = {
-  keyPrefix: 'lens:',
+  keyPrefix,
   port: 6379,
   host: '127.0.0.1',
   family: 4,
@@ -28,6 +30,7 @@ const config = {
   server_port,
   redisOptions,
   resqueOptions,
+  keyPrefix,
   queue_name: 'il'
 };
 

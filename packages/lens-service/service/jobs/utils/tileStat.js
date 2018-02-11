@@ -6,27 +6,42 @@ const debug = debugLib('lens:job-utils-tile-stats');
 
 const jStat = jst.jStat;
 
-function absoluteHistogram(vector, maxValue, binCount = 10) {
+function makeRelativeChannel(primary, a, b) {
+  const length = primary.length;
+  const data = new Array(length);
+  for (let i = 0; i < length; i++) {
+    data[i] = Math.floor(Math.max(0, primary[i] - (a[i] + b[i]) / 3));
+  }
+  return data;
+}
+
+function absoluteHistogram(vector, maxValue, includeZero = true, binCount = 10) {
   const binWidth = maxValue / binCount;
   const binLast = binCount - 1;
   const len = vector.length;
   const bins = [];
 
-  for (let i = 0; i < binCount; i++)
+  for (let i = 0; i < binCount; i++) {
     bins[i] = 0;
+  }
 
-  for (let i = 0; i < len; i++)
-    bins[Math.min(Math.floor(vector[i] / binWidth), binLast)] += 1;
+  let v;
+  for (let i = 0; i < len; i++) {
+    v = vector[i];
+    if (v || includeZero) {
+      bins[Math.min(Math.floor(vector[i] / binWidth), binLast)] += 1;
+    }
+  }
 
   return bins;
 }
 
-function runStats(vector, maxValue) {
+function runStats(vector, maxValue, includeZero = true) {
   return new Promise((resolve, reject) => {
     try {
       const stat = jStat(vector);
       const data = {
-        histogram: absoluteHistogram(vector, maxValue)
+        histogram: absoluteHistogram(vector, maxValue, includeZero)
       };
 
       stat.mean((val) => { data.mean = val; })
@@ -67,9 +82,9 @@ export default (buffer) => {
       }
 
       return Promise.all([
-        runStats(r, 256),
-        runStats(g, 256),
-        runStats(b, 256),
+        runStats(makeRelativeChannel(r, g, b), 256, false),
+        runStats(makeRelativeChannel(g, b, r), 256, false),
+        runStats(makeRelativeChannel(b, r, g), 256, false),
         runStats(h, 360),
         runStats(s, 1),
         runStats(l, 1)

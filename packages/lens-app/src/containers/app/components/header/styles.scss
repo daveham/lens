@@ -1,10 +1,14 @@
 @import '../../../../variables';
 
 .container {
-  padding: 2px 0;
+  padding-top: 2px;
   color: $lens-app-header-color;
   text-align: center;
-  border-bottom: solid 2px $lens-app-header-button-border-color;
+  z-index: 1;
+  box-shadow:
+    0 4px 5px 0 rgba(0, 0, 0, .14),
+    0 1px 10px 0 rgba(0, 0, 0, .12),
+    0 2px 4px -1px rgba(0, 0, 0, .4);
 }
 
 .title {

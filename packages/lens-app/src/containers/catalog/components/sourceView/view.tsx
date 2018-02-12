@@ -81,8 +81,10 @@ class View extends React.Component<IProps, IState> {
               thumbnailUrl={this.props.thumbnailUrl}
               link={'/Catalog'}
             />
-            {this.renderStats()}
-            {this.renderTools()}
+            <div className={styles.statsAndTools}>
+              {this.renderStats()}
+              {this.renderTools()}
+            </div>
           </div>
           {this.renderTiles()}
         </div>
@@ -105,7 +107,7 @@ class View extends React.Component<IProps, IState> {
   private renderTools() {
     if (this.state.statsSpec) {
       return (
-        <div>
+        <div className={styles.toolbar}>
           <ToolButton title={'Reset Stats'} clickHandler={this.handleResetStats}/>
         </div>
       );

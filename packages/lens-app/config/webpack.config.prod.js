@@ -84,7 +84,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/290
     // `web` extension prefixes have been added for better support
     // for React Native Web.
-    extensions: ['.web.js', '.js', '.json', '.web.jsx', '.jsx'],
+    extensions: ['.ts', '.tsx', '.web.js', '.js', '.json', '.web.jsx', '.jsx'],
     alias: {
       
       // Support React Native Web
@@ -135,6 +135,7 @@ module.exports = {
         exclude: [
           /\.html$/,
           /\.(js|jsx)$/,
+          /\.(ts|tsx)$/,
           /\.css$/,
           /\.(scss|sass)$/,
           /\.json$/,
@@ -159,13 +160,25 @@ module.exports = {
           name: 'static/media/[name].[hash:8].[ext]'
         }
       },
+      {
+        test: /\.(ts|tsx)$/,
+        include: paths.appSrc,
+        use: [
+          {
+            loader: require.resolve('babel-loader'),
+            options: {
+              compact: true
+            }
+          },
+          require.resolve('ts-loader')
+        ]
+      },
       // Process JS with Babel.
       {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
         loader: require.resolve('babel-loader'),
         options: {
-          
           compact: true
         }
       },

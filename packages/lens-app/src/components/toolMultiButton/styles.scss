@@ -1,18 +1,35 @@
 @import '../../variables';
 
-.button {
-  padding: 3px 3px 0;
+.container {
   margin: 2px 8px;
-  font-size: 9pt;
-  color: $lens-tool-button-color;
-  background-image: linear-gradient(to top, #e3e3e3 0, #f0f0f0 20%, #fff 60%);
+  padding: 1px 3px 0;
   border-radius: 4px;
   border: solid 1px $lens-tool-button-border-color;
-  cursor: pointer;
+  font-size: 9pt;
+  color: $lens-tool-button-color;
   box-shadow:
     0 4px 5px rgba(0, 0, 0, .14),
     0 1px 10px 0 rgba(0, 0, 0, .12),
     0 2px 4px -1px rgba(0, 0, 0, .4);
+  background-image: linear-gradient(to top, #e3e3e3 0, #f0f0f0 20%, #fff 60%);
+}
+
+.button {
+  background-color: transparent;
+  padding: 4px 2px 1px;
+  border-radius: 4px;
+  border: solid 1px transparent;
+  cursor: pointer;
+
+  &.selected {
+    color: $lens-tool-button-hover-color;
+    background-image: linear-gradient(to top, #000 0, #3f3f3f 20%, #6e6e6e 60%);
+    cursor: default;
+
+    g {
+      stroke: $lens-accent-color;
+    }
+  }
 }
 
 .disabled {
@@ -23,7 +40,6 @@
 .button:hover:enabled {
   color: $lens-tool-button-hover-color;
   background-image: linear-gradient(to top, #000 0, #3f3f3f 20%, #6e6e6e 60%);
-  border-color: $lens-tool-button-border-hover-color;
 }
 
 .button:hover g {

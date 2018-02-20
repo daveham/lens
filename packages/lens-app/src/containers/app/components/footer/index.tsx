@@ -1,4 +1,6 @@
 import React from 'react';
+import faStyles from 'font-awesome/scss/font-awesome.scss';
+import FontAwesome from 'react-fontawesome';
 import CommandButton from './command-button/index';
 
 import styles from './styles.scss';
@@ -31,17 +33,19 @@ const Footer = ({ connected, pingFlash, pingJob, command }: IProps) => {
     <div className={styles.container}>
       <div>
         <CommandButton
-          title={'ping(f)'}
           connected={true}
           clickHandler={pingFlash}
-        />
+        >
+          <FontAwesome cssModule={faStyles} name='share-square-o' size='lg' />
+        </CommandButton>
       </div>
       <div>
         <CommandButton
-          title={'ping(j)'}
           connected={connected}
           clickHandler={pingJob}
-        />
+        >
+          <FontAwesome cssModule={faStyles} name='share-square' size='lg' />
+        </CommandButton>
       </div>
       {statusElement}
     </div>

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import faStyles from 'font-awesome/scss/font-awesome.scss';
+import FontAwesome from 'react-fontawesome';
 import {
   makeTileImageDescriptor,
   makeTileStatsDescriptor,
@@ -8,10 +10,15 @@ import {
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
 import ToolButton from '../../../../components/toolButton';
+import ToolMultiButton from '../../../../components/toolMultiButton';
 import { createTileSpec, tileSizeFromSourceSpec, ITileSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
 import Tiles from './components/tiles';
+import ResSmall from './resSmall';
+import ResMedium from './resMedium';
+import ResLarge from './resLarge';
+
 import styles from './styles.scss';
 
 // import _debug from 'debug';
@@ -32,6 +39,7 @@ interface IProps {
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
   deleteStats: (payload: any) => void;
   ensureImages: (payload: {[imageDescriptors: string]: IImageDescriptor[]}) => void;
+  history: any;
 }
 
 interface IState {
@@ -53,10 +61,10 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(): any {
-    const { sourceStats, thumbnailUrl } = this.props;
+    const { sourceStats, resolution, thumbnailUrl } = this.props;
 
     if (sourceStats) {
-      this.calculateTileSpecs(sourceStats);
+      this.calculateTileSpecs(sourceStats, resolution);
     } else {
       this.requestSourceStat();
     }
@@ -67,8 +75,9 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(nextProps: IProps): any {
-    if (nextProps.sourceStats !== this.props.sourceStats) {
-      this.calculateTileSpecs(nextProps.sourceStats);
+    if (nextProps.sourceStats !== this.props.sourceStats ||
+      nextProps.resolution !== this.props.resolution) {
+      this.calculateTileSpecs(nextProps.sourceStats, nextProps.resolution);
     }
   }
 
@@ -106,9 +115,28 @@ class View extends React.Component<IProps, IState> {
 
   private renderTools() {
     if (this.state.statsSpec) {
+
+      const multiSvg = [
+        <ResLarge key={'large'}/>,
+        <ResMedium key={'medium'}/>,
+        <ResSmall key={'small'}/>
+      ];
+
       return (
         <div className={styles.toolbar}>
-          <ToolButton title={'Reset Stats'} clickHandler={this.handleResetStats}/>
+          <ToolMultiButton
+            key='abc'
+            selectedIndex={this.buttonIndexFromResolution()}
+            clickHandler={this.handleChangeRes}
+          >
+            {multiSvg}
+          </ToolMultiButton>
+          <ToolButton
+            key='reset'
+            clickHandler={this.handleResetStats}
+          >
+            <FontAwesome cssModule={faStyles} name='eraser' size='lg' />
+          </ToolButton>
         </div>
       );
     }
@@ -134,6 +162,17 @@ class View extends React.Component<IProps, IState> {
       );
     }
     return null;
+  }
+
+  private buttonIndexFromResolution() {
+    const { resolution } = this.props;
+    if (resolution === 8) {
+      return 2;
+    }
+    if (resolution === 16) {
+      return 1;
+    }
+    return 0;
   }
 
   private handleTilesViewportSizeChanged = (left: number, top: number, width: number, height: number): void => {
@@ -188,13 +227,13 @@ class View extends React.Component<IProps, IState> {
     this.setState({ selectedStatsKey });
   };
 
-  private calculateTileSpecs(sourceStats) {
+  private calculateTileSpecs(sourceStats, resolution) {
     if (!sourceStats.loading) {
       const width = parseInt(sourceStats.width, 10);
       const height = parseInt(sourceStats.height, 10);
       setTimeout(() => {
         const displaySpec = createTileSpec(width, height, displayTileResolution);
-        const statsSpec = createTileSpec(width, height, this.props.resolution);
+        const statsSpec = createTileSpec(width, height, resolution);
         this.setState({ displaySpec, statsSpec });
       }, 0);
     }
@@ -225,6 +264,14 @@ class View extends React.Component<IProps, IState> {
       group: resolution
     });
   };
+
+  private handleChangeRes = (index) => {
+    const currentIndex = this.buttonIndexFromResolution();
+    if (currentIndex !== index) {
+      const newResolution = [32, 16, 8][index];
+      this.props.history.push(`/Catalog/Source/${this.props.sourceId}/${newResolution}`);
+    }
+  }
 }
 
 export default View;

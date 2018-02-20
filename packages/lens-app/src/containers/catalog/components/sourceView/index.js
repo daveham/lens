@@ -16,6 +16,9 @@ import { ensureStats, deleteStats } from '../../../../modules/stats/actions';
 import { ensureImage, ensureImages } from '../../../../modules/images/actions';
 import View, { displayTileResolution } from './view';
 
+// import _debug from 'debug';
+// const debug = _debug('lens:sourceView:index');
+
 const mapDispatchToProps = {
   ensureStats,
   deleteStats,
@@ -26,7 +29,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state, ownProps) => {
   const { id, res } = ownProps.match.params;
   let resolution = parseInt(res, 10);
-  if (!(resolution === 8 || resolution === 16 || resolution === 32 || resolution === 64)) {
+  if (!(resolution === 8 || resolution === 16 || resolution === 32)) {
     resolution = 32;
   }
 

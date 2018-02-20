@@ -23,8 +23,8 @@
 }
 
 .toolbar {
+  padding: 4px;
   display: flex;
-  padding: 2px;
   justify-content: flex-end;
 }
 
@@ -42,4 +42,15 @@
 .tilesWrapper {
   overflow: hidden;
   flex: 1;
+}
+
+.svgResButtonBox {
+  width: 18px;
+  height: 18px;
+}
+
+.resButtonRect {
+  stroke: $lens-tool-button-color;
+  stroke-width: 1px;
+  fill: none;
 }

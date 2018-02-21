@@ -102,9 +102,11 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.imageKeys !== this.props.imageKeys) {
+    if (nextProps.stats !== this.props.stats ||
+      nextProps.statsTileSpec !== this.props.statsTileSpec) {
       const { selectedTile } = this.state;
-      if (!selectedTile.imageKey.length) {
+      if (nextProps.statsTileSpec !== this.props.statsTileSpec ||
+        !selectedTile.imageKey.length) {
         const { res } = nextProps.statsTileSpec;
         const { x, y } = selectedTile;
         this.setState({ selectedTile: {

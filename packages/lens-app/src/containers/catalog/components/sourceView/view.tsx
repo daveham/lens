@@ -1,6 +1,4 @@
 import * as React from 'react';
-import faStyles from 'font-awesome/scss/font-awesome.scss';
-import FontAwesome from 'react-fontawesome';
 import {
   makeTileImageDescriptor,
   makeTileStatsDescriptor,
@@ -9,15 +7,11 @@ import {
 } from '@lens/image-descriptors';
 import { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
 import Loading from '../../../../components/loading';
-import ToolButton from '../../../../components/toolButton';
-import ToolMultiButton from '../../../../components/toolMultiButton';
 import { createTileSpec, tileSizeFromSourceSpec, ITileSpec } from '../../utils';
 import SourceThumbnail from '../sourceThumbnail';
 import Details from './components/details';
 import Tiles from './components/tiles';
-import ResSmall from './resSmall';
-import ResMedium from './resMedium';
-import ResLarge from './resLarge';
+import Toolbar from './components/toolbar';
 
 import styles from './styles.scss';
 
@@ -115,28 +109,13 @@ class View extends React.Component<IProps, IState> {
 
   private renderTools() {
     if (this.state.statsSpec) {
-
-      const multiSvg = [
-        <ResLarge key={'large'}/>,
-        <ResMedium key={'medium'}/>,
-        <ResSmall key={'small'}/>
-      ];
-
       return (
         <div className={styles.toolbar}>
-          <ToolMultiButton
-            key='abc'
-            selectedIndex={this.buttonIndexFromResolution()}
-            clickHandler={this.handleChangeRes}
-          >
-            {multiSvg}
-          </ToolMultiButton>
-          <ToolButton
-            key='reset'
-            clickHandler={this.handleResetStats}
-          >
-            <FontAwesome cssModule={faStyles} name='eraser' size='lg' />
-          </ToolButton>
+          <Toolbar
+            resolution={this.props.resolution}
+            onChangeRes={this.handleChangeRes}
+            onResetStats={this.handleResetStats}
+          />
         </div>
       );
     }
@@ -265,7 +244,7 @@ class View extends React.Component<IProps, IState> {
     });
   };
 
-  private handleChangeRes = (index) => {
+  private handleChangeRes = (index: number) => {
     const currentIndex = this.buttonIndexFromResolution();
     if (currentIndex !== index) {
       const newResolution = [32, 16, 8][index];

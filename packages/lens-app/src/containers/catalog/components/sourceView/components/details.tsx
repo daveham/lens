@@ -46,12 +46,10 @@ const renderDetailRow = (stats, detail, key) => {
   );
 };
 
-const Details = ({ stats }) => {
+export default ({ stats }) => {
   return (
     <div className={styles.container}>
       {detailsTemplate.map((detail: any, index) => renderDetailRow(stats, detail.g || detail, index))}
     </div>
   );
 };
-
-export default Details;

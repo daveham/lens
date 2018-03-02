@@ -2,12 +2,8 @@ import * as React from 'react';
 import faStyles from 'font-awesome/scss/font-awesome.scss';
 import FontAwesome from 'react-fontawesome';
 
-import ToolButton from '../../../../../../components/toolButton';
-import ToolMultiButton from '../../../../../../components/toolMultiButton';
-
-import ResSmall from './resSmall';
-import ResMedium from './resMedium';
-import ResLarge from './resLarge';
+import { ToolButton, ToolMultiButton } from '../../../../../../components';
+import { ResSmall, ResMedium, ResLarge } from './svg';
 
 import styles from './styles.scss';
 
@@ -15,10 +11,10 @@ interface IProps {
   resolution: number;
   onChangeRes: (index: number) => void;
   onResetStats: () => void;
+  onToggleSplit: () => void;
 }
 
 class Toolbar extends React.Component<IProps, any> {
-
   public render() {
     const multiSvg = [
       <ResLarge key={'large'}/>,
@@ -28,6 +24,12 @@ class Toolbar extends React.Component<IProps, any> {
 
     return (
       <div className={styles.container}>
+        <ToolButton
+          key='split'
+          clickHandler={this.props.onToggleSplit}
+        >
+          <FontAwesome cssModule={faStyles} name='adjust' size='lg' />
+        </ToolButton>
         <ToolMultiButton
           key='abc'
           selectedIndex={this.buttonIndexFromResolution()}

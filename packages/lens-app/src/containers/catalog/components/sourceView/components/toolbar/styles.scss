@@ -1,17 +1,4 @@
-@import '../../../../../../variables';
-
 .container {
   display: flex;
   justify-content: flex-end;
-}
-
-.svgResButtonBox {
-  width: 18px;
-  height: 18px;
-}
-
-.resButtonRect {
-  stroke: $lens-tool-button-color;
-  stroke-width: 1px;
-  fill: none;
 }

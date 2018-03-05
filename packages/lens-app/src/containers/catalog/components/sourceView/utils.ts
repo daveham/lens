@@ -1,4 +1,4 @@
-import { ITileSize, ITileSpec } from './interfaces';
+import { ITileSize, ITileSpec, IViewport } from './interfaces';
 
 export function createTileSpec(width: number, height: number, res: number): ITileSpec {
   let tilesWide = Math.floor(width / res);
@@ -32,5 +32,26 @@ export function tileSizeFromSourceSpec(spec: ITileSpec, top: number, left: numbe
   return {
     width: Math.floor(left / res) === tilesWide - 1 ? lastWidth : res,
     height: Math.floor(top / res) === tilesHigh - 1 ? lastHeight : res
+  };
+}
+
+export function sizeFromViewport(viewport: IViewport): any {
+  const { left, top, right, bottom } = viewport;
+  return {
+    width: right - left,
+    height: bottom - top
+  };
+}
+
+export function calculateTileDimensions({ res, tilesWide, tilesHigh, lastHeight, lastWidth }: ITileSpec,
+                                        x: number, y: number): any {
+  const col = Math.floor(x / res);
+  const row = Math.floor(y / res);
+
+  return {
+    left: x,
+    top: y,
+    width: col === tilesWide - 1 ? lastWidth : res,
+    height: row === tilesHigh - 1 ? lastHeight : res
   };
 }

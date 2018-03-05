@@ -21,3 +21,9 @@ export interface IViewport {
   bottom: number;
   left: number;
 }
+
+export interface ISelectedTile {
+  x: number;
+  y: number;
+  imageKey: string;
+}

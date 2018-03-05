@@ -8,8 +8,8 @@ import TileAnalysis from './tileAnalysis';
 
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:source-tiles');
+// import _debug from 'debug';
+// const debug = _debug('lens:source-tiles');
 
 interface IProps {
   statsTileSpec: ITileSpec;
@@ -29,8 +29,6 @@ interface ISelectedTile {
 }
 
 interface IState {
-  width: number;
-  height: number;
   viewport: IViewport;
   selectedTile: ISelectedTile;
   selectedStatsData: any;
@@ -55,6 +53,14 @@ const initialViewport: IViewport = {
   top: 0, right: 0, bottom: 0, left: 0
 };
 
+function sizeFromViewport(viewport: IViewport): any {
+  const { left, top, right, bottom } = viewport;
+  return {
+    width: right - left,
+    height: bottom - top
+  };
+}
+
 class Tiles extends React.Component<IProps, IState> {
   private containerNode: any;
   private controlledResize: () => void;
@@ -65,12 +71,9 @@ class Tiles extends React.Component<IProps, IState> {
     let selectedStatsData = {};
     if (props.selectedStatsKey) {
       selectedStatsData = props.stats[props.selectedStatsKey] || {};
-      debug('ctor', { selectedStatsData });
     }
 
     this.state = {
-      width: 0,
-      height: 0,
       selectedTile: {
         x: 0,
         y: 0,
@@ -97,11 +100,6 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   public componentWillReceiveProps(nextProps: IProps) {
-    debug('componentWillReceiveProps', {
-      propsWillChange: nextProps !== this.props,
-      nextProps: { ...nextProps },
-      props: { ...this.props }
-    });
     if (nextProps.stats !== this.props.stats ||
       nextProps.statsTileSpec !== this.props.statsTileSpec) {
       const { selectedTile } = this.state;
@@ -120,50 +118,35 @@ class Tiles extends React.Component<IProps, IState> {
     if ((nextProps.selectedStatsKey !== this.props.selectedStatsKey) ||
       (nextProps.selectedStatsKey &&
         (nextProps.stats[nextProps.selectedStatsKey] !== this.props.stats[nextProps.selectedStatsKey]))) {
-      debug('componentWillReceiveProps', { selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] || {} });
       this.setState({ selectedStatsData: nextProps.stats[nextProps.selectedStatsKey] || {} });
     }
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState) {
-    debug('componentDidUpdate', {
-      propsChanged: prevProps !== this.props,
-      stateChanged: prevState !== this.state,
-      prevProps: { ...prevProps },
-      props: { ...this.props },
-      prevState: { ...prevState },
-      state: { ...this.state }
-    });
-    const { width, height, viewport: { left, top } } = this.state;
-    const sizeChanged =
-      prevState.width !== width ||
-      prevState.height !== height ||
-      prevState.viewport.left !== left ||
-      prevState.viewport.top !== top;
-
-    if (sizeChanged && this.props.onSizeChanged) {
-      debug('componentDidUpdate - invoking onSizeChanged');
-//      this.props.onSizeChanged(left, top, width, height);
+    const { viewport } = this.state;
+    if (prevState.viewport !== viewport && this.props.onSizeChanged) {
       setTimeout(() => {
-        this.props.onSizeChanged(left, top, width, height);
+        const { left, top } = viewport;
+        const size = sizeFromViewport(viewport);
+        this.props.onSizeChanged(left, top, size.width, size.height);
       }, 0);
     } else {
       this.detectClientSizeChange();
     }
 
-    if (this.state.selectedTile.imageKey !== prevState.selectedTile.imageKey) {
+    const { imageKey } = this.state.selectedTile;
+    if (imageKey !== prevState.selectedTile.imageKey) {
       if (this.props.onTileSelectionChanged) {
-        const { selectedTile: { x, y } } = this.state;
-        const tileDimensions = this.calculateSelectedTileDimensions(x, y);
         setTimeout(() => {
-          this.props.onTileSelectionChanged(this.state.selectedTile.imageKey, tileDimensions.top, tileDimensions.left);
+          const { selectedTile: { x, y } } = this.state;
+          const { left, top } = this.calculateSelectedTileDimensions(x, y);
+          this.props.onTileSelectionChanged(imageKey, top, left);
         }, 0);
       }
     }
   }
 
   public render() {
-    debug('render');
     const { viewport } = this.state;
     const { imageKeys, images, displayTileSpec } = this.props;
     const { res } = displayTileSpec;
@@ -174,10 +157,8 @@ class Tiles extends React.Component<IProps, IState> {
       if (image) {
         const left = image.x - viewport.left;
         const top = image.y - viewport.top;
-        debug(`render key ${key}`, { res, left, top });
         if (left + res > 0 && top + res > 0 &&
           left < viewport.right && top < viewport.bottom) {
-          debug(`render key ${key}`, { url: image.url });
           tiles.push(
             <Tile
               key={key}
@@ -205,7 +186,8 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   private renderActiveElements() {
-    if (this.containerNode && (this.state.width || this.state.height)) {
+    const size = sizeFromViewport(this.state.viewport);
+    if (this.containerNode && (size.width || size.height)) {
       return [
         this.renderSelection(),
         this.renderInfo()
@@ -242,16 +224,16 @@ class Tiles extends React.Component<IProps, IState> {
   private detectClientSizeChange() {
     if (this.containerNode) {
       const { clientWidth, clientHeight } = this.containerNode;
-      const { width, height } = this.state;
-      const sizeChanged = width !== clientWidth || height !== clientHeight;
-
-      debug('detectClientSizeChange', { sizeChanged, width, height, clientWidth, clientHeight });
-
+      const size = sizeFromViewport(this.state.viewport);
+      const sizeChanged = size.width !== clientWidth || size.height !== clientHeight;
       if (sizeChanged) {
-        debug('detectClientSizeChange - size changed');
+        const { left, top } = this.state.viewport;
         this.setState({
-          width: clientWidth,
-          height: clientHeight
+          viewport: {
+            left, top,
+            right: left + clientWidth,
+            bottom: top + clientHeight
+          }
         });
       }
     }
@@ -287,43 +269,36 @@ class Tiles extends React.Component<IProps, IState> {
   }
 
   private updateSize = () => {
-    debug('updateSize');
     if (this.containerNode) {
       const { clientWidth, clientHeight } = this.containerNode;
-      const { viewport } = this.state;
-      if (this.state.width !== clientWidth ||
-        this.state.height !== clientHeight ||
-        viewport.right - viewport.left !== clientWidth ||
-        viewport.bottom - viewport.top !== clientHeight) {
-        // size has changed, calculate new viewports
-        const { res, width, tilesWide, height, tilesHigh } = this.props.statsTileSpec;
-        const newViewport = {
-          top: viewport.top,
-          left: viewport.left,
-          right: viewport.left + clientWidth,
-          bottom: viewport.top + clientHeight
+      const size = sizeFromViewport(this.state.viewport);
+
+      if (size.width !== clientWidth || size.height !== clientHeight) {
+        const { left, top } = this.state.viewport;
+        const viewport = {
+          left, top,
+          right: left + clientWidth,
+          bottom: top + clientHeight
         };
-        if (newViewport.right - width > res) {
-          const shiftX = newViewport.right - tilesWide * res;
-          newViewport.left -= shiftX;
-          newViewport.right -= shiftX;
+
+        const { res, width, tilesWide, height, tilesHigh } = this.props.statsTileSpec;
+        if (viewport.right - width > res) {
+          const shiftX = viewport.right - tilesWide * res;
+          viewport.left -= shiftX;
+          viewport.right -= shiftX;
         }
-        if (newViewport.bottom - height > res) {
-          const shiftY = newViewport.bottom - tilesHigh * res;
-          newViewport.top -= shiftY;
-          newViewport.bottom -= shiftY;
+        if (viewport.bottom - height > res) {
+          const shiftY = viewport.bottom - tilesHigh * res;
+          viewport.top -= shiftY;
+          viewport.bottom -= shiftY;
         }
 
-        const newState: any = {
-          width: clientWidth,
-          height: clientHeight,
-          viewport: newViewport
-        };
+        const newState: any = { viewport };
 
         // ensure selected tile is within bounds of the new viewport
         const { x, y } = this.state.selectedTile;
-        const adjustedX = Math.min(newViewport.right, Math.max(newViewport.left, x));
-        const adjustedY = Math.min(newViewport.bottom, Math.max(newViewport.top, y));
+        const adjustedX = Math.min(viewport.right, Math.max(viewport.left, x));
+        const adjustedY = Math.min(viewport.bottom, Math.max(viewport.top, y));
         if (x !== adjustedX || y !== adjustedY) {
           newState.selectedTile = {
             y: adjustedY,
@@ -331,34 +306,30 @@ class Tiles extends React.Component<IProps, IState> {
             imageKey: generateImageKey(this.props, res, adjustedX, adjustedY)
           };
         }
-        debug('updateSize - invoking setState');
         this.setState(newState);
-      } else {
-        debug('updateSize - no change in width/height');
       }
-    } else {
-      debug('updateSize - no containerNode');
     }
   };
 
   private handleKeyDown = (event) => {
     const move = keyMoves[event.code];
     if (move) {
+      event.stopPropagation();
+      event.preventDefault();
+
       let moveX = move[0];
       let moveY = move[1];
       if (event.shiftKey) {
-        const { viewport } = this.state;
+        const size = sizeFromViewport(this.state.viewport);
         const { res } = this.props.statsTileSpec;
         if (moveX) {
-          moveX = moveX * Math.floor((viewport.right - viewport.left) / res);
+          moveX = moveX * Math.floor(size.width / res);
         }
         if (moveY) {
-          moveY = moveY * Math.floor((viewport.bottom - viewport.top) / res);
+          moveY = moveY * Math.floor(size.height / res);
         }
       }
       this.moveSelection(moveX, moveY);
-      event.stopPropagation();
-      event.preventDefault();
     }
   };
 

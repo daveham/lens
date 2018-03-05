@@ -71,14 +71,14 @@ class Menu extends React.Component<IProps, IState> {
   private handleMouseLeaveMenu = () => {
     this.setState({ expanded: false });
     const { onChannelChanged } = this.props;
-    if (onChannelChanged) {
+    if (onChannelChanged && this.preHoverChannel) {
       onChannelChanged(this.preHoverChannel);
     }
   };
 
   private handleMouseEnterMenuItem = (channel) => () => {
     const { onChannelChanged } = this.props;
-    if (onChannelChanged) {
+    if (onChannelChanged && channel) {
       this.preHoverChannel = this.state.currentChannel;
       onChannelChanged(channel);
     }
@@ -92,7 +92,7 @@ class Menu extends React.Component<IProps, IState> {
   };
 
   private handleItemClicked = (channel) => () => {
-    if (channel !== this.state.currentChannel) {
+    if (channel && channel !== this.state.currentChannel) {
       this.preHoverChannel = channel;
       this.setState({ currentChannel: channel, expanded: false });
       const { onChannelChanged } = this.props;

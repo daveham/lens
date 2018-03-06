@@ -1,7 +1,7 @@
 import _debug from 'debug';
 const debug = _debug('lens:api-stats-utils');
 
-export function handleStatsError(redis, res, next, statsKey, err) {
+export function handleStatsError(redis, res, next, statsKey, hashKey, err) {
   debug('handleStatsError', { err });
   const payload = {
     status: 'bad',
@@ -9,5 +9,7 @@ export function handleStatsError(redis, res, next, statsKey, err) {
   };
   res.send(payload);
   next();
-  redis.set(statsKey, JSON.stringify({ status: 'bad', error: err }));
+  redis.hset(statsKey, hashKey, JSON.stringify({ status: 'bad', error: err }));
 }
+
+export const basicHashKey = 'basic';

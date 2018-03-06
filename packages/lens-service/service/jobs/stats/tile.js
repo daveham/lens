@@ -7,6 +7,7 @@ import toBuffer from '../utils/gmBuffer';
 import tileStats from '../utils/tileStat';
 import fileExists from '../utils/fileExists';
 import { generator as tileGenerator } from '../image/tile';
+import { basicHashKey } from './constants';
 
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-stats-tile');
@@ -26,9 +27,9 @@ function* generator(imageDescriptor, key, context) {
     ...stats
   };
   const payload = { status: 'ok', data };
-  const result = yield context.getRedisClient().set(key, JSON.stringify(payload));
-  if (result !== 'OK') {
-    debug('stats redis.set failed', { result });
+  const result = yield context.getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
+  if (result !== 0 && result !== 1) {
+    debug('stats redis.hset failed', { result });
   }
   return data;
 }
@@ -43,7 +44,7 @@ export function processTile(context, job, cb) {
     cb();
   })
   .catch((error) => {
-    context.getRedisClient().set(statsKey, JSON.stringify({ status: 'bad', error }));
+    context.getRedisClient().hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
     context.respondWithError(error, job);
     cb();
   });

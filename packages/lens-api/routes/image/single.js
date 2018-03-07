@@ -5,7 +5,7 @@ import {
   urlFromImageDescriptor
 } from '@lens/image-descriptors';
 import { createImage } from '@lens/data-jobs';
-import { enqueueJob, loadCatalog } from '../utils';
+import { enqueueJob } from '../utils';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-image-single');
@@ -28,25 +28,9 @@ export default function processSingleImage(clientId, imageDescriptor, res, next)
 
     debug('file does not exist - creating task');
 
-    loadCatalog((err, catalog) => {
-      if (err) {
-        debug('processSingleImage loadCatalog error', { err });
-        res.send(new errors.InternalServerError(err, 'loadCatalog error'));
-        return next();
-      }
-
-      const { id } = imageDescriptor.input;
-      const foundSource = catalog.sources.find((source) => source.id === id);
-      if (!foundSource) {
-        debug(`processSingleImage did not find source with id ${id}`);
-        res.send(new errors.InternalServerError({ message: `Did not find source with id ${id}` }));
-        return next();
-      }
-
-      enqueueJob(createImage(clientId, imageDescriptor, foundSource.file), (status) => {
-        res.send(status);
-        next();
-      });
+    enqueueJob(createImage(clientId, imageDescriptor), (status) => {
+      res.send(status);
+      next();
     });
   });
 }

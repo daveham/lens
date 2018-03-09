@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <div>
-      <img src="/build/images/DMEvenGen500.jpg" />
+      <img src="images/DMEvenGen500.jpg" />
       <p style={s.p}>
         This is an example single page app built
         with React and React&nbsp;Router using {' '}

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { IViewport, ITileSpec, ISelectedTile } from '../interfaces';
-import { sizeFromViewport, calculateTileDimensions } from '../utils';
+import { IViewport, ITileSpec, ISelectedTile } from '../../interfaces';
+import { sizeFromViewport, calculateTileDimensions } from '../../utils';
 
 import styles from './styles.scss';
 

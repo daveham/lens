@@ -35,36 +35,3 @@
   }
 }
 
-$tile-background-color: #222;
-$tile-idle-color: #282828;
-$tile-loading-color: #333;
-
-.tilesContainer {
-  position: relative;
-  height: 100%;
-  background-color: $tile-background-color;
-  overflow: hidden;
-}
-
-.tile {
-  position: absolute;
-  border-top: solid 1px $tile-idle-color;
-  border-left: solid 1px $tile-idle-color;
-}
-
-.loading {
-  border-top: solid 1px $tile-loading-color;
-  border-left: solid 1px $tile-loading-color;
-}
-
-.image {
-  position: absolute;
-}
-
-.selection {
-  position: absolute;
-  z-index: 100;
-  border: solid 2px rgba(255, 255, 0, .6);
-  border-radius: 4px;
-}
-

@@ -12,7 +12,7 @@ const properties = {
 };
 
 ReactDOM.render(
-  <BrowserRouter { ...properties }>
+  <BrowserRouter {...properties}>
     <App />
   </BrowserRouter>,
   document.getElementById('root'),

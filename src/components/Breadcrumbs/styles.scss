@@ -1,0 +1,8 @@
+.link a {
+  border-bottom: 1px dotted rgb(0, 168, 0);
+
+  &:hover {
+    border-bottom: 1px solid rgb(0, 168, 0);
+    color: black;
+  }
+}

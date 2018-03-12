@@ -17,7 +17,7 @@ export default () => {
   return (
     <div>
       <p className={styles.normal}>
-        Generate this image <code>{img2}</code>:
+        Generate this image:
       </p>
       <img src={img1} alt='' className={styles.framedImage}/>
       <p className={styles.normal}>

@@ -1,17 +1,17 @@
 import React from 'react';
 import styles from '../styles.scss';
 
-function makeImgUrl(url) {
+function makeImgUrl(file) {
   if (process.env.NODE_ENV === 'production') {
-    return url;
+    return `/lens/build/images/${file}`;
   }
-  return '/' + url;
+  return `/build/images/${file}`;
 }
 
-const img1 = makeImgUrl('build/images/DMEvenGen500.jpg');
-const img2 = makeImgUrl('build/images/EveningCloudsDavisMountains500.jpg');
-const img3 = makeImgUrl('build/images/EveSrcCut.jpg');
-const img4 = makeImgUrl('build/images/DMEvenCut.png');
+const img1 = makeImgUrl('DMEvenGen500.jpg');
+const img2 = makeImgUrl('EveningCloudsDavisMountains500.jpg');
+const img3 = makeImgUrl('EveSrcCut.jpg');
+const img4 = makeImgUrl('DMEvenCut.png');
 
 export default () => {
   return (

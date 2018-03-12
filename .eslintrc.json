@@ -1,7 +1,9 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": [
+    "react-app"
+  ],
   "env": {
     "browser": true,
     "node": true
@@ -21,7 +23,9 @@
     "jsx-a11y/anchor-is-valid": ["error", {"components": ["Link"], "specialLink": ["to"]}],
     "react/forbid-prop-types": "off",
     "react/jsx-filename-extension": "off",
-    "react/no-array-index-key": "off"
+    "react/no-array-index-key": "off",
+    "react/require-default-props": "off",
+    "react/sort-comp": "off"
   },
   "parserOptions": {
     "ecmaFeatures": {

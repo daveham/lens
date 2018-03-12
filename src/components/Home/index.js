@@ -1,5 +1,11 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Tabs from '../Tabs';
+import Intro from './Intro';
+import Stack from './Stack';
+import Services from './Services';
+import Environments from './Environments';
+
 import styles from './styles.scss';
 
 const tabs = [
@@ -8,76 +14,24 @@ const tabs = [
   'services',
   'environments'
 ];
+const paths = tabs.map((tab) => `/info/${tab}`);
 
-export default class Home extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      currentTabIndex: 0
-    };
-  }
-
-  renderIntro() {
-    return (
-      <div>
-        <p className={styles.normal}>
-          Generate this image:
-        </p>
-        <img src='build/images/DMEvenGen500.jpg' alt='' className={styles.framedImage}/>
-        <p className={styles.normal}>
-          From this photo:
-        </p>
-        <img src='build/images/EveningCloudsDavisMountains500.jpg' alt=''
-             className={styles.framedImage}/>
-        <p className={styles.normal}>
-          Detail:
-        </p>
-        <div className={styles.cutContainer}>
-          <div>
-            <img src='build/images/EveSrcCut.jpg' alt='' className={styles.framedImage}/>
-          </div>
-          <div>
-            <img src='build/images/DMEvenCut.png' alt='' className={styles.framedImage}/>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  render() {
-    const { currentTabIndex } = this.state;
-    let content;
-    if (currentTabIndex === 0) {
-      content = this.renderIntro();
-    } else {
-      content = (
-        <div>
-          <p className={styles.normal}>
-            {`Content for '${tabs[currentTabIndex]}' section.`}
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        <p className={styles.normal}>
-          Lens is a tool for creating images by applying generative algorithms to photos.
-        </p>
-        <Tabs
-          selectedIndex={this.state.currentTabIndex}
-          titles={tabs}
-          onTabClicked={this.handleTabClicked}
-        />
-        {content}
-      </div>
-    );
-  }
-
-  handleTabClicked = (index) => {
-    if (index !== this.state.currentTabIndex) {
-      this.setState({ currentTabIndex: index });
-    }
-  };
+export default function Home() {
+  return (
+    <div>
+      <p className={styles.normal}>
+        Lens is a tool for creating images by applying generative algorithms to photos.
+      </p>
+      <Tabs
+        titles={tabs}
+        paths={paths}
+      />
+      <Switch>
+        <Route path='/info/stack' component={Stack}/>
+        <Route path='/info/services' component={Services}/>
+        <Route path='/info/environments' component={Environments}/>
+        <Route path='/info' component={Intro}/>
+      </Switch>
+    </div>
+  );
 }

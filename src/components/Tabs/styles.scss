@@ -6,26 +6,21 @@
 
 $tab-border-bottom: 4px;
 
-.tab {
+.container a {
   flex: 1;
   color: #999;
   padding: 18px 10px 2px;
   border-bottom: solid $tab-border-bottom #f0f0f0;
-  user-select: none;
-  cursor: pointer;
 
   &:hover {
     color: #000;
     border-bottom-color: #999;
+    cursor: pointer;
   }
 }
 
-.tab.selected {
+.container a.activenavlink {
   color: #000;
   border-bottom-color: #333;
   cursor: default;
-
-  &:hover {
-    border-bottom-color: #333;
-  }
 }

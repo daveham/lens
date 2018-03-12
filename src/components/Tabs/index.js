@@ -1,53 +1,25 @@
 import React from 'react';
+import * as ReactRouterDom from 'react-router-dom';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import styles from './styles.scss';
 
-export default class Tabs extends React.Component {
-  static get propTypes() {
-    return {
-      selectedIndex: PropTypes.number,
-      titles: PropTypes.arrayOf(PropTypes.string),
-      onTabClicked: PropTypes.func
-    };
-  }
-
-  static get defaultProps() {
-    return {
-      onTabClicked: () => {}
-    };
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      currentTabIndex: props.selectedIndex
-    };
-  }
-
-  render() {
-    const { titles, selectedIndex } = this.props;
-
-    const tabs = titles.map((item, index) => {
-      const tabClasses = classNames(styles.tab, index === selectedIndex && styles.selected);
-      return (
-        <div className={tabClasses} key={index} onClick={this.handleTabClicked(index)}>
-          {item}
-        </div>
-      );
-    });
-
+export default function Tabs({ titles, paths }) {
+  const tabs = titles.map((item, index) => {
     return (
-      <div className={styles.container}>
-        {tabs}
-      </div>
+      <ReactRouterDom.NavLink key={index} activeClassName={styles.activenavlink} to={paths[index]}>
+        {item}
+      </ReactRouterDom.NavLink>
     );
-  }
+  });
 
-  handleTabClicked = (index) => (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    this.props.onTabClicked(index);
-  };
+  return  (
+    <div className={styles.container}>
+      {tabs}
+    </div>
+  );
 }
+
+Tabs.propTypes = {
+  titles: PropTypes.arrayOf(PropTypes.string),
+  paths: PropTypes.arrayOf(PropTypes.string)
+};

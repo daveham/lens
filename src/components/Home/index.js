@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Tabs from '../Tabs';
 import Intro from './Intro';
 import Stack from './Stack';
@@ -30,7 +30,8 @@ export default function Home() {
         <Route path='/info/stack' component={Stack}/>
         <Route path='/info/services' component={Services}/>
         <Route path='/info/environments' component={Environments}/>
-        <Route path='/info' component={Intro}/>
+        <Redirect exact from='/info' to='/info/intro'/>
+        <Route component={Intro}/>
       </Switch>
     </div>
   );

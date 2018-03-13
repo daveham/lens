@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const isDevelopment = process.argv.indexOf('-p') === -1;
@@ -7,8 +8,10 @@ const isDevelopment = process.argv.indexOf('-p') === -1;
 let publicPath;
 let rules;
 let plugins;
+let filename;
 if (isDevelopment) {
-  publicPath = '/lens/build/';
+  publicPath = '/';
+  filename = 'bundle.js';
 
   rules = [
     {
@@ -55,9 +58,16 @@ if (isDevelopment) {
     }
   ];
 
-  plugins = [];
+  plugins = [
+    // Generates an `index.html` file.
+    new HtmlWebpackPlugin({
+      title: 'development',
+      template: 'devTemplate.html'
+    })
+  ];
 } else {
   publicPath = '/build/';
+  filename = 'bundle.[chunkhash:8].js';
   const cssFilename = 'static/css/[name].[contenthash:8].css';
   const extractTextPluginOptions =
     // Making sure that the publicPath goes back to build folder.
@@ -114,6 +124,25 @@ if (isDevelopment) {
   ];
 
   plugins = [
+    // Generates an `index.html` file with the <script> injected.
+    new HtmlWebpackPlugin({
+      inject: false,
+      hash: false,
+      filename: `${__dirname}/index.html`,
+      template: `${__dirname}/prodTemplate.html` //,
+      // minify: {
+      //   removeComments: true,
+      //   collapseWhitespace: true,
+      //   removeRedundantAttributes: true,
+      //   useShortDoctype: true,
+      //   removeEmptyAttributes: true,
+      //   removeStyleLinkTypeAttributes: true,
+      //   keepClosingSlash: true,
+      //   minifyJS: true,
+      //   minifyCSS: true,
+      //   minifyURLs: true
+      // }
+    }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
@@ -133,7 +162,7 @@ module.exports = {
   output: {
     path: `${__dirname}/build`,
     publicPath,
-    filename: 'bundle.[chunkhash:8].js'
+    filename
   },
   module: { rules },
   plugins

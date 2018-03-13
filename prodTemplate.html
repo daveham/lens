@@ -63,14 +63,14 @@
       }(window.location))
     </script>
     <!-- End Single Page Apps for GitHub Pages -->
-    
-    <link href="/lens//build/static/css/main.73bc8bb1.css" rel="stylesheet">
-    
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="/lens/<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+    <% } %>
 </head>
 <body>
 <div id="root"></div>
-
-<script type="text/javascript" src="/lens/build/bundle.65593f57.js"></script>
-
+<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+<script type="text/javascript" src="/lens<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% } %>
 </body>
 </html>

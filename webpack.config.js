@@ -58,7 +58,7 @@ if (isDevelopment) {
   plugins = [];
 } else {
   publicPath = '/build/';
-  const cssFilename = 'static/css/[name].css';
+  const cssFilename = 'static/css/[name].[contenthash:8].css';
   const extractTextPluginOptions =
     // Making sure that the publicPath goes back to build folder.
     { publicPath: Array(cssFilename.split('/').length).join('../') };
@@ -114,6 +114,9 @@ if (isDevelopment) {
   ];
 
   plugins = [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+    }),
     new webpack.optimize.UglifyJsPlugin({
       output: {
         comments: false
@@ -130,7 +133,7 @@ module.exports = {
   output: {
     path: `${__dirname}/build`,
     publicPath,
-    filename: 'bundle.js'
+    filename: 'bundle.[chunkhash:8].js'
   },
   module: { rules },
   plugins

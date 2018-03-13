@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const isDevelopment = process.argv.indexOf('-p') === -1;
 
@@ -124,24 +125,28 @@ if (isDevelopment) {
   ];
 
   plugins = [
+    new CleanWebpackPlugin([
+      `${__dirname}/build/*.js`,
+      `${__dirname}/build/static/css/*.css`
+      ], { }),
     // Generates an `index.html` file with the <script> injected.
     new HtmlWebpackPlugin({
       inject: false,
       hash: false,
       filename: `${__dirname}/index.html`,
-      template: `${__dirname}/prodTemplate.html` //,
-      // minify: {
-      //   removeComments: true,
-      //   collapseWhitespace: true,
-      //   removeRedundantAttributes: true,
-      //   useShortDoctype: true,
-      //   removeEmptyAttributes: true,
-      //   removeStyleLinkTypeAttributes: true,
-      //   keepClosingSlash: true,
-      //   minifyJS: true,
-      //   minifyCSS: true,
-      //   minifyURLs: true
-      // }
+      template: `${__dirname}/prodTemplate.html`,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true
+      }
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production')

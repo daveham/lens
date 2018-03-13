@@ -1,3 +1,25 @@
+# My Version of React for GitHub Pages
+I've modified the original approach to enabling React in GitHub
+pages - 
+[react-github-pages](https://github.com/rafrex/react-github-pages)
+by Rafael Pedicini.
+ 
+I addressed some issues I encountered in
+supporting both prod and dev environments for project
+pages. Look at the changes to
+the contents of webpack.config.js to get an idea of what
+I did.
+ 
+Also, I switched from the original approach to 
+styling to using CSS Modules (as well as SCSS) and 
+authored React components according to the style
+I normally follow.
+
+I've left the contents of
+the original README below and I'll provide better details of
+my modifications soon. Until then, look at the changes to
+the contents of webpack.config.js.
+
 # Single Page Apps for GitHub Pages
 
 [Live example][liveExample]  

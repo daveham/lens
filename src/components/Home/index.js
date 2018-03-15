@@ -10,8 +10,8 @@ import styles from './styles.scss';
 
 const tabs = [
   'intro',
-  'stack',
   'services',
+  'stack',
   'environments'
 ];
 const paths = tabs.map((tab) => `/info/${tab}`);
@@ -19,13 +19,17 @@ const paths = tabs.map((tab) => `/info/${tab}`);
 export default function Home() {
   return (
     <div>
-      <p className={styles.normal}>
-        Lens is a tool for creating images by applying generative algorithms to photos.
-      </p>
-      <Tabs
-        titles={tabs}
-        paths={paths}
-      />
+      <div className={styles.menuContainer}>
+        <div className={styles.title}>
+          Lens
+        </div>
+        <div className={styles.menu}>
+          <Tabs
+            titles={tabs}
+            paths={paths}
+          />
+        </div>
+      </div>
       <Switch>
         <Route path='/info/stack' component={Stack}/>
         <Route path='/info/services' component={Services}/>

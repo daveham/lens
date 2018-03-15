@@ -1,41 +1,38 @@
 import React from 'react';
-import styles from '../styles.scss';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import Pin from '../../Pin';
+import Tabs from '../../Tabs';
+import Overview from './Overview';
+import Placeholder from '../placeholder';
 
-function makeImgUrl(file) {
-  if (process.env.NODE_ENV === 'production') {
-    return `/lens/build/images/${file}`;
-  }
-  return `/build/images/${file}`;
-}
-
-const img1 = makeImgUrl('DMEvenGen500.jpg');
-const img2 = makeImgUrl('EveningCloudsDavisMountains500.jpg');
-const img3 = makeImgUrl('EveSrcCut.jpg');
-const img4 = makeImgUrl('DMEvenCut.png');
+const tabs = [
+  'overview',
+  'analysis',
+  'simulation',
+  'rendering'
+];
+const paths = tabs.map((tab) => `/info/intro/${tab}`);
 
 export default () => {
   return (
     <div>
-      <p className={styles.normal}>
-        Generate this image:
+      <Pin>
+        <Tabs
+          titles={tabs}
+          paths={paths}
+          horizontal={false}
+        />
+      </Pin>
+      <p>
+        Lens is a tool for creating images by applying generative algorithms to photos.
       </p>
-      <img src={img1} alt='' className={styles.framedImage}/>
-      <p className={styles.normal}>
-        From this photo:
-      </p>
-      <img src={img2} alt=''
-           className={styles.framedImage}/>
-      <p className={styles.normal}>
-        Detail:
-      </p>
-      <div className={styles.cutContainer}>
-        <div>
-          <img src={img3} alt='' className={styles.framedImage}/>
-        </div>
-        <div>
-          <img src={img4} alt='' className={styles.framedImage}/>
-        </div>
-      </div>
+      <Switch>
+        <Route path={paths[1]} component={Placeholder}/>
+        <Route path={paths[2]} component={Placeholder}/>
+        <Route path={paths[3]} component={Placeholder}/>
+        <Redirect exact from='/info/intro' to={paths[0]}/>
+        <Route component={Overview}/>
+      </Switch>
     </div>
   );
 };

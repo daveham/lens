@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import App from './components/App';
 
+import styles from './styles.scss';
+
 let basename;
 if (process.env.NODE_ENV === 'production') {
   basename = '/lens';
@@ -13,7 +15,9 @@ const properties = {
 
 ReactDOM.render(
   <BrowserRouter {...properties}>
-    <App />
+    <div className={styles.container}>
+      <App />
+    </div>
   </BrowserRouter>,
   document.getElementById('root'),
 );

@@ -1,18 +1,18 @@
-.framedImage {
-  margin: 10px 6px;
-  padding: 12px;
-  border: solid 1px #ccc;
-  box-shadow:
-          0 4px 5px rgba(0, 0, 0, .14),
-          0 1px 10px 0 rgba(0, 0, 0, .12),
-          0 2px 4px -1px rgba(0, 0, 0, .4);
-}
+@import '../../variables';
 
-.cutContainer {
+.menuContainer {
   display: flex;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
-p.normal {
-  margin: 2vh 0 0;
-  line-height: 1.4;
+.menu {
+  flex: 1;
+}
+
+.title {
+  font-family: $titles-font;
+  font-size: 24px;
+  letter-spacing: .06em;
+  padding-right: 50px;
 }

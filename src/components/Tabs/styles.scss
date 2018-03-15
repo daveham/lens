@@ -1,26 +1,67 @@
+@import '../../variables';
+
 .container {
   display: flex;
   justify-content: space-evenly;
-  align-content: center;
+  flex-wrap: wrap-reverse;
+
+  &.horizontal {
+    align-content: flex-end;
+  }
+
+  &.vertical {
+    text-align: right;
+    flex-direction: column;
+    padding-top: 120px;
+  }
 }
 
-$tab-border-bottom: 4px;
-
 .container a {
+  font-family: $page-font;
   flex: 1;
   color: #999;
-  padding: 18px 10px 2px;
-  border-bottom: solid $tab-border-bottom #f0f0f0;
 
   &:hover {
     color: #000;
-    border-bottom-color: #999;
     cursor: pointer;
   }
 }
 
 .container a.activenavlink {
   color: #000;
-  border-bottom-color: #333;
   cursor: default;
+}
+
+$tab-border-bottom: 4px;
+
+.container.horizontal a {
+  padding: 2px 10px;
+  border-bottom: solid $tab-border-bottom #f0f0f0;
+
+  &:hover {
+    border-bottom-color: #999;
+  }
+}
+
+.container.horizontal a.activenavlink {
+  border-bottom-color: #333;
+}
+
+
+$tab-border-right: 2px;
+
+.container.vertical a {
+  border-right: solid $tab-border-right #f0f0f0;
+  padding: .5em .5em .3em 3em;
+  width: 100%;
+
+  &:hover {
+    border-right-color: #999;
+    background-color: #eee;
+  }
+}
+
+.container.vertical a.activenavlink {
+  border-right-color: #333;
+  background-color: #ddd;
 }

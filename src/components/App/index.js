@@ -7,8 +7,6 @@ import styles from './styles.scss';
 export default () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Lens</h1>
-
       <Switch>
         <Redirect exact from='/' to='/info'/>
         <Route path='/info' component={Home}/>

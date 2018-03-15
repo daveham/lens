@@ -23,9 +23,6 @@ export default () => {
           horizontal={false}
         />
       </Pin>
-      <p>
-        Lens is a tool for creating images by applying generative algorithms to photos.
-      </p>
       <Switch>
         <Route path={paths[1]} component={Placeholder}/>
         <Route path={paths[2]} component={Placeholder}/>

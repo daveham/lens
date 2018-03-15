@@ -4,13 +4,14 @@ import Pin from '../../Pin';
 import Tabs from '../../Tabs';
 import Placeholder from '../placeholder';
 
+const root = '/info/stack';
 const tabs = [
   'client',
   'api',
   'work',
   'ops'
 ];
-const paths = tabs.map((tab) => `/info/stack/${tab}`);
+const paths = tabs.map((tab) => `${root}/${tab}`);
 
 export default () => {
   return (
@@ -30,7 +31,7 @@ export default () => {
           <Route path={paths[1]} component={Placeholder}/>
           <Route path={paths[2]} component={Placeholder}/>
           <Route path={paths[3]} component={Placeholder}/>
-          <Redirect exact from='/info/stack' to={paths[0]}/>
+          <Redirect exact from={root} to={paths[0]}/>
           <Route component={Placeholder}/>
         </Switch>
       </div>

@@ -5,16 +5,19 @@ import Intro from './Intro';
 import Stack from './Stack';
 import Services from './Services';
 import Environments from './Environments';
+import Code from './Code';
 
 import styles from './styles.scss';
 
+const root = '/info';
 const tabs = [
   'intro',
   'services',
   'stack',
-  'environments'
+  'environments',
+  'code'
 ];
-const paths = tabs.map((tab) => `/info/${tab}`);
+const paths = tabs.map((tab) => `${root}/${tab}`);
 
 export default function Home() {
   return (
@@ -31,10 +34,11 @@ export default function Home() {
         </div>
       </div>
       <Switch>
-        <Route path='/info/stack' component={Stack}/>
-        <Route path='/info/services' component={Services}/>
-        <Route path='/info/environments' component={Environments}/>
-        <Redirect exact from='/info' to='/info/intro'/>
+        <Route path={paths[1]} component={Services}/>
+        <Route path={paths[2]} component={Stack}/>
+        <Route path={paths[3]} component={Environments}/>
+        <Route path={paths[4]} component={Code}/>
+        <Redirect exact from={root} to={paths[0]}/>
         <Route component={Intro}/>
       </Switch>
     </div>

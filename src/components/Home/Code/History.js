@@ -14,8 +14,8 @@ export default () => {
       </p>
       <p>
         The first incarnation of Lens was a client-only program, focused on
-        simulation and rendering. It did not include a interface for data
-        analysis - which was handled via custom command line utilities.
+        simulation and rendering. It did not include a user interface
+        - everything was handled via the command line.
       </p>
       <p>
         During development of this version, I transitioned from working on Windows

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import Pin from '../../Pin';
 import Tabs from '../../Tabs';
-import Placeholder from '../placeholder';
+import Status from './Status';
 import History from './History';
+import styles from './styles.scss';
 
 const root = '/info/code';
 const tabs = [
@@ -21,11 +23,16 @@ export default () => {
           paths={paths}
           horizontal={false}
         />
+        <div className={styles.icon}>
+          <a href='https://github.com/daveham/lens'>
+            <FontAwesomeIcon icon={['fab', 'github']} size='2x' pull='right' />
+          </a>
+        </div>
       </Pin>
       <Switch>
         <Route path={paths[1]} component={History}/>
         <Redirect exact from={root} to={paths[0]}/>
-        <Route component={Placeholder}/>
+        <Route component={Status}/>
       </Switch>
     </div>
   );

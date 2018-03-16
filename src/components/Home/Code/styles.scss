@@ -1,0 +1,32 @@
+.github {
+  display: flex;
+  align-items: flex-end;
+
+  & :first-child {
+    padding-right: 2px;
+  }
+
+  & :not(:first-child) {
+    padding-bottom: 2px;
+  }
+}
+
+.external {
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.icon {
+  padding-top: 80px;
+  padding-right: 4px;
+}
+
+.statusList {
+  padding: 14px 40px 8px;
+
+  li:not(:last-child) {
+    padding-bottom: 6px;
+  }
+}

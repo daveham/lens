@@ -1,0 +1,98 @@
+$info-text-color: #222;
+$info-width: 150px;
+$info-height: 170px;
+$svg-width: $info-width - 4px;
+$svg-height: $info-height - 44px;
+$hist-container-width: $info-width;
+$hist-container-height: $info-height - 40px;
+
+.infoContainer {
+  color: $info-text-color;
+  font-size: 8pt;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-width: $info-width;
+  min-height: $info-height;
+}
+
+.statsTitle {
+  padding-left: 2px;
+  display: flex;
+  min-height: 26px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.statsFilename {
+  padding-left: 2px;
+}
+
+.histContainer {
+  width: $hist-container-width;
+  height: $hist-container-height;
+}
+
+.svgBox {
+  width: $svg-width;
+  height: $svg-height;
+}
+
+.histBarRed {
+  stroke: #fcc;
+  stroke-width: 1px;
+  fill: #ffd8d8;
+}
+
+.histBarGreen {
+  stroke: #ada;
+  stroke-width: 1px;
+  fill: #c8eec8;
+}
+
+.histBarBlue {
+  stroke: #cce;
+  stroke-width: 1px;
+  fill: #d8d8ff;
+}
+
+.histBarHue {
+  stroke: #9dd;
+  stroke-width: 1px;
+  fill: #aee;
+}
+
+.histBarSaturation {
+  stroke: #fcf;
+  stroke-width: 1px;
+  fill: #ffd8ff;
+}
+
+.histBarLuminance {
+  stroke: #f0e68c;
+  stroke-width: 1px;
+  fill: #fdff62;
+}
+
+.menuContainer {
+  width: 100%;
+  display: flex;
+  padding-bottom: 8px;
+}
+
+.menuItem {
+  padding: 2px 4px;
+  margin: 0 4px;
+  border: solid 1px #eee;
+  border-radius: 4px;
+  user-select: none;
+
+  &:hover {
+    border: solid 1px #ccc;
+  }
+
+  &.selected {
+    border-color: #777;
+  }
+}

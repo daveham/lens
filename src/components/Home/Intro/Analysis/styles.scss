@@ -1,0 +1,14 @@
+.imageContainer {
+  position: relative;
+  min-width: 500px;
+  min-height: 300px;
+  max-width: 500px;
+  background-color: #ddd;
+  overflow: hidden;
+  border: solid 4px #fff;
+  box-shadow:
+          0 4px 5px rgba(0, 0, 0, .14),
+          0 1px 10px 0 rgba(0, 0, 0, .12),
+          0 2px 4px -1px rgba(0, 0, 0, .4);
+  margin: 10px 0 20px;
+}

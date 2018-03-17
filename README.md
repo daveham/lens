@@ -1,4 +1,6 @@
-# lens: The Inference Lens
+# Lens: The Inference Lens
+
+[Project Site](https://daveham.github.io/lens/info/intro/overview)
 
 ````
 +----------+           +----------+               +----------+

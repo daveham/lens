@@ -1,0 +1,23 @@
+.techList {
+  padding: 14px 40px 8px;
+
+  li:not(:last-child) {
+    padding-bottom: 6px;
+  }
+
+  li a {
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.tech a {
+  font-weight: 600;
+}
+
+.external {
+  &:hover {
+    text-decoration: underline;
+  }
+}

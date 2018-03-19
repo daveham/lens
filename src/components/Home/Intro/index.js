@@ -18,7 +18,7 @@ const paths = tabs.map((tab) => `${root}/${tab}`);
 export default () => {
   return (
     <div>
-      <Pin>
+      <Pin animate={true}>
         <Tabs
           titles={tabs}
           paths={paths}

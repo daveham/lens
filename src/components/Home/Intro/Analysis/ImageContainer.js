@@ -34,7 +34,7 @@ export default class ImageContainer extends React.Component {
     window.addEventListener('resize', this.controlledResize, false);
     setTimeout(() => {
       this.updateSize();
-    }, 300);
+    }, 100);
   }
 
   componentWillUnmount() {

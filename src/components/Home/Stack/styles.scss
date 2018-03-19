@@ -17,7 +17,14 @@
 }
 
 .external {
+  color: steelblue;
   &:hover {
     text-decoration: underline;
   }
+}
+
+.icon {
+  color: steelblue;
+  padding-left: 10px;
+  padding-top: 14px;
 }

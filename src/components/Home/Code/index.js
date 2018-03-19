@@ -23,6 +23,8 @@ export default () => {
           paths={paths}
           horizontal={false}
         />
+      </Pin>
+      <Pin>
         <div className={styles.icon}>
           <a href='https://github.com/daveham/lens'>
             <FontAwesomeIcon icon={['fab', 'github']} size='2x' pull='right' />

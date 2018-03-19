@@ -21,6 +21,9 @@ export default class Pin extends React.Component {
 
   render() {
     const contentStyles = { ...this.state.pin };
+    if (this.props.animate) {
+      contentStyles.transition = 'top .5s ease-out';
+    }
 
     return (
       <div className={styles.anchor} ref={(node) => this.anchorNode = node}>
@@ -41,5 +44,6 @@ export default class Pin extends React.Component {
 }
 
 Pin.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  animate: PropTypes.bool
 };

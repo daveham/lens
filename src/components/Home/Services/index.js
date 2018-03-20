@@ -22,9 +22,6 @@ export default () => {
           horizontal={false}
         />
       </Pin>
-      <p>
-        {'Content for \'services\' section.'}
-      </p>
       <Switch>
         <Route path={paths[1]} component={Placeholder}/>
         <Route path={paths[2]} component={Placeholder}/>

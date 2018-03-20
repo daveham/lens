@@ -21,9 +21,6 @@ export default () => {
           horizontal={false}
         />
       </Pin>
-      <p>
-        {'Content for \'environments\' section.'}
-      </p>
       <Switch>
         <Route path={paths[1]} component={Placeholder}/>
         <Redirect exact from={root} to={paths[0]}/>

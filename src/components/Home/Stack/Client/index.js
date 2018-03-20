@@ -19,23 +19,24 @@ export default () => {
       <ul className={styles.techList}>
         <li>
           <span className={styles.tech}>
-            <a href='https://reactjs.org/'>React</a> for UI components
+            <a href='https://reactjs.org/'>React</a> &mdash; UI components
           </span>
         </li>
         <li>
           <span className={styles.tech}>
-            <a href='https://redux.js.org/'>Redux</a> for state management
+            <a href='https://redux.js.org/'>Redux</a> &mdash; state management
           </span>
         </li>
         <li>
           <span className={styles.tech}>
             <a href='https://reacttraining.com/react-router/'>React Router</a> and <a
-              href='https://github.com/ReactTraining/react-router/tree/master/packages/react-router-redux'>React Router Redux</a>
+              href='https://github.com/ReactTraining/react-router/tree/master/packages/react-router-redux'>React Router Redux</a> &mdash;
+              in-client routing
           </span>
         </li>
         <li>
           <span className={styles.tech}>
-            <a href='https://redux-saga.js.org/'>Redux Sagas</a> for async / side effects
+            <a href='https://redux-saga.js.org/'>Redux Sagas</a> &mdash; async / side effects
           </span>
         </li>
       </ul>
@@ -46,18 +47,18 @@ export default () => {
       <ul className={styles.techList}>
         <li>
           <span className={styles.tech}>
-            <a href='https://babeljs.io/'>Babel</a> for next-gen JavaScript
+            <a href='https://babeljs.io/'>Babel</a> &mdash; next-gen JavaScript
           </span>
         </li>
         <li>
           <span className={styles.tech}>
-            <a href='http://www.typescriptlang.org/'>Typescript</a> for type safety
+            <a href='http://www.typescriptlang.org/'>Typescript</a> &mdash; type safety
           </span>
         </li>
         <li>
           <span className={styles.tech}>
             <a href='https://eslint.org/'>ESLint</a> and <a
-            href='https://palantir.github.io/tslint/'>TSLint</a> for code quality and consistency
+            href='https://palantir.github.io/tslint/'>TSLint</a> &mdash; code quality and consistency
           </span>
         </li>
       </ul>
@@ -67,7 +68,7 @@ export default () => {
       <ul className={styles.techList}>
         <li>
           <span className={styles.tech}>
-            <a href='https://github.com/css-modules'>CSS Modules</a>
+            <a href='https://github.com/css-modules'>CSS Modules</a> &mdash; scoped CSS (transpiled SCSS)
           </span>
         </li>
       </ul>

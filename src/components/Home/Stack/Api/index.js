@@ -17,17 +17,17 @@ export default () => {
       <ul className={styles.techList}>
         <li>
           <span className={styles.tech}>
-            <a href='http://restify.com/'>Restify</a> handles client request over HTTP
+            <a href='http://restify.com/'>Restify</a> &mdash; handles client request over HTTP
           </span>
         </li>
         <li>
           <span className={styles.tech}>
-            <a href='http://restify.com/'>ioredis</a> a client for accessing cached results stored in Redis
+            <a href='http://restify.com/'>ioredis</a> &mdash; a client for accessing cached results stored in Redis
           </span>
         </li>
         <li>
           <span className={styles.tech}>
-            <a href='https://github.com/taskrabbit/node-resque'>node-resque</a> a
+            <a href='https://github.com/taskrabbit/node-resque'>node-resque</a> &mdash; a
             client for submitting jobs for background processing
           </span>
         </li>
@@ -38,7 +38,7 @@ export default () => {
       <ul className={styles.techList}>
         <li>
           <span className={styles.tech}>
-            <a href='https://babeljs.io/docs/usage/babel-register/'>babel-register</a> a mechanism to engage babel through
+            <a href='https://babeljs.io/docs/usage/babel-register/'>babel-register</a> &mdash; a mechanism to engage babel through
             Node module resolution
           </span>
         </li>

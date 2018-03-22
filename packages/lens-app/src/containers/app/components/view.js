@@ -5,7 +5,7 @@ import Menu from './menu';
 import Header from './header';
 import Footer from './footer/index';
 import Home from '../../home';
-import { catalogRoute, featureARoute, featureBRoute } from '../../../routes';
+import { catalogRoute, simulationRoute, renderRoute } from '../../../routes';
 import styles from './styles.scss';
 
 class View extends Component {
@@ -54,8 +54,8 @@ class View extends Component {
           <Switch>
             <Route exact path='/' component={Home}/>
             <Route path='/Catalog' component={catalogRoute}/>
-            <Route exact path='/FeatureA' component={featureARoute}/>
-            <Route exact path='/FeatureB' component={featureBRoute}/>
+            <Route exact path='/Simulation' component={simulationRoute}/>
+            <Route exact path='/Render' component={renderRoute}/>
           </Switch>
         </main>
         <Footer

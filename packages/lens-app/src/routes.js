@@ -9,16 +9,16 @@ export const catalogRoute = asyncRoute({
   // getCommands
 });
 
-export const featureARoute = asyncRoute({
-  getComponent: () => import(/* webpackChunkName: "featureAUI" */ './containers/featureA'),
-  getReducers: () => import(/* webpackChunkName: "featureAReducers" */ './containers/featureA/reducer'),
-  getSagas: () => import(/* webpackChunkName: "featureASagas" */ './containers/featureA/sagas')
+export const simulationRoute = asyncRoute({
+  getComponent: () => import(/* webpackChunkName: "simulationUI" */ './containers/simulation'),
+  getReducers: () => import(/* webpackChunkName: "simulationReducers" */ './containers/simulation/reducer')
+//  getSagas: () => import(/* webpackChunkName: "featureASagas" */ './containers/featureA/sagas')
   // getCommands
 });
 
-export const featureBRoute = asyncRoute({
-  getComponent: () => import(/* webpackChunkName: "featureBUI" */ './containers/featureB'),
-  getReducers: () => import(/* webpackChunkName: "featureBReducers" */ './containers/featureB/reducer')
+export const renderRoute = asyncRoute({
+  getComponent: () => import(/* webpackChunkName: "renderUI" */ './containers/render'),
+  getReducers: () => import(/* webpackChunkName: "renderReducers" */ './containers/render/reducer')
   // getSagas
   // getCommands
 });

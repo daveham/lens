@@ -1,7 +1,7 @@
 import restify from 'restify';
 import corsMiddleware from 'restify-cors-middleware';
 import graphqlHTTP from 'express-graphql';
-import { buildSchema } from 'graphql';
+import createSchema from '../schema';
 
 import config from '../config';
 
@@ -46,19 +46,15 @@ server.get( /\/tiles\//, restify.plugins.serveStatic({
   directory: '/data'
 }));
 
-const lensSchema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
+const schema = createSchema({ log: (e) => log.error(e) });
 
 server.post('/graphql', graphqlHTTP({
-  schema: lensSchema,
+  schema,
   graphiql: false
 }));
 
 server.get('/graphql', graphqlHTTP({
-  schema: lensSchema,
+  schema,
   graphiql: true
 }));
 

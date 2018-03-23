@@ -18,5 +18,6 @@
     <orderEntry type="library" name="reselect" level="project" />
     <orderEntry type="library" name="tsconfig$roots" level="project" />
     <orderEntry type="library" name="@types/restify-errors" level="application" />
+    <orderEntry type="library" name="@types/graphql" level="application" />
   </component>
 </module>

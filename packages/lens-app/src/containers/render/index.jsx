@@ -1,12 +1,11 @@
 import React from 'react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import SimulationList from './components/simulationList';
 import styles from './styles.scss';
 
-const GET_SIMULATIONS = gql`
+const GET_RENDERINGS = gql`
 {
-  simulations {
+  renderings {
     id,
     name
   }
@@ -14,12 +13,12 @@ const GET_SIMULATIONS = gql`
 `;
 
 const View = () => (
-  <Query query={GET_SIMULATIONS}>
+  <Query query={GET_RENDERINGS}>
     {(props) => {
       return (
         <div className={styles.container}>
           <div className={styles.data}>
-            <h1>Simulation</h1>
+            <h1>Renderings</h1>
             {renderContents(props)}
           </div>
         </div>
@@ -31,12 +30,11 @@ const View = () => (
 function renderContents({ loading, error, data}) {
   if (loading) return renderLoading();
   if (error) return renderError(error);
-  return renderSimulations(data);
+  return renderRenderings(data);
 }
 
-function renderSimulations(data) {
-  return <SimulationList simulationRows={data.simulations}/>;
-//  return data.simulations.map((s, index) => <div key={index}>{s.name}</div>);
+function renderRenderings(data) {
+  return data.renderings.map((r, index) => <div key={index}>{r.name}</div>);
 }
 
 function renderError(error) {

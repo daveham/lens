@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+
+  & div {
+    padding: 2px 4px;
+    border: 1px solid #ddd;
+    margin: 1px;
+    text-align: right;
+
+    &:not(:first-child) {
+      flex: 1;
+      text-align: left;
+    }
+  }
+}

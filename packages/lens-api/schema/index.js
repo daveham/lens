@@ -12,13 +12,13 @@ const typeDefs = `
     id: Int!
     simulationId: Int!
     name: String!
-    renderings: [Rendering]!
+    renderings: [Rendering!]!
   }
   
   type Simulation {
     id: Int!
     name: String!
-    executions: [Execution]!
+    executions: [Execution!]!
   }
   
   type Query {

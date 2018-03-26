@@ -31,6 +31,12 @@ export default () => {
             client for submitting jobs for background processing
           </span>
         </li>
+        <li>
+          <span className={styles.tech}>
+            <a href='http://graphql.org/graphql-js/'>graphql</a> and <a
+            href='https://www.apollographql.com/docs/graphql-tools/'>graphql-tools</a> &mdash; a GraphQL interface for data management
+          </span>
+        </li>
       </ul>
       <p>
         The API server is written with the latest syntax of JavaScript via the babel transpiler.

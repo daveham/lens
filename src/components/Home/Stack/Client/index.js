@@ -39,6 +39,11 @@ export default () => {
             <a href='https://redux-saga.js.org/'>Redux Sagas</a> &mdash; async / side effects
           </span>
         </li>
+        <li>
+          <span className={styles.tech}>
+            <a href='https://www.apollographql.com/docs/react/'>Apollo Client</a> &mdash; GraphQL client for use with React
+          </span>
+        </li>
       </ul>
       <p>
         The code is written in a combination of JavaScript and Typescript. The latest

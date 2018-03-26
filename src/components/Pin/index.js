@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import throttle from 'lodash.throttle';
 
 import styles from './styles.scss';
 
 export default class Pin extends React.Component {
   constructor(props) {
     super(props);
+    this.controlledResize = throttle(this.updateSize, 50, { leading: true, trailing: true });
 
     this.state = {
       pin: {
@@ -16,7 +18,12 @@ export default class Pin extends React.Component {
   }
 
   componentDidMount() {
+    window.addEventListener('resize', this.controlledResize, false);
     setTimeout(this.pinContentAtAnchor, 0);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.controlledResize);
   }
 
   render() {
@@ -40,6 +47,12 @@ export default class Pin extends React.Component {
     const left =  anchorRect.left - contentRect.width;
     const top = anchorRect.top;
     this.setState({ pin: { top, left } });
+  };
+
+  updateSize = () => {
+    if (this.anchorNode) {
+      this.pinContentAtAnchor();
+    }
   };
 }
 

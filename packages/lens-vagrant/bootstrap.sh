@@ -16,10 +16,24 @@ sudo chmod 777 ${projectdatafolder}
 
 #install packages
 sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
-sudo curl --silent --location https://rpm.nodesource.com/setup_6.x | bash -
+sudo curl --silent --location https://rpm.nodesource.com/setup_8.x | bash -
 #Add repo for nginx, for some reason yum's base package is broked
 #rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
 #sudo yum -y update
+
+# install mongodb repo
+repodest='/etc/yum.repos.d/mongodb.repo'
+mongodbrepo='
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+'
+
+printf "${mongodbrepo}" >> ${repodest}
+
+
 sudo yum -y install epel-release git nodejs perf iproute2 psmisc
 sudo yum -y groupinstall 'Development Tools'
 sudo yum -y install ctags ctags-etags
@@ -27,6 +41,7 @@ sudo yum -y install ctags ctags-etags
 sudo yum -y install vim
 sudo yum -y install GraphicsMagick
 sudo yum -y install redis
+sudo yum -y install mongodb-org mongodb-org-server
 
 # prepare a custom folder for installing npm packages globally without requiring sudo
 # idea for how to handle this came from https://github.com/glenpike/npm-g_nosudo

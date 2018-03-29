@@ -35,8 +35,8 @@
     "restify-cors-middleware": "^1.0.1"
   },
   "scripts": {
-    "start": "nodemon --debug=192.168.20.20:5859 bin/register.js",
-    "dev": "nodemon --debug=192.168.20.20:5859 bin/register.js",
+    "start": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
+    "dev": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {}

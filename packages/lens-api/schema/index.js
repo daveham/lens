@@ -1,9 +1,20 @@
 import { makeExecutableSchema } from 'graphql-tools';
 
 const typeDefs = `
+  input RenderingInput {
+    executionId: Int!
+    simulationId: Int!
+    name: String!
+  }
+  
   type Rendering {
     id: Int!
     executionId: Int!
+    simulationId: Int!
+    name: String!
+  }
+  
+  input ExecutionInput {
     simulationId: Int!
     name: String!
   }
@@ -13,6 +24,10 @@ const typeDefs = `
     simulationId: Int!
     name: String!
     renderings: [Rendering!]!
+  }
+  
+  input SimulationInput {
+    name: String!
   }
   
   type Simulation {
@@ -29,7 +44,16 @@ const typeDefs = `
     renderings: [Rendering]
     rendering(id: Int!): Rendering
   }
+
+  type Mutation {
+    createSimulation(input: SimulationInput!): Simulation
+    createExecution(input: ExecutionInput!): Execution
+    createRendering(input: RenderingInput!): Rendering
+  }
 `;
+// updateSimulation(id: id!, input: SimulationInput!): Simulation
+// updateExecution(id: id!, input: ExecutionInput!): Execution
+// updateRendering(id: id!, input: RenderingInput!): Rendering
 
 const renderings = [
   { id: 1, simulationId: 1, executionId: 1, name: 'sim1-ex1-ren1' },
@@ -51,6 +75,7 @@ const renderings = [
   { id: 17, simulationId: 4, executionId: 9, name: 'sim4-ex3-ren2' },
   { id: 18, simulationId: 4, executionId: 9, name: 'sim4-ex3-ren3' }
 ];
+let nextRenderingId = 18;
 
 const executions = [
   { id: 1, simulationId: 1, name: 'sim1-ex1', renderings: renderings.filter(r => r.executionId === 1) },
@@ -63,6 +88,7 @@ const executions = [
   { id: 8, simulationId: 4, name: 'sim4-ex2', renderings: renderings.filter(r => r.executionId === 8) },
   { id: 9, simulationId: 4, name: 'sim4-ex3', renderings: renderings.filter(r => r.executionId === 9) }
 ];
+let nextExecutionId = 10;
 
 const simulations = [
   { id: 1, name: 'sim1', executions: executions.filter(e => e.simulationId === 1) },
@@ -70,6 +96,7 @@ const simulations = [
   { id: 3, name: 'sim3', executions: executions.filter(e => e.simulationId === 3)  },
   { id: 4, name: 'sim4', executions: executions.filter(e => e.simulationId === 4)  }
 ];
+let nextSimulationId = 5;
 
 const resolvers = {
   Query: {
@@ -79,6 +106,32 @@ const resolvers = {
     execution: (_, { id }) => executions.find(e => e.id === id),
     renderings: () => renderings,
     rendering: (_, { id }) => renderings.find(e => e.id === id)
+  },
+  Mutation: {
+    createSimulation: (_, { input }) => {
+      const simulation = { ...input, executions: [], id: nextSimulationId++ };
+      simulations.push(simulation);
+      return simulation;
+    },
+    // updateSimulation: (_, { id, input }) => { return { ...input, id }; },
+    createExecution: (_, { input }) => {
+      const execution = { ...input, renderings: [], id: nextExecutionId++ };
+      executions.push(execution);
+      const simulation = simulations.find((item) => item.id === input.simulationId);
+      simulation.executions.push(simulation);
+      return execution;
+    },
+    // updateExecution: (_, { id, input }) => { return { ...input, id }; },
+    createRendering: (_, { input }) => {
+      const rendering = { ...input, id: nextRenderingId++ };
+      renderings.push(rendering);
+      // TODO: find execution to add to
+      const execution = executions.find((item) => item.id === input.executionId &&
+        item.simulationId === input.simulationId);
+      execution.renderings.push(execution);
+      return rendering;
+    } //,
+    // updateRendering: (_, { id, input }) => { return { ...input, id }; }
   }
 };
 

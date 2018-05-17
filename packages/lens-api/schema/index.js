@@ -7,6 +7,11 @@ const typeDefs = `
     name: String!
   }
   
+  input RenderingUpdateInput {
+    id: Int!
+    name: String!
+  }
+
   type Rendering {
     id: Int!
     executionId: Int!
@@ -19,6 +24,11 @@ const typeDefs = `
     name: String!
   }
   
+  input ExecutionUpdateInput {
+    id: Int!
+    name: String!
+  }
+
   type Execution {
     id: Int!
     simulationId: Int!
@@ -27,6 +37,11 @@ const typeDefs = `
   }
   
   input SimulationInput {
+    name: String!
+  }
+  
+  input SimulationUpdateInput {
+    id: Int!
     name: String!
   }
   
@@ -47,13 +62,13 @@ const typeDefs = `
 
   type Mutation {
     createSimulation(input: SimulationInput!): Simulation
+    updateSimulation(input: SimulationUpdateInput!): Simulation
     createExecution(input: ExecutionInput!): Execution
+    updateExecution(input: ExecutionUpdateInput!): Execution
     createRendering(input: RenderingInput!): Rendering
+    updateRendering(input: RenderingUpdateInput!): Rendering
   }
 `;
-// updateSimulation(id: id!, input: SimulationInput!): Simulation
-// updateExecution(id: id!, input: ExecutionInput!): Execution
-// updateRendering(id: id!, input: RenderingInput!): Rendering
 
 const renderings = [
   { id: 1, simulationId: 1, executionId: 1, name: 'sim1-ex1-ren1' },
@@ -113,7 +128,11 @@ const resolvers = {
       simulations.push(simulation);
       return simulation;
     },
-    // updateSimulation: (_, { id, input }) => { return { ...input, id }; },
+    updateSimulation: (_, { input }) => {
+      const simulation = simulations.find((item) => item.id === input.id);
+      simulation.name = input.name;
+      return simulation;
+    },
     createExecution: (_, { input }) => {
       const execution = { ...input, renderings: [], id: nextExecutionId++ };
       executions.push(execution);
@@ -121,17 +140,24 @@ const resolvers = {
       simulation.executions.push(simulation);
       return execution;
     },
-    // updateExecution: (_, { id, input }) => { return { ...input, id }; },
+    updateExecution: (_, { input }) => {
+      const execution = executions.find((item) => item.id === input.id);
+      execution.name = input.name;
+      return execution;
+      },
     createRendering: (_, { input }) => {
       const rendering = { ...input, id: nextRenderingId++ };
       renderings.push(rendering);
-      // TODO: find execution to add to
       const execution = executions.find((item) => item.id === input.executionId &&
         item.simulationId === input.simulationId);
       execution.renderings.push(execution);
       return rendering;
-    } //,
-    // updateRendering: (_, { id, input }) => { return { ...input, id }; }
+    },
+    updateRendering: (_, { input }) => {
+      const rendering = renderings.find((item) => item.id === input.id);
+      rendering.name = input.name;
+      return rendering;
+    }
   }
 };
 

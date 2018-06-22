@@ -115,8 +115,12 @@ cd src
 make
 sudo cp -v unison /usr/local/sbin/
 sudo cp -v unison /usr/bin
+sudo cp -v unison-fsmonitor /usr/local/sbin/
+sudo cp -v unison-fsmonitor /usr/bin
 cd ~
 rm -fr src
+
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
 # configure firewall
 sudo firewall-cmd --zone=public --permanent --add-service=http

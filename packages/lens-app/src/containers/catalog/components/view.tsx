@@ -1,6 +1,7 @@
 import * as React from 'react';
-import * as ReactRouterDom from 'react-router-dom';
+import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 import Loading from '../../../components/loading';
+import { simulationRoute } from '../../../routes';
 import SourcesView from './sourcesView';
 import SourceView from './sourceView';
 import styles from './styles.scss';
@@ -41,10 +42,11 @@ class View extends React.Component<IProps, any> {
       this.props.catalogIsLoaded &&
       (
         <div className={styles.content}>
-          <ReactRouterDom.Switch>
-            <ReactRouterDom.Route path='/Catalog/Source/:id/:res' component={SourceView}/>
-            <ReactRouterDom.Route component={SourcesView}/>
-          </ReactRouterDom.Switch>
+          <RouterSwitch>
+            <RouterRoute path='/Catalog/Source/:id/:res' component={SourceView}/>
+            <RouterRoute path='/Catalog/:id/Simulation' component={simulationRoute}/>
+            <RouterRoute component={SourcesView}/>
+          </RouterSwitch>
         </div>
       )
     );

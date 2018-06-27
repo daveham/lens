@@ -1,4 +1,9 @@
 import React from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import Toolbar from '@material-ui/core/Toolbar';
+import Gradient from '@material-ui/icons/Gradient';
+import PhotoLibrary from '@material-ui/icons/PhotoLibrary';
+import { Link as RouterLink } from 'react-router-dom';
 import SourceThumbnail from '../sourceThumbnail';
 import { IImageDescriptor, ISourceDescriptor } from '../../../../interfaces';
 import styles from './styles.scss';
@@ -38,6 +43,35 @@ class View extends React.Component<IProps, IState> {
     }
   }
 
+  public renderThumbnail(resolution, source, thumbnail, key) {
+    const SimulationLink = (props) => (
+      <RouterLink
+        to={`/Catalog/${source.id}/Simulation`}
+        {...props}
+      />
+    );
+    const TileLink = (props) => (
+      <RouterLink
+        to={`/Catalog/Source/${source.id}/${resolution}`}
+        {...props}
+      />
+    );
+
+    return (
+      <SourceThumbnail
+        key={key}
+        thumbnailUrl={thumbnail ? thumbnail.url : null}
+        label={source.name}
+        link={`/Catalog/Source/${source.id}/${resolution}`}
+      >
+        <Toolbar>
+          <IconButton component={SimulationLink}><PhotoLibrary/></IconButton>
+          <IconButton component={TileLink}><Gradient/></IconButton>
+        </Toolbar>
+      </SourceThumbnail>
+    );
+  }
+
   public render() {
     const { thumbnailImages, sources, catalogName } = this.props;
     const { resolution } = this.state;
@@ -45,18 +79,12 @@ class View extends React.Component<IProps, IState> {
       <div className={styles.container}>
         <div className={styles.catalogName}>{catalogName}</div>
         <div className={styles.thumbnailsContainer}>
-          {this.props.thumbnailImageKeys.map((key, index) => {
-            const source = sources[index];
-            const thumbnail = thumbnailImages[key];
-            return (
-              <SourceThumbnail
-                key={key}
-                thumbnailUrl={thumbnail ? thumbnail.url : null}
-                label={source.name}
-                link={`/Catalog/Source/${source.id}/${resolution}`}
-              />
-            );
-          })}
+          {this.props.thumbnailImageKeys.map((key, index) =>
+            this.renderThumbnail(
+              resolution,
+              sources[index],
+              thumbnailImages[key],
+              key))}
         </div>
       </div>
     );

@@ -6,6 +6,9 @@ import SourcesView from './sourcesView';
 import SourceView from './sourceView';
 import styles from './styles.scss';
 
+import _debug from 'debug';
+const debug = _debug('lens:catalog:view');
+
 interface IProps {
   catalogIsLoading?: boolean;
   catalogIsLoaded?: boolean;
@@ -22,6 +25,7 @@ class View extends React.Component<IProps, any> {
   }
 
   public render() {
+    debug('render');
     return (
       <div className={styles.container}>
         {this.renderLoading()}

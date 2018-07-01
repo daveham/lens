@@ -13,7 +13,7 @@ import {
   IViewport
 } from './interfaces';
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
-import SourceThumbnail from '../sourceThumbnail';
+import SourceThumbnail from '../../../../components/sourceThumbnail';
 import { Details, Tiles, Toolbar } from './components';
 
 import styles from './styles.scss';

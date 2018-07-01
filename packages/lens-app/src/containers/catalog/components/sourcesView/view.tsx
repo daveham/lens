@@ -4,7 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Gradient from '@material-ui/icons/Gradient';
 import PhotoLibrary from '@material-ui/icons/PhotoLibrary';
 import { Link as RouterLink } from 'react-router-dom';
-import SourceThumbnail from '../sourceThumbnail';
+import SourceThumbnail from '../../../../components/sourceThumbnail';
 import { IImageDescriptor, ISourceDescriptor } from '../../../../interfaces';
 import styles from './styles.scss';
 
@@ -58,17 +58,18 @@ class View extends React.Component<IProps, IState> {
     );
 
     return (
-      <SourceThumbnail
-        key={key}
-        thumbnailUrl={thumbnail ? thumbnail.url : null}
-        label={source.name}
-        link={`/Catalog/Source/${source.id}/${resolution}`}
-      >
-        <Toolbar>
-          <IconButton component={SimulationLink}><PhotoLibrary/></IconButton>
-          <IconButton component={TileLink}><Gradient/></IconButton>
-        </Toolbar>
-      </SourceThumbnail>
+      <div className={styles.thumbnailContainer} key={key}>
+        <SourceThumbnail
+          thumbnailUrl={thumbnail ? thumbnail.url : null}
+          label={source.name}
+          link={`/Catalog/Source/${source.id}/${resolution}`}
+        >
+          <Toolbar>
+            <IconButton component={SimulationLink}><PhotoLibrary/></IconButton>
+            <IconButton component={TileLink}><Gradient/></IconButton>
+          </Toolbar>
+        </SourceThumbnail>
+      </div>
     );
   }
 

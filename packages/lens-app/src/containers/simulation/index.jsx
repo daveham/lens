@@ -1,19 +1,7 @@
-import React from 'react';
-import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { compose } from 'redux';
 import View from './components/view';
 
-const GET_SIMULATIONS = gql`
-{
-  simulations {
-    id,
-    name
-  }
-}
-`;
+import rdxWrapper from './rdxWrapper';
+import gqlWrapper from './gqlWrapper';
 
-export default  () => (
-  <Query query={GET_SIMULATIONS}>
-    {View}
-  </Query>
-);
+export default compose(rdxWrapper, gqlWrapper)(View);

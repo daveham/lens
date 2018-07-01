@@ -9,7 +9,10 @@
 .thumbnailsContainer {
   display: flex;
   justify-content: center;
-  padding: 20px 0;
+}
+
+.thumbnailContainer {
+  padding: 20px;
 }
 
 .catalogName {

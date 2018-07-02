@@ -10,7 +10,7 @@ import styles from './styles.scss';
 // import _debug from 'debug';
 // const debug = _debug('lens:simulation:view');
 
-function renderSimulations({ simulations }) {
+function renderSimulations(simulations) {
   return <SimulationList simulationRows={simulations}/>;
 }
 
@@ -22,13 +22,13 @@ function renderLoading() {
   return <div>'Loading...'</div>;
 }
 
-function renderContents(loading, error, data) {
+function renderContents(loading, error, simulations) {
   return (
     <div className={styles.contents}>
       <Paper>
         {loading && renderLoading()}
         {!loading && error && renderError(error)}
-        {!loading && !error && renderSimulations(data)}
+        {!loading && !error && renderSimulations(simulations)}
       </Paper>
     </div>
   );
@@ -48,7 +48,7 @@ class View extends React.Component {
   }
 
   render() {
-    const { loading, error, data, thumbnailUrl } = this.props;
+    const { loading, error, simulations, thumbnailUrl } = this.props;
 
     return (
       <div className={styles.container}>
@@ -56,7 +56,7 @@ class View extends React.Component {
           <ListToolbar />
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
-        {renderContents(loading, error, data)}
+        {renderContents(loading, error, simulations)}
       </div>
     );
   }

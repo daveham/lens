@@ -37,6 +37,7 @@ const typeDefs = `
   }
   
   input SimulationInput {
+    sourceId: String!
     name: String!
   }
   
@@ -47,16 +48,18 @@ const typeDefs = `
   
   type Simulation {
     id: Int!
+    sourceId: String!
     name: String!
     executions: [Execution!]!
   }
   
   type Query {
     simulations: [Simulation]
+    simulationsForSource(sourceId: String!): [Simulation]
     simulation(id: Int!): Simulation
-    executions: [Execution]
+    executions(simulationId: Int!): [Execution]
     execution(id: Int!): Execution
-    renderings: [Rendering]
+    renderings(executionId: Int!): [Rendering]
     rendering(id: Int!): Rendering
   }
 
@@ -104,9 +107,10 @@ function generateMockExecution(simulationId, renderingCount) {
   return execution;
 }
 
-function generateMockSimulation(renderingCounts) {
+function generateMockSimulation(sourceId, renderingCounts) {
   const simulation = {
     id: ++simulationIdIndex,
+    sourceId,
     executions: renderingCounts.map(n => generateMockExecution(simulationIdIndex, n)),
     name: `sim${simulationIdIndex}`
   };
@@ -114,14 +118,15 @@ function generateMockSimulation(renderingCounts) {
   return simulation;
 }
 
-generateMockSimulation([2, 3, 1]);
-generateMockSimulation([3, 1]);
-generateMockSimulation([2]);
-generateMockSimulation([2, 1, 3]);
+generateMockSimulation('1001', [2, 3, 1]);
+generateMockSimulation('1001', [3, 1]);
+generateMockSimulation('1002', [2]);
+generateMockSimulation('1003', [2, 1, 3]);
 
 const resolvers = {
   Query: {
     simulations: () => allSimulations,
+    simulationsForSource: (_, { sourceId })=> allSimulations.filter(s => s.sourceId === sourceId),
     simulation: (_, { id }) => allSimulations.find(s => s.id === id),
     executions: () => allExecutions,
     execution: (_, { id }) => allExecutions.find(e => e.id === id),

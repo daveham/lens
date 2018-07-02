@@ -6,22 +6,24 @@ import { Query } from 'react-apollo';
 // const debug = _debug('lens:simulation:gqlWrapper');
 
 const GET_SIMULATIONS = gql`
-{
-  simulations {
-    id,
-    name
+  query getSimulations($sourceId: String!) {
+    simulationsForSource(sourceId: $sourceId) {
+      id
+      sourceId
+      name
+    }
   }
-}
 `;
 
 export default View => props => (
-  <Query query={GET_SIMULATIONS}>
+  <Query query={GET_SIMULATIONS} variables={{ sourceId: props.sourceId }}>
     {({ data, error, loading }) => (
       <View
-        data={data}
+        simulations={data.simulationsForSource}
         error={error}
         loading={loading}
-        { ...props }
-      />)}
+        {...props}
+      />
+    )}
   </Query>
 );

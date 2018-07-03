@@ -1,6 +1,10 @@
 import { makeExecutableSchema } from 'graphql-tools';
+import { GraphQLScalarType } from 'graphql';
+import { Kind } from 'graphql/language';
 
 const typeDefs = `
+  scalar Date
+  
   input RenderingInput {
     executionId: Int!
     simulationId: Int!
@@ -8,12 +12,12 @@ const typeDefs = `
   }
   
   input RenderingUpdateInput {
-    id: Int!
+    id: ID!
     name: String!
   }
 
   type Rendering {
-    id: Int!
+    id: ID!
     executionId: Int!
     simulationId: Int!
     name: String!
@@ -25,12 +29,12 @@ const typeDefs = `
   }
   
   input ExecutionUpdateInput {
-    id: Int!
+    id: ID!
     name: String!
   }
 
   type Execution {
-    id: Int!
+    id: ID!
     simulationId: Int!
     name: String!
     renderings: [Rendering!]!
@@ -42,15 +46,18 @@ const typeDefs = `
   }
   
   input SimulationUpdateInput {
-    id: Int!
+    id: ID!
     name: String!
   }
   
   type Simulation {
-    id: Int!
+    id: ID!
+    created: Date!
+    modified: Date!
     sourceId: String!
     name: String!
     executions: [Execution!]!
+    executionCount: Int!
   }
   
   type Query {
@@ -108,8 +115,11 @@ function generateMockExecution(simulationId, renderingCount) {
 }
 
 function generateMockSimulation(sourceId, renderingCounts) {
+  const created = new Date();
   const simulation = {
     id: ++simulationIdIndex,
+    created,
+    modified: created,
     sourceId,
     executions: renderingCounts.map(n => generateMockExecution(simulationIdIndex, n)),
     name: `sim${simulationIdIndex}`
@@ -123,10 +133,33 @@ generateMockSimulation('1001', [3, 1]);
 generateMockSimulation('1002', [2]);
 generateMockSimulation('1003', [2, 1, 3]);
 
+const getSimulationData = simulation => ({
+  ...simulation,
+  executionCount: simulation.executions.length
+});
+
 const resolvers = {
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      return new Date(value); // value from the client
+    },
+    serialize(value) {
+      return value.getTime(); // value from the server
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return parseInt(ast.value, 10); // ast value is always in string format
+      }
+      return null;
+    }
+  }),
   Query: {
-    simulations: () => allSimulations,
-    simulationsForSource: (_, { sourceId })=> allSimulations.filter(s => s.sourceId === sourceId),
+    simulations: () => allSimulations.map(getSimulationData),
+    simulationsForSource: (_, { sourceId })=> allSimulations
+      .filter(s => s.sourceId === sourceId)
+      .map(getSimulationData),
     simulation: (_, { id }) => allSimulations.find(s => s.id === id),
     executions: () => allExecutions,
     execution: (_, { id }) => allExecutions.find(e => e.id === id),

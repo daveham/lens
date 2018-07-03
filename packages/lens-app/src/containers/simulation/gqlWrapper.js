@@ -9,17 +9,20 @@ const GET_SIMULATIONS = gql`
   query getSimulations($sourceId: String!) {
     simulationsForSource(sourceId: $sourceId) {
       id
+      created
+      modified
       sourceId
       name
+      executionCount
     }
   }
 `;
 
 export default View => props => (
   <Query query={GET_SIMULATIONS} variables={{ sourceId: props.sourceId }}>
-    {({ data, error, loading }) => (
+    {({ data: { simulationsForSource }, error, loading }) => (
       <View
-        simulations={data.simulationsForSource}
+        simulations={simulationsForSource}
         error={error}
         loading={loading}
         {...props}

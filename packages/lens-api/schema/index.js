@@ -122,7 +122,7 @@ function generateMockSimulation(sourceId, renderingCounts) {
     modified: created,
     sourceId,
     executions: renderingCounts.map(n => generateMockExecution(simulationIdIndex, n)),
-    name: `sim${simulationIdIndex}`
+    name: `This is the name of sim${simulationIdIndex}`
   };
   allSimulations.push(simulation);
   return simulation;

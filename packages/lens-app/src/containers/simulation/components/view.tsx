@@ -1,6 +1,8 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
 
+import { IThumbnailDescriptor } from '../../../interfaces';
+import { ISimulation } from './interfaces';
 import SourceThumbnail from '../../../components/sourceThumbnail';
 import SimulationList from './simulationList';
 import Header from './header';
@@ -10,19 +12,19 @@ import styles from './styles.scss';
 // import _debug from 'debug';
 // const debug = _debug('lens:simulation:view');
 
-function renderSimulations(simulations) {
+function renderSimulations(simulations: ReadonlyArray<ISimulation>): any {
   return <SimulationList simulationRows={simulations}/>;
 }
 
-function renderError(error) {
+function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
 }
 
-function renderLoading() {
+function renderLoading(): any {
   return <div>'Loading...'</div>;
 }
 
-function renderContents(loading, error, simulations) {
+function renderContents(loading: boolean, error: any, simulations: ReadonlyArray<ISimulation>): any {
   return (
     <div className={styles.contents}>
       <Paper>
@@ -34,8 +36,17 @@ function renderContents(loading, error, simulations) {
   );
 }
 
-class View extends React.Component {
-  componentDidMount() {
+interface IProps {
+  loading: boolean;
+  error: any;
+  simulations: ReadonlyArray<ISimulation>;
+  thumbnailUrl?: string;
+  thumbnailImageDescriptor?: IThumbnailDescriptor;
+  ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
+}
+
+class View extends React.Component<IProps, any> {
+  public componentDidMount(): any {
     const {
       thumbnailUrl,
       thumbnailImageDescriptor,
@@ -47,7 +58,7 @@ class View extends React.Component {
     }
   }
 
-  render() {
+  public render(): any {
     const { loading, error, simulations, thumbnailUrl } = this.props;
 
     return (

@@ -7,6 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
+import { ISimulation } from '../interfaces';
 import RowToolbar from './rowToolbar';
 
 import styles from './styles.scss';
@@ -16,16 +17,8 @@ import styles from './styles.scss';
 
 const timestampFormat = 'MM/D YYYY h:mm:ss a';
 
-interface ISimulationRow {
-  id: number;
-  created: number;
-  modified: number;
-  name: string;
-  executionCount: number;
-}
-
 interface IProps {
-  simulationRows: ISimulationRow[];
+  simulationRows: ReadonlyArray<ISimulation>;
 }
 
 interface IState {
@@ -75,7 +68,7 @@ class SimulationList extends React.Component<IProps, IState> {
     }
   };
 
-  private renderRow = (row: ISimulationRow): any => {
+  private renderRow = (row: ISimulation): any => {
     const toolbar = row.id === this.state.activeId ? <RowToolbar /> : <span className={styles.toolbarFill} />;
     return (
       <TableRow

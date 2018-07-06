@@ -1,7 +1,3 @@
-import { compose } from 'redux';
-import View from './components/view';
+import RouteSwitch from './routeSwitch';
 
-import rdxWrapper from './rdxWrapper';
-import gqlWrapper from './gqlWrapper';
-
-export default compose(rdxWrapper, gqlWrapper)(View);
+export default RouteSwitch;

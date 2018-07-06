@@ -18,6 +18,8 @@ const typeDefs = `
 
   type Rendering {
     id: ID!
+    created: Date!
+    modified: Date!
     executionId: Int!
     simulationId: Int!
     name: String!
@@ -35,9 +37,12 @@ const typeDefs = `
 
   type Execution {
     id: ID!
+    created: Date!
+    modified: Date!
     simulationId: Int!
     name: String!
     renderings: [Rendering!]!
+    renderingCount: Int!
   }
   
   input SimulationInput {
@@ -89,8 +94,11 @@ let executionIdIndex = 0;
 let simulationIdIndex = 0;
 
 function generateMockRendering(simulationId, executionId) {
+  const created = new Date();
   const rendering = {
     id: ++renderingIdIndex,
+    created,
+    modified: created,
     simulationId,
     executionId,
     name: `sim${simulationId}-ex${executionId}-ren${renderingIdIndex}`
@@ -100,8 +108,11 @@ function generateMockRendering(simulationId, executionId) {
 }
 
 function generateMockExecution(simulationId, renderingCount) {
+  const created = new Date();
   const execution = {
     id: ++executionIdIndex,
+    created,
+    modified: created,
     simulationId,
     renderings: [],
     name: `sim${simulationId}-ex${executionIdIndex}`
@@ -137,6 +148,13 @@ const getSimulationData = simulation => ({
   ...simulation,
   executionCount: simulation.executions.length
 });
+const getExecutionData = execution => ({
+  ...execution,
+  renderingCount: execution.renderings.length
+});
+const getRenderingData = rendering => ({
+  ...rendering
+});
 
 const resolvers = {
   Date: new GraphQLScalarType({
@@ -161,9 +179,13 @@ const resolvers = {
       .filter(s => s.sourceId === sourceId)
       .map(getSimulationData),
     simulation: (_, { id }) => allSimulations.find(s => s.id === id),
-    executions: () => allExecutions,
+    executions: (_, { simulationId }) => allExecutions
+      .filter(e => e.simulationId === simulationId)
+      .map(getExecutionData),
     execution: (_, { id }) => allExecutions.find(e => e.id === id),
-    renderings: () => allRenderings,
+    renderings: (_, { executionId }) => allRenderings
+      .filter(r => r.executionId === executionId)
+      .map(getRenderingData),
     rendering: (_, { id }) => allRenderings.find(e => e.id === id)
   },
   Mutation: {

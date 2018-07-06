@@ -61,10 +61,15 @@ class View extends React.Component<IProps, any> {
   public render(): any {
     const { loading, error, simulations, thumbnailUrl } = this.props;
 
+    const links = {
+      back: '/Catalog',
+      newItem: '/Catalog' // temp
+    };
+
     return (
       <div className={styles.container}>
         <Header title='Simulations' loading={loading}>
-          <ListToolbar />
+          {!loading && <ListToolbar links={links}/>}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
         {renderContents(loading, error, simulations)}

@@ -19,8 +19,8 @@ import styles from './styles.scss';
 interface IProps {
   renderingRows: ReadonlyArray<IRendering>;
   sourceId: string;
-  simulationId?: number;
-  executionId?: number;
+  simulationId: number;
+  executionId: number;
 }
 
 interface IState {

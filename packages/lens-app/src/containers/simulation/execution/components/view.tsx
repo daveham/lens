@@ -24,10 +24,10 @@ interface IProps {
   loading: boolean;
   error: any;
   executions: ReadonlyArray<IExecution>;
-  simulationId?: number;
-  sourceId?: string;
+  simulationId: number;
+  sourceId: string;
   thumbnailUrl?: string;
-  thumbnailImageDescriptor?: IThumbnailDescriptor;
+  thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
 }
 
@@ -82,8 +82,18 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderExecutions(): any {
-    const { executions, sourceId } = this.props;
-    return <ExecutionList executionRows={executions} sourceId={sourceId}/>;
+    const {
+      executions,
+      sourceId,
+      simulationId
+    } = this.props;
+    return (
+      <ExecutionList
+        executionRows={executions}
+        sourceId={sourceId}
+        simulationId={simulationId}
+      />
+    );
   }
 }
 

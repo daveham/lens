@@ -45,57 +45,57 @@ export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
   if (links) {
     if (links.back) {
       buttons.push(
-        <RouterLink to={links.back}>
-          <IconButton key='back' style={buttonStyle}><Reply style={iconStyle} /></IconButton>
+        <RouterLink key='back' to={links.back}>
+          <IconButton style={buttonStyle}><Reply style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.newItem) {
       buttons.push(
-        <RouterLink to={links.newItem}>
-          <IconButton key='newItem' style={buttonStyle}><AddToPhotos style={iconStyle} /></IconButton>
+        <RouterLink key='newItem' to={links.newItem}>
+          <IconButton style={buttonStyle}><AddToPhotos style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.editItem) {
       buttons.push(
-        <RouterLink to={links.editItem}>
-          <IconButton key='editItem' style={buttonStyle}><Edit style={iconStyle} /></IconButton>
+        <RouterLink key='editItem' to={links.editItem}>
+          <IconButton style={buttonStyle}><Edit style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.deleteItem) {
       buttons.push(
-        <RouterLink to={links.deleteItem}>
-          <IconButton key='deleteItem' style={buttonStyle}><Delete style={iconStyle} /></IconButton>
+        <RouterLink key='deleteItem' to={links.deleteItem}>
+          <IconButton style={buttonStyle}><Delete style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.executions) {
       buttons.push(
-        <RouterLink to={links.executions}>
-          <IconButton key='executions' style={buttonStyle}><Landscape style={iconStyle} /></IconButton>
+        <RouterLink key='executions' to={links.executions}>
+          <IconButton style={buttonStyle}><Landscape style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.renderings) {
       buttons.push(
-        <RouterLink to={links.renderings}>
-          <IconButton key='renderings' style={buttonStyle}><Photo style={iconStyle} /></IconButton>
+        <RouterLink key='renderings' to={links.renderings}>
+          <IconButton style={buttonStyle}><Photo style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.other) {
       buttons.push(
-        <RouterLink to={links.other}>
-          <IconButton key='other' style={buttonStyle}><PhotoLibrary style={iconStyle} /></IconButton>
+        <RouterLink key='other' to={links.other}>
+          <IconButton style={buttonStyle}><PhotoLibrary style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }
     if (links.extra) {
       buttons.push(
-        <RouterLink to={links.extra}>
-          <IconButton key='extra' style={buttonStyle}><MoreVert style={iconStyle} /></IconButton>
+        <RouterLink key='extra' to={links.extra}>
+          <IconButton style={buttonStyle}><MoreVert style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }

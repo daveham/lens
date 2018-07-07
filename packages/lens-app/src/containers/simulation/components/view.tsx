@@ -24,9 +24,9 @@ interface IProps {
   loading: boolean;
   error: any;
   simulations: ReadonlyArray<ISimulation>;
-  sourceId?: string;
+  sourceId: string;
   thumbnailUrl?: string;
-  thumbnailImageDescriptor?: IThumbnailDescriptor;
+  thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
 }
 

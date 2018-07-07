@@ -24,11 +24,11 @@ interface IProps {
   loading: boolean;
   error: any;
   renderings: ReadonlyArray<IRendering>;
-  sourceId?: string;
-  simulationId?: number;
-  executionId?: number;
+  sourceId: string;
+  simulationId: number;
+  executionId: number;
   thumbnailUrl?: string;
-  thumbnailImageDescriptor?: IThumbnailDescriptor;
+  thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
 }
 

@@ -7,19 +7,19 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import {IExecution } from '../../../components/interfaces';
+import {IExecution } from '../../../interfaces';
 import RowToolbar from '../../../components/rowToolbar';
+import { timestampFormat } from '../../../constants';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:executionList');
 
-const timestampFormat = 'MM/D YYYY h:mm:ss a';
-
 interface IProps {
   executionRows: ReadonlyArray<IExecution>;
   sourceId: string;
+  simulationId?: number;
 }
 
 interface IState {
@@ -70,13 +70,12 @@ class ExecutionList extends React.Component<IProps, IState> {
   };
 
   private renderToolbar = (row: IExecution): any => {
-    // /Catalog/:id/Simulation/:simulationId/Execution
     if (row.id === this.state.activeId) {
       const { sourceId } = this.props;
       const links = {
-        editItem: `/Catalog/${sourceId}/Simulation/${row.id}/Execution`, // temp
-        executions: `/Catalog/${sourceId}/Simulation/${row.id}/Execution`, // temp
-        deleteItem: `/Catalog/${sourceId}/Simulation/${row.id}/Execution` // temp
+        editItem: `/Catalog/${sourceId}/Simulation/${row.id}/Execution/${row.id}`,
+        renderings: `/Catalog/${sourceId}/Simulation/${row.id}/Execution/${row.id}/Rendering`,
+        deleteItem: `/Catalog/${sourceId}/Simulation/${row.id}/Execution`
       };
       return <RowToolbar links={links}/>;
     }

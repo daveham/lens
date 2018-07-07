@@ -3,12 +3,22 @@ import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 
 import Simulation from './wrappedView';
 import Execution from './execution';
+import Rendering from './rendering';
 
 export default () => (
   <div>
     <RouterSwitch>
-      <RouterRoute path='/Catalog/:id/Simulation/:simulationId/Execution' component={Execution} />
-      <RouterRoute component={Simulation} />
+      <RouterRoute
+        path='/Catalog/:id/Simulation/:simulationId/Execution/:executionId/Rendering'
+        component={Rendering}
+      />
+      <RouterRoute
+        path='/Catalog/:id/Simulation/:simulationId/Execution'
+        component={Execution}
+      />
+      <RouterRoute
+        component={Simulation}
+      />
     </RouterSwitch>
   </div>
 );

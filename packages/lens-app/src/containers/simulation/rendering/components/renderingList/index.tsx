@@ -7,24 +7,27 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import { ISimulation } from '../../interfaces';
-import RowToolbar from '../rowToolbar';
-import { timestampFormat } from '../../constants';
+import {IRendering } from '../../../interfaces';
+import RowToolbar from '../../../components/rowToolbar';
+import { timestampFormat } from '../../../constants';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulationList');
+// const debug = _debug('lens:renderingList');
 
 interface IProps {
-  simulationRows: ReadonlyArray<ISimulation>;
+  renderingRows: ReadonlyArray<IRendering>;
+  sourceId: string;
+  simulationId?: number;
+  executionId?: number;
 }
 
 interface IState {
   activeId: number;
 }
 
-class SimulationList extends React.Component<IProps, IState> {
+class RenderingList extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -34,21 +37,20 @@ class SimulationList extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { simulationRows } = this.props;
+    const { renderingRows } = this.props;
     return(
       <div>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Executions</TableCell>
               <TableCell className={styles.toolbarCell} />
               <TableCell className={styles.timestampCell}>Created</TableCell>
               <TableCell className={styles.timestampCell}>Modified</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {simulationRows.map(this.renderRow)}
+            {renderingRows.map(this.renderRow)}
           </TableBody>
         </Table>
       </div>
@@ -67,20 +69,23 @@ class SimulationList extends React.Component<IProps, IState> {
     }
   };
 
-  private renderToolbar = (row: ISimulation): any => {
+  private renderToolbar = (row: IRendering): any => {
     if (row.id === this.state.activeId) {
-      const { id, sourceId } = row;
+      const {
+        sourceId,
+        simulationId,
+        executionId
+      } = this.props;
       const links = {
-        editItem: `/Catalog/${sourceId}/Simulation/${id}`,
-        executions: `/Catalog/${sourceId}/Simulation/${id}/Execution`,
-        deleteItem: `/Catalog/${sourceId}/Simulation/${id}/Execution`
+        editItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${executionId}/Rendering/${row.id}`,
+        deleteItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${executionId}`
       };
-      return <RowToolbar links={links} />;
+      return <RowToolbar links={links}/>;
     }
     return <span className={styles.toolbarFill} />;
   };
 
-  private renderRow = (row: ISimulation): any => {
+  private renderRow = (row: IRendering): any => {
     const toolbar = this.renderToolbar(row);
     return (
       <TableRow
@@ -89,7 +94,6 @@ class SimulationList extends React.Component<IProps, IState> {
         onMouseLeave={this.handleMouseLeave}
       >
         <TableCell>{row.name}</TableCell>
-        <TableCell>{row.executionCount}</TableCell>
         <TableCell className={styles.toolbarCell}>{toolbar}</TableCell>
         <TableCell>{moment(row.created).format(timestampFormat)}</TableCell>
         <TableCell>{moment(row.modified).format(timestampFormat)}</TableCell>
@@ -98,4 +102,4 @@ class SimulationList extends React.Component<IProps, IState> {
   }
 }
 
-export default SimulationList;
+export default RenderingList;

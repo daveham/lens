@@ -2,15 +2,15 @@ import React from 'react';
 import Paper from '@material-ui/core/Paper';
 
 import { IThumbnailDescriptor } from '../../../../interfaces';
-import { IExecution } from '../../interfaces';
+import { IRendering } from '../../interfaces';
 import SourceThumbnail from '../../../../components/sourceThumbnail';
-import ExecutionList from './executionList';
+import RenderingList from './renderingList';
 import Header from '../../components/header';
 import ListToolbar from '../../components/listToolbar';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:execution:view');
+// const debug = _debug('lens:rendering:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -23,9 +23,10 @@ function renderLoading(): any {
 interface IProps {
   loading: boolean;
   error: any;
-  executions: ReadonlyArray<IExecution>;
-  simulationId?: number;
+  renderings: ReadonlyArray<IRendering>;
   sourceId?: string;
+  simulationId?: number;
+  executionId?: number;
   thumbnailUrl?: string;
   thumbnailImageDescriptor?: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -49,17 +50,18 @@ class View extends React.Component<IProps, any> {
       loading,
       thumbnailUrl,
       sourceId,
-      simulationId
+      simulationId,
+      executionId
     } = this.props;
 
     const links = {
-      back: `/Catalog/${sourceId}/Simulation`,
-      newItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/new`
+      back: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution`,
+      newItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${executionId}/Rendering/new`
     };
 
     return (
       <div className={styles.container}>
-        <Header title='Executions' loading={loading}>
+        <Header title='Renderings' loading={loading}>
           {!loading && <ListToolbar links={links} />}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
@@ -75,15 +77,27 @@ class View extends React.Component<IProps, any> {
         <Paper>
           {loading && renderLoading()}
           {!loading && error && renderError(error)}
-          {!loading && !error && this.renderExecutions()}
+          {!loading && !error && this.renderRenderings()}
         </Paper>
       </div>
     );
   }
 
-  private renderExecutions(): any {
-    const { executions, sourceId } = this.props;
-    return <ExecutionList executionRows={executions} sourceId={sourceId}/>;
+  private renderRenderings(): any {
+    const {
+      renderings,
+      sourceId,
+      simulationId,
+      executionId,
+    } = this.props;
+    return (
+      <RenderingList
+        renderingRows={renderings}
+        sourceId={sourceId}
+        simulationId={simulationId}
+        executionId={executionId}
+      />
+    );
   }
 }
 

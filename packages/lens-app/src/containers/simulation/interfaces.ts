@@ -14,3 +14,10 @@ export interface IExecution {
   name: string;
   renderingCount: number;
 }
+
+export interface IRendering {
+  id: number;
+  created: number;
+  modified: number;
+  name: string;
+}

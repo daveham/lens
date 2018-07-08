@@ -25,6 +25,12 @@ const typeDefs = `
     name: String!
   }
   
+  type RenderingsWithNames {
+    items: [Rendering!]!
+    simulationName: String!
+    executionName: String!
+  }
+    
   input ExecutionInput {
     simulationId: Int!
     name: String!
@@ -43,6 +49,11 @@ const typeDefs = `
     name: String!
     renderings: [Rendering!]!
     renderingCount: Int!
+  }
+  
+  type ExecutionsWithNames {
+    items: [Execution!]!
+    simulationName: String!
   }
   
   input SimulationInput {
@@ -69,9 +80,9 @@ const typeDefs = `
     simulations: [Simulation]
     simulationsForSource(sourceId: String!): [Simulation]
     simulation(id: Int!): Simulation
-    executions(simulationId: Int!): [Execution]
+    executions(simulationId: Int!): ExecutionsWithNames
     execution(id: Int!): Execution
-    renderings(executionId: Int!): [Rendering]
+    renderings(executionId: Int!): RenderingsWithNames
     rendering(id: Int!): Rendering
   }
 
@@ -179,13 +190,21 @@ const resolvers = {
       .filter(s => s.sourceId === sourceId)
       .map(getSimulationData),
     simulation: (_, { id }) => allSimulations.find(s => s.id === id),
-    executions: (_, { simulationId }) => allExecutions
-      .filter(e => e.simulationId === simulationId)
-      .map(getExecutionData),
+    executions: (_, { simulationId }) => ({
+      items: allExecutions.filter(e => e.simulationId === simulationId)
+        .map(getExecutionData),
+      simulationName: (allSimulations.find(s => s.id === simulationId)).name
+    }),
     execution: (_, { id }) => allExecutions.find(e => e.id === id),
-    renderings: (_, { executionId }) => allRenderings
-      .filter(r => r.executionId === executionId)
-      .map(getRenderingData),
+    renderings: (_, { executionId }) => {
+      const execution = allExecutions.find(e => e.id === executionId);
+      return {
+        items: allRenderings.filter(r => r.executionId === executionId)
+          .map(getRenderingData),
+        simulationName: allSimulations.find(s => s.id === execution.simulationId).name,
+        executionName: allExecutions.find(e => e.id === executionId).name,
+      };
+    },
     rendering: (_, { id }) => allRenderings.find(e => e.id === id)
   },
   Mutation: {

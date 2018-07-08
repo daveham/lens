@@ -27,6 +27,8 @@ interface IProps {
   sourceId: string;
   simulationId: number;
   executionId: number;
+  simulationName: string;
+  executionName: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -51,7 +53,9 @@ class View extends React.Component<IProps, any> {
       thumbnailUrl,
       sourceId,
       simulationId,
-      executionId
+      simulationName,
+      executionId,
+      executionName
     } = this.props;
 
     const links = {
@@ -62,6 +66,9 @@ class View extends React.Component<IProps, any> {
     return (
       <div className={styles.container}>
         <Header title='Renderings' loading={loading}>
+          <div>
+            {`simulation: ${simulationName}, execution: ${executionName}`}
+          </div>
           {!loading && <ListToolbar links={links} />}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>

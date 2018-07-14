@@ -7,14 +7,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import {IExecution } from '../../../interfaces';
-import RowToolbar from '../../../components/rowToolbar';
-import { timestampFormat } from '../../../constants';
+import {IExecution } from '../../../../interfaces';
+import RowToolbar from '../../../../components/rowToolbar';
+import { timestampFormat } from '../../../../constants';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:executionList');
+// const debug = _debug('lens:executionTable');
 
 interface IProps {
   executionRows: ReadonlyArray<IExecution>;
@@ -26,7 +26,7 @@ interface IState {
   activeId: number;
 }
 
-class ExecutionList extends React.Component<IProps, IState> {
+class ExecutionTable extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -38,22 +38,20 @@ class ExecutionList extends React.Component<IProps, IState> {
   public render(): any {
     const { executionRows } = this.props;
     return(
-      <div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Renderings</TableCell>
-              <TableCell className={styles.toolbarCell} />
-              <TableCell className={styles.timestampCell}>Created</TableCell>
-              <TableCell className={styles.timestampCell}>Modified</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {executionRows.map(this.renderRow)}
-          </TableBody>
-        </Table>
-      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Renderings</TableCell>
+            <TableCell className={styles.toolbarCell} />
+            <TableCell className={styles.timestampCell}>Created</TableCell>
+            <TableCell className={styles.timestampCell}>Modified</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {executionRows.map(this.renderRow)}
+        </TableBody>
+      </Table>
     );
   }
 
@@ -100,4 +98,4 @@ class ExecutionList extends React.Component<IProps, IState> {
   }
 }
 
-export default ExecutionList;
+export default ExecutionTable;

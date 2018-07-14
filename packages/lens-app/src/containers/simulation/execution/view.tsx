@@ -6,19 +6,16 @@ import { IThumbnailDescriptor } from '../../../interfaces';
 
 import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
-import simulationListRenderFunction from '../components/simulationList';
-import simulationListToolbarRenderFunction from '../components/simulationList/toolbar';
-// import SimulationEdit from '../components/simulationEdit';
-// import SimulationEditToolbar from '../components/simulationEdit/toolbar';
-// import SimulationNew from '../components/simulationNew';
-// import SimulationNewToolbar from '../components/simulationNew/toolbar';
 import styles from './styles.scss';
+import executionListRenderFunction from './components/executionList';
+import executionListToolbarRenderFunction from './components/executionList/toolbar';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulation:view');
+// const debug = _debug('lens:execution:view');
 
 interface IProps {
   sourceId: string;
+  simulationId: number;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -36,13 +33,12 @@ class View extends React.Component<IProps, any> {
       ensureImage({ imageDescriptor: thumbnailImageDescriptor });
     }
   }
-
   public render(): any {
     const { thumbnailUrl } = this.props;
 
     return (
       <div className={styles.container}>
-        <Header title='Simulations'>
+        <Header title='Executions'>
           {this.renderToolbar()}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
@@ -51,19 +47,19 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderSimulationListToolbar = (props) => {
-    const { sourceId } = this.props;
-    return simulationListToolbarRenderFunction({ ...props, sourceId });
+  private renderExecutionListToolbar = (props) => {
+    const { sourceId, simulationId } = this.props;
+    return executionListToolbarRenderFunction({ ...props, sourceId, simulationId });
   };
 
   /*
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId'
-          component={SimulationEditToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
+          component={ExecutionEditToolbar}
         />
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/new'
-          component={SimulationNewToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
+          component={ExecutionNewToolbar}
         />
    */
 
@@ -71,26 +67,26 @@ class View extends React.Component<IProps, any> {
     return (
       <RouterSwitch>
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/'
-          render={this.renderSimulationListToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
+          render={this.renderExecutionListToolbar}
         />
       </RouterSwitch>
     );
   }
 
-  private renderSimulationList = (props) => {
-    const { sourceId } = this.props;
-    return simulationListRenderFunction({ ...props, sourceId });
+  private renderExecutionList = (props) => {
+    const { sourceId, simulationId } = this.props;
+    return executionListRenderFunction({ ...props, sourceId, simulationId });
   };
 
   /*
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId'
-              component={SimulationEdit}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
+              component={ExecutionEdit}
             />
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/new'
-              component={SimulationNew}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
+              component={ExecutionNew}
             />
    */
 
@@ -100,8 +96,8 @@ class View extends React.Component<IProps, any> {
         <Paper>
           <RouterSwitch>
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/'
-              render={this.renderSimulationList}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
+              render={this.renderExecutionList}
             />
           </RouterSwitch>
         </Paper>

@@ -5,7 +5,7 @@ interface IProps {
   sourceId: string;
 }
 
-const TempToolbar = ({ sourceId }: IProps) => {
+const SimulationListToolbar = ({ sourceId }: IProps) => {
   const links = {
     back: '/Catalog',
     newItem: `/Catalog/${sourceId}/Simulation/new`
@@ -14,4 +14,4 @@ const TempToolbar = ({ sourceId }: IProps) => {
   return <ListToolbar links={links} />;
 };
 
-export default TempToolbar;
+export default SimulationListToolbar;

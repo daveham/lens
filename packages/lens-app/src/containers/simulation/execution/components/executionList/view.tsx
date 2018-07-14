@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { ISimulation } from '../../interfaces';
-import SimulationTable from './simulationTable';
+import { IExecution } from '../../../interfaces';
+import ExecutionTable from './executionTable';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulationList:view');
+// const debug = _debug('lens:executionList:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -18,7 +18,10 @@ function renderLoading(): any {
 interface IProps {
   loading: boolean;
   error: any;
-  simulations: ReadonlyArray<ISimulation>;
+  executions: ReadonlyArray<IExecution>;
+  simulationId: number;
+  sourceId: string;
+  simulationName: string;
 }
 
 class View extends React.Component<IProps, any> {
@@ -26,14 +29,22 @@ class View extends React.Component<IProps, any> {
     const {
       error,
       loading,
-      simulations
+      executions,
+      sourceId,
+      simulationId
     } = this.props;
 
     return (
       <div className={styles.container}>
         {loading && renderLoading()}
         {!loading && error && renderError(error)}
-        {!loading && !error && <SimulationTable simulationRows={simulations}/>}
+        {!loading && !error && (
+          <ExecutionTable
+            executionRows={executions}
+            sourceId={sourceId}
+            simulationId={simulationId}
+          />
+        )}
       </div>
     );
   }

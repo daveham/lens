@@ -47,7 +47,7 @@ class View extends React.Component<IProps, any> {
         <div className={styles.content}>
           <RouterSwitch>
             <RouterRoute path='/Catalog/Source/:id/:res' component={SourceView}/>
-            <RouterRoute path='/Catalog/:id/Simulation' component={simulationRoute}/>
+            <RouterRoute path='/Catalog/:sourceId/Simulation' component={simulationRoute}/>
             <RouterRoute component={SourcesView}/>
           </RouterSwitch>
         </div>

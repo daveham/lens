@@ -7,14 +7,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import { ISimulation } from '../../interfaces';
-import RowToolbar from '../rowToolbar';
-import { timestampFormat } from '../../constants';
+import { ISimulation } from '../../../interfaces';
+import RowToolbar from '../../rowToolbar';
+import { timestampFormat } from '../../../constants';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulationList');
+// const debug = _debug('lens:simulationTable');
 
 interface IProps {
   simulationRows: ReadonlyArray<ISimulation>;
@@ -24,7 +24,7 @@ interface IState {
   activeId: number;
 }
 
-class SimulationList extends React.Component<IProps, IState> {
+class SimulationTable extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -36,22 +36,20 @@ class SimulationList extends React.Component<IProps, IState> {
   public render(): any {
     const { simulationRows } = this.props;
     return(
-      <div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Executions</TableCell>
-              <TableCell className={styles.toolbarCell} />
-              <TableCell className={styles.timestampCell}>Created</TableCell>
-              <TableCell className={styles.timestampCell}>Modified</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {simulationRows.map(this.renderRow)}
-          </TableBody>
-        </Table>
-      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Executions</TableCell>
+            <TableCell className={styles.toolbarCell} />
+            <TableCell className={styles.timestampCell}>Created</TableCell>
+            <TableCell className={styles.timestampCell}>Modified</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {simulationRows.map(this.renderRow)}
+        </TableBody>
+      </Table>
     );
   }
 
@@ -98,4 +96,4 @@ class SimulationList extends React.Component<IProps, IState> {
   }
 }
 
-export default SimulationList;
+export default SimulationTable;

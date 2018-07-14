@@ -1,13 +1,7 @@
-.toolbarCell {
-  width: 144px;
-  text-align: right;
-}
-
-.timestampCell {
-  width: 220px;
-}
-
-.toolbarFill {
-  display: block;
-  width: 144px;
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
 }

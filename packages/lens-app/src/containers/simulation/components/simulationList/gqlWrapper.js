@@ -3,7 +3,7 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulation:gqlWrapper');
+// const debug = _debug('lens:simulationList:gqlWrapper');
 
 const GET_SIMULATIONS = gql`
   query getSimulations($sourceId: String!) {

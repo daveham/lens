@@ -7,8 +7,8 @@ import { IThumbnailDescriptor } from '../../../interfaces';
 import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
 import styles from './styles.scss';
-import executionListRenderFunction from './components/executionList';
-import executionListToolbarRenderFunction from './components/executionList/toolbar';
+import renderingListRenderFunction from './components/renderingList';
+import renderingListToolbarRenderFunction from './components/renderingList/toolbar';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:execution:view');
@@ -16,6 +16,7 @@ import executionListToolbarRenderFunction from './components/executionList/toolb
 interface IProps {
   sourceId: string;
   simulationId: number;
+  executionId: number;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -33,13 +34,12 @@ class View extends React.Component<IProps, any> {
       ensureImage({ imageDescriptor: thumbnailImageDescriptor });
     }
   }
-
   public render(): any {
     const { thumbnailUrl } = this.props;
 
     return (
       <div className={styles.container}>
-        <Header title='Executions'>
+        <Header title='Renderings'>
           {this.renderToolbar()}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
@@ -48,19 +48,19 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderExecutionListToolbar = (props) => {
-    const { sourceId, simulationId } = this.props;
-    return executionListToolbarRenderFunction({ ...props, sourceId, simulationId });
+  private renderRenderingListToolbar = (props) => {
+    const { sourceId, simulationId, executionId } = this.props;
+    return renderingListToolbarRenderFunction({ ...props, sourceId, simulationId, executionId });
   };
 
   /*
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
-          component={ExecutionEditToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/:renderingId'
+          component={RenderingEditToolbar}
         />
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
-          component={ExecutionNewToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/new'
+          component={RenderingNewToolbar}
         />
    */
 
@@ -68,26 +68,26 @@ class View extends React.Component<IProps, any> {
     return (
       <RouterSwitch>
         <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
-          render={this.renderExecutionListToolbar}
+          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering'
+          render={this.renderRenderingListToolbar}
         />
       </RouterSwitch>
     );
   }
 
-  private renderExecutionList = (props) => {
-    const { sourceId, simulationId } = this.props;
-    return executionListRenderFunction({ ...props, sourceId, simulationId });
+  private renderRenderingList = (props) => {
+    const { sourceId, simulationId, executionId } = this.props;
+    return renderingListRenderFunction({ ...props, sourceId, simulationId, executionId });
   };
 
   /*
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
-              component={ExecutionEdit}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/:renderingId'
+              component={RenderingEdit}
             />
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
-              component={ExecutionNew}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/new'
+              component={RenderingNew}
             />
    */
 
@@ -97,8 +97,8 @@ class View extends React.Component<IProps, any> {
         <Paper>
           <RouterSwitch>
             <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
-              render={this.renderExecutionList}
+              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering'
+              render={this.renderRenderingList}
             />
           </RouterSwitch>
         </Paper>

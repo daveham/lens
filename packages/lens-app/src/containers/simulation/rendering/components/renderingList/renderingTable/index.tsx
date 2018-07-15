@@ -7,14 +7,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import {IRendering } from '../../../interfaces';
-import RowToolbar from '../../../components/rowToolbar';
-import { timestampFormat } from '../../../constants';
+import {IRendering } from '../../../../interfaces';
+import RowToolbar from '../../../../components/rowToolbar';
+import { timestampFormat } from '../../../../constants';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:renderingList');
+// const debug = _debug('lens:renderingTable');
 
 interface IProps {
   renderingRows: ReadonlyArray<IRendering>;
@@ -27,7 +27,7 @@ interface IState {
   activeId: number;
 }
 
-class RenderingList extends React.Component<IProps, IState> {
+class RenderingTable extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -39,21 +39,19 @@ class RenderingList extends React.Component<IProps, IState> {
   public render(): any {
     const { renderingRows } = this.props;
     return(
-      <div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell className={styles.toolbarCell} />
-              <TableCell className={styles.timestampCell}>Created</TableCell>
-              <TableCell className={styles.timestampCell}>Modified</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {renderingRows.map(this.renderRow)}
-          </TableBody>
-        </Table>
-      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell className={styles.toolbarCell} />
+            <TableCell className={styles.timestampCell}>Created</TableCell>
+            <TableCell className={styles.timestampCell}>Modified</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {renderingRows.map(this.renderRow)}
+        </TableBody>
+      </Table>
     );
   }
 
@@ -102,4 +100,4 @@ class RenderingList extends React.Component<IProps, IState> {
   }
 }
 
-export default RenderingList;
+export default RenderingTable;

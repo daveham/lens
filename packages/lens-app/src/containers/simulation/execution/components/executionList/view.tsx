@@ -22,9 +22,22 @@ interface IProps {
   simulationId: number;
   sourceId: string;
   simulationName: string;
+  recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
+  public componentDidMount(): void {
+    if (this.props.simulationName) {
+      this.recordNavigationPath();
+    }
+  }
+
+  public componentDidUpdate(prevProps: IProps): void {
+    if (this.props.simulationName && !prevProps.simulationName) {
+      this.recordNavigationPath();
+    }
+  }
+
   public render(): any {
     const {
       error,
@@ -47,6 +60,11 @@ class View extends React.Component<IProps, any> {
         )}
       </div>
     );
+  }
+
+  private recordNavigationPath(): void {
+    const { simulationId, simulationName, recordPathNames } = this.props;
+    recordPathNames({ simulationId, simulationName });
   }
 }
 

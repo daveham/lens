@@ -19,6 +19,7 @@ interface IProps {
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
+  recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
@@ -76,8 +77,8 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderExecutionList = (props) => {
-    const { sourceId, simulationId } = this.props;
-    return executionListRenderFunction({ ...props, sourceId, simulationId });
+    const { sourceId, simulationId, recordPathNames } = this.props;
+    return executionListRenderFunction({ ...props, sourceId, simulationId, recordPathNames });
   };
 
   /*

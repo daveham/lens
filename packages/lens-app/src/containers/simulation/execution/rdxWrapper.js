@@ -2,11 +2,15 @@ import { connect } from 'react-redux';
 import { makeThumbnailImageDescriptor } from '@lens/image-descriptors';
 import { thumbnailUrlFromIdSelector } from '../../../modules/images/selectors';
 import { ensureImage } from '../../../modules/images/actions';
+import { recordPathNames } from '../modules/actions';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:simulation:execution:rdxWrapper');
 
-const mapDispatchToProps = { ensureImage };
+const mapDispatchToProps = {
+  ensureImage,
+  recordPathNames
+};
 
 const mapStateToProps = (state, { match: { params: { sourceId, simulationId } }}) => {
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(sourceId);

@@ -10,16 +10,19 @@ import styles from './styles.scss';
 import renderingListRenderFunction from './components/renderingList';
 import renderingListToolbarRenderFunction from './components/renderingList/toolbar';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:execution:view');
+import _debug from 'debug';
+const debug = _debug('lens:execution:view');
 
 interface IProps {
   sourceId: string;
   simulationId: number;
   executionId: number;
+  simulationNames: {[id: number]: string};
+  executionNames: {[id: number]: string};
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
+  recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
@@ -35,7 +38,18 @@ class View extends React.Component<IProps, any> {
     }
   }
   public render(): any {
-    const { thumbnailUrl } = this.props;
+    const {
+      simulationId,
+      simulationNames,
+      executionId,
+      executionNames,
+      thumbnailUrl
+    } = this.props;
+
+    const simulationName = simulationNames[simulationId];
+    const executionName = executionNames[executionId];
+
+    debug(`render: ${simulationName}/${executionName}`);
 
     return (
       <div className={styles.container}>
@@ -76,8 +90,8 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderRenderingList = (props) => {
-    const { sourceId, simulationId, executionId } = this.props;
-    return renderingListRenderFunction({ ...props, sourceId, simulationId, executionId });
+    const { sourceId, simulationId, executionId, recordPathNames } = this.props;
+    return renderingListRenderFunction({ ...props, sourceId, simulationId, executionId, recordPathNames });
   };
 
   /*

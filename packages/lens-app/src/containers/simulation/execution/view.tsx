@@ -16,6 +16,7 @@ import executionListToolbarRenderFunction from './components/executionList/toolb
 interface IProps {
   sourceId: string;
   simulationId: number;
+  simulationNames: {[id: number]: string};
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -41,6 +42,7 @@ class View extends React.Component<IProps, any> {
     return (
       <div className={styles.container}>
         <Header title='Executions'>
+          {this.renderNavigationPath()}
           {this.renderToolbar()}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
@@ -64,6 +66,21 @@ class View extends React.Component<IProps, any> {
           component={ExecutionNewToolbar}
         />
    */
+
+  private renderNavigationPath(): any {
+    const {
+      simulationId,
+      simulationNames
+    } = this.props;
+
+    const simulationName = simulationNames[simulationId];
+
+    return (
+      <div className={styles.navigation}>
+        <div className={styles.segment}><span className={styles.label}>simulation:</span> {simulationName}</div>
+      </div>
+    );
+  }
 
   private renderToolbar(): any {
     return (

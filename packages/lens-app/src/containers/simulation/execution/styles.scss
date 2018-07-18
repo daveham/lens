@@ -6,3 +6,19 @@
 .contents {
   width: 100%;
 }
+
+.navigation {
+  display: flex;
+}
+
+.segment {
+  font-style: italic;
+  font-size: 12px;
+  color: #999;
+  padding-right: 20px;
+  padding-bottom: 6px;
+}
+
+.label {
+  color: #ccc;
+}

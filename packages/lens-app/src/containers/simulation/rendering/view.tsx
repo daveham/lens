@@ -10,8 +10,8 @@ import styles from './styles.scss';
 import renderingListRenderFunction from './components/renderingList';
 import renderingListToolbarRenderFunction from './components/renderingList/toolbar';
 
-import _debug from 'debug';
-const debug = _debug('lens:execution:view');
+// import _debug from 'debug';
+// const debug = _debug('lens:execution:view');
 
 interface IProps {
   sourceId: string;
@@ -38,22 +38,12 @@ class View extends React.Component<IProps, any> {
     }
   }
   public render(): any {
-    const {
-      simulationId,
-      simulationNames,
-      executionId,
-      executionNames,
-      thumbnailUrl
-    } = this.props;
-
-    const simulationName = simulationNames[simulationId];
-    const executionName = executionNames[executionId];
-
-    debug(`render: ${simulationName}/${executionName}`);
+    const { thumbnailUrl } = this.props;
 
     return (
       <div className={styles.container}>
         <Header title='Renderings'>
+          {this.renderNavigationPath()}
           {this.renderToolbar()}
           {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
         </Header>
@@ -77,6 +67,25 @@ class View extends React.Component<IProps, any> {
           component={RenderingNewToolbar}
         />
    */
+
+  private renderNavigationPath(): any {
+    const {
+      simulationId,
+      simulationNames,
+      executionId,
+      executionNames
+    } = this.props;
+
+    const simulationName = simulationNames[simulationId];
+    const executionName = executionNames[executionId];
+
+    return (
+      <div className={styles.navigation}>
+        <div className={styles.segment}><span className={styles.label}>execution:</span> {executionName}</div>
+        <div className={styles.segment}><span className={styles.label}>simulation:</span> {simulationName}</div>
+      </div>
+    );
+  }
 
   private renderToolbar(): any {
     return (

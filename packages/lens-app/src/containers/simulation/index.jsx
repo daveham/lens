@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 import Simulation from './view';
 import Execution from './execution';
@@ -8,22 +8,22 @@ import Rendering from './rendering';
 // import _debug from 'debug';
 // const debug = _debug('lens:containers:simulationRouteSwitch');
 
-const SimulationRouteSwitch = () => (
+const SimulationRouteSwitch = ({ match: { path } }) => (
   <div>
-    <RouterSwitch>
-      <RouterRoute
-        path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering'
+    <Switch>
+      <Route
+        path={`${path}/:simulationId/Execution/:executionId/Rendering`}
         component={Rendering}
       />
-      <RouterRoute
-        path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
+      <Route
+        path={`${path}/:simulationId/Execution`}
         component={Execution}
       />
-      <RouterRoute
-        path='/Catalog/:sourceId/Simulation'
+      <Route
+        path={path}
         component={Simulation}
       />
-    </RouterSwitch>
+    </Switch>
   </div>
 );
 

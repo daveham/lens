@@ -1,6 +1,6 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from '../../../interfaces';
 
@@ -18,6 +18,7 @@ import styles from './styles.scss';
 // const debug = _debug('lens:simulation:view');
 
 interface IProps {
+  match: any;
   sourceId: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
@@ -57,24 +58,25 @@ class View extends React.Component<IProps, any> {
   };
 
   /*
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId'
+        <Route
+          path=`${path/:simulationId}`
           component={SimulationEditToolbar}
         />
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/new'
+        <Route
+          path=`${path}/new`
           component={SimulationNewToolbar}
         />
    */
 
   private renderToolbar(): any {
+    const { match: { path } } = this.props;
     return (
-      <RouterSwitch>
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/'
+      <Switch>
+        <Route
+          path={path}
           render={this.renderSimulationListToolbar}
         />
-      </RouterSwitch>
+      </Switch>
     );
   }
 
@@ -84,26 +86,27 @@ class View extends React.Component<IProps, any> {
   };
 
   /*
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId'
+            <Route
+              path=`${path}/:simulationId`
               component={SimulationEdit}
             />
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/new'
+            <Route
+              path=`${path}/new`
               component={SimulationNew}
             />
    */
 
   private renderContents(): any {
+    const { match: { path } } = this.props;
     return (
       <div className={styles.contents}>
         <Paper>
-          <RouterSwitch>
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/'
+          <Switch>
+            <Route
+              path={path}
               render={this.renderSimulationList}
             />
-          </RouterSwitch>
+          </Switch>
         </Paper>
       </div>
     );

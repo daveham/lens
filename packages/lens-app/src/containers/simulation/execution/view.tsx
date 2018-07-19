@@ -1,6 +1,6 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from '../../../interfaces';
 
@@ -14,6 +14,7 @@ import executionListToolbarRenderFunction from './components/executionList/toolb
 // const debug = _debug('lens:execution:view');
 
 interface IProps {
+  match: any;
   sourceId: string;
   simulationId: number;
   simulationNames: {[id: number]: string};
@@ -56,17 +57,6 @@ class View extends React.Component<IProps, any> {
     return executionListToolbarRenderFunction({ ...props, sourceId, simulationId });
   };
 
-  /*
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
-          component={ExecutionEditToolbar}
-        />
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
-          component={ExecutionNewToolbar}
-        />
-   */
-
   private renderNavigationPath(): any {
     const {
       simulationId,
@@ -82,14 +72,26 @@ class View extends React.Component<IProps, any> {
     );
   }
 
+  /*
+        <Route
+          path={`${path}/:executionId`}
+          component={ExecutionEditToolbar}
+        />
+        <Route
+          path={`${path}/new`}
+          component={ExecutionNewToolbar}
+        />
+   */
+
   private renderToolbar(): any {
+    const { match: { path } } = this.props;
     return (
-      <RouterSwitch>
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
+      <Switch>
+        <Route
+          path={path}
           render={this.renderExecutionListToolbar}
         />
-      </RouterSwitch>
+      </Switch>
     );
   }
 
@@ -99,26 +101,27 @@ class View extends React.Component<IProps, any> {
   };
 
   /*
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId'
+            <Route
+              path={`${path}/:executionId`}
               component={ExecutionEdit}
             />
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/new'
+            <Route
+              path={`${path}/new`}
               component={ExecutionNew}
             />
    */
 
   private renderContents(): any {
+    const { match: { path } } = this.props;
     return (
       <div className={styles.contents}>
         <Paper>
-          <RouterSwitch>
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution'
+          <Switch>
+            <Route
+              path={path}
               render={this.renderExecutionList}
             />
-          </RouterSwitch>
+          </Switch>
         </Paper>
       </div>
     );

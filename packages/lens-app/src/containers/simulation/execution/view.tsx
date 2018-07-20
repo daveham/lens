@@ -8,7 +8,9 @@ import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
 import styles from './styles.scss';
 import executionListRenderFunction from './components/executionList';
-import executionListToolbarRenderFunction from './components/executionList/toolbar';
+import executionEditRenderFunction from './components/executionEdit';
+import executionNewRenderFunction from './components/executionNew';
+import ListToolbar from '../components/listToolbar';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:execution:view');
@@ -38,24 +40,13 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
-    const { thumbnailUrl } = this.props;
-
     return (
       <div className={styles.container}>
-        <Header title='Executions'>
-          {this.renderNavigationPath()}
-          {this.renderToolbar()}
-          {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-        </Header>
+        {this.renderToolbar()}
         {this.renderContents()}
       </div>
     );
   }
-
-  private renderExecutionListToolbar = (props) => {
-    const { sourceId, simulationId } = this.props;
-    return executionListToolbarRenderFunction({ ...props, sourceId, simulationId });
-  };
 
   private renderNavigationPath(): any {
     const {
@@ -72,25 +63,52 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  /*
-        <Route
-          path={`${path}/:executionId`}
-          component={ExecutionEditToolbar}
-        />
-        <Route
-          path={`${path}/new`}
-          component={ExecutionNewToolbar}
-        />
-   */
+  private renderExecutionEditToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
+    return (
+      <Header title='Edit Execution'>
+        {this.renderNavigationPath()}
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderExecutionNewToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
+    return (
+      <Header title='New Execution'>
+        {this.renderNavigationPath()}
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderExecutionListToolbar = (): any => {
+    const { thumbnailUrl, match: { url } } = this.props;
+    const backUrl = url.substr(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    const links = {
+      back: backUrl,
+      newItem: `${url}/new`
+    };
+
+    return (
+      <Header title='Executions'>
+        {this.renderNavigationPath()}
+        <ListToolbar links={links} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
 
   private renderToolbar(): any {
     const { match: { path } } = this.props;
     return (
       <Switch>
-        <Route
-          path={path}
-          render={this.renderExecutionListToolbar}
-        />
+        <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
+        <Route path={`${path}/:executionId`} render={this.renderExecutionEditToolbar} />
+        <Route path={path} render={this.renderExecutionListToolbar} />
       </Switch>
     );
   }
@@ -100,16 +118,15 @@ class View extends React.Component<IProps, any> {
     return executionListRenderFunction({ ...props, sourceId, simulationId, recordPathNames });
   };
 
-  /*
-            <Route
-              path={`${path}/:executionId`}
-              component={ExecutionEdit}
-            />
-            <Route
-              path={`${path}/new`}
-              component={ExecutionNew}
-            />
-   */
+  private renderExecutionEdit = (props) => {
+    const { sourceId, simulationId } = this.props;
+    return executionEditRenderFunction({ ...props, sourceId, simulationId });
+  };
+
+  private renderExecutionNew = (props) => {
+    const { sourceId, simulationId } = this.props;
+    return executionNewRenderFunction({ ...props, sourceId, simulationId });
+  };
 
   private renderContents(): any {
     const { match: { path } } = this.props;
@@ -117,10 +134,9 @@ class View extends React.Component<IProps, any> {
       <div className={styles.contents}>
         <Paper>
           <Switch>
-            <Route
-              path={path}
-              render={this.renderExecutionList}
-            />
+            <Route path={`${path}/new`} render={this.renderExecutionNew} />
+            <Route path={`${path}/:executionId`} render={this.renderExecutionEdit} />
+            <Route path={path} render={this.renderExecutionList} />
           </Switch>
         </Paper>
       </div>

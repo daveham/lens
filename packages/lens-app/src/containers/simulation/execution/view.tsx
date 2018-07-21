@@ -6,11 +6,11 @@ import { IThumbnailDescriptor } from '../../../interfaces';
 
 import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
-import styles from './styles.scss';
 import executionListRenderFunction from './components/executionList';
 import executionEditRenderFunction from './components/executionEdit';
 import executionNewRenderFunction from './components/executionNew';
 import ListToolbar from '../components/listToolbar';
+import styles from './styles.scss';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:execution:view');

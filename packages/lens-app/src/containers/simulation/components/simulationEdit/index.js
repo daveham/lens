@@ -1,3 +1,9 @@
+import React from 'react';
+
 import View from './view';
 
-export default View;
+const renderProp = (props) => {
+  return <View {...props} />;
+};
+
+export default renderProp;

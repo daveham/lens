@@ -7,11 +7,9 @@ import { IThumbnailDescriptor } from '../../../interfaces';
 import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
 import simulationListRenderFunction from '../components/simulationList';
-import simulationListToolbarRenderFunction from '../components/simulationList/toolbar';
-// import SimulationEdit from '../components/simulationEdit';
-// import SimulationEditToolbar from '../components/simulationEdit/toolbar';
-// import SimulationNew from '../components/simulationNew';
-// import SimulationNewToolbar from '../components/simulationNew/toolbar';
+import simulationEditRenderFunction from '../components/simulationEdit';
+import simulationNewRenderFunction from '../components/simulationNew';
+import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
@@ -39,43 +37,57 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
-    const { thumbnailUrl } = this.props;
-
     return (
       <div className={styles.container}>
-        <Header title='Simulations'>
-          {this.renderToolbar()}
-          {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-        </Header>
+        {this.renderToolbar()}
         {this.renderContents()}
       </div>
     );
   }
 
-  private renderSimulationListToolbar = (props) => {
-    const { sourceId } = this.props;
-    return simulationListToolbarRenderFunction({ ...props, sourceId });
+  private renderSimulationEditToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
+    return (
+      <Header title='Edit Simulation'>
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
   };
 
-  /*
-        <Route
-          path=`${path/:simulationId}`
-          component={SimulationEditToolbar}
-        />
-        <Route
-          path=`${path}/new`
-          component={SimulationNewToolbar}
-        />
-   */
+  private renderSimulationNewToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
+    return (
+      <Header title='New Simulation'>
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderSimulationListToolbar = () => {
+    const { thumbnailUrl, match: { url } } = this.props;
+    const backUrl = url.substr(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    const links = {
+      back: backUrl,
+      newItem: `${url}/new`
+    };
+
+    return (
+      <Header title='Simulations'>
+        <ListToolbar links={links} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
 
   private renderToolbar(): any {
     const { match: { path } } = this.props;
     return (
       <Switch>
-        <Route
-          path={path}
-          render={this.renderSimulationListToolbar}
-        />
+        <Route path={`${path}/new`} render={this.renderSimulationNewToolbar} />
+        <Route path={`${path}/:simulationId`} render={this.renderSimulationEditToolbar} />
+        <Route path={path} render={this.renderSimulationListToolbar} />
       </Switch>
     );
   }
@@ -85,16 +97,15 @@ class View extends React.Component<IProps, any> {
     return simulationListRenderFunction({ ...props, sourceId });
   };
 
-  /*
-            <Route
-              path=`${path}/:simulationId`
-              component={SimulationEdit}
-            />
-            <Route
-              path=`${path}/new`
-              component={SimulationNew}
-            />
-   */
+  private renderSimulationEdit = (props) => {
+    const { sourceId } = this.props;
+    return simulationEditRenderFunction({ ...props, sourceId });
+  };
+
+  private renderSimulationNew = (props) => {
+    const { sourceId } = this.props;
+    return simulationNewRenderFunction({ ...props, sourceId });
+  };
 
   private renderContents(): any {
     const { match: { path } } = this.props;
@@ -102,10 +113,9 @@ class View extends React.Component<IProps, any> {
       <div className={styles.contents}>
         <Paper>
           <Switch>
-            <Route
-              path={path}
-              render={this.renderSimulationList}
-            />
+            <Route path={`${path}/new`} render={this.renderSimulationNew} />
+            <Route path={`${path}/:simulationId`} render={this.renderSimulationEdit} />
+            <Route path={path} render={this.renderSimulationList} />
           </Switch>
         </Paper>
       </div>

@@ -1,19 +1,22 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from '../../../interfaces';
 
 import Header from '../components/header';
 import SourceThumbnail from '../../../components/sourceThumbnail';
-import styles from './styles.scss';
 import renderingListRenderFunction from './components/renderingList';
-import renderingListToolbarRenderFunction from './components/renderingList/toolbar';
+import renderingEditRenderFunction from './components/renderingEdit';
+import renderingNewRenderFunction from './components/renderingNew';
+import ListToolbar from '../components/listToolbar';
+import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:execution:view');
+// const debug = _debug('lens:rendering:view');
 
 interface IProps {
+  match: any;
   sourceId: string;
   simulationId: number;
   executionId: number;
@@ -37,36 +40,15 @@ class View extends React.Component<IProps, any> {
       ensureImage({ imageDescriptor: thumbnailImageDescriptor });
     }
   }
-  public render(): any {
-    const { thumbnailUrl } = this.props;
 
+  public render(): any {
     return (
       <div className={styles.container}>
-        <Header title='Renderings'>
-          {this.renderNavigationPath()}
-          {this.renderToolbar()}
-          {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-        </Header>
+        {this.renderToolbar()}
         {this.renderContents()}
       </div>
     );
   }
-
-  private renderRenderingListToolbar = (props) => {
-    const { sourceId, simulationId, executionId } = this.props;
-    return renderingListToolbarRenderFunction({ ...props, sourceId, simulationId, executionId });
-  };
-
-  /*
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/:renderingId'
-          component={RenderingEditToolbar}
-        />
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/new'
-          component={RenderingNewToolbar}
-        />
-   */
 
   private renderNavigationPath(): any {
     const {
@@ -87,14 +69,53 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderToolbar(): any {
+  private renderRenderingEditToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
     return (
-      <RouterSwitch>
-        <RouterRoute
-          path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering'
-          render={this.renderRenderingListToolbar}
-        />
-      </RouterSwitch>
+      <Header title='Edit Rendering'>
+        {this.renderNavigationPath()}
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderRenderingNewToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+
+    return (
+      <Header title='New Rendering'>
+        {this.renderNavigationPath()}
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderRenderingListToolbar = () => {
+    const { thumbnailUrl, match: { url } } = this.props;
+    const backUrl = url.substr(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    const links = {
+      back: backUrl,
+      newItem: `${url}/new`
+    };
+
+    return (
+      <Header title='Renderings'>
+        {this.renderNavigationPath()}
+        <ListToolbar links={links} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderToolbar(): any {
+    const { match: { path } } = this.props;
+    return (
+      <Switch>
+        <Route path={`${path}/new`} render={this.renderRenderingNewToolbar} />
+        <Route path={`${path}/:renderingId`} render={this.renderRenderingEditToolbar} />
+        <Route path={path} render={this.renderRenderingListToolbar} />
+      </Switch>
     );
   }
 
@@ -103,27 +124,26 @@ class View extends React.Component<IProps, any> {
     return renderingListRenderFunction({ ...props, sourceId, simulationId, executionId, recordPathNames });
   };
 
-  /*
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/:renderingId'
-              component={RenderingEdit}
-            />
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering/new'
-              component={RenderingNew}
-            />
-   */
+  private renderRenderingEdit = (props) => {
+    const { sourceId, simulationId, executionId } = this.props;
+    return renderingEditRenderFunction({ ...props, sourceId, simulationId, executionId });
+  };
+
+  private renderRenderingNew = (props) => {
+    const { sourceId, simulationId, executionId } = this.props;
+    return renderingNewRenderFunction({ ...props, sourceId, simulationId, executionId });
+  };
 
   private renderContents(): any {
+    const { match: { path } } = this.props;
     return (
       <div className={styles.contents}>
         <Paper>
-          <RouterSwitch>
-            <RouterRoute
-              path='/Catalog/:sourceId/Simulation/:simulationId/Execution/:executionId/Rendering'
-              render={this.renderRenderingList}
-            />
-          </RouterSwitch>
+          <Switch>
+            <Route path={`${path}/new`} render={this.renderRenderingNew} />
+            <Route path={`${path}/:renderingId`} render={this.renderRenderingEdit} />
+            <Route path={path} render={this.renderRenderingList} />
+          </Switch>
         </Paper>
       </div>
     );

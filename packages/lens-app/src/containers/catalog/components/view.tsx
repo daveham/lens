@@ -10,6 +10,7 @@ import styles from './styles.scss';
 // const debug = _debug('lens:catalog:view');
 
 interface IProps {
+  match: any;
   catalogIsLoading?: boolean;
   catalogIsLoaded?: boolean;
   requestCatalog: () => void;
@@ -41,18 +42,18 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderCatalog() {
-    return (
-      this.props.catalogIsLoaded &&
+    const { match: { path } } = this.props;
+
+    return this.props.catalogIsLoaded &&
       (
         <div className={styles.content}>
           <RouterSwitch>
-            <RouterRoute path='/Catalog/Source/:id/:res' component={SourceView}/>
-            <RouterRoute path='/Catalog/:sourceId/Simulation' component={simulationRoute}/>
+            <RouterRoute path={`${path}/Source/:id/:res`} component={SourceView}/>
+            <RouterRoute path={`${path}/:sourceId/Simulation`} component={simulationRoute}/>
             <RouterRoute component={SourcesView}/>
           </RouterSwitch>
         </div>
-      )
-    );
+      );
   }
 }
 

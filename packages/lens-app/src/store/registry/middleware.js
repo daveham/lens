@@ -1,7 +1,7 @@
 export const STORE_INJECT = Symbol('@@STORE_INJECT');
 
-export default function registryMiddleware(registry) {
-  return store => next => action => {
+export default (registry) =>
+  (/* store */) => next => action => {
     if (action.hasOwnProperty(STORE_INJECT)) {
       const { reducers, sagas, commands } = action[STORE_INJECT];
       if (reducers || sagas || commands) {
@@ -11,4 +11,3 @@ export default function registryMiddleware(registry) {
     }
     return next(action);
   };
-}

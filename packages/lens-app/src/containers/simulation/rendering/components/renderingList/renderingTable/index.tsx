@@ -18,9 +18,7 @@ import styles from './styles.scss';
 
 interface IProps {
   renderingRows: ReadonlyArray<IRendering>;
-  sourceId: string;
-  simulationId: number;
-  executionId: number;
+  matchUrl: string;
 }
 
 interface IState {
@@ -69,16 +67,12 @@ class RenderingTable extends React.Component<IProps, IState> {
 
   private renderToolbar = (row: IRendering): any => {
     if (row.id === this.state.activeId) {
-      const {
-        sourceId,
-        simulationId,
-        executionId
-      } = this.props;
+      const rowUrl = `${this.props.matchUrl}/${row.id}`;
       const links = {
-        editItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${executionId}/Rendering/${row.id}`,
-        deleteItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${executionId}`
+        editItem: rowUrl,
+        deleteItem: `${rowUrl}/delete`
       };
-      return <RowToolbar links={links}/>;
+      return <RowToolbar links={links} />;
     }
     return <span className={styles.toolbarFill} />;
   };

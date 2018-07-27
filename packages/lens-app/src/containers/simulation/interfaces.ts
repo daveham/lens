@@ -11,6 +11,7 @@ export interface IExecution {
   id: number;
   created: number;
   modified: number;
+  simulationId: number;
   name: string;
   renderingCount: number;
 }
@@ -19,5 +20,7 @@ export interface IRendering {
   id: number;
   created: number;
   modified: number;
+  executionId: number;
+  simulationId: number;
   name: string;
 }

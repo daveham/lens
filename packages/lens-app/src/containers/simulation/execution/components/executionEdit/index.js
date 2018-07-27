@@ -1,9 +1,4 @@
-import React from 'react';
-
 import View from './view';
+import gqlWrapper from './gqlWrapper';
 
-const renderProp = (props) => {
-  return <View {...props} />;
-};
-
-export default renderProp;
+export default gqlWrapper(View);

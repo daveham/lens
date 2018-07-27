@@ -1,6 +1,4 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import createHistory from 'history/createBrowserHistory';
-import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import Registry from './registry';
 import registryMiddleware from './registry/middleware';
@@ -10,13 +8,10 @@ import sagas from '../sagas';
 
 export const registry = new Registry({ reducers, commands });
 
-export const history = createHistory({ basename: process.env.REACT_APP_BASENAME });
-
 const sagaMiddleware = createSagaMiddleware(registry);
 
 const middleware = [
   sagaMiddleware,
-  routerMiddleware(history),
   registryMiddleware(registry)
 ];
 

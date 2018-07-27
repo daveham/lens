@@ -7,7 +7,7 @@ import { Query } from 'react-apollo';
 
 const GET_EXECUTIONS = gql`
   query getExecutions($simulationId: Int!) {
-    executions(simulationId: $simulationId) {
+    getExecutions(simulationId: $simulationId) {
       items {
         id
         created
@@ -20,24 +20,27 @@ const GET_EXECUTIONS = gql`
   }
 `;
 
-export default View => props => (
-  <Query query={GET_EXECUTIONS} variables={{ simulationId: props.simulationId }}>
-    {({ data, error, loading }) => {
-      let executions;
-      let simulationName;
-      if (data.executions) {
-        executions = data.executions.items;
-        simulationName = data.executions.simulationName;
-      }
-      return (
-        <View
-          executions={executions}
-          simulationName={simulationName}
-          error={error}
-          loading={loading}
-          {...props}
-        />
-      );
-    }}
-  </Query>
-);
+export default View => props => {
+  const renderProp = ({
+    data: { getExecutions: { items: executions, simulationName } = {} },
+    error,
+    loading
+  }) =>
+    <View
+      {...props}
+      loading={loading}
+      error={error}
+      executions={executions}
+      simulationName={simulationName}
+    />;
+
+  return (
+    <Query
+      displayName='ExecutionsQuery'
+      query={GET_EXECUTIONS}
+      variables={{ simulationId: props.simulationId }}
+    >
+      {renderProp}
+    </Query>
+  );
+};

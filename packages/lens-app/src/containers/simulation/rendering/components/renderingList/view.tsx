@@ -16,10 +16,10 @@ function renderLoading(): any {
 }
 
 interface IProps {
+  match: any;
   loading: boolean;
   error: any;
   renderings: ReadonlyArray<IRendering>;
-  sourceId: string;
   simulationId: number;
   executionId: number;
   simulationName: string;
@@ -45,9 +45,7 @@ class View extends React.Component<IProps, any> {
       error,
       loading,
       renderings,
-      sourceId,
-      simulationId,
-      executionId
+      match: { url }
     } = this.props;
 
     return (
@@ -57,9 +55,7 @@ class View extends React.Component<IProps, any> {
         {!loading && !error && (
           <RenderingTable
             renderingRows={renderings}
-            sourceId={sourceId}
-            simulationId={simulationId}
-            executionId={executionId}
+            matchUrl={url}
           />
         )}
       </div>

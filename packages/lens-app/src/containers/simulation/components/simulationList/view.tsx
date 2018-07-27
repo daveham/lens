@@ -16,6 +16,7 @@ function renderLoading(): any {
 }
 
 interface IProps {
+  match: any;
   loading: boolean;
   error: any;
   simulations: ReadonlyArray<ISimulation>;
@@ -26,14 +27,20 @@ class View extends React.Component<IProps, any> {
     const {
       error,
       loading,
-      simulations
+      simulations,
+      match: { url }
     } = this.props;
 
     return (
       <div className={styles.container}>
         {loading && renderLoading()}
         {!loading && error && renderError(error)}
-        {!loading && !error && <SimulationTable simulationRows={simulations}/>}
+        {!loading && !error &&
+          <SimulationTable
+            simulationRows={simulations}
+            matchUrl={url}
+          />
+        }
       </div>
     );
   }

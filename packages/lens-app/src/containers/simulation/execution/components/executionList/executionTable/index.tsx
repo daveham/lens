@@ -18,8 +18,7 @@ import styles from './styles.scss';
 
 interface IProps {
   executionRows: ReadonlyArray<IExecution>;
-  sourceId: string;
-  simulationId: number;
+  matchUrl: string;
 }
 
 interface IState {
@@ -69,11 +68,11 @@ class ExecutionTable extends React.Component<IProps, IState> {
 
   private renderToolbar = (row: IExecution): any => {
     if (row.id === this.state.activeId) {
-      const { sourceId, simulationId } = this.props;
+      const rowUrl = `${this.props.matchUrl}/${row.id}`;
       const links = {
-        editItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${row.id}`,
-        renderings: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/${row.id}/Rendering`,
-        deleteItem: `/Catalog/${sourceId}/Simulation/${simulationId}/Execution`
+        editItem: rowUrl,
+        renderings: `${rowUrl}/Rendering`,
+        deleteItem: `${rowUrl}/delete`
       };
       return <RowToolbar links={links}/>;
     }

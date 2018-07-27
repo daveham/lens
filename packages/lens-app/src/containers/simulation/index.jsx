@@ -8,23 +8,26 @@ import Rendering from './rendering';
 // import _debug from 'debug';
 // const debug = _debug('lens:containers:simulationRouteSwitch');
 
-const SimulationRouteSwitch = ({ match: { path } }) => (
-  <div>
-    <Switch>
-      <Route
-        path={`${path}/:simulationId/Execution/:executionId/Rendering`}
-        component={Rendering}
-      />
-      <Route
-        path={`${path}/:simulationId/Execution`}
-        component={Execution}
-      />
-      <Route
-        path={path}
-        component={Simulation}
-      />
-    </Switch>
-  </div>
-);
+const SimulationRouteSwitch = (props) => {
+  const { match: { path } } = props;
+  return (
+    <div>
+      <Switch>
+        <Route
+          path={`${path}/:simulationId/Execution/:executionId/Rendering`}
+          component={Rendering}
+        />
+        <Route
+          path={`${path}/:simulationId/Execution`}
+          component={Execution}
+        />
+        <Route
+          path={path}
+          component={Simulation}
+        />
+      </Switch>
+    </div>
+  );
+};
 
 export default SimulationRouteSwitch;

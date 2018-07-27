@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@types/graphql, @types/restify-errors, jest-DefinitelyTyped, react-DefinitelyTyped, react-test-renderer-DefinitelyTyped, reselect, restify-DefinitelyTyped, tsconfig$roots}" />
+    <file url="PROJECT" libraries="{reselect}" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
 </project>

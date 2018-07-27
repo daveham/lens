@@ -12,8 +12,8 @@ import simulationNewRenderFunction from '../components/simulationNew';
 import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:simulation:view');
+import _debug from 'debug';
+const debug = _debug('lens:simulation:view');
 
 interface IProps {
   match: any;
@@ -24,7 +24,7 @@ interface IProps {
 }
 
 class View extends React.Component<IProps, any> {
-  public componentDidMount(): any {
+  public componentDidMount(): void {
     const {
       thumbnailUrl,
       thumbnailImageDescriptor,
@@ -46,10 +46,14 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderSimulationEditToolbar = (): any => {
-    const { thumbnailUrl } = this.props;
+    const { thumbnailUrl, match: { url } } = this.props;
+    const links = {
+      back: url
+    };
 
     return (
       <Header title='Edit Simulation'>
+        <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -67,7 +71,8 @@ class View extends React.Component<IProps, any> {
 
   private renderSimulationListToolbar = () => {
     const { thumbnailUrl, match: { url } } = this.props;
-    const backUrl = url.substr(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    const backUrl = url.substring(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    debug(`renderSimulationListToolbar - from matched url '${url}', calculated back url '${backUrl}'`);
     const links = {
       back: backUrl,
       newItem: `${url}/new`
@@ -98,8 +103,9 @@ class View extends React.Component<IProps, any> {
   };
 
   private renderSimulationEdit = (props) => {
+    const { match: { params: { simulationId } } } = props;
     const { sourceId } = this.props;
-    return simulationEditRenderFunction({ ...props, sourceId });
+    return simulationEditRenderFunction({ ...props, sourceId, simulationId });
   };
 
   private renderSimulationNew = (props) => {

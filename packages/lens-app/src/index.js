@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'react-router-redux';
+import { BrowserRouter as Router } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
-import store, { history } from './store';
+import store from './store';
 import App from './containers/app';
 import { default as getConfig } from './config';
 import 'isomorphic-fetch';
@@ -21,15 +21,15 @@ const client = new ApolloClient({ uri: `${dataHost}/graphql` });
 const target = document.getElementById('root');
 
 render(
-  <ApolloProvider client={client}>
+  <Router>
     <Provider store={store}>
-      <ConnectedRouter history={history}>
+      <ApolloProvider client={client}>
         <div className={styles.container}>
           <App/>
         </div>
-      </ConnectedRouter>
+      </ApolloProvider>
     </Provider>
-  </ApolloProvider>,
+  </Router>,
   target
 );
 

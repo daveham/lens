@@ -12,8 +12,8 @@ import renderingNewRenderFunction from './components/renderingNew';
 import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:rendering:view');
+import _debug from 'debug';
+const debug = _debug('lens:rendering:view');
 
 interface IProps {
   match: any;
@@ -70,11 +70,15 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderRenderingEditToolbar = (): any => {
-    const { thumbnailUrl } = this.props;
+    const { thumbnailUrl, match: { url } } = this.props;
+    const links = {
+      back: url
+    };
 
     return (
       <Header title='Edit Rendering'>
         {this.renderNavigationPath()}
+        <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -93,7 +97,8 @@ class View extends React.Component<IProps, any> {
 
   private renderRenderingListToolbar = () => {
     const { thumbnailUrl, match: { url } } = this.props;
-    const backUrl = url.substr(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    const backUrl = url.substring(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
+    debug(`from matched url '${url}', calculated back url '${backUrl}'`);
     const links = {
       back: backUrl,
       newItem: `${url}/new`
@@ -125,8 +130,9 @@ class View extends React.Component<IProps, any> {
   };
 
   private renderRenderingEdit = (props) => {
-    const { sourceId, simulationId, executionId } = this.props;
-    return renderingEditRenderFunction({ ...props, sourceId, simulationId, executionId });
+    const { sourceId } = this.props;
+    const { match: { params: { renderingId } }, ...other } = props;
+    return renderingEditRenderFunction({ ...other, sourceId, renderingId });
   };
 
   private renderRenderingNew = (props) => {

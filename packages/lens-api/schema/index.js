@@ -77,13 +77,13 @@ const typeDefs = `
   }
   
   type Query {
-    simulations: [Simulation]
-    simulationsForSource(sourceId: String!): [Simulation]
-    simulation(id: Int!): Simulation
-    executions(simulationId: Int!): ExecutionsWithNames
-    execution(id: Int!): Execution
-    renderings(executionId: Int!): RenderingsWithNames
-    rendering(id: Int!): Rendering
+    getSimulations: [Simulation]
+    getSimulationsForSource(sourceId: String!): [Simulation]
+    getSimulation(id: Int!): Simulation
+    getExecutions(simulationId: Int!): ExecutionsWithNames
+    getExecution(id: Int!): Execution
+    getRenderings(executionId: Int!): RenderingsWithNames
+    getRendering(id: Int!): Rendering
   }
 
   type Mutation {
@@ -155,17 +155,17 @@ generateMockSimulation('1001', [3, 1]);
 generateMockSimulation('1002', [2]);
 generateMockSimulation('1003', [2, 1, 3]);
 
-const getSimulationData = simulation => ({
+const getSimulationData = simulation => simulation ? ({
   ...simulation,
   executionCount: simulation.executions.length
-});
-const getExecutionData = execution => ({
+}) : null;
+const getExecutionData = execution => execution ? ({
   ...execution,
   renderingCount: execution.renderings.length
-});
-const getRenderingData = rendering => ({
+}) : null;
+const getRenderingData = rendering => rendering ? ({
   ...rendering
-});
+}) : null;
 
 const resolvers = {
   Date: new GraphQLScalarType({
@@ -185,18 +185,18 @@ const resolvers = {
     }
   }),
   Query: {
-    simulations: () => allSimulations.map(getSimulationData),
-    simulationsForSource: (_, { sourceId })=> allSimulations
+    getSimulations: () => allSimulations.map(getSimulationData),
+    getSimulationsForSource: (_, { sourceId })=> allSimulations
       .filter(s => s.sourceId === sourceId)
       .map(getSimulationData),
-    simulation: (_, { id }) => allSimulations.find(s => s.id === id),
-    executions: (_, { simulationId }) => ({
+    getSimulation: (_, { id }) => getSimulationData(allSimulations.find(s => s.id === id)),
+    getExecutions: (_, { simulationId }) => ({
       items: allExecutions.filter(e => e.simulationId === simulationId)
         .map(getExecutionData),
       simulationName: (allSimulations.find(s => s.id === simulationId)).name
     }),
-    execution: (_, { id }) => allExecutions.find(e => e.id === id),
-    renderings: (_, { executionId }) => {
+    getExecution: (_, { id }) => getExecutionData(allExecutions.find(e => e.id === id)),
+    getRenderings: (_, { executionId }) => {
       const execution = allExecutions.find(e => e.id === executionId);
       return {
         items: allRenderings.filter(r => r.executionId === executionId)
@@ -205,7 +205,7 @@ const resolvers = {
         executionName: allExecutions.find(e => e.id === executionId).name,
       };
     },
-    rendering: (_, { id }) => allRenderings.find(e => e.id === id)
+    getRendering: (_, { id }) => getRenderingData(allRenderings.find(e => e.id === id))
   },
   Mutation: {
     createSimulation: (_, { input }) => {

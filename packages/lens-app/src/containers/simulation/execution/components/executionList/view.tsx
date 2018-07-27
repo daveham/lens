@@ -16,11 +16,11 @@ function renderLoading(): any {
 }
 
 interface IProps {
+  match: any;
   loading: boolean;
   error: any;
   executions: ReadonlyArray<IExecution>;
   simulationId: number;
-  sourceId: string;
   simulationName: string;
   recordPathNames: (payload: any) => void;
 }
@@ -43,21 +43,19 @@ class View extends React.Component<IProps, any> {
       error,
       loading,
       executions,
-      sourceId,
-      simulationId
+      match: { url }
     } = this.props;
 
     return (
       <div className={styles.container}>
         {loading && renderLoading()}
         {!loading && error && renderError(error)}
-        {!loading && !error && (
+        {!loading && !error &&
           <ExecutionTable
             executionRows={executions}
-            sourceId={sourceId}
-            simulationId={simulationId}
+            matchUrl={url}
           />
-        )}
+        }
       </div>
     );
   }

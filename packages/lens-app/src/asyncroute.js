@@ -88,7 +88,8 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
       }
 
       Promise.all(loaderPromises)
-      .then(([Component]) => {
+      .then((results) => {
+        const [Component] = results;
         if (this._mounted) {
           this.setState({ Component });
         } else {

@@ -1,4 +1,4 @@
-export { IStatsDescriptor, IImageDescriptor } from '../../../../interfaces';
+export { IStatsDescriptor, IImageDescriptor } from '@src/interfaces';
 
 export interface ITileSpec {
   res: number;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IExecution } from '../../../interfaces';
+import { IExecution } from '@simulation/interfaces';
 import styles from './styles.scss';
 
 interface IProps {

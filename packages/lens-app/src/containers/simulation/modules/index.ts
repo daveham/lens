@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { ACTIONS } from './constants';
-import { InsertableReducer } from '../../../modules/types';
+import { InsertableReducer } from '@modules/types';
 
 const simulationNames = (state = {}, { type, payload }) => {
   if (type === ACTIONS.RECORD_PATH_NAMES && payload.simulationId) {

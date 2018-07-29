@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ISimulation } from '../../interfaces';
+import { ISimulation } from '@simulation/interfaces';
 import SimulationTable from './simulationTable';
 import styles from './styles.scss';
 

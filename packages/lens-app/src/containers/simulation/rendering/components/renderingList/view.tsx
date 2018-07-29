@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IRendering } from '../../../interfaces';
+import { IRendering } from '@simulation/interfaces';
 import RenderingTable from './renderingTable';
 import styles from './styles.scss';
 

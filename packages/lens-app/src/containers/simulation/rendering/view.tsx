@@ -2,10 +2,10 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 
-import { IThumbnailDescriptor } from '../../../interfaces';
+import { IThumbnailDescriptor } from '@src/interfaces';
 
 import Header from '../components/header';
-import SourceThumbnail from '../../../components/sourceThumbnail';
+import SourceThumbnail from '@components/sourceThumbnail';
 import renderingListRenderFunction from './components/renderingList';
 import renderingEditRenderFunction from './components/renderingEdit';
 import renderingNewRenderFunction from './components/renderingNew';

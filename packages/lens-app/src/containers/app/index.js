@@ -8,7 +8,7 @@ import {
   requestSocket as connectSocket,
   sendSocketCommand,
   sendPing
-} from '../../modules/common';
+} from '@modules/common';
 
 const mapDispatchToProps = {
   connectSocket,

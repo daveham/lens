@@ -4,8 +4,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Gradient from '@material-ui/icons/Gradient';
 import PhotoLibrary from '@material-ui/icons/PhotoLibrary';
 import { Link as RouterLink } from 'react-router-dom';
-import SourceThumbnail from '../../../../components/sourceThumbnail';
-import { IImageDescriptor, ISourceDescriptor } from '../../../../interfaces';
+import SourceThumbnail from '@components/sourceThumbnail';
+import { IImageDescriptor, ISourceDescriptor } from '@src/interfaces';
 import styles from './styles.scss';
 
 interface IProps {

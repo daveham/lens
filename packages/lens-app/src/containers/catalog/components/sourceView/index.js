@@ -7,13 +7,13 @@ import {
 import {
   thumbnailUrlFromIdSelector,
   tileImagesSelector
-} from '../../../../modules/images/selectors';
+} from '@modules/images/selectors';
 import {
   statsSelector,
   tileStatsSelector
-} from '../../../../modules/stats/selectors';
-import { ensureStats, deleteStats } from '../../../../modules/stats/actions';
-import { ensureImage, ensureImages } from '../../../../modules/images/actions';
+} from '@modules/stats/selectors';
+import { ensureStats, deleteStats } from '@modules/stats/actions';
+import { ensureImage, ensureImages } from '@modules/images/actions';
 import View, { displayTileResolution } from './view';
 
 // import _debug from 'debug';

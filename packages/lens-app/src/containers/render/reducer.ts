@@ -1,4 +1,4 @@
-import { InsertableReducer } from '../../modules/types';
+import { InsertableReducer } from '@modules/types';
 
 const renderReducer: InsertableReducer = (state = {}) => {
   return state;

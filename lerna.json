@@ -9,7 +9,7 @@
     "packages/lens-image-descriptors",
     "packages/lens-service"
   ],
-  "commands": {
+  "command": {
     "bootstrap": {
       "ignore": ["@lens/vagrant"]
     },

@@ -19,7 +19,15 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "react": ["node_modules/@types/react"]
+      "react": ["node_modules/@types/react"],
+      "@src/*": ["src/*"],
+      "@config/*": ["config/*"],
+      "@containers/*": ["src/containers/*"],
+      "@catalog/*": ["src/containers/catalog/*"],
+      "@simulation/*": ["src/containers/simulation/*"],
+      "@components/*": ["src/components/*"],
+      "@modules/*": ["src/modules/*"],
+      "@sagas/*": ["src/sagas/*"]
     }
   },
   "include": [

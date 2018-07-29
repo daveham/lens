@@ -1,6 +1,6 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { default as getConfig } from '../../../../../../config';
+import { default as getConfig } from '@src/config';
 import styles from './styles.scss';
 
 interface IProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IExecution } from '../../../interfaces';
+import { IExecution } from '@simulation/interfaces';
 import ExecutionTable from './executionTable';
 import styles from './styles.scss';
 

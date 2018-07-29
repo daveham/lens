@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { ACTIONS } from './actions';
-import { InsertableReducer } from '../../../modules/types';
+import { InsertableReducer } from '@modules/types';
 
 // reducers
 const loading = (state = false, { type }) => {

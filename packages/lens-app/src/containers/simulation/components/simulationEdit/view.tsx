@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISimulation } from '../../interfaces';
+import { ISimulation } from '@simulation/interfaces';
 import styles from './styles.scss';
 
 // import _debug from 'debug';

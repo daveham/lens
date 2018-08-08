@@ -22,6 +22,7 @@ export default View => props => {
   const renderProp =
     ({ data: { getSimulation: simulation }, error, loading }) =>
       <View
+        key={simulation ? simulation.id : 0}
         simulation={simulation}
         error={error}
         loading={loading}

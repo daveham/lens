@@ -7,6 +7,7 @@ const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+const getTransformer = require('ts-transform-graphql-tag').getTransformer;
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 
@@ -168,7 +169,12 @@ module.exports = {
                   cacheDirectory: true
                 }
               },
-              require.resolve('ts-loader')
+              {
+                loader: require.resolve('ts-loader'),
+                options: {
+                  getCustomTransformers: () => ({ before: [getTransformer()] })
+                }
+              }
             ]
           },
           // sass

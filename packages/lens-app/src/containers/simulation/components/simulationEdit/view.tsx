@@ -4,8 +4,8 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import Form from './form';
 
-import _debug from 'debug';
-const debug = _debug('lens:simulationEdit:view');
+// import _debug from 'debug';
+// const debug = _debug('lens:simulationEdit:view');
 
 const UPDATE_SIMULATION = gql`
   mutation UpdateSimulation($id: ID!, $name: String!) {
@@ -18,6 +18,8 @@ const UPDATE_SIMULATION = gql`
 `;
 
 interface IProps {
+  match: any;
+  history: any;
   sourceId: string;
   simulation: ISimulation;
   loading: boolean;
@@ -73,7 +75,7 @@ class View extends React.Component<IProps, IState> {
             tag={`${sourceId}:${id}`}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(updateSimulation)}
-            onCancel={this.handleCancelClick}
+            onCancel={this.returnToList}
           />
         )}
       </Mutation>
@@ -84,6 +86,12 @@ class View extends React.Component<IProps, IState> {
     this.setState({ name: this.props.simulation.name });
   }
 
+  private returnToList = () => {
+    const { match: { url }, history } = this.props;
+    const backUrl = url.substring(0, url.lastIndexOf('/'));
+    history.replace(backUrl);
+  };
+
   private handleSaveClick = (mutateFunc) => () => {
     mutateFunc({
       variables: {
@@ -91,10 +99,7 @@ class View extends React.Component<IProps, IState> {
         name: this.state.name
       }
     });
-  };
-
-  private handleCancelClick = () => {
-    debug('handleCancelClick');
+    this.returnToList();
   };
 
   private handleChange = (key: string) => (event) =>

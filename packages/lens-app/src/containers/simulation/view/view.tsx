@@ -37,13 +37,36 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
+    const { match: { path } } = this.props;
     return (
       <div className={styles.container}>
-        {this.renderToolbar()}
-        {this.renderContents()}
+        <Switch>
+          <Route path={`${path}/new`} render={this.renderSimulationNewToolbar} />
+          <Route path={`${path}/:simulationId`} render={this.renderSimulationEditToolbar} />
+          <Route path={path} render={this.renderSimulationListToolbar} />
+        </Switch>
+        <div className={styles.contents}>
+          <Paper>
+            <Switch>
+              <Route path={`${path}/new`} render={this.renderSimulationNew} />
+              <Route path={`${path}/:simulationId`} render={this.renderSimulationEdit} />
+              <Route path={path} render={this.renderSimulationList} />
+            </Switch>
+          </Paper>
+        </div>
       </div>
     );
   }
+
+  private renderSimulationEdit = (props) => {
+    const { match: { params: { simulationId } } } = props;
+    const { sourceId } = this.props;
+    return simulationEditRenderFunction({
+      ...props,
+      sourceId,
+      simulationId
+    });
+  };
 
   private renderSimulationEditToolbar = (): any => {
     const { thumbnailUrl, match: { url } } = this.props;
@@ -59,6 +82,11 @@ class View extends React.Component<IProps, any> {
     );
   };
 
+  private renderSimulationNew = (props) => {
+    const { sourceId } = this.props;
+    return simulationNewRenderFunction({ ...props, sourceId });
+  };
+
   private renderSimulationNewToolbar = (): any => {
     const { thumbnailUrl } = this.props;
 
@@ -67,6 +95,11 @@ class View extends React.Component<IProps, any> {
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
+  };
+
+  private renderSimulationList = (props) => {
+    const { sourceId } = this.props;
+    return simulationListRenderFunction({ ...props, sourceId });
   };
 
   private renderSimulationListToolbar = () => {
@@ -85,48 +118,6 @@ class View extends React.Component<IProps, any> {
       </Header>
     );
   };
-
-  private renderToolbar(): any {
-    const { match: { path } } = this.props;
-    return (
-      <Switch>
-        <Route path={`${path}/new`} render={this.renderSimulationNewToolbar} />
-        <Route path={`${path}/:simulationId`} render={this.renderSimulationEditToolbar} />
-        <Route path={path} render={this.renderSimulationListToolbar} />
-      </Switch>
-    );
-  }
-
-  private renderSimulationList = (props) => {
-    const { sourceId } = this.props;
-    return simulationListRenderFunction({ ...props, sourceId });
-  };
-
-  private renderSimulationEdit = (props) => {
-    const { match: { params: { simulationId } } } = props;
-    const { sourceId } = this.props;
-    return simulationEditRenderFunction({ ...props, sourceId, simulationId });
-  };
-
-  private renderSimulationNew = (props) => {
-    const { sourceId } = this.props;
-    return simulationNewRenderFunction({ ...props, sourceId });
-  };
-
-  private renderContents(): any {
-    const { match: { path } } = this.props;
-    return (
-      <div className={styles.contents}>
-        <Paper>
-          <Switch>
-            <Route path={`${path}/new`} render={this.renderSimulationNew} />
-            <Route path={`${path}/:simulationId`} render={this.renderSimulationEdit} />
-            <Route path={path} render={this.renderSimulationList} />
-          </Switch>
-        </Paper>
-      </div>
-    );
-  }
 }
 
 export default View;

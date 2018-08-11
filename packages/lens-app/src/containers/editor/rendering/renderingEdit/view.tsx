@@ -1,10 +1,10 @@
 import React from 'react';
-import { IExecution } from '@simulation/interfaces';
+import { IRendering } from '@editor/interfaces';
 import styles from './styles.scss';
 
 interface IProps {
   sourceId: string;
-  execution: IExecution;
+  rendering: IRendering;
   loading: boolean;
 }
 
@@ -14,9 +14,9 @@ class View extends React.Component<IProps, any> {
       return null;
     }
 
-    const { execution, sourceId } = this.props;
-    const label = `Edit execution ${execution.id} belonging to simulation ${execution.simulationId}` +
-      ` for source ${sourceId}`;
+    const { rendering, sourceId } = this.props;
+    const label = `Edit rendering ${rendering.id} belonging to execution ${rendering.executionId},` +
+      ` simulation ${rendering.simulationId} on source ${sourceId}`;
     return (
       <div className={styles.container}>
         {label}

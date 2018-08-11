@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import Simulation from './view';
+import Simulation from './simulation';
 import Execution from './execution';
 import Rendering from './rendering';
 

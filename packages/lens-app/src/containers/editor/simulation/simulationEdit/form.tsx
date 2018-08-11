@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { timestampFormat } from '@simulation/constants';
+import { timestampFormat } from '@editor/constants';
 import styles from './styles.scss';
 
 // import _debug from 'debug';

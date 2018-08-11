@@ -24,7 +24,7 @@
       "@config/*": ["config/*"],
       "@containers/*": ["src/containers/*"],
       "@catalog/*": ["src/containers/catalog/*"],
-      "@simulation/*": ["src/containers/simulation/*"],
+      "@editor/*": ["src/containers/editor/*"],
       "@components/*": ["src/components/*"],
       "@modules/*": ["src/modules/*"],
       "@sagas/*": ["src/sagas/*"]

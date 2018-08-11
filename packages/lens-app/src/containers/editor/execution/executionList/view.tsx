@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { IRendering } from '@simulation/interfaces';
-import RenderingTable from './renderingTable';
+import { IExecution } from '@editor/interfaces';
+import ExecutionTable from './executionTable';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:renderingList:view');
+// const debug = _debug('lens:executionList:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -19,23 +19,21 @@ interface IProps {
   match: any;
   loading: boolean;
   error: any;
-  renderings: ReadonlyArray<IRendering>;
+  executions: ReadonlyArray<IExecution>;
   simulationId: number;
-  executionId: number;
   simulationName: string;
-  executionName: string;
   recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
   public componentDidMount(): void {
-    if (this.props.executionName) {
+    if (this.props.simulationName) {
       this.recordNavigationPath();
     }
   }
 
   public componentDidUpdate(prevProps: IProps): void {
-    if (this.props.executionName && !prevProps.executionName) {
+    if (this.props.simulationName && !prevProps.simulationName) {
       this.recordNavigationPath();
     }
   }
@@ -44,7 +42,7 @@ class View extends React.Component<IProps, any> {
     const {
       error,
       loading,
-      renderings,
+      executions,
       match: { url }
     } = this.props;
 
@@ -52,30 +50,19 @@ class View extends React.Component<IProps, any> {
       <div className={styles.container}>
         {loading && renderLoading()}
         {!loading && error && renderError(error)}
-        {!loading && !error && (
-          <RenderingTable
-            renderingRows={renderings}
+        {!loading && !error &&
+          <ExecutionTable
+            executionRows={executions}
             matchUrl={url}
           />
-        )}
+        }
       </div>
     );
   }
 
   private recordNavigationPath(): void {
-    const {
-      simulationId,
-      simulationName,
-      executionId,
-      executionName,
-      recordPathNames
-    } = this.props;
-    recordPathNames({
-      simulationId,
-      simulationName,
-      executionId,
-      executionName
-    });
+    const { simulationId, simulationName, recordPathNames } = this.props;
+    recordPathNames({ simulationId, simulationName });
   }
 }
 

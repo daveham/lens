@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISimulation } from '@simulation/interfaces';
+import { ISimulation } from '@editor/interfaces';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from '@src/helpers';

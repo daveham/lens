@@ -90,7 +90,7 @@ module.exports = {
       '@config': paths.appConfig,
       '@containers': `${paths.appSrc}/containers`,
       '@catalog': `${paths.appSrc}/containers/catalog`,
-      '@simulation': `${paths.appSrc}/containers/simulation`,
+      '@editor': `${paths.appSrc}/containers/editor`,
       '@components': `${paths.appSrc}/components`,
       '@modules': `${paths.appSrc}/modules`,
       '@sagas': `${paths.appSrc}/sagas`

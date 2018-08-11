@@ -7,9 +7,9 @@ import { backupUrl } from '@src/helpers';
 
 import Header from '../components/header';
 import SourceThumbnail from '@components/sourceThumbnail';
-import renderingListRenderFunction from './components/renderingList';
-import renderingEditRenderFunction from './components/renderingEdit';
-import renderingNewRenderFunction from './components/renderingNew';
+import renderingListRenderFunction from './renderingList';
+import renderingEditRenderFunction from './renderingEdit';
+import renderingNewRenderFunction from './renderingNew';
 import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 

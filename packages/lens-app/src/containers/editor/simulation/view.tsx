@@ -7,9 +7,9 @@ import { backupUrl } from '@src/helpers';
 
 import Header from '../components/header';
 import SourceThumbnail from '@src/components/sourceThumbnail';
-import simulationListRenderFunction from '../components/simulationList';
-import simulationEditRenderFunction from '../components/simulationEdit';
-import simulationNewRenderFunction from '../components/simulationNew';
+import simulationListRenderFunction from './simulationList';
+import simulationEditRenderFunction from './simulationEdit';
+import simulationNewRenderFunction from './simulationNew';
 import ListToolbar from '../components/listToolbar';
 
 import styles from './styles.scss';

@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 
 import { IThumbnailDescriptor } from '@src/interfaces';
+import { backupUrl } from '@src/helpers';
 
 import Header from '../components/header';
 import SourceThumbnail from '@components/sourceThumbnail';
@@ -12,8 +13,8 @@ import executionNewRenderFunction from './components/executionNew';
 import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:execution:view');
+// import _debug from 'debug';
+// const debug = _debug('lens:execution:view');
 
 interface IProps {
   match: any;
@@ -91,10 +92,8 @@ class View extends React.Component<IProps, any> {
 
   private renderExecutionListToolbar = (): any => {
     const { thumbnailUrl, match: { url } } = this.props;
-    const backUrl = url.substring(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
-    debug(`from matched url '${url}', calculated back url '${backUrl}'`);
     const links = {
-      back: backUrl,
+      back: backupUrl(url, 2),
       newItem: `${url}/new`
     };
 

@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 
 import { IThumbnailDescriptor } from '@src/interfaces';
+import { backupUrl } from '@src/helpers';
 
 import Header from '../components/header';
 import SourceThumbnail from '@src/components/sourceThumbnail';
@@ -10,10 +11,11 @@ import simulationListRenderFunction from '../components/simulationList';
 import simulationEditRenderFunction from '../components/simulationEdit';
 import simulationNewRenderFunction from '../components/simulationNew';
 import ListToolbar from '../components/listToolbar';
+
 import styles from './styles.scss';
 
-import _debug from 'debug';
-const debug = _debug('lens:simulation:view');
+// import _debug from 'debug';
+// const debug = _debug('lens:simulation:view');
 
 interface IProps {
   match: any;
@@ -104,10 +106,8 @@ class View extends React.Component<IProps, any> {
 
   private renderSimulationListToolbar = () => {
     const { thumbnailUrl, match: { url } } = this.props;
-    const backUrl = url.substring(0, url.lastIndexOf('/', url.lastIndexOf('/') - 1));
-    debug(`renderSimulationListToolbar - from matched url '${url}', calculated back url '${backUrl}'`);
     const links = {
-      back: backUrl,
+      back: backupUrl(url, 2),
       newItem: `${url}/new`
     };
 

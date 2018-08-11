@@ -2,6 +2,8 @@ import React from 'react';
 import { ISimulation } from '@simulation/interfaces';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import { backupUrl } from '@src/helpers';
+
 import Form from './form';
 
 // import _debug from 'debug';
@@ -88,8 +90,7 @@ class View extends React.Component<IProps, IState> {
 
   private returnToList = () => {
     const { match: { url }, history } = this.props;
-    const backUrl = url.substring(0, url.lastIndexOf('/'));
-    history.replace(backUrl);
+    history.replace(backupUrl(url));
   };
 
   private handleSaveClick = (mutateFunc) => () => {

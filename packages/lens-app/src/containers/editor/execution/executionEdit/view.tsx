@@ -83,6 +83,7 @@ class View extends React.Component<IProps, any> {
       </Mutation>
     );
   }
+
   private initializeEditFields() {
     this.setState({ name: this.props.execution.name });
   }

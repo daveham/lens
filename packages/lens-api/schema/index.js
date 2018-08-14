@@ -223,6 +223,7 @@ const resolvers = {
       return simulation;
     },
     createExecution: (_, { input }) => {
+      console.log('createExecution', input);
       const execution = { ...input, renderings: [], id: ++executionIdIndex };
       allExecutions.push(execution);
       const simulation = allSimulations.find((item) => item.id === input.simulationId);
@@ -230,7 +231,9 @@ const resolvers = {
       return execution;
     },
     updateExecution: (_, { input }) => {
-      const execution = allExecutions.find((item) => item.id === input.id);
+      const id = parseInt(input.id, 10);
+      console.log('createExecution', input);
+      const execution = allExecutions.find((item) => item.id === id);
       execution.name = input.name;
       execution.modified = new Date();
       return execution;
@@ -244,7 +247,9 @@ const resolvers = {
       return rendering;
     },
     updateRendering: (_, { input }) => {
-      const rendering = allRenderings.find((item) => item.id === input.id);
+      const id = parseInt(input.id, 10);
+      console.log('createRendering', input);
+      const rendering = allRenderings.find((item) => item.id === id);
       rendering.name = input.name;
       rendering.modified = new Date();
       return rendering;

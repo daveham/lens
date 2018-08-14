@@ -7,7 +7,7 @@ import { backupUrl } from '@src/helpers';
 import Form from './form';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulationEdit:view');
+// const debug = _debug('lens:editor:simulation:simulationEdit:view');
 
 const UPDATE_SIMULATION = gql`
   mutation UpdateSimulation($id: ID!, $name: String!) {

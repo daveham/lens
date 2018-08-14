@@ -6,7 +6,7 @@ import { timestampFormat } from '@editor/constants';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:simulationEdit:form');
+// const debug = _debug('lens:editor:execution:executionEdit:form');
 
 interface IProps {
   created: number;

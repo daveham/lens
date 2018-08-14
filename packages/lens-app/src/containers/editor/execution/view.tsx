@@ -11,10 +11,11 @@ import executionListRenderFunction from './executionList';
 import executionEditRenderFunction from './executionEdit';
 import executionNewRenderFunction from './executionNew';
 import ListToolbar from '../components/listToolbar';
+
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:execution:view');
+// const debug = _debug('lens:editor:execution:view');
 
 interface IProps {
   match: any;
@@ -41,10 +42,23 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
+    const { match: { path } } = this.props;
     return (
       <div className={styles.container}>
-        {this.renderToolbar()}
-        {this.renderContents()}
+        <Switch>
+          <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
+          <Route path={`${path}/:executionId`} render={this.renderExecutionEditToolbar} />
+          <Route path={path} render={this.renderExecutionListToolbar} />
+        </Switch>
+        <div className={styles.contents}>
+          <Paper>
+            <Switch>
+              <Route path={`${path}/new`} render={this.renderExecutionNew} />
+              <Route path={`${path}/:executionId`} render={this.renderExecutionEdit} />
+              <Route path={path} render={this.renderExecutionList} />
+            </Switch>
+          </Paper>
+        </div>
       </div>
     );
   }
@@ -64,30 +78,46 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderExecutionEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url } } = this.props;
-    const links = {
-      back: url
-    };
+  private renderExecutionEdit = (props): any => {
+    const { sourceId, simulationId } = this.props;
+    const { match: { params: { executionId } } } = props;
+    return executionEditRenderFunction({
+      ...props,
+      sourceId,
+      simulationId,
+      executionId
+    });
+  };
 
+  private renderExecutionEditToolbar = (): any => {
+    const { thumbnailUrl, match: { url: back } } = this.props;
     return (
       <Header title='Edit Execution'>
         {this.renderNavigationPath()}
-        <ListToolbar links={links} />
+        <ListToolbar links={{ back }} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
   };
 
+  private renderExecutionNew = (props): any => {
+    const { sourceId, simulationId } = this.props;
+    return executionNewRenderFunction({ ...props, sourceId, simulationId });
+  };
+
   private renderExecutionNewToolbar = (): any => {
     const { thumbnailUrl } = this.props;
-
     return (
       <Header title='New Execution'>
         {this.renderNavigationPath()}
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
+  };
+
+  private renderExecutionList = (props): any => {
+    const { sourceId, simulationId, recordPathNames } = this.props;
+    return executionListRenderFunction({ ...props, sourceId, simulationId, recordPathNames });
   };
 
   private renderExecutionListToolbar = (): any => {
@@ -105,48 +135,6 @@ class View extends React.Component<IProps, any> {
       </Header>
     );
   };
-
-  private renderToolbar(): any {
-    const { match: { path } } = this.props;
-    return (
-      <Switch>
-        <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
-        <Route path={`${path}/:executionId`} render={this.renderExecutionEditToolbar} />
-        <Route path={path} render={this.renderExecutionListToolbar} />
-      </Switch>
-    );
-  }
-
-  private renderExecutionList = (props) => {
-    const { sourceId, simulationId, recordPathNames } = this.props;
-    return executionListRenderFunction({ ...props, sourceId, simulationId, recordPathNames });
-  };
-
-  private renderExecutionEdit = (props) => {
-    const { sourceId, simulationId } = this.props;
-    const { match: { params: { executionId } }, ...other } = props;
-    return executionEditRenderFunction({ ...other, sourceId, simulationId, executionId });
-  };
-
-  private renderExecutionNew = (props) => {
-    const { sourceId, simulationId } = this.props;
-    return executionNewRenderFunction({ ...props, sourceId, simulationId });
-  };
-
-  private renderContents(): any {
-    const { match: { path } } = this.props;
-    return (
-      <div className={styles.contents}>
-        <Paper>
-          <Switch>
-            <Route path={`${path}/new`} render={this.renderExecutionNew} />
-            <Route path={`${path}/:executionId`} render={this.renderExecutionEdit} />
-            <Route path={path} render={this.renderExecutionList} />
-          </Switch>
-        </Paper>
-      </div>
-    );
-  }
 }
 
 export default View;

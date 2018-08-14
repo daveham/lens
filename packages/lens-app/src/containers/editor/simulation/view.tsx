@@ -15,7 +15,7 @@ import ListToolbar from '../components/listToolbar';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulation:view');
+// const debug = _debug('lens:editor:simulation:view');
 
 interface IProps {
   match: any;
@@ -60,7 +60,7 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderSimulationEdit = (props) => {
+  private renderSimulationEdit = (props): any => {
     const { match: { params: { simulationId } } } = props;
     const { sourceId } = this.props;
     return simulationEditRenderFunction({
@@ -71,27 +71,22 @@ class View extends React.Component<IProps, any> {
   };
 
   private renderSimulationEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url } } = this.props;
-    const links = {
-      back: url
-    };
-
+    const { thumbnailUrl, match: { url: back } } = this.props;
     return (
       <Header title='Edit Simulation'>
-        <ListToolbar links={links} />
+        <ListToolbar links={{ back }} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
   };
 
-  private renderSimulationNew = (props) => {
+  private renderSimulationNew = (props): any => {
     const { sourceId } = this.props;
     return simulationNewRenderFunction({ ...props, sourceId });
   };
 
   private renderSimulationNewToolbar = (): any => {
     const { thumbnailUrl } = this.props;
-
     return (
       <Header title='New Simulation'>
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}

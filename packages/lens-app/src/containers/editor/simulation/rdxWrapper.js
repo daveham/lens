@@ -8,7 +8,7 @@ import { ensureImage } from '@modules/images/actions';
 
 const mapDispatchToProps = { ensureImage };
 
-const mapStateToProps = (state, { match: { params: { sourceId } }}) => {
+const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(sourceId);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, sourceId);
 

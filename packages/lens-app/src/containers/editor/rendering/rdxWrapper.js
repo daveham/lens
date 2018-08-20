@@ -16,7 +16,7 @@ const mapDispatchToProps = {
   recordPathNames
 };
 
-const mapStateToProps = (state, { match: { params: { sourceId, simulationId, executionId } }}) => {
+const mapStateToProps = (state, { match: { params: { sourceId, simulationId, executionId } } }) => {
   const thumbnailImageDescriptor = makeThumbnailImageDescriptor(sourceId);
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, sourceId);
   const simulationNames = simulationNamesSelector(state);

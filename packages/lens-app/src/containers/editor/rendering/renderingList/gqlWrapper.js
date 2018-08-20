@@ -1,24 +1,9 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
+import { GET_RENDERINGS } from '@editor/queries';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:simulation:rendering:gqlWrapper');
-
-const GET_RENDERINGS = gql`
-  query getRenderings($executionId: Int!) {
-    getRenderings(executionId: $executionId) {
-      items {
-        id
-        created
-        modified
-        name
-      }
-      simulationName
-      executionName
-    }
-  }
-`;
 
 export default View => props => {
   const renderProp = ({

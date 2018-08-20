@@ -1,23 +1,13 @@
 import React from 'react';
 import { ISimulation } from '@editor/interfaces';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from '@src/helpers';
+import { UPDATE_SIMULATION } from '@editor/queries';
 
 import Form from './form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:simulation:simulationEdit:view');
-
-const UPDATE_SIMULATION = gql`
-  mutation UpdateSimulation($id: ID!, $name: String!) {
-    updateSimulation(input: { id: $id, name: $name }) {
-      id
-      name
-      modified
-    }
-  }
-`;
 
 interface IProps {
   match: any;

@@ -26,7 +26,7 @@ const mapDispatchToProps = {
   ensureImages
 };
 
-const mapStateToProps = (state, { match: { params: { id, res } }}) => {
+const mapStateToProps = (state, { match: { params: { id, res } } }) => {
   let resolution = parseInt(res, 10);
   if (!(resolution === 8 || resolution === 16 || resolution === 32)) {
     resolution = 32;

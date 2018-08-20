@@ -1,23 +1,13 @@
 import React from 'react';
 import { IRendering } from '@editor/interfaces';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from '@src/helpers';
+import { UPDATE_RENDERING } from '@editor/queries';
 
 import Form from './form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:rendering:renderingEdit:view');
-
-const UPDATE_RENDERING = gql`
-  mutation UpdateRendering($id: ID!, $name: String!) {
-    updateRendering(input: { id: $id, name: $name }) {
-      id
-      name
-      modified
-    }
-  }
-`;
 
 interface IProps {
   match: any;

@@ -3,6 +3,9 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="Eslint" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="JSUnusedGlobalSymbols" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="myAdditionalRequiredHtmlAttributes" value="onCompleted,onCompleted,onCompleted,onCompleted,onCompleted" />
+    </inspection_tool>
     <inspection_tool class="Stylelint" enabled="true" level="ERROR" enabled_by_default="true" />
     <inspection_tool class="TsLint" enabled="true" level="ERROR" enabled_by_default="true" />
   </profile>

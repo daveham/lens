@@ -209,7 +209,8 @@ const resolvers = {
   },
   Mutation: {
     createSimulation: (_, { input }) => {
-      const simulation = { ...input, executions: [], id: ++simulationIdIndex };
+      const created = new Date();
+      const simulation = { ...input, created, modified: created, executions: [], id: ++simulationIdIndex };
       allSimulations.push(simulation);
       return simulation;
     },

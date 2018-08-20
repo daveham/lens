@@ -1,23 +1,10 @@
 import React from 'react';
 import { IExecution } from '@editor/interfaces';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from '@src/helpers';
+import { UPDATE_EXECUTION } from '@editor/queries';
 
 import Form from './form';
-
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:execution:executionEdit:view');
-
-const UPDATE_EXECUTION = gql`
-  mutation UpdateExecution($id: ID!, $name: String!) {
-    updateExecution(input: { id: $id, name: $name }) {
-      id
-      name
-      modified
-    }
-  }
-`;
 
 interface IProps {
   match: any;
@@ -32,7 +19,7 @@ interface IState {
 }
 
 const initialState: IState = {
-  name: ''
+  name: '',
 };
 
 class View extends React.Component<IProps, any> {
@@ -63,8 +50,8 @@ class View extends React.Component<IProps, any> {
         id,
         simulationId,
         created,
-        modified
-      }
+        modified,
+      },
     } = this.props;
 
     return (
@@ -97,8 +84,8 @@ class View extends React.Component<IProps, any> {
     mutateFunc({
       variables: {
         id: this.props.execution.id,
-        name: this.state.name
-      }
+        name: this.state.name,
+      },
     });
     this.returnToList();
   };

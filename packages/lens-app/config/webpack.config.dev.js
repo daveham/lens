@@ -119,14 +119,18 @@ module.exports = {
         use: [
           {
             options: {
+              baseConfig: {
+                extends: [require.resolve('eslint-config-react-app')],
+              },
               formatter: eslintFormatter,
               eslintPath: require.resolve('eslint'),
-
+              emitWarning: true,
             },
             loader: require.resolve('eslint-loader'),
           },
         ],
         include: paths.appSrc,
+        exclude: [/[/\\\\]node_modules[/\\\\]/]
       },
       {
         // "oneOf" will traverse all following loaders until one will

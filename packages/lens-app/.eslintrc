@@ -1,0 +1,18 @@
+{
+  "extends": "react-app",
+  "plugins": ["import"],
+  "rules": {
+    "object-curly-spacing": ["error", "always",
+      {
+        "objectsInObjects": true,
+        "arraysInObjects": true
+      }]
+  },
+  "settings": {
+    "import/resolver": {
+      "webpack": {
+        "config": "./config/webpack.config.dev.js"
+      }
+    }
+  }
+}

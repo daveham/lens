@@ -1,6 +1,6 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
-import FormContainer from '@editor/components/formContainer';
+import FormContainer from 'editor/components/formContainer';
 
 interface IProps {
   name: string;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
-import Loading from '@components/loading';
-import { simulationRoute } from '@src/routes';
+import Loading from 'components/loading';
+import { simulationRoute } from 'src/routes';
 import SourcesView from './sourcesView';
 import SourceView from './sourceView';
 import styles from './styles.scss';

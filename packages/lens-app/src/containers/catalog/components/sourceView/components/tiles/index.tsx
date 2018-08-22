@@ -3,7 +3,7 @@ import { throttle } from 'lodash';
 import { makeTileImageKeyFromPrototype } from '@lens/image-descriptors';
 import { IViewport, ITileSpec, ISelectedTile } from '../../interfaces';
 import { sizeFromViewport, calculateTileDimensions } from '../../utils';
-import MovablePanel from '@components/movablePanel';
+import MovablePanel from 'components/movablePanel';
 import Selection from './selection';
 import Tile from './tile';
 import TileAnalysis from '../tileAnalysis';

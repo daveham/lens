@@ -5,7 +5,7 @@ import {
   makeImageKey,
   makeStatsKey
 } from '@lens/image-descriptors';
-import Loading from '@components/loading';
+import Loading from 'components/loading';
 import {
   IStatsDescriptor,
   IImageDescriptor,
@@ -13,7 +13,7 @@ import {
   IViewport
 } from './interfaces';
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
-import SourceThumbnail from '@components/sourceThumbnail';
+import SourceThumbnail from 'components/sourceThumbnail';
 import { Details, Tiles, Toolbar } from './components';
 
 import styles from './styles.scss';

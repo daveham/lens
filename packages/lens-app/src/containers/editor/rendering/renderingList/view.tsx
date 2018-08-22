@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IRendering } from '@editor/interfaces';
+import { IRendering } from 'editor/interfaces';
 import RenderingTable from './renderingTable';
 import styles from './styles.scss';
 

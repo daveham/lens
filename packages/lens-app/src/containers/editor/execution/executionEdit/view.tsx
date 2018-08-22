@@ -1,8 +1,8 @@
 import React from 'react';
-import { IExecution } from '@editor/interfaces';
+import { IExecution } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
-import { backupUrl } from '@src/helpers';
-import { UPDATE_EXECUTION } from '@editor/queries';
+import { backupUrl } from 'src/helpers';
+import { UPDATE_EXECUTION } from 'editor/queries';
 
 import Form from './form';
 

@@ -20,14 +20,14 @@
     "baseUrl": ".",
     "paths": {
       "react": ["node_modules/@types/react"],
-      "@src/*": ["src/*"],
-      "@config/*": ["config/*"],
-      "@containers/*": ["src/containers/*"],
-      "@catalog/*": ["src/containers/catalog/*"],
-      "@editor/*": ["src/containers/editor/*"],
-      "@components/*": ["src/components/*"],
-      "@modules/*": ["src/modules/*"],
-      "@sagas/*": ["src/sagas/*"]
+      "src/*": ["src/*"],
+      "config/*": ["config/*"],
+      "containers/*": ["src/containers/*"],
+      "catalog/*": ["src/containers/catalog/*"],
+      "editor/*": ["src/containers/editor/*"],
+      "components/*": ["src/components/*"],
+      "modules/*": ["src/modules/*"],
+      "sagas/*": ["src/sagas/*"]
     }
   },
   "include": [

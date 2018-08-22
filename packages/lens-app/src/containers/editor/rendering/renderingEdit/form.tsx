@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import TextField from '@material-ui/core/TextField';
-import { timestampFormat } from '@editor/constants';
-import FormContainer from '@editor/components/formContainer';
+import { timestampFormat } from 'editor/constants';
+import FormContainer from 'editor/components/formContainer';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:execution:executionEdit:form');

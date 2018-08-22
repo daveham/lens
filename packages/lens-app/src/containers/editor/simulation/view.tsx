@@ -2,11 +2,11 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 
-import { IThumbnailDescriptor } from '@src/interfaces';
-import { backupUrl } from '@src/helpers';
+import { IThumbnailDescriptor } from 'src/interfaces';
+import { backupUrl } from 'src/helpers';
 
 import Header from '../components/header';
-import SourceThumbnail from '@src/components/sourceThumbnail';
+import SourceThumbnail from 'src/components/sourceThumbnail';
 import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';

@@ -5,7 +5,7 @@ import Menu from './menu';
 import Header from './header';
 import Footer from './footer/index';
 import Home from '../../home';
-import { catalogRoute /*, simulationRoute, renderRoute */ } from '@src/routes';
+import { catalogRoute /*, simulationRoute, renderRoute */ } from 'src/routes';
 import styles from './styles.scss';
 
 class View extends Component {

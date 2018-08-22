@@ -2,8 +2,8 @@ import * as React from 'react';
 import faStyles from 'font-awesome/scss/font-awesome.scss';
 import FontAwesome from 'react-fontawesome';
 
-import ToolButton from '@components/toolButton';
-import ToolMultiButton from '@components/toolMultiButton';
+import ToolButton from 'components/toolButton';
+import ToolMultiButton from 'components/toolMultiButton';
 import { ResSmall, ResMedium, ResLarge } from './svg';
 
 import styles from './styles.scss';

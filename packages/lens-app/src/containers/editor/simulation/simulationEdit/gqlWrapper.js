@@ -1,6 +1,6 @@
 import React from 'react';
 import { Query } from 'react-apollo';
-import { GET_SIMULATION } from '@editor/components/queries';
+import { GET_SIMULATION } from 'editor/queries';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:simulationEdit:gqlWrapper');

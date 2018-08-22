@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import View from './view';
-import { thumbnailImagesSelector } from '@modules/images/selectors';
-import { ensureImages } from '@modules/images/actions';
+import { thumbnailImagesSelector } from 'modules/images/selectors';
+import { ensureImages } from 'modules/images/actions';
 import {
   sources,
   catalogName,

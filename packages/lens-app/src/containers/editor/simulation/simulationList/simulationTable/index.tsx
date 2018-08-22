@@ -7,9 +7,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import { ISimulation } from '@editor/interfaces';
-import RowToolbar from '@editor/components/rowToolbar';
-import { timestampFormat } from '@editor/constants';
+import { ISimulation } from 'editor/interfaces';
+import RowToolbar from 'editor/components/rowToolbar';
+import { timestampFormat } from 'editor/constants';
 
 import styles from './styles.scss';
 

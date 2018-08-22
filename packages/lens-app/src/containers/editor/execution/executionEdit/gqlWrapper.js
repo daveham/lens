@@ -1,6 +1,6 @@
 import React from 'react';
 import { Query } from 'react-apollo';
-import { GET_EXECUTION } from '@editor/queries';
+import { GET_EXECUTION } from 'editor/queries';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:executionEdit:gqlWrapper');

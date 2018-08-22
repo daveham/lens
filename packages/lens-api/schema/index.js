@@ -212,47 +212,50 @@ const resolvers = {
       const created = new Date();
       const simulation = { ...input, created, modified: created, executions: [], id: ++simulationIdIndex };
       allSimulations.push(simulation);
+      console.log('createSimulation', simulation);
       return simulation;
     },
     updateSimulation: (_, { input }) => {
-      console.log('updateSimulation', input);
       const id = parseInt(input.id, 10);
       const simulation = allSimulations.find((item) => item.id === id);
-      console.log('found', { simulation });
       simulation.name = input.name;
       simulation.modified = new Date();
+      console.log('updateSimulation', simulation);
       return simulation;
     },
     createExecution: (_, { input }) => {
-      console.log('createExecution', input);
-      const execution = { ...input, renderings: [], id: ++executionIdIndex };
+      const created = new Date();
+      const execution = { ...input, created, modified: created, renderings: [], id: ++executionIdIndex };
       allExecutions.push(execution);
       const simulation = allSimulations.find((item) => item.id === input.simulationId);
       simulation.executions.push(simulation);
+      console.log('createExecution', execution);
       return execution;
     },
     updateExecution: (_, { input }) => {
       const id = parseInt(input.id, 10);
-      console.log('createExecution', input);
       const execution = allExecutions.find((item) => item.id === id);
       execution.name = input.name;
       execution.modified = new Date();
+      console.log('updateExecution', execution);
       return execution;
       },
     createRendering: (_, { input }) => {
-      const rendering = { ...input, id: ++renderingIdIndex };
+      const created = new Date();
+      const rendering = { ...input, created, modified: created, id: ++renderingIdIndex };
       allRenderings.push(rendering);
       const execution = allExecutions.find((item) => item.id === input.executionId &&
         item.simulationId === input.simulationId);
       execution.renderings.push(execution);
+      console.log('createRendering', rendering);
       return rendering;
     },
     updateRendering: (_, { input }) => {
       const id = parseInt(input.id, 10);
-      console.log('createRendering', input);
       const rendering = allRenderings.find((item) => item.id === id);
       rendering.name = input.name;
       rendering.modified = new Date();
+      console.log('updateRendering', rendering);
       return rendering;
     }
   }

@@ -84,6 +84,16 @@ export const UPDATE_EXECUTION = gql`
   }
 `;
 
+export const CREATE_EXECUTION = gql`
+  mutation CreateExecution($simulationId: Int!, $name: String!) {
+    createExecution(input: { simulationId: $simulationId, name: $name }) {
+      id
+      simulationId
+      name
+    }
+  }
+`;
+
 export const GET_RENDERING = gql`
   query getRendering($id: Int!) {
     getRendering(id: $id) {

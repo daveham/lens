@@ -131,3 +131,14 @@ export const UPDATE_RENDERING = gql`
     }
   }
 `;
+
+export const CREATE_RENDERING = gql`
+  mutation CreateRendering($executionId: Int!, $simulationId: Int!, $name: String!) {
+    createRendering(input: { executionId: $executionId, simulationId: $simulationId, name: $name }) {
+      id
+      executionId
+      simulationId
+      name
+    }
+  }
+`;

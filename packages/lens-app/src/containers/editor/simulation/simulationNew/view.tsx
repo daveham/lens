@@ -1,7 +1,11 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from 'src/helpers';
-import { CREATE_SIMULATION } from 'editor/queries';
+import {
+  CREATE_SIMULATION,
+  GET_SIMULATIONS,
+
+} from 'editor/queries';
 
 import Form from './form';
 
@@ -80,7 +84,10 @@ class View extends React.Component<IProps, IState> {
         sourceId: this.props.sourceId,
         name: this.state.name
       },
-      refetchQueries: ['getSimulationsForSource']
+      refetchQueries: [{
+        query: GET_SIMULATIONS,
+        variables: { sourceId: this.props.sourceId }
+      }]
     });
     this.returnToList();
   };

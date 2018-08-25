@@ -66,6 +66,10 @@ const typeDefs = `
     name: String!
   }
   
+  input SimulationDeleteInput {
+    id: ID!
+  }
+
   type Simulation {
     id: ID!
     created: Date!
@@ -89,6 +93,7 @@ const typeDefs = `
   type Mutation {
     createSimulation(input: SimulationInput!): Simulation
     updateSimulation(input: SimulationUpdateInput!): Simulation
+    deleteSimulation(input: SimulationDeleteInput!): Simulation
     createExecution(input: ExecutionInput!): Execution
     updateExecution(input: ExecutionUpdateInput!): Execution
     createRendering(input: RenderingInput!): Rendering
@@ -166,6 +171,27 @@ const getExecutionData = execution => execution ? ({
 const getRenderingData = rendering => rendering ? ({
   ...rendering
 }) : null;
+const deleteSimulation = id => {
+  const index = allSimulations.findIndex((item) => item.id === id);
+  if (index > -1) {
+    return allSimulations.splice(index, 1)[0];
+  }
+  return null;
+};
+const deleteExecution = id => {
+  const index = allExecutions.findIndex((item) => item.id === id);
+  if (index > -1) {
+    return allExecutions.splice(index, 1)[0];
+  }
+  return null;
+};
+const deleteRendering = id => {
+  const index = allRenderings.findIndex((item) => item.id === id);
+  if (index > -1) {
+    return allRenderings.splice(index, 1)[0];
+  }
+  return null;
+};
 
 const resolvers = {
   Date: new GraphQLScalarType({
@@ -186,9 +212,13 @@ const resolvers = {
   }),
   Query: {
     getSimulations: () => allSimulations.map(getSimulationData),
-    getSimulationsForSource: (_, { sourceId })=> allSimulations
-      .filter(s => s.sourceId === sourceId)
-      .map(getSimulationData),
+    getSimulationsForSource: (_, { sourceId }) => {
+      const simulations = allSimulations
+        .filter(s => s.sourceId === sourceId)
+        .map(getSimulationData);
+      console.log('getSimulationsForSource', sourceId, simulations);
+      return simulations;
+    },
     getSimulation: (_, { id }) => getSimulationData(allSimulations.find(s => s.id === id)),
     getExecutions: (_, { simulationId }) => ({
       items: allExecutions.filter(e => e.simulationId === simulationId)
@@ -223,12 +253,26 @@ const resolvers = {
       console.log('updateSimulation', simulation);
       return simulation;
     },
+    deleteSimulation: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const simulation = deleteSimulation(id);
+      console.log('deleteSimulation', simulation);
+      simulation.executions.forEach(execution => {
+        console.log('deleteSimulation - delete owned execution', execution);
+        deleteExecution(execution.id);
+        execution.renderings.forEach(rendering => {
+          console.log('deleteSimulation - delete owned rendering', rendering);
+          deleteRendering(rendering.id);
+        });
+      });
+      return simulation;
+    },
     createExecution: (_, { input }) => {
       const created = new Date();
       const execution = { ...input, created, modified: created, renderings: [], id: ++executionIdIndex };
       allExecutions.push(execution);
       const simulation = allSimulations.find((item) => item.id === input.simulationId);
-      simulation.executions.push(simulation);
+      simulation.executions.push(execution);
       console.log('createExecution', execution);
       return execution;
     },
@@ -246,7 +290,7 @@ const resolvers = {
       allRenderings.push(rendering);
       const execution = allExecutions.find((item) => item.id === input.executionId &&
         item.simulationId === input.simulationId);
-      execution.renderings.push(execution);
+      execution.renderings.push(rendering);
       console.log('createRendering', rendering);
       return rendering;
     },

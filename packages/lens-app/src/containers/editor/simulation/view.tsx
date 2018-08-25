@@ -10,6 +10,7 @@ import SourceThumbnail from 'src/components/sourceThumbnail';
 import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
+import simulationDeleteRenderFunction from './simulationDelete';
 import ListToolbar from '../components/listToolbar';
 
 import styles from './styles.scss';
@@ -44,6 +45,7 @@ class View extends React.Component<IProps, any> {
       <div className={styles.container}>
         <Switch>
           <Route path={`${path}/new`} render={this.renderSimulationNewToolbar} />
+          <Route path={`${path}/:simulationId/delete`} render={this.renderSimulationDeleteToolbar} />
           <Route path={`${path}/:simulationId`} render={this.renderSimulationEditToolbar} />
           <Route path={path} render={this.renderSimulationListToolbar} />
         </Switch>
@@ -51,6 +53,7 @@ class View extends React.Component<IProps, any> {
           <Paper>
             <Switch>
               <Route path={`${path}/new`} render={this.renderSimulationNew} />
+              <Route path={`${path}/:simulationId/delete`} render={this.renderSimulationDelete} />
               <Route path={`${path}/:simulationId`} render={this.renderSimulationEdit} />
               <Route path={path} render={this.renderSimulationList} />
             </Switch>
@@ -75,6 +78,25 @@ class View extends React.Component<IProps, any> {
     return (
       <Header title='Edit Simulation'>
         <ListToolbar links={{ back }} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
+  private renderSimulationDelete = (props): any => {
+    const { match: { params: { simulationId } } } = props;
+    const { sourceId } = this.props;
+    return simulationDeleteRenderFunction({
+      ...props,
+      sourceId,
+      simulationId
+    });
+  };
+
+  private renderSimulationDeleteToolbar = (): any => {
+    const { thumbnailUrl } = this.props;
+    return (
+      <Header title='Delete Simulation'>
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );

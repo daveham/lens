@@ -5,16 +5,20 @@ import styles from './styles.scss';
 interface IProps {
   children: any;
   onCancel: () => void;
-  onSave: () => void;
+  onConfirm?: () => void;
+  onSave?: () => void;
   tag?: string;
 }
 
 export default ({
   children,
   onCancel,
+  onConfirm,
   onSave,
   tag
 }: IProps) => {
+  const label = onSave ? 'Save' : 'Ok';
+  const handler = onSave ? onSave : onConfirm;
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -22,9 +26,9 @@ export default ({
         <div className={styles.actions}>
           <Button
             color='primary'
-            onClick={onSave}
+            onClick={handler}
           >
-            Save
+            {label}
           </Button>
           <Button
             color='default'

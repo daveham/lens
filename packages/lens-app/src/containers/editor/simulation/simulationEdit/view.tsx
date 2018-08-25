@@ -2,7 +2,10 @@ import React from 'react';
 import { ISimulation } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from 'src/helpers';
-import { UPDATE_SIMULATION } from 'editor/queries';
+import {
+  GET_SIMULATIONS,
+  UPDATE_SIMULATION
+} from 'editor/queries';
 
 import Form from './form';
 
@@ -88,7 +91,11 @@ class View extends React.Component<IProps, IState> {
       variables: {
         id: this.props.simulation.id,
         name: this.state.name
-      }
+      },
+      refetchQueries: [{
+        query: GET_SIMULATIONS,
+        variables: { sourceId: this.props.sourceId }
+      }]
     });
     this.returnToList();
   };

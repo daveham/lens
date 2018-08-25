@@ -46,6 +46,15 @@ export const UPDATE_SIMULATION = gql`
   }
 `;
 
+export const DELETE_SIMULATION = gql`
+  mutation DeleteSimulation($id: ID!) {
+    deleteSimulation(input: { id: $id }) {
+      id
+      modified
+    }
+  }
+`;
+
 export const GET_EXECUTION = gql`
   query getExecution($id: Int!) {
     getExecution(id: $id) {

@@ -1,18 +1,21 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
 import { backupUrl } from 'src/helpers';
-import { CREATE_EXECUTION } from 'editor/queries';
+import {
+  CREATE_EXECUTION,
+  getAddExecutionRefetchQueries
+} from 'editor/queries';
 
 import Form from './form';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor/execution/executionNew/view');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor/execution/executionNew/view');
 
 interface IProps {
-  match: any;
-  history: any;
+  sourceId: string;
   simulationId: number;
   loading: boolean;
+  onClose: () => void;
 }
 
 interface IState {
@@ -48,6 +51,7 @@ class View extends React.Component<IProps, IState> {
 
     const {
       simulationId,
+      onClose
     } = this.props;
 
     return (
@@ -57,7 +61,7 @@ class View extends React.Component<IProps, IState> {
             name={this.state.name}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(addExecution)}
-            onCancel={this.returnToList}
+            onCancel={onClose}
           />
         )}
       </Mutation>
@@ -68,21 +72,14 @@ class View extends React.Component<IProps, IState> {
     this.setState({ name: initialState.name });
   }
 
-  private returnToList = () => {
-    const { match: { url }, history } = this.props;
-    history.replace(backupUrl(url));
-  };
-
   private handleSaveClick = (mutateFunc) => () => {
-    debug('handleSaveClick', { simulationId: this.props.simulationId, name: this.state.name });
+    const { sourceId, simulationId, onClose } = this.props;
+    const { name } = this.state;
     mutateFunc({
-      variables: {
-        simulationId: this.props.simulationId,
-        name: this.state.name
-      },
-      refetchQueries: ['getExecutions']
+      variables: { simulationId, name },
+      refetchQueries: getAddExecutionRefetchQueries(sourceId, simulationId)
     });
-    this.returnToList();
+    onClose();
   };
 
   private handleChange = (key: string) => (event) =>

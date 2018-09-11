@@ -1,5 +1,15 @@
 import gql from 'graphql-tag';
 
+import _debug from 'debug';
+const debug = _debug('lens:editor:queries');
+
+export const GET_BREADCRUMB_NAMES = gql`
+  query getBreadcrumbNames($simulationId: Int, $executionId: Int, $renderingId: Int) {
+    getBreadcrumbNames(input: { simulationId: $simulationId,
+      executionId: $executionId, renderingId: $renderingId })
+  }
+`;
+
 export const GET_SIMULATION = gql`
   query getSimulation($id: Int!) {
     getSimulation(id: $id) {
@@ -55,6 +65,13 @@ export const DELETE_SIMULATION = gql`
   }
 `;
 
+export function getSimulationsRefetchQueries(sourceId) {
+  return [{
+    query: GET_SIMULATIONS,
+    variables: { sourceId }
+  }];
+}
+
 export const GET_EXECUTION = gql`
   query getExecution($id: Int!) {
     getExecution(id: $id) {
@@ -83,6 +100,16 @@ export const GET_EXECUTIONS = gql`
   }
 `;
 
+export const CREATE_EXECUTION = gql`
+  mutation CreateExecution($simulationId: Int!, $name: String!) {
+    createExecution(input: { simulationId: $simulationId, name: $name }) {
+      id
+      simulationId
+      name
+    }
+  }
+`;
+
 export const UPDATE_EXECUTION = gql`
   mutation UpdateExecution($id: ID!, $name: String!) {
     updateExecution(input: { id: $id, name: $name }) {
@@ -93,15 +120,36 @@ export const UPDATE_EXECUTION = gql`
   }
 `;
 
-export const CREATE_EXECUTION = gql`
-  mutation CreateExecution($simulationId: Int!, $name: String!) {
-    createExecution(input: { simulationId: $simulationId, name: $name }) {
+export const DELETE_EXECUTION = gql`
+  mutation DeleteExecution($id: ID!) {
+    deleteExecution(input: { id: $id }) {
       id
-      simulationId
-      name
+      modified
     }
   }
 `;
+
+export function getExecutionsRefetchQueries(sourceId, simulationId) {
+  debug('getExecutionsRefetchQueries', { sourceId, simulationId });
+  return [{
+    query: GET_SIMULATIONS,
+    variables: { sourceId }
+  }, {
+    query: GET_EXECUTIONS,
+    variables: { simulationId }
+  }];
+}
+
+export function getAddExecutionRefetchQueries(sourceId, simulationId) {
+  debug('getAddExecutionRefetchQueries', { sourceId, simulationId });
+  return [{
+    query: GET_SIMULATIONS,
+    variables: { sourceId }
+  }, {
+    query: GET_EXECUTIONS,
+    variables: { simulationId }
+  }];
+}
 
 export const GET_RENDERING = gql`
   query getRendering($id: Int!) {
@@ -131,16 +179,6 @@ export const GET_RENDERINGS = gql`
   }
 `;
 
-export const UPDATE_RENDERING = gql`
-  mutation UpdateRendering($id: ID!, $name: String!) {
-    updateRendering(input: { id: $id, name: $name }) {
-      id
-      name
-      modified
-    }
-  }
-`;
-
 export const CREATE_RENDERING = gql`
   mutation CreateRendering($executionId: Int!, $simulationId: Int!, $name: String!) {
     createRendering(input: { executionId: $executionId, simulationId: $simulationId, name: $name }) {
@@ -151,3 +189,29 @@ export const CREATE_RENDERING = gql`
     }
   }
 `;
+
+export const UPDATE_RENDERING = gql`
+  mutation UpdateRendering($id: ID!, $name: String!) {
+    updateRendering(input: { id: $id, name: $name }) {
+      id
+      name
+      modified
+    }
+  }
+`;
+
+export const DELETE_RENDERING = gql`
+  mutation DeleteRendering($id: ID!) {
+    deleteRendering(input: { id: $id }) {
+      id
+      modified
+    }
+  }
+`;
+
+export function getRenderingsRefetchQueries(executionId) {
+  return [{
+    query: GET_RENDERINGS,
+    variables: { executionId }
+  }];
+}

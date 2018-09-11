@@ -11,8 +11,8 @@ import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Delete';
 import AddToPhotos from '@material-ui/icons/AddToPhotos';
 
-import _debug from 'debug';
-const debug = _debug('lens:simulation:components:listToolbar');
+// import _debug from 'debug';
+// const debug = _debug('lens:simulation:components:listToolbar');
 
 interface IProps {
   links: {[key: string]: string};
@@ -22,7 +22,7 @@ interface IProps {
 }
 
 export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
-  debug('render', { links });
+  // debug('render', { links });
 
   const buttons = [];
 

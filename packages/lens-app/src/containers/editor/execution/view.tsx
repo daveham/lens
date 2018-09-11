@@ -5,11 +5,13 @@ import Paper from '@material-ui/core/Paper';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
-import Header from '../components/header';
 import SourceThumbnail from 'components/sourceThumbnail';
+import Header from '../components/header';
+import BreadcrumbBar from '../components/breadcrumbs';
 import executionListRenderFunction from './executionList';
 import executionEditRenderFunction from './executionEdit';
 import executionNewRenderFunction from './executionNew';
+import executionDeleteRenderFunction from './executionDelete';
 import ListToolbar from '../components/listToolbar';
 
 import styles from './styles.scss';
@@ -19,13 +21,9 @@ import styles from './styles.scss';
 
 interface IProps {
   match: any;
-  sourceId: string;
-  simulationId: number;
-  simulationNames: {[id: number]: string};
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
-  recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
@@ -47,15 +45,17 @@ class View extends React.Component<IProps, any> {
       <div className={styles.container}>
         <Switch>
           <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
+          <Route path={`${path}/:executionId/delete`} render={this.renderExecutionDeleteToolbar} />
           <Route path={`${path}/:executionId`} render={this.renderExecutionEditToolbar} />
           <Route path={path} render={this.renderExecutionListToolbar} />
         </Switch>
         <div className={styles.contents}>
           <Paper>
             <Switch>
-              <Route path={`${path}/new`} render={this.renderExecutionNew} />
-              <Route path={`${path}/:executionId`} render={this.renderExecutionEdit} />
-              <Route path={path} render={this.renderExecutionList} />
+              <Route path={`${path}/new`} render={executionNewRenderFunction} />
+              <Route path={`${path}/:executionId/delete`} render={executionDeleteRenderFunction} />
+              <Route path={`${path}/:executionId`} render={executionEditRenderFunction} />
+              <Route path={path} render={executionListRenderFunction} />
             </Switch>
           </Paper>
         </div>
@@ -63,65 +63,39 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderNavigationPath(): any {
-    const {
-      simulationId,
-      simulationNames
-    } = this.props;
-
-    const simulationName = simulationNames[simulationId];
-
-    return (
-      <div className={styles.navigation}>
-        <div className={styles.segment}><span className={styles.label}>simulation:</span> {simulationName}</div>
-      </div>
-    );
-  }
-
-  private renderExecutionEdit = (props): any => {
-    const { sourceId, simulationId } = this.props;
-    const { match: { params: { executionId } } } = props;
-    return executionEditRenderFunction({
-      ...props,
-      sourceId,
-      simulationId,
-      executionId
-    });
-  };
-
   private renderExecutionEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url: back } } = this.props;
+    const { thumbnailUrl, match: { url: back, params: { simulationId } } } = this.props;
     return (
       <Header title='Edit Execution'>
-        {this.renderNavigationPath()}
+        <BreadcrumbBar simulationId={simulationId} />
         <ListToolbar links={{ back }} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
   };
 
-  private renderExecutionNew = (props): any => {
-    const { sourceId, simulationId } = this.props;
-    return executionNewRenderFunction({ ...props, sourceId, simulationId });
-  };
-
-  private renderExecutionNewToolbar = (): any => {
-    const { thumbnailUrl } = this.props;
+  private renderExecutionDeleteToolbar = (): any => {
+    const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
     return (
-      <Header title='New Execution'>
-        {this.renderNavigationPath()}
+      <Header title='Delete Execution'>
+        <BreadcrumbBar simulationId={simulationId} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
   };
 
-  private renderExecutionList = (props): any => {
-    const { sourceId, simulationId, recordPathNames } = this.props;
-    return executionListRenderFunction({ ...props, sourceId, simulationId, recordPathNames });
+  private renderExecutionNewToolbar = (): any => {
+    const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
+    return (
+      <Header title='New Execution'>
+        <BreadcrumbBar simulationId={simulationId} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
   };
 
   private renderExecutionListToolbar = (): any => {
-    const { thumbnailUrl, match: { url } } = this.props;
+    const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
     const links = {
       back: backupUrl(url, 2),
       newItem: `${url}/new`
@@ -129,7 +103,7 @@ class View extends React.Component<IProps, any> {
 
     return (
       <Header title='Executions'>
-        {this.renderNavigationPath()}
+        <BreadcrumbBar simulationId={simulationId} />
         <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>

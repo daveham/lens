@@ -4,8 +4,8 @@ import { ISimulation } from 'editor/interfaces';
 import SimulationTable from './simulationTable';
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:simulationList:view');
+import _debug from 'debug';
+const debug = _debug('lens:editor:simulation:simulationList:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -16,10 +16,10 @@ function renderLoading(): any {
 }
 
 interface IProps {
-  match: any;
-  loading: boolean;
   error: any;
+  loading: boolean;
   simulations: ReadonlyArray<ISimulation>;
+  url: string;
 }
 
 class View extends React.Component<IProps, any> {
@@ -28,8 +28,9 @@ class View extends React.Component<IProps, any> {
       error,
       loading,
       simulations,
-      match: { url }
+      url
     } = this.props;
+    debug('render', { url });
 
     return (
       <div className={styles.container}>
@@ -38,7 +39,7 @@ class View extends React.Component<IProps, any> {
         {!loading && !error &&
           <SimulationTable
             simulationRows={simulations}
-            matchUrl={url}
+            url={url}
           />
         }
       </div>

@@ -1,22 +1,19 @@
 import React from 'react';
 import { Mutation } from 'react-apollo';
-import { backupUrl } from 'src/helpers';
 import {
   CREATE_SIMULATION,
-  GET_SIMULATIONS,
-
+  getSimulationsRefetchQueries
 } from 'editor/queries';
 
 import Form from './form';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor/simulation/simulationNew/view');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor/simulation/simulationNew/view');
 
 interface IProps {
-  match: any;
-  history: any;
   sourceId: string;
   loading: boolean;
+  onClose: () => void;
 }
 
 interface IState {
@@ -52,6 +49,7 @@ class View extends React.Component<IProps, IState> {
 
     const {
       sourceId,
+      onClose
     } = this.props;
 
     return (
@@ -61,7 +59,7 @@ class View extends React.Component<IProps, IState> {
             name={this.state.name}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(addSimulation)}
-            onCancel={this.returnToList}
+            onCancel={onClose}
           />
         )}
       </Mutation>
@@ -72,24 +70,20 @@ class View extends React.Component<IProps, IState> {
     this.setState({ name: initialState.name });
   }
 
-  private returnToList = () => {
-    const { match: { url }, history } = this.props;
-    history.replace(backupUrl(url));
-  };
-
   private handleSaveClick = (mutateFunc) => () => {
-    debug('handleSaveClick', { sourceId: this.props.sourceId, name: this.state.name });
+    const {
+      sourceId,
+      onClose
+    } = this.props;
+
     mutateFunc({
       variables: {
-        sourceId: this.props.sourceId,
+        sourceId,
         name: this.state.name
       },
-      refetchQueries: [{
-        query: GET_SIMULATIONS,
-        variables: { sourceId: this.props.sourceId }
-      }]
+      refetchQueries: getSimulationsRefetchQueries(sourceId)
     });
-    this.returnToList();
+    onClose();
   };
 
   private handleChange = (key: string) => (event) =>

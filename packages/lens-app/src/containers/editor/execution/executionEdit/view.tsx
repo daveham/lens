@@ -1,17 +1,20 @@
 import React from 'react';
 import { IExecution } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
-import { backupUrl } from 'src/helpers';
-import { UPDATE_EXECUTION } from 'editor/queries';
+import {
+  UPDATE_EXECUTION,
+  getExecutionsRefetchQueries,
+} from 'editor/queries';
 
 import Form from './form';
 
 interface IProps {
-  match: any;
-  history: any;
   sourceId: string;
+  simulationId: number;
+  executionId: number;
   execution: IExecution;
   loading: boolean;
+  onClose: () => void;
 }
 
 interface IState {
@@ -44,27 +47,29 @@ class View extends React.Component<IProps, any> {
     if (this.props.loading) {
       return null;
     }
+
     const {
+      onClose,
       sourceId,
+      simulationId,
+      executionId,
       execution: {
-        id,
-        simulationId,
         created,
         modified,
       },
     } = this.props;
 
     return (
-      <Mutation mutation={UPDATE_EXECUTION} key={id}>
+      <Mutation mutation={UPDATE_EXECUTION} key={executionId}>
         {(updateExecution) => (
           <Form
             name={this.state.name}
             created={created}
             modified={modified}
-            tag={`${sourceId}:${simulationId}:${id}`}
+            tag={`${sourceId}:${simulationId}:${executionId}`}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(updateExecution)}
-            onCancel={this.returnToList}
+            onCancel={onClose}
           />
         )}
       </Mutation>
@@ -75,19 +80,14 @@ class View extends React.Component<IProps, any> {
     this.setState({ name: this.props.execution.name });
   }
 
-  private returnToList = () => {
-    const { match: { url }, history } = this.props;
-    history.replace(backupUrl(url));
-  };
-
   private handleSaveClick = (mutateFunc) => () => {
+    const { executionId, sourceId, simulationId, onClose } = this.props;
+    const { name } = this.state;
     mutateFunc({
-      variables: {
-        id: this.props.execution.id,
-        name: this.state.name,
-      },
+      variables: { id: executionId, name },
+      refetchQueries: getExecutionsRefetchQueries(sourceId, simulationId)
     });
-    this.returnToList();
+    onClose();
   };
 
   private handleChange = (key: string) => (event) =>

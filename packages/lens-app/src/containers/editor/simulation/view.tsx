@@ -20,7 +20,6 @@ import styles from './styles.scss';
 
 interface IProps {
   match: any;
-  sourceId: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
@@ -52,26 +51,16 @@ class View extends React.Component<IProps, any> {
         <div className={styles.contents}>
           <Paper>
             <Switch>
-              <Route path={`${path}/new`} render={this.renderSimulationNew} />
-              <Route path={`${path}/:simulationId/delete`} render={this.renderSimulationDelete} />
-              <Route path={`${path}/:simulationId`} render={this.renderSimulationEdit} />
-              <Route path={path} render={this.renderSimulationList} />
+              <Route path={`${path}/new`} render={simulationNewRenderFunction} />
+              <Route path={`${path}/:simulationId/delete`} render={simulationDeleteRenderFunction} />
+              <Route path={`${path}/:simulationId`} render={simulationEditRenderFunction} />
+              <Route path={path} render={simulationListRenderFunction} />
             </Switch>
           </Paper>
         </div>
       </div>
     );
   }
-
-  private renderSimulationEdit = (props): any => {
-    const { match: { params: { simulationId } } } = props;
-    const { sourceId } = this.props;
-    return simulationEditRenderFunction({
-      ...props,
-      sourceId,
-      simulationId
-    });
-  };
 
   private renderSimulationEditToolbar = (): any => {
     const { thumbnailUrl, match: { url: back } } = this.props;
@@ -83,16 +72,6 @@ class View extends React.Component<IProps, any> {
     );
   };
 
-  private renderSimulationDelete = (props): any => {
-    const { match: { params: { simulationId } } } = props;
-    const { sourceId } = this.props;
-    return simulationDeleteRenderFunction({
-      ...props,
-      sourceId,
-      simulationId
-    });
-  };
-
   private renderSimulationDeleteToolbar = (): any => {
     const { thumbnailUrl } = this.props;
     return (
@@ -102,11 +81,6 @@ class View extends React.Component<IProps, any> {
     );
   };
 
-  private renderSimulationNew = (props): any => {
-    const { sourceId } = this.props;
-    return simulationNewRenderFunction({ ...props, sourceId });
-  };
-
   private renderSimulationNewToolbar = (): any => {
     const { thumbnailUrl } = this.props;
     return (
@@ -114,11 +88,6 @@ class View extends React.Component<IProps, any> {
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
-  };
-
-  private renderSimulationList = (props) => {
-    const { sourceId } = this.props;
-    return simulationListRenderFunction({ ...props, sourceId });
   };
 
   private renderSimulationListToolbar = () => {

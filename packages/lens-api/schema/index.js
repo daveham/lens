@@ -16,6 +16,10 @@ const typeDefs = `
     name: String!
   }
 
+  input RenderingDeleteInput {
+    id: ID!
+  }
+
   type Rendering {
     id: ID!
     created: Date!
@@ -39,6 +43,10 @@ const typeDefs = `
   input ExecutionUpdateInput {
     id: ID!
     name: String!
+  }
+
+  input ExecutionDeleteInput {
+    id: ID!
   }
 
   type Execution {
@@ -80,6 +88,12 @@ const typeDefs = `
     executionCount: Int!
   }
   
+  input BreadcrumbQueryInput {
+    simulationId: Int
+    executionId: Int
+    renderingId: Int
+  }
+  
   type Query {
     getSimulations: [Simulation]
     getSimulationsForSource(sourceId: String!): [Simulation]
@@ -88,6 +102,7 @@ const typeDefs = `
     getExecution(id: Int!): Execution
     getRenderings(executionId: Int!): RenderingsWithNames
     getRendering(id: Int!): Rendering
+    getBreadcrumbNames(input: BreadcrumbQueryInput!): [String!]
   }
 
   type Mutation {
@@ -96,8 +111,10 @@ const typeDefs = `
     deleteSimulation(input: SimulationDeleteInput!): Simulation
     createExecution(input: ExecutionInput!): Execution
     updateExecution(input: ExecutionUpdateInput!): Execution
+    deleteExecution(input: ExecutionDeleteInput!): Execution
     createRendering(input: RenderingInput!): Rendering
     updateRendering(input: RenderingUpdateInput!): Rendering
+    deleteRendering(input: RenderingDeleteInput!): Rendering
   }
 `;
 
@@ -235,7 +252,21 @@ const resolvers = {
         executionName: allExecutions.find(e => e.id === executionId).name,
       };
     },
-    getRendering: (_, { id }) => getRenderingData(allRenderings.find(e => e.id === id))
+    getRendering: (_, { id }) => getRenderingData(allRenderings.find(e => e.id === id)),
+    getBreadcrumbNames: (_, { input: { simulationId, executionId, renderingId } }) => {
+      console.log('getBreadcrumbNames', { simulationId, executionId, renderingId });
+      const names = [];
+      if (simulationId) {
+        names.push(allSimulations.find(s => s.id === simulationId).name);
+      }
+      if (executionId) {
+        names.push(allExecutions.find(e => e.id === executionId).name);
+      }
+      if (renderingId) {
+        names.push(allRenderings.find(r => r.id === renderingId).name);
+      }
+      return names;
+    }
   },
   Mutation: {
     createSimulation: (_, { input }) => {
@@ -283,7 +314,21 @@ const resolvers = {
       execution.modified = new Date();
       console.log('updateExecution', execution);
       return execution;
-      },
+    },
+    deleteExecution: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const execution = deleteExecution(id);
+      console.log('deleteExecution', execution);
+      execution.renderings.forEach(rendering => {
+        console.log('deleteExecution - delete owned rendering', rendering);
+        deleteRendering(rendering.id);
+      });
+      const simulation = allSimulations.find((item) => item.id === execution.simulationId);
+      const index = simulation.executions.findIndex((item) => item.id === id);
+      simulation.executions.splice(index, 1);
+      console.log('deleteExecution - removing execution from owner simulation', simulation);
+      return execution;
+    },
     createRendering: (_, { input }) => {
       const created = new Date();
       const rendering = { ...input, created, modified: created, id: ++renderingIdIndex };

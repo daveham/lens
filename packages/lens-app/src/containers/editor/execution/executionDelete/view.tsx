@@ -1,20 +1,21 @@
 import React from 'react';
-import { ISimulation } from 'editor/interfaces';
+import { IExecution } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
 import {
-  DELETE_SIMULATION,
-  getSimulationsRefetchQueries
+  DELETE_EXECUTION,
+  getExecutionsRefetchQueries
 } from 'editor/queries';
 
 import Form from './form';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:simulationDelete:view');
+// const debug = _debug('lens:editor:execution:executionDelete:view');
 
 interface IProps {
   sourceId: string;
   simulationId: number;
-  simulation: ISimulation;
+  executionId: number;
+  execution: IExecution;
   loading: boolean;
   onClose: () => void;
 }
@@ -29,7 +30,8 @@ class View extends React.Component<IProps, any> {
       onClose,
       sourceId,
       simulationId,
-      simulation: {
+      executionId,
+      execution: {
         name,
         created,
         modified
@@ -37,14 +39,14 @@ class View extends React.Component<IProps, any> {
     } = this.props;
 
     return (
-      <Mutation mutation={DELETE_SIMULATION} key={simulationId}>
-        {(deleteSimulation) => (
+      <Mutation mutation={DELETE_EXECUTION} key={executionId}>
+        {(deleteExecution) => (
           <Form
             name={name}
             created={created}
             modified={modified}
-            tag={`${sourceId}:${simulationId}`}
-            onConfirm={this.handleConfirmClick(deleteSimulation)}
+            tag={`${sourceId}:${simulationId}:${executionId}`}
+            onConfirm={this.handleConfirmClick(deleteExecution)}
             onCancel={onClose}
           />
         )}
@@ -53,10 +55,10 @@ class View extends React.Component<IProps, any> {
   }
 
   private handleConfirmClick = (mutateFunc) => () => {
-    const { sourceId, simulationId, onClose } = this.props;
+    const { sourceId, simulationId, executionId, onClose } = this.props;
     mutateFunc({
-      variables: { id: simulationId },
-      refetchQueries: getSimulationsRefetchQueries(sourceId)
+      variables: { id: executionId },
+      refetchQueries: getExecutionsRefetchQueries(sourceId, simulationId)
     });
     onClose();
   };

@@ -18,7 +18,7 @@ import styles from './styles.scss';
 
 interface IProps {
   executionRows: ReadonlyArray<IExecution>;
-  matchUrl: string;
+  url: string;
 }
 
 interface IState {
@@ -68,7 +68,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
 
   private renderToolbar = (row: IExecution): any => {
     if (row.id === this.state.activeId) {
-      const rowUrl = `${this.props.matchUrl}/${row.id}`;
+      const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
         editItem: rowUrl,
         renderings: `${rowUrl}/Rendering`,

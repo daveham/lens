@@ -4,8 +4,8 @@ import { IRendering } from 'editor/interfaces';
 import RenderingTable from './renderingTable';
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:renderingList:view');
+import _debug from 'debug';
+const debug = _debug('lens:editor:rendering:renderingList:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -41,6 +41,7 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
+    debug('render', { match: this.props.match });
     const {
       error,
       loading,

@@ -13,7 +13,6 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
   const thumbnailUrl = thumbnailUrlFromIdSelector(state, sourceId);
 
   return {
-    sourceId,
     thumbnailImageDescriptor,
     thumbnailUrl
   };

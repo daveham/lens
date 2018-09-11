@@ -5,7 +5,7 @@ import ExecutionTable from './executionTable';
 import styles from './styles.scss';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:executionList:view');
+// const debug = _debug('lens:editor:execution:executionList:view');
 
 function renderError(error: any): any {
   return <div>`Error: ${error.message}`</div>;
@@ -16,34 +16,19 @@ function renderLoading(): any {
 }
 
 interface IProps {
-  match: any;
+  url: string;
   loading: boolean;
   error: any;
   executions: ReadonlyArray<IExecution>;
-  simulationId: number;
-  simulationName: string;
-  recordPathNames: (payload: any) => void;
 }
 
 class View extends React.Component<IProps, any> {
-  public componentDidMount(): void {
-    if (this.props.simulationName) {
-      this.recordNavigationPath();
-    }
-  }
-
-  public componentDidUpdate(prevProps: IProps): void {
-    if (this.props.simulationName && !prevProps.simulationName) {
-      this.recordNavigationPath();
-    }
-  }
-
   public render(): any {
     const {
       error,
       loading,
       executions,
-      match: { url }
+      url
     } = this.props;
 
     return (
@@ -53,16 +38,11 @@ class View extends React.Component<IProps, any> {
         {!loading && !error &&
           <ExecutionTable
             executionRows={executions}
-            matchUrl={url}
+            url={url}
           />
         }
       </div>
     );
-  }
-
-  private recordNavigationPath(): void {
-    const { simulationId, simulationName, recordPathNames } = this.props;
-    recordPathNames({ simulationId, simulationName });
   }
 }
 

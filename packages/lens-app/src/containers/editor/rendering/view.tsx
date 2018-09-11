@@ -14,8 +14,8 @@ import ListToolbar from '../components/listToolbar';
 
 import styles from './styles.scss';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:rendering:view');
+import _debug from 'debug';
+const debug = _debug('lens:editor:rendering:view');
 
 interface IProps {
   match: any;
@@ -44,6 +44,7 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
+    debug('render', { match: this.props.match });
     const { match: { path } } = this.props;
     return (
       <div className={styles.container}>

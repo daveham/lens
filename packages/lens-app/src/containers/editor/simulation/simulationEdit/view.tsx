@@ -1,10 +1,9 @@
 import React from 'react';
 import { ISimulation } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
-import { backupUrl } from 'src/helpers';
 import {
-  GET_SIMULATIONS,
-  UPDATE_SIMULATION
+  UPDATE_SIMULATION,
+  getSimulationsRefetchQueries
 } from 'editor/queries';
 
 import Form from './form';
@@ -13,11 +12,11 @@ import Form from './form';
 // const debug = _debug('lens:editor:simulation:simulationEdit:view');
 
 interface IProps {
-  match: any;
-  history: any;
   sourceId: string;
+  simulationId: number;
   simulation: ISimulation;
   loading: boolean;
+  onClose: () => void;
 }
 
 interface IState {
@@ -52,25 +51,26 @@ class View extends React.Component<IProps, IState> {
     }
 
     const {
+      onClose,
       sourceId,
+      simulationId,
       simulation: {
-        id,
         created,
         modified
       }
     } = this.props;
 
     return (
-      <Mutation mutation={UPDATE_SIMULATION} key={id}>
+      <Mutation mutation={UPDATE_SIMULATION} key={simulationId}>
         {(updateSimulation) => (
           <Form
             name={this.state.name}
             created={created}
             modified={modified}
-            tag={`${sourceId}:${id}`}
+            tag={`${sourceId}:${simulationId}`}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(updateSimulation)}
-            onCancel={this.returnToList}
+            onCancel={onClose}
           />
         )}
       </Mutation>
@@ -81,23 +81,16 @@ class View extends React.Component<IProps, IState> {
     this.setState({ name: this.props.simulation.name });
   }
 
-  private returnToList = () => {
-    const { match: { url }, history } = this.props;
-    history.replace(backupUrl(url));
-  };
-
   private handleSaveClick = (mutateFunc) => () => {
+    const { simulationId, sourceId, onClose } = this.props;
     mutateFunc({
       variables: {
-        id: this.props.simulation.id,
+        id: simulationId,
         name: this.state.name
       },
-      refetchQueries: [{
-        query: GET_SIMULATIONS,
-        variables: { sourceId: this.props.sourceId }
-      }]
+      refetchQueries: getSimulationsRefetchQueries(sourceId)
     });
-    this.returnToList();
+    onClose();
   };
 
   private handleChange = (key: string) => (event) =>

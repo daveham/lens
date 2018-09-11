@@ -18,7 +18,7 @@ import styles from './styles.scss';
 
 interface IProps {
   simulationRows: ReadonlyArray<ISimulation>;
-  matchUrl: string;
+  url: string;
 }
 
 interface IState {
@@ -68,7 +68,7 @@ class SimulationTable extends React.Component<IProps, IState> {
 
   private renderToolbar = (row: ISimulation): any => {
     if (row.id === this.state.activeId) {
-      const rowUrl = `${this.props.matchUrl}/${row.id}`;
+      const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
         editItem: rowUrl,
         executions: `${rowUrl}/Execution`,

@@ -3,28 +3,28 @@ import { Query } from 'react-apollo';
 import { GET_RENDERINGS } from 'editor/queries';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulation:rendering:gqlWrapper');
+// const debug = _debug('lens:editor:rendering:gqlWrapper');
 
 export default View => props => {
+  const { match: { url, params: { executionId } } } = props;
+
   const renderProp = ({
-    data: { getRenderings: { items: renderings, simulationName, executionName } = {} },
+    data: { getRenderings: { items: renderings } = {} },
     error,
     loading
   }) =>
     <View
-      {...props}
+      url={url}
       loading={loading}
       error={error}
       renderings={renderings}
-      simulationName={simulationName}
-      executionName={executionName}
     />;
 
   return (
     <Query
       displayName='RenderingsQuery'
       query={GET_RENDERINGS}
-      variables={{ executionId: props.executionId }}
+      variables={{ executionId }}
     >
       {renderProp}
     </Query>

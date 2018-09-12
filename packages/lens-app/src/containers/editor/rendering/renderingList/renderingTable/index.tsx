@@ -18,7 +18,7 @@ import styles from './styles.scss';
 
 interface IProps {
   renderingRows: ReadonlyArray<IRendering>;
-  matchUrl: string;
+  url: string;
 }
 
 interface IState {
@@ -67,7 +67,7 @@ class RenderingTable extends React.Component<IProps, IState> {
 
   private renderToolbar = (row: IRendering): any => {
     if (row.id === this.state.activeId) {
-      const rowUrl = `${this.props.matchUrl}/${row.id}`;
+      const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
         editItem: rowUrl,
         deleteItem: `${rowUrl}/delete`

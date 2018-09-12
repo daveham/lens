@@ -252,7 +252,7 @@ const resolvers = {
         executionName: allExecutions.find(e => e.id === executionId).name,
       };
     },
-    getRendering: (_, { id }) => getRenderingData(allRenderings.find(e => e.id === id)),
+    getRendering: (_, { id }) => getRenderingData(allRenderings.find(r => r.id === id)),
     getBreadcrumbNames: (_, { input: { simulationId, executionId, renderingId } }) => {
       console.log('getBreadcrumbNames', { simulationId, executionId, renderingId });
       const names = [];
@@ -346,7 +346,17 @@ const resolvers = {
       rendering.modified = new Date();
       console.log('updateRendering', rendering);
       return rendering;
-    }
+    },
+    deleteRendering: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const rendering = deleteRendering(id);
+      console.log('deleteRendering', rendering);
+      const execution = allExecutions.find((item) => item.id === rendering.executionId);
+      const index = execution.renderings.findIndex((item) => item.id === id);
+      execution.renderings.splice(index, 1);
+      console.log('deleteRendering - removing rendering from owner execution', execution);
+      return rendering;
+    },
   }
 };
 

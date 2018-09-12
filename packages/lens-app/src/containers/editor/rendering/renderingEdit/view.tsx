@@ -1,8 +1,10 @@
 import React from 'react';
 import { IRendering } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
-import { backupUrl } from 'src/helpers';
-import { UPDATE_RENDERING } from 'editor/queries';
+import {
+  UPDATE_RENDERING,
+  getRenderingsRefetchQueries,
+} from 'editor/queries';
 
 import Form from './form';
 
@@ -10,11 +12,13 @@ import Form from './form';
 // const debug = _debug('lens:editor:rendering:renderingEdit:view');
 
 interface IProps {
-  match: any;
-  history: any;
   sourceId: string;
+  simulationId: number;
+  executionId: number;
+  renderingId: number;
   rendering: IRendering;
   loading: boolean;
+  onClose: () => void;
 }
 
 interface IState {
@@ -47,28 +51,30 @@ class View extends React.Component<IProps, any> {
     if (this.props.loading) {
       return null;
     }
+
     const {
+      onClose,
       sourceId,
+      simulationId,
+      executionId,
+      renderingId,
       rendering: {
-        id,
-        executionId,
-        simulationId,
         created,
         modified
       }
     } = this.props;
 
     return (
-      <Mutation mutation={UPDATE_RENDERING} key={id}>
+      <Mutation mutation={UPDATE_RENDERING} key={renderingId}>
         {(updateRendering) => (
           <Form
             name={this.state.name}
             created={created}
             modified={modified}
-            tag={`${sourceId}:${simulationId}:${executionId}:${id}`}
+            tag={`${sourceId}:${simulationId}:${executionId}:${renderingId}`}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(updateRendering)}
-            onCancel={this.returnToList}
+            onCancel={onClose}
           />
         )}
       </Mutation>
@@ -79,19 +85,14 @@ class View extends React.Component<IProps, any> {
     this.setState({ name: this.props.rendering.name });
   }
 
-  private returnToList = () => {
-    const { match: { url }, history } = this.props;
-    history.replace(backupUrl(url));
-  };
-
   private handleSaveClick = (mutateFunc) => () => {
+    const { renderingId, executionId, onClose } = this.props;
+    const { name } = this.state;
     mutateFunc({
-      variables: {
-        id: this.props.rendering.id,
-        name: this.state.name
-      }
+      variables: { id: renderingId, name },
+      refetchQueries: getRenderingsRefetchQueries(executionId)
     });
-    this.returnToList();
+    onClose();
   };
 
   private handleChange = (key: string) => (event) =>

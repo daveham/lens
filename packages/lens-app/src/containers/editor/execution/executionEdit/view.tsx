@@ -3,7 +3,7 @@ import { IExecution } from 'editor/interfaces';
 import { Mutation } from 'react-apollo';
 import {
   UPDATE_EXECUTION,
-  getExecutionsRefetchQueries,
+  getExecutionsRefetchQueries
 } from 'editor/queries';
 
 import Form from './form';

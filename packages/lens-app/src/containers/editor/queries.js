@@ -215,3 +215,17 @@ export function getRenderingsRefetchQueries(executionId) {
     variables: { executionId }
   }];
 }
+
+export function getAddRenderingRefetchQueries(sourceId, simulationId, executionId) {
+  debug('getAddRenderingRefetchQueries', { sourceId, simulationId, executionId });
+  return [{
+    query: GET_SIMULATIONS,
+    variables: { sourceId }
+  }, {
+    query: GET_EXECUTIONS,
+    variables: { simulationId }
+  }, {
+    query: GET_RENDERINGS,
+    variables: { executionId }
+  }];
+}

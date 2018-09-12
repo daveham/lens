@@ -4,7 +4,7 @@ import { thumbnailUrlFromIdSelector } from 'modules/images/selectors';
 import { ensureImage } from 'modules/images/actions';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:simulation:view:rdxWrapper');
+// const debug = _debug('lens:editor:simulation:rdxWrapper');
 
 const mapDispatchToProps = { ensureImage };
 

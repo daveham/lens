@@ -7,7 +7,10 @@ import { backupUrl } from 'src/helpers';
 // const debug = _debug('lens:editor:simulation:simulationEdit:gqlWrapper');
 
 export default View => props => {
-  const { history, match: { url, params: { sourceId, simulationId } } } = props;
+  const {
+    history,
+    match: { url, params: { sourceId, simulationId } }
+  } = props;
 
   const returnToList = () => {
     history.replace(backupUrl(url));

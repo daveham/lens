@@ -5,15 +5,13 @@ import View from './view';
 const renderProp = (props) => {
   const {
     history,
-    match: {
-      url,
-      params: { sourceId }
-    }
+    match: { url, params: { sourceId } }
   } = props;
 
   const returnToList = () => {
     history.replace(backupUrl(url));
   };
+
   return <View
     onClose={returnToList}
     sourceId={sourceId}

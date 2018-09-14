@@ -5,7 +5,7 @@ import {
   getSimulationsRefetchQueries
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor/simulation/simulationNew/view');
@@ -56,6 +56,7 @@ class View extends React.Component<IProps, IState> {
       <Mutation mutation={CREATE_SIMULATION} key={sourceId}>
         {(addSimulation) => (
           <Form
+            isNew
             name={this.state.name}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(addSimulation)}
@@ -67,20 +68,14 @@ class View extends React.Component<IProps, IState> {
   }
 
   private initializeEditFields() {
-    this.setState({ name: initialState.name });
+    this.setState(initialState);
   }
 
   private handleSaveClick = (mutateFunc) => () => {
-    const {
-      sourceId,
-      onClose
-    } = this.props;
-
+    const { sourceId, onClose } = this.props;
+    const { name } = this.state;
     mutateFunc({
-      variables: {
-        sourceId,
-        name: this.state.name
-      },
+      variables: { sourceId, name },
       refetchQueries: getSimulationsRefetchQueries(sourceId)
     });
     onClose();

@@ -1,24 +1,29 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import { GET_EXECUTIONS } from 'editor/queries';
+import ListView from 'editor/common/listView';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:simulation:executionList:gqlWrapper');
 
-export default View => props => {
+export default Table => props => {
   const { match: { url, params: { simulationId } } } = props;
-
   const renderProp = ({
     data: { getExecutions: { items: executions } = {} },
     error,
     loading
   }) =>
-    <View
-      url={url}
+    <ListView
       loading={loading}
       error={error}
-      executions={executions}
-    />;
+    >
+      {executions && (
+        <Table
+          executionRows={executions}
+          url={url}
+        />
+      )}
+    </ListView>;
 
   return (
     <Query

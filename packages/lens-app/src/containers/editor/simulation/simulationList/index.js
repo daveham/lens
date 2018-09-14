@@ -1,4 +1,4 @@
-import View from './view';
+import SimulationTable from './simulationTable';
 import gqlWrapper from './gqlWrapper';
 
-export default gqlWrapper(View);
+export default gqlWrapper(SimulationTable);

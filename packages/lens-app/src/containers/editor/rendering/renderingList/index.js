@@ -1,4 +1,4 @@
-import View from './view';
+import RenderingTable from './renderingTable';
 import gqlWrapper from './gqlWrapper';
 
-export default gqlWrapper(View);
+export default gqlWrapper(RenderingTable);

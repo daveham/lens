@@ -1,4 +1,4 @@
-import View from './view';
+import ExecutionTable from './executionTable';
 import gqlWrapper from './gqlWrapper';
 
-export default gqlWrapper(View);
+export default gqlWrapper(ExecutionTable);

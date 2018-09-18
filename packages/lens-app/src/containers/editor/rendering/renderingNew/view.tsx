@@ -6,7 +6,7 @@ import {
   getAddRenderingRefetchQueries,
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor/rendering/renderingNew/view');
@@ -59,6 +59,7 @@ class View extends React.Component<IProps, IState> {
       <Mutation mutation={CREATE_RENDERING} key={executionId}>
         {(addRendering) => (
           <Form
+            isNew
             name={this.state.name}
             onNameChange={this.handleChange('name')}
             onSave={this.handleSaveClick(addRendering)}

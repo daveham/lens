@@ -6,7 +6,7 @@ import {
   getExecutionsRefetchQueries
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:execution:executionDelete:view');
@@ -42,6 +42,7 @@ class View extends React.Component<IProps, any> {
       <Mutation mutation={DELETE_EXECUTION} key={executionId}>
         {(deleteExecution) => (
           <Form
+            isDelete
             name={name}
             created={created}
             modified={modified}

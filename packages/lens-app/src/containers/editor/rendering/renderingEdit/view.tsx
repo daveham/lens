@@ -6,7 +6,7 @@ import {
   getRenderingsRefetchQueries,
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:rendering:renderingEdit:view');
@@ -68,6 +68,7 @@ class View extends React.Component<IProps, any> {
       <Mutation mutation={UPDATE_RENDERING} key={renderingId}>
         {(updateRendering) => (
           <Form
+            isEdit
             name={this.state.name}
             created={created}
             modified={modified}

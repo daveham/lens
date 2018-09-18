@@ -6,7 +6,7 @@ import {
   getRenderingsRefetchQueries
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:rendering:renderingDelete:view');
@@ -44,6 +44,7 @@ class View extends React.Component<IProps, any> {
       <Mutation mutation={DELETE_RENDERING} key={renderingId}>
         {(deleteRendering) => (
           <Form
+            isDelete
             name={name}
             created={created}
             modified={modified}

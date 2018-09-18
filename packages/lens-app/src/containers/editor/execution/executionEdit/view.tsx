@@ -6,7 +6,7 @@ import {
   getExecutionsRefetchQueries
 } from 'editor/queries';
 
-import Form from './form';
+import Form from '../common/form';
 
 interface IProps {
   sourceId: string;
@@ -63,6 +63,7 @@ class View extends React.Component<IProps, any> {
       <Mutation mutation={UPDATE_EXECUTION} key={executionId}>
         {(updateExecution) => (
           <Form
+            isEdit
             name={this.state.name}
             created={created}
             modified={modified}

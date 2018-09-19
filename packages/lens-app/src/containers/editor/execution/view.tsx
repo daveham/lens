@@ -66,8 +66,10 @@ class View extends React.Component<IProps, any> {
   private renderExecutionEditToolbar = (): any => {
     const { thumbnailUrl, match: { url: back, params: { simulationId } } } = this.props;
     return (
-      <Header title='Edit Execution'>
-        <BreadcrumbBar simulationId={simulationId} />
+      <Header
+        title='Edit Execution'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+      >
         <ListToolbar links={{ back }} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
@@ -77,8 +79,10 @@ class View extends React.Component<IProps, any> {
   private renderExecutionDeleteToolbar = (): any => {
     const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
     return (
-      <Header title='Delete Execution'>
-        <BreadcrumbBar simulationId={simulationId} />
+      <Header
+        title='Delete Execution'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+      >
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -87,8 +91,10 @@ class View extends React.Component<IProps, any> {
   private renderExecutionNewToolbar = (): any => {
     const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
     return (
-      <Header title='New Execution'>
-        <BreadcrumbBar simulationId={simulationId} />
+      <Header
+        title='New Execution'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+      >
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -102,8 +108,10 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Executions'>
-        <BreadcrumbBar simulationId={simulationId} />
+      <Header
+        title='Executions'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+      >
         <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>

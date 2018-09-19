@@ -21,9 +21,12 @@ function renderLabelElement(label, link) {
     : labelElement;
 }
 
-function renderSegmentElement(inner) {
+function renderSegmentElement(prefix, inner) {
   return (
     <div className={styles.segment}>
+      <span className={styles.prefix}>
+        {prefix}:
+      </span>
       {inner}
     </div>
   );
@@ -39,11 +42,11 @@ const BreadcrumbBar = (props: IProps): any => {
   return (
     <div className={styles.container}>
       {simulationName &&
-        renderSegmentElement(renderLabelElement(simulationName, simulationLink))}
+        renderSegmentElement('Simulation', renderLabelElement(simulationName, simulationLink))}
       {executionName &&
-        renderSegmentElement(renderLabelElement(executionName, executionLink))}
+        renderSegmentElement('Execution', renderLabelElement(executionName, executionLink))}
       {renderingName &&
-      renderSegmentElement(renderLabelElement(renderingName, renderingLink))}
+      renderSegmentElement('Rendering', renderLabelElement(renderingName, renderingLink))}
     </div>
   );
 };

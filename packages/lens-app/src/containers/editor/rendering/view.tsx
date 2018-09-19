@@ -66,8 +66,10 @@ class View extends React.Component<IProps, any> {
   private renderRenderingEditToolbar = (): any => {
     const { thumbnailUrl, match: { url: back, params: { simulationId, executionId } } } = this.props;
     return (
-      <Header title='Edit Rendering'>
-        <BreadcrumbBar simulationId={simulationId} executionId={executionId} />
+      <Header
+        title='Edit Rendering'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+      >
         <ListToolbar links={{ back }} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
@@ -77,8 +79,10 @@ class View extends React.Component<IProps, any> {
   private renderRenderingDeleteToolbar = (): any => {
     const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
     return (
-      <Header title='Delete Rendering'>
-        <BreadcrumbBar simulationId={simulationId} executionId={executionId} />
+      <Header
+        title='Delete Rendering'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+      >
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -87,8 +91,10 @@ class View extends React.Component<IProps, any> {
   private renderRenderingNewToolbar = (): any => {
     const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
     return (
-      <Header title='New Rendering'>
-        <BreadcrumbBar simulationId={simulationId} executionId={executionId} />
+      <Header
+        title='New Rendering'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+      >
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );
@@ -102,8 +108,10 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Renderings'>
-        <BreadcrumbBar simulationId={simulationId} executionId={executionId} />
+      <Header
+        title='Renderings'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+      >
         <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>

@@ -13,7 +13,7 @@ export default View => props => {
   } = props;
 
   const returnToList = () => {
-    history.replace(backupUrl(url));
+    history.replace(backupUrl(url, 2));
   };
 
   const renderProp =

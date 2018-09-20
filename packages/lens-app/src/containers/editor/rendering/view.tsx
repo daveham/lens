@@ -46,7 +46,7 @@ class View extends React.Component<IProps, any> {
         <Switch>
           <Route path={`${path}/new`} render={this.renderRenderingNewToolbar} />
           <Route path={`${path}/:renderingId/delete`} render={this.renderRenderingDeleteToolbar} />
-          <Route path={`${path}/:renderingId`} render={this.renderRenderingEditToolbar} />
+          <Route path={`${path}/:renderingId/edit`} render={this.renderRenderingEditToolbar} />
           <Route path={path} render={this.renderRenderingListToolbar} />
         </Switch>
         <div className={styles.contents}>
@@ -54,7 +54,7 @@ class View extends React.Component<IProps, any> {
             <Switch>
               <Route path={`${path}/new`} render={renderingNewRenderFunction} />
               <Route path={`${path}/:renderingId/delete`} render={renderingDeleteRenderFunction} />
-              <Route path={`${path}/:renderingId`} render={renderingEditRenderFunction} />
+              <Route path={`${path}/:renderingId/edit`} render={renderingEditRenderFunction} />
               <Route path={path} render={renderingListRenderFunction} />
             </Switch>
           </Paper>
@@ -64,13 +64,17 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderRenderingEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url: back, params: { simulationId, executionId } } } = this.props;
+    const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
+    const links = {
+      back: backupUrl(url, 2)
+    };
+
     return (
       <Header
         title='Edit Rendering'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
       >
-        <ListToolbar links={{ back }} />
+        <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );

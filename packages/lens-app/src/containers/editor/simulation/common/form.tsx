@@ -11,7 +11,7 @@ interface IProps {
   created?: number;
   modified?: number;
   name: string;
-  onCancel: () => void;
+  onCancel?: () => void;
   onConfirm?: () => void;
   onNameChange?: (event) => void;
   onSave?: () => void;
@@ -33,48 +33,43 @@ export default ({
   isNew,
   isEdit,
   isDelete
-}: IProps) => (
-  <FormContainer
-    onCancel={onCancel}
-    onConfirm={onConfirm}
-    onSave={onSave}
-    tag={tag}
-  >
-    {(isEdit || isNew) && (
+}: IProps) => {
+  const isShow = !(isNew || isEdit || isDelete);
+  return (
+    <FormContainer
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+      onSave={onSave}
+      tag={tag}
+    >
       <TextField
         label='Name'
         margin='normal'
         multiline
-        onChange={onNameChange}
+        onChange={(isEdit || isNew) ? onNameChange : null}
         value={name}
         fullWidth
-        required
+        required={isEdit || isNew}
+        disabled={isDelete || isShow}
       />
-    )}
-    {isDelete && (
-      <Fragment>
-        <div>{name}</div>
-        <div>modified: {moment(modified).format(timestampFormat)}</div>
-        <div>created: {moment(created).format(timestampFormat)}</div>
-      </Fragment>
-    )}
-    {isEdit && (
-      <Fragment>
-        <TextField
-          label='Modified'
-          margin='normal'
-          value={moment(modified).format(timestampFormat)}
-          fullWidth
-          disabled
-        />
-        <TextField
-          label='Created'
-          margin='normal'
-          value={moment(created).format(timestampFormat)}
-          fullWidth
-          disabled
-        />
-      </Fragment>
-    )}
-  </FormContainer>
-);
+      {!isNew && (
+        <Fragment>
+          <TextField
+            label='Modified'
+            margin='normal'
+            value={moment(modified).format(timestampFormat)}
+            fullWidth
+            disabled
+          />
+          <TextField
+            label='Created'
+            margin='normal'
+            value={moment(created).format(timestampFormat)}
+            fullWidth
+            disabled
+          />
+        </Fragment>
+      )}
+    </FormContainer>
+  );
+};

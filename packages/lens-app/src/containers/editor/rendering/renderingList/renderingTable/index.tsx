@@ -69,7 +69,7 @@ class RenderingTable extends React.Component<IProps, IState> {
     if (row.id === this.state.activeId) {
       const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
-        editItem: rowUrl,
+        editItem: `${rowUrl}/edit`,
         deleteItem: `${rowUrl}/delete`
       };
       return <RowToolbar links={links} />;

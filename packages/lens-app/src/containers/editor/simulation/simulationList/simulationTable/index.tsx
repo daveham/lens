@@ -70,7 +70,8 @@ class SimulationTable extends React.Component<IProps, IState> {
     if (row.id === this.state.activeId) {
       const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
-        editItem: rowUrl,
+        showItem: rowUrl,
+        editItem: `${rowUrl}/edit`,
         executions: `${rowUrl}/Execution`,
         deleteItem: `${rowUrl}/delete`
       };

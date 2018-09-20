@@ -10,6 +10,7 @@ import SourceThumbnail from 'src/components/sourceThumbnail';
 import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
+import simulationShowRenderFunction from './simulationShow';
 import simulationDeleteRenderFunction from './simulationDelete';
 import ListToolbar from '../components/listToolbar';
 
@@ -45,7 +46,8 @@ class View extends React.Component<IProps, any> {
         <Switch>
           <Route path={`${path}/new`} render={this.renderSimulationNewToolbar} />
           <Route path={`${path}/:simulationId/delete`} render={this.renderSimulationDeleteToolbar} />
-          <Route path={`${path}/:simulationId`} render={this.renderSimulationEditToolbar} />
+          <Route path={`${path}/:simulationId/edit`} render={this.renderSimulationEditToolbar} />
+          <Route path={`${path}/:simulationId`} render={this.renderSimulationShowToolbar} />
           <Route path={path} render={this.renderSimulationListToolbar} />
         </Switch>
         <div className={styles.contents}>
@@ -53,7 +55,8 @@ class View extends React.Component<IProps, any> {
             <Switch>
               <Route path={`${path}/new`} render={simulationNewRenderFunction} />
               <Route path={`${path}/:simulationId/delete`} render={simulationDeleteRenderFunction} />
-              <Route path={`${path}/:simulationId`} render={simulationEditRenderFunction} />
+              <Route path={`${path}/:simulationId/edit`} render={simulationEditRenderFunction} />
+              <Route path={`${path}/:simulationId`} render={simulationShowRenderFunction} />
               <Route path={path} render={simulationListRenderFunction} />
             </Switch>
           </Paper>
@@ -62,11 +65,29 @@ class View extends React.Component<IProps, any> {
     );
   }
 
+  private renderSimulationShowToolbar = (): any => {
+    const { thumbnailUrl, match: { url } } = this.props;
+    const links = {
+      back: url
+    };
+
+    return (
+      <Header title='Simulation Show'>
+        <ListToolbar links={links} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
+
   private renderSimulationEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url: back } } = this.props;
+    const { thumbnailUrl, match: { url } } = this.props;
+    const links = {
+      back: backupUrl(url, 2)
+    };
+
     return (
       <Header title='Edit Simulation'>
-        <ListToolbar links={{ back }} />
+        <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>
     );

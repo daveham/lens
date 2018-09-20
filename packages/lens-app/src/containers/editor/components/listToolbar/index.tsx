@@ -2,6 +2,7 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
 import Photo from '@material-ui/icons/Photo';
 import Landscape from '@material-ui/icons/Landscape';
 import MoreVert from '@material-ui/icons/MoreVert';
@@ -59,6 +60,13 @@ export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
       buttons.push(
         <RouterLink key='newItem' to={links.newItem}>
           <IconButton style={buttonStyle}><AddToPhotos style={iconStyle} /></IconButton>
+        </RouterLink>
+      );
+    }
+    if (links.showItem) {
+      buttons.push(
+        <RouterLink key='showItem' to={links.showItem}>
+          <IconButton style={buttonStyle}><RemoveRedEye style={iconStyle} /></IconButton>
         </RouterLink>
       );
     }

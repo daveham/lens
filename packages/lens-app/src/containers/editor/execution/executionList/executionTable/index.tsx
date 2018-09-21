@@ -70,6 +70,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
     if (row.id === this.state.activeId) {
       const rowUrl = `${this.props.url}/${row.id}`;
       const links = {
+        showItem: rowUrl,
         editItem: `${rowUrl}/edit`,
         renderings: `${rowUrl}/Rendering`,
         deleteItem: `${rowUrl}/delete`

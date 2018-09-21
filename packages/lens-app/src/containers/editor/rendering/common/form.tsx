@@ -5,13 +5,13 @@ import { timestampFormat } from 'editor/constants';
 import FormContainer from 'editor/components/formContainer';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:editor:execution:common:form');
+// const debug = _debug('lens:editor:rendering:common:form');
 
 interface IProps {
   created?: number;
   modified?: number;
   name: string;
-  onCancel: () => void;
+  onCancel?: () => void;
   onConfirm?: () => void;
   onNameChange?: (event) => void;
   onSave?: () => void;
@@ -22,59 +22,56 @@ interface IProps {
 }
 
 export default ({
-                  created,
-                  modified,
-                  name,
-                  onCancel,
-                  onConfirm,
-                  onNameChange,
-                  onSave,
-                  tag,
-                  isNew,
-                  isEdit,
-                  isDelete
-                }: IProps) => (
-  <FormContainer
-    onCancel={onCancel}
-    onConfirm={onConfirm}
-    onSave={onSave}
-    tag={tag}
-  >
-    {(isEdit || isNew) && (
-      <TextField
-        label='Name'
-        margin='normal'
-        multiline
-        onChange={onNameChange}
-        value={name}
-        fullWidth
-        required
-      />
-    )}
-    {isDelete && (
-      <Fragment>
-        <div>{name}</div>
-        <div>modified: {moment(modified).format(timestampFormat)}</div>
-        <div>created: {moment(created).format(timestampFormat)}</div>
-      </Fragment>
-    )}
-    {isEdit && (
-      <Fragment>
+  created,
+  modified,
+  name,
+  onCancel,
+  onConfirm,
+  onNameChange,
+  onSave,
+  tag,
+  isNew,
+  isEdit,
+  isDelete
+}: IProps) => {
+  const isShow = !(isNew || isEdit || isDelete);
+  return (
+    <FormContainer
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+      onSave={onSave}
+      tag={tag}
+    >
+      {(isEdit || isNew) && (
         <TextField
-          label='Modified'
+          label='Name'
           margin='normal'
-          value={moment(modified).format(timestampFormat)}
+          multiline
+          onChange={(isEdit || isNew) ? onNameChange : null}
+          value={name}
           fullWidth
-          disabled
+          required={isEdit || isNew}
+          disabled={isDelete || isShow}
         />
-        <TextField
-          label='Created'
-          margin='normal'
-          value={moment(created).format(timestampFormat)}
-          fullWidth
-          disabled
-        />
-      </Fragment>
-    )}
-  </FormContainer>
-);
+      )}
+      {!isNew && (
+        <Fragment>
+          <TextField
+            label='Modified'
+            margin='normal'
+            value={moment(modified).format(timestampFormat)}
+            fullWidth
+            disabled
+          />
+          <TextField
+            label='Created'
+            margin='normal'
+            value={moment(created).format(timestampFormat)}
+            fullWidth
+            disabled
+          />
+        </Fragment>
+      )}
+    </FormContainer>
+  );
+};

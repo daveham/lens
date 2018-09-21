@@ -5,8 +5,8 @@ import Paper from '@material-ui/core/Paper';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
+import SourceThumbnail from 'components/sourceThumbnail';
 import Header from '../components/header';
-import SourceThumbnail from 'src/components/sourceThumbnail';
 import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
@@ -72,7 +72,7 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Simulation Show'>
+      <Header title='Simulation'>
         <ListToolbar links={links} />
         {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
       </Header>

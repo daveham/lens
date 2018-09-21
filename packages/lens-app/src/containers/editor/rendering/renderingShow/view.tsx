@@ -1,16 +1,17 @@
 import React from 'react';
-import { IExecution } from 'editor/interfaces';
+import { IRendering } from 'editor/interfaces';
 
 import Form from '../common/form';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:editor:execution:executionShow:view');
+// const debug = _debug('lens:editor:rendering:renderingShow:view');
 
 interface IProps {
   sourceId: string;
   simulationId: number;
   executionId: number;
-  execution: IExecution;
+  renderingId: number;
+  rendering: IRendering;
   loading: boolean;
 }
 
@@ -24,11 +25,12 @@ class View extends React.Component<IProps, any> {
       sourceId,
       simulationId,
       executionId,
-      execution: {
+      renderingId,
+      rendering: {
         created,
         modified,
         name
-      },
+      }
     } = this.props;
 
     return (
@@ -36,7 +38,7 @@ class View extends React.Component<IProps, any> {
         name={name}
         created={created}
         modified={modified}
-        tag={`${sourceId}:${simulationId}:${executionId}`}
+        tag={`${sourceId}:${simulationId}:${executionId}:${renderingId}`}
       />
     );
   }

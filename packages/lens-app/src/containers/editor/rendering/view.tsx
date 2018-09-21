@@ -11,6 +11,7 @@ import BreadcrumbBar from '../components/breadcrumbs';
 import renderingListRenderFunction from './renderingList';
 import renderingEditRenderFunction from './renderingEdit';
 import renderingNewRenderFunction from './renderingNew';
+import renderingShowRenderFunction from './renderingShow';
 import renderingDeleteRenderFunction from './renderingDelete';
 import ListToolbar from '../components/listToolbar';
 
@@ -47,6 +48,7 @@ class View extends React.Component<IProps, any> {
           <Route path={`${path}/new`} render={this.renderRenderingNewToolbar} />
           <Route path={`${path}/:renderingId/delete`} render={this.renderRenderingDeleteToolbar} />
           <Route path={`${path}/:renderingId/edit`} render={this.renderRenderingEditToolbar} />
+          <Route path={`${path}/:renderingId`} render={this.renderRenderingShowToolbar} />
           <Route path={path} render={this.renderRenderingListToolbar} />
         </Switch>
         <div className={styles.contents}>
@@ -55,6 +57,7 @@ class View extends React.Component<IProps, any> {
               <Route path={`${path}/new`} render={renderingNewRenderFunction} />
               <Route path={`${path}/:renderingId/delete`} render={renderingDeleteRenderFunction} />
               <Route path={`${path}/:renderingId/edit`} render={renderingEditRenderFunction} />
+              <Route path={`${path}/:renderingId`} render={renderingShowRenderFunction} />
               <Route path={path} render={renderingListRenderFunction} />
             </Switch>
           </Paper>
@@ -62,6 +65,20 @@ class View extends React.Component<IProps, any> {
       </div>
     );
   }
+
+  private renderRenderingShowToolbar = (): any => {
+    const { thumbnailUrl, match: { url } } = this.props;
+    const links = {
+      back: url
+    };
+
+    return (
+      <Header title='Rendering'>
+        <ListToolbar links={links} />
+        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
+      </Header>
+    );
+  };
 
   private renderRenderingEditToolbar = (): any => {
     const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;

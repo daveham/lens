@@ -42,18 +42,16 @@ export default ({
       onSave={onSave}
       tag={tag}
     >
-      {(isEdit || isNew) && (
-        <TextField
-          label='Name'
-          margin='normal'
-          multiline
-          onChange={(isEdit || isNew) ? onNameChange : null}
-          value={name}
-          fullWidth
-          required={isEdit || isNew}
-          disabled={isDelete || isShow}
-        />
-      )}
+      <TextField
+        label='Name'
+        margin='normal'
+        multiline
+        onChange={(isEdit || isNew) ? onNameChange : null}
+        value={name}
+        fullWidth
+        required={isEdit || isNew}
+        disabled={isDelete || isShow}
+      />
       {!isNew && (
         <Fragment>
           <TextField

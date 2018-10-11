@@ -11,6 +11,7 @@ import Reply from '@material-ui/icons/Reply';
 import Edit from '@material-ui/icons/Edit';
 import Delete from '@material-ui/icons/Delete';
 import AddToPhotos from '@material-ui/icons/AddToPhotos';
+import Tooltip from '@material-ui/core/Tooltip';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:simulation:components:listToolbar');
@@ -23,8 +24,6 @@ interface IProps {
 }
 
 export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
-  // debug('render', { links });
-
   const buttons = [];
 
   let buttonStyle;
@@ -73,7 +72,12 @@ export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
     if (links.editItem) {
       buttons.push(
         <RouterLink key='editItem' to={links.editItem}>
-          <IconButton style={buttonStyle}><Edit style={iconStyle} /></IconButton>
+          <Tooltip
+            placement='bottom'
+            title='Edit'
+          >
+            <IconButton style={buttonStyle}><Edit style={iconStyle} /></IconButton>
+          </Tooltip>
         </RouterLink>
       );
     }

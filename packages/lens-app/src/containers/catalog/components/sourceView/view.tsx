@@ -15,11 +15,24 @@ import {
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
 import SourceThumbnail from 'components/sourceThumbnail';
 import { Details, Tiles, Toolbar } from './components';
+// import { withStyles } from '@material-ui/core/styles';
 
 import styles from './styles.scss';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:sourceView');
+
+// const styles = {
+//   root: {
+//     display: 'flex',
+//     flexDirection: 'column',
+//     height: '100%'
+//   },
+//   featureContainer: {
+//     display: 'flex',
+//     flexGrow: 1
+//   }
+// };
 
 export const displayTileResolution = 512;
 
@@ -118,7 +131,12 @@ function calcInitialState(props: IProps): IState {
   return {
     statsSpec,
     displaySpec,
-    viewport: { left: 0, top: 0, right: 0, bottom: 0 },
+    viewport: {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0
+    },
     displayImageKeys: [],
     pendingImageDescriptors: [],
     selectedStatsDescriptor,
@@ -319,7 +337,8 @@ class View extends React.Component<IProps, IState> {
 
   private handleTilesViewportSizeChanged = (left: number, top: number, width: number, height: number): void => {
     this.setState({ viewport: {
-      left, top,
+      left,
+      top,
       right: left + width,
       bottom: top + height
     }});

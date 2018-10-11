@@ -1,14 +1,35 @@
 import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import Gradient from '@material-ui/icons/Gradient';
 import PhotoLibrary from '@material-ui/icons/PhotoLibrary';
 import { Link as RouterLink } from 'react-router-dom';
 import SourceThumbnail from 'components/sourceThumbnail';
 import { IImageDescriptor, ISourceDescriptor } from 'src/interfaces';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: theme.spacing.unit,
+    paddingTop: theme.spacing.unit
+  },
+  title: {
+    flexGrow: 1
+  },
+  thumbnailsContainer: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  thumbnailContainer: {
+    padding: 20
+  }
+});
 
 interface IProps {
+  classes: any;
   sources: ReadonlyArray<ISourceDescriptor>;
   catalogName: string;
   thumbnailImageDescriptors: ReadonlyArray<IImageDescriptor>;
@@ -21,7 +42,7 @@ interface IState {
   resolution: number;
 }
 
-class View extends React.Component<IProps, IState> {
+class SourcesView extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -44,6 +65,8 @@ class View extends React.Component<IProps, IState> {
   }
 
   public renderThumbnail(resolution, source, thumbnail, key) {
+    const { classes } = this.props;
+
     const SimulationLink = (props) => (
       <RouterLink
         to={`/Catalog/${source.id}/Simulation`}
@@ -58,7 +81,7 @@ class View extends React.Component<IProps, IState> {
     );
 
     return (
-      <div className={styles.thumbnailContainer} key={key}>
+      <div className={classes.thumbnailContainer} key={key}>
         <SourceThumbnail
           thumbnailUrl={thumbnail ? thumbnail.url : null}
           label={source.name}
@@ -74,12 +97,14 @@ class View extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { thumbnailImages, sources, catalogName } = this.props;
+    const { classes, thumbnailImages, sources, catalogName } = this.props;
     const { resolution } = this.state;
     return (
-      <div className={styles.container}>
-        <div className={styles.catalogName}>{catalogName}</div>
-        <div className={styles.thumbnailsContainer}>
+      <div className={classes.root}>
+        <Typography variant='display1' gutterBottom noWrap className={classes.title}>
+          {catalogName}
+        </Typography>
+        <div className={classes.thumbnailsContainer}>
           {this.props.thumbnailImageKeys.map((key, index) =>
             this.renderThumbnail(
               resolution,
@@ -98,4 +123,5 @@ class View extends React.Component<IProps, IState> {
   }
 }
 
-export default View;
+// @ts-ignore
+export default withStyles(styles)(SourcesView);

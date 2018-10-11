@@ -15,12 +15,14 @@ import renderingShowRenderFunction from './renderingShow';
 import renderingDeleteRenderFunction from './renderingDelete';
 import ListToolbar from '../components/listToolbar';
 
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+import { styles } from 'editor/styles/editorView';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:rendering:view');
 
 interface IProps {
+  classes: any;
   match: any;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
@@ -41,9 +43,9 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
-    const { match: { path } } = this.props;
+    const { classes, match: { path } } = this.props;
     return (
-      <div className={styles.container}>
+      <div className={classes.root}>
         <Switch>
           <Route path={`${path}/new`} render={this.renderRenderingNewToolbar} />
           <Route path={`${path}/:renderingId/delete`} render={this.renderRenderingDeleteToolbar} />
@@ -51,7 +53,7 @@ class View extends React.Component<IProps, any> {
           <Route path={`${path}/:renderingId`} render={this.renderRenderingShowToolbar} />
           <Route path={path} render={this.renderRenderingListToolbar} />
         </Switch>
-        <div className={styles.contents}>
+        <div className={classes.contents}>
           <Paper>
             <Switch>
               <Route path={`${path}/new`} render={renderingNewRenderFunction} />
@@ -140,4 +142,5 @@ class View extends React.Component<IProps, any> {
   };
 }
 
-export default View;
+// @ts-ignore
+export default withStyles(styles)(View);

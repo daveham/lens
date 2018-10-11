@@ -4,30 +4,46 @@ import Loading from 'components/loading';
 import { simulationRoute } from 'src/routes';
 import SourcesView from './sourcesView';
 import SourceView from './sourceView';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:catalog:view');
 
+const styles = {
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  content: {
+    height: '100vh',
+    overflow: 'auto',
+    width: '100%',
+  }
+};
+
 interface IProps {
+  classes: any;
   match: any;
   catalogIsLoading?: boolean;
   catalogIsLoaded?: boolean;
   requestCatalog: () => void;
 }
 
-class View extends React.Component<IProps, any> {
+class AppView extends React.Component<IProps, any> {
   public componentDidMount(): any {
-    if (!(this.props.catalogIsLoaded || this.props.catalogIsLoading)) {
+    const { catalogIsLoaded, catalogIsLoading, requestCatalog } = this.props;
+    if (!(catalogIsLoaded || catalogIsLoading)) {
       setTimeout(() => {
-        this.props.requestCatalog();
+        requestCatalog();
       }, 0);
     }
   }
 
   public render() {
     return (
-      <div className={styles.container}>
+      <div className={this.props.classes.root}>
         {this.renderLoading()}
         {this.renderCatalog()}
       </div>
@@ -42,11 +58,11 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderCatalog() {
-    const { match: { path } } = this.props;
+    const { classes: { content }, match: { path } } = this.props;
 
     return this.props.catalogIsLoaded &&
       (
-        <div className={styles.content}>
+        <div className={content}>
           <RouterSwitch>
             <RouterRoute path={`${path}/Source/:id/:res`} component={SourceView}/>
             <RouterRoute path={`${path}/:sourceId/Simulation`} component={simulationRoute}/>
@@ -57,4 +73,5 @@ class View extends React.Component<IProps, any> {
   }
 }
 
-export default View;
+// @ts-ignore
+export default withStyles(styles)(AppView);

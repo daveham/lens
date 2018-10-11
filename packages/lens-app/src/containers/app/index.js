@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 
-import View from './components/view';
+import Dashboard from './components/dashboard';
 
 import {
   requestSocket as connectSocket,
@@ -25,4 +25,4 @@ const command = createSelector(commonSelector, ({ command }) => command);
 
 const mapStateToProps = createStructuredSelector({ connected, connecting, socketId, command });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(View));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

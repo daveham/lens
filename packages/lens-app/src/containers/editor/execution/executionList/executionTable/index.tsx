@@ -11,12 +11,14 @@ import {IExecution } from 'editor/interfaces';
 import RowToolbar from 'editor/components/rowToolbar';
 import { timestampFormat } from 'editor/constants';
 
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+import { styles } from 'editor/styles/tables';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:executionTable');
 
 interface IProps {
+  classes: any;
   executionRows: ReadonlyArray<IExecution>;
   url: string;
 }
@@ -35,16 +37,16 @@ class ExecutionTable extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { executionRows } = this.props;
+    const { classes, executionRows } = this.props;
     return(
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Renderings</TableCell>
-            <TableCell className={styles.toolbarCell} />
-            <TableCell className={styles.timestampCell}>Created</TableCell>
-            <TableCell className={styles.timestampCell}>Modified</TableCell>
+            <TableCell className={classes.toolbarCell} />
+            <TableCell className={classes.timestampCell}>Created</TableCell>
+            <TableCell className={classes.timestampCell}>Modified</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -77,7 +79,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
       };
       return <RowToolbar links={links}/>;
     }
-    return <span className={styles.toolbarFill} />;
+    return <span className={this.props.classes.toolbarFill} />;
   };
 
   private renderRow = (row: IExecution): any => {
@@ -90,7 +92,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
       >
         <TableCell>{row.name}</TableCell>
         <TableCell>{row.renderingCount}</TableCell>
-        <TableCell className={styles.toolbarCell}>{toolbar}</TableCell>
+        <TableCell className={this.props.classes.toolbarCell}>{toolbar}</TableCell>
         <TableCell>{moment(row.created).format(timestampFormat)}</TableCell>
         <TableCell>{moment(row.modified).format(timestampFormat)}</TableCell>
       </TableRow>
@@ -98,4 +100,5 @@ class ExecutionTable extends React.Component<IProps, IState> {
   }
 }
 
-export default ExecutionTable;
+// @ts-ignore
+export default withStyles(styles)(ExecutionTable);

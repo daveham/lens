@@ -10,13 +10,14 @@ import TableCell from '@material-ui/core/TableCell';
 import {IRendering } from 'editor/interfaces';
 import RowToolbar from 'editor/components/rowToolbar';
 import { timestampFormat } from 'editor/constants';
-
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+import { styles } from 'editor/styles/tables';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:renderingTable');
 
 interface IProps {
+  classes: any;
   renderingRows: ReadonlyArray<IRendering>;
   url: string;
 }
@@ -35,15 +36,15 @@ class RenderingTable extends React.Component<IProps, IState> {
   }
 
   public render(): any {
-    const { renderingRows } = this.props;
+    const { classes, renderingRows } = this.props;
     return(
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell className={styles.toolbarCell} />
-            <TableCell className={styles.timestampCell}>Created</TableCell>
-            <TableCell className={styles.timestampCell}>Modified</TableCell>
+            <TableCell className={classes.toolbarCell} />
+            <TableCell className={classes.timestampCell}>Created</TableCell>
+            <TableCell className={classes.timestampCell}>Modified</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -75,7 +76,7 @@ class RenderingTable extends React.Component<IProps, IState> {
       };
       return <RowToolbar links={links} />;
     }
-    return <span className={styles.toolbarFill} />;
+    return <span className={this.props.classes.toolbarFill} />;
   };
 
   private renderRow = (row: IRendering): any => {
@@ -87,7 +88,7 @@ class RenderingTable extends React.Component<IProps, IState> {
         onMouseLeave={this.handleMouseLeave}
       >
         <TableCell>{row.name}</TableCell>
-        <TableCell className={styles.toolbarCell}>{toolbar}</TableCell>
+        <TableCell className={this.props.classes.toolbarCell}>{toolbar}</TableCell>
         <TableCell>{moment(row.created).format(timestampFormat)}</TableCell>
         <TableCell>{moment(row.modified).format(timestampFormat)}</TableCell>
       </TableRow>
@@ -95,4 +96,5 @@ class RenderingTable extends React.Component<IProps, IState> {
   }
 }
 
-export default RenderingTable;
+// @ts-ignore
+export default withStyles(styles)(RenderingTable);

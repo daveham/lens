@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch } from 'react-router-dom';
-import classNames from 'classnames';
+import cx from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -19,6 +19,9 @@ import Home from '../../home';
 import Footer from './footer/index';
 import { mainListItems, secondaryListItems } from './listItems';
 import { catalogRoute } from 'src/routes';
+
+// import _debug from 'debug';
+// const debug = _debug('lens:containers:app:dashboard');
 
 const drawerWidth = 240;
 
@@ -94,6 +97,9 @@ const styles = theme => ({
   tableContainer: {
     height: 320,
   },
+  h5: {
+    marginBottom: theme.spacing.unit * 2,
+  },
   list: {
     '& a': {
       textDecoration: 'none',
@@ -153,7 +159,7 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, location: { pathname } } = this.props;
 
     return (
       <Fragment>
@@ -161,21 +167,21 @@ class Dashboard extends Component {
         <div className={classes.root}>
           <AppBar
             position="absolute"
-            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+            className={cx(classes.appBar, this.state.open && classes.appBarShift)}
           >
             <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
               <IconButton
                 color="inherit"
                 aria-label="Open drawer"
                 onClick={this.handleDrawerOpen}
-                className={classNames(
+                className={cx(
                   classes.menuButton,
                   this.state.open && classes.menuButtonHidden,
                 )}
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="title" color="inherit" noWrap className={classes.title}>
+              <Typography variant="h6" color="inherit" noWrap className={classes.title}>
                 Lens
               </Typography>
               <Footer
@@ -194,7 +200,7 @@ class Dashboard extends Component {
           <Drawer
             variant="permanent"
             classes={{
-              paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+              paper: cx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
             }}
             open={this.state.open}
           >
@@ -204,7 +210,9 @@ class Dashboard extends Component {
               </IconButton>
             </div>
             <Divider />
-            <List className={classes.list}>{mainListItems}</List>
+            <List className={classes.list}>
+              {mainListItems(pathname)}
+            </List>
             <Divider />
             <List>{secondaryListItems}</List>
           </Drawer>

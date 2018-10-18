@@ -1,11 +1,6 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Gradient from '@material-ui/icons/Gradient';
-import PhotoLibrary from '@material-ui/icons/PhotoLibrary';
-import { Link as RouterLink } from 'react-router-dom';
-import SourceThumbnail from 'components/sourceThumbnail';
+import ThumbnailCard from 'components/thumbnailCard';
 import { IImageDescriptor, ISourceDescriptor } from 'src/interfaces';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -64,34 +59,16 @@ class SourcesView extends React.Component<IProps, IState> {
     }
   }
 
-  public renderThumbnail(resolution, source, thumbnail, key) {
+  public renderThumbnailCard(resolution, source, thumbnail, key) {
     const { classes } = this.props;
-
-    const SimulationLink = (props) => (
-      <RouterLink
-        to={`/Catalog/${source.id}/Simulation`}
-        {...props}
-      />
-    );
-    const TileLink = (props) => (
-      <RouterLink
-        to={`/Catalog/Source/${source.id}/${resolution}`}
-        {...props}
-      />
-    );
-
     return (
       <div className={classes.thumbnailContainer} key={key}>
-        <SourceThumbnail
+        <ThumbnailCard
           thumbnailUrl={thumbnail ? thumbnail.url : null}
           label={source.name}
-          link={`/Catalog/Source/${source.id}/${resolution}`}
-        >
-          <Toolbar>
-            <IconButton component={SimulationLink}><PhotoLibrary/></IconButton>
-            <IconButton component={TileLink}><Gradient/></IconButton>
-          </Toolbar>
-        </SourceThumbnail>
+          imageDataLink={`/Catalog/Source/${source.id}/${resolution}`}
+          catalogLink={`/Catalog/${source.id}/Simulation`}
+        />
       </div>
     );
   }
@@ -101,12 +78,12 @@ class SourcesView extends React.Component<IProps, IState> {
     const { resolution } = this.state;
     return (
       <div className={classes.root}>
-        <Typography variant='display1' gutterBottom noWrap className={classes.title}>
+        <Typography variant='h4' gutterBottom noWrap className={classes.title}>
           {catalogName}
         </Typography>
         <div className={classes.thumbnailsContainer}>
           {this.props.thumbnailImageKeys.map((key, index) =>
-            this.renderThumbnail(
+            this.renderThumbnailCard(
               resolution,
               sources[index],
               thumbnailImages[key],

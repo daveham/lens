@@ -1,7 +1,23 @@
 import React from 'react';
-import styles from './styles.scss';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = (theme) => ({
+  root: {
+    display: 'flex',
+  },
+  label: {
+    color: theme.palette.primary.light,
+    paddingRight: theme.spacing.unit * 2,
+  },
+  prefix: {
+    color: theme.palette.primary.dark,
+    paddingRight: 2,
+  },
+});
 
 interface IProps {
+  classes: any;
   simulationName: string;
   simulationLink: string;
   executionName: string;
@@ -10,9 +26,9 @@ interface IProps {
   renderingLink: string;
 }
 
-function renderLabelElement(label, link) {
+function renderLabelElement(classes, label, link) {
   const labelElement = (
-    <span className={styles.label}>
+    <span className={classes.label}>
       {label}
     </span>
   );
@@ -21,34 +37,38 @@ function renderLabelElement(label, link) {
     : labelElement;
 }
 
-function renderSegmentElement(prefix, inner) {
+function renderSegmentElement(classes, prefix, inner) {
   return (
-    <div className={styles.segment}>
-      <span className={styles.prefix}>
+    <Typography variant='subtitle1'>
+      <span className={classes.prefix}>
         {prefix}:
       </span>
       {inner}
-    </div>
+    </Typography>
   );
 }
 
 const BreadcrumbBar = (props: IProps): any => {
   const {
+    classes,
     simulationName, simulationLink,
     executionName, executionLink,
     renderingName, renderingLink
   } = props;
 
   return (
-    <div className={styles.container}>
+    <div className={classes.root}>
       {simulationName &&
-        renderSegmentElement('Simulation', renderLabelElement(simulationName, simulationLink))}
+        renderSegmentElement(classes, 'Simulation',
+          renderLabelElement(classes, simulationName, simulationLink))}
       {executionName &&
-        renderSegmentElement('Execution', renderLabelElement(executionName, executionLink))}
+        renderSegmentElement(classes, 'Execution',
+          renderLabelElement(classes, executionName, executionLink))}
       {renderingName &&
-      renderSegmentElement('Rendering', renderLabelElement(renderingName, renderingLink))}
+      renderSegmentElement(classes, 'Rendering',
+        renderLabelElement(classes, renderingName, renderingLink))}
     </div>
   );
 };
 
-export default BreadcrumbBar;
+export default withStyles(styles)(BreadcrumbBar);

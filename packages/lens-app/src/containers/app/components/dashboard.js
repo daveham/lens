@@ -11,13 +11,11 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Home from '../../home';
-import Footer from './footer/index';
-import { mainListItems, secondaryListItems } from './listItems';
+import CommandBar from './commandBar';
+import { renderMainListItems, renderSecondaryListItems } from './listItems';
 import { catalogRoute } from 'src/routes';
 
 // import _debug from 'debug';
@@ -184,17 +182,12 @@ class Dashboard extends Component {
               <Typography variant="h6" color="inherit" noWrap className={classes.title}>
                 Lens
               </Typography>
-              <Footer
+              <CommandBar
                 connected={this.props.connected}
                 pingFlash={this.sendFlashPing}
                 pingJob={this.sendCommandPing}
                 command={this.props.command}
               />
-              <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
             </Toolbar>
           </AppBar>
           <Drawer
@@ -210,11 +203,9 @@ class Dashboard extends Component {
               </IconButton>
             </div>
             <Divider />
-            <List className={classes.list}>
-              {mainListItems(pathname)}
-            </List>
+            <List className={classes.list}>{renderMainListItems(pathname)}</List>
             <Divider />
-            <List>{secondaryListItems}</List>
+            <List className={classes.list}>{renderSecondaryListItems(pathname)}</List>
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />

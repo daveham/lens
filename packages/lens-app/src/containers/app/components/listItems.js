@@ -13,16 +13,14 @@ import CollectionsIcon from '@material-ui/icons/Collections';
 
 const linkWrapper = (link) => (props) => <Link to={link} {...props} />;
 
-export const mainListItems = (pathname) => (
+export const renderMainListItems = (pathname) => (
   <div>
     <ListItem
       button
       component={linkWrapper('/')}
       selected={pathname === '/'}
     >
-      <ListItemIcon>
-        <CameraIcon />
-      </ListItemIcon>
+      <ListItemIcon><CameraIcon /></ListItemIcon>
       <ListItemText primary="Home" />
     </ListItem>
     <ListItem
@@ -30,9 +28,7 @@ export const mainListItems = (pathname) => (
       component={linkWrapper('/Catalog')}
       selected={pathname.includes('/Catalog')}
     >
-      <ListItemIcon>
-        <CameraRollIcon />
-      </ListItemIcon>
+      <ListItemIcon><CameraRollIcon /></ListItemIcon>
       <ListItemText primary="Catalog" />
     </ListItem>
     <ListItem
@@ -40,9 +36,7 @@ export const mainListItems = (pathname) => (
       component={linkWrapper('/')}
       selected={pathname === '/Activity'}
     >
-      <ListItemIcon>
-        <AutoRenewIcon />
-      </ListItemIcon>
+      <ListItemIcon><AutoRenewIcon /></ListItemIcon>
       <ListItemText primary="Activity" />
     </ListItem>
     <ListItem
@@ -50,9 +44,7 @@ export const mainListItems = (pathname) => (
       component={linkWrapper('/')}
       selected={pathname === '/Statistics'}
     >
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
+      <ListItemIcon><BarChartIcon /></ListItemIcon>
       <ListItemText primary="Statistics" />
     </ListItem>
     <ListItem
@@ -60,33 +52,37 @@ export const mainListItems = (pathname) => (
       component={linkWrapper('/')}
       selected={pathname === '/Maintenance'}
     >
-      <ListItemIcon>
-        <BuildIcon />
-      </ListItemIcon>
+      <ListItemIcon><BuildIcon /></ListItemIcon>
       <ListItemText primary="Maintenance" />
     </ListItem>
   </div>
 );
 
-export const secondaryListItems = (
+export const renderSecondaryListItems = (pathname) => (
   <div>
     <ListSubheader inset>Recent Renderings</ListSubheader>
-    <ListItem button>
-      <ListItemIcon>
-        <CollectionsIcon />
-      </ListItemIcon>
+    <ListItem
+      button
+      component={linkWrapper('/')}
+      selected={pathname.includes('/Recent/Today')}
+    >
+      <ListItemIcon><CollectionsIcon /></ListItemIcon>
       <ListItemText primary="Today" />
     </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <CollectionsIcon />
-      </ListItemIcon>
+    <ListItem
+      button
+      component={linkWrapper('/')}
+      selected={pathname.includes('/Recent/Yesterday')}
+    >
+      <ListItemIcon><CollectionsIcon /></ListItemIcon>
       <ListItemText primary="Yesterday" />
     </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <CollectionsIcon />
-      </ListItemIcon>
+    <ListItem
+      button
+      component={linkWrapper('/')}
+      selected={pathname.includes('/Recent/ThisWeek')}
+    >
+      <ListItemIcon><CollectionsIcon /></ListItemIcon>
       <ListItemText primary="This Week" />
     </ListItem>
   </div>

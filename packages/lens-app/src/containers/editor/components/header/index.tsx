@@ -1,31 +1,34 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import SourceThumbnail from 'components/sourceThumbnail';
+import ListToolbar from '../listToolbar';
 
-const styles = {
+const styles: any = (theme) => ({
   root: {
     alignItems: 'flex-end',
     display: 'flex',
-    justifyContent: 'space-between',
     width: '100%',
-    '& div:first-child': {
-      marginRight: 'auto'
+    '& div:last-child': {
+      marginLeft: 'auto'
     },
   },
   titleContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    paddingLeft: theme.spacing.unit * 2,
   },
-};
+});
 
 interface IProps {
   classes: any;
   loading: boolean;
   title: string;
   breadcrumb?: object;
-  children?: any;
+  thumbnailUrl?: string;
+  toolbarLinks?: any;
 }
 
 const Header = (props: IProps): any => {
@@ -34,17 +37,26 @@ const Header = (props: IProps): any => {
     loading,
     title,
     breadcrumb,
-    children,
+    thumbnailUrl,
+    toolbarLinks,
   } = props;
   const titleOrLoading = loading ? `${title} (loading...)` : title;
   const bcElement = breadcrumb ? breadcrumb : null;
+  const thumbnail = thumbnailUrl
+    ? <SourceThumbnail thumbnailUrl={thumbnailUrl} />
+    : null;
+  const toolbar = toolbarLinks
+    ? <ListToolbar links={toolbarLinks} />
+    : <div />;
+
   return (
     <div className={classes.root}>
+      {thumbnail}
       <div className={classes.titleContainer}>
-        {bcElement}
         <Typography variant='h4'>{titleOrLoading}</Typography>
+        {bcElement}
       </div>
-      {children}
+      {toolbar}
     </div>
   );
 };

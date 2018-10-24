@@ -5,7 +5,6 @@ import Paper from '@material-ui/core/Paper';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
-import SourceThumbnail from 'components/sourceThumbnail';
 import Header from '../components/header';
 import BreadcrumbBar from '../components/breadcrumbs';
 import executionListRenderFunction from './executionList';
@@ -13,7 +12,6 @@ import executionEditRenderFunction from './executionEdit';
 import executionNewRenderFunction from './executionNew';
 import executionShowRenderFunction from './executionShow';
 import executionDeleteRenderFunction from './executionDelete';
-import ListToolbar from '../components/listToolbar';
 
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/editorView';
@@ -75,10 +73,11 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Execution'>
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Execution'
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
@@ -92,10 +91,9 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Edit Execution'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-      >
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
@@ -105,9 +103,8 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Delete Execution'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-      >
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
@@ -117,9 +114,8 @@ class View extends React.Component<IProps, any> {
       <Header
         title='New Execution'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-      >
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
@@ -134,10 +130,9 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Executions'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-      >
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 }

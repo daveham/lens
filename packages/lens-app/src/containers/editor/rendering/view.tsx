@@ -5,7 +5,6 @@ import Paper from '@material-ui/core/Paper';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
-import SourceThumbnail from 'components/sourceThumbnail';
 import Header from '../components/header';
 import BreadcrumbBar from '../components/breadcrumbs';
 import renderingListRenderFunction from './renderingList';
@@ -13,7 +12,6 @@ import renderingEditRenderFunction from './renderingEdit';
 import renderingNewRenderFunction from './renderingNew';
 import renderingShowRenderFunction from './renderingShow';
 import renderingDeleteRenderFunction from './renderingDelete';
-import ListToolbar from '../components/listToolbar';
 
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/editorView';
@@ -69,16 +67,18 @@ class View extends React.Component<IProps, any> {
   }
 
   private renderRenderingShowToolbar = (): any => {
-    const { thumbnailUrl, match: { url } } = this.props;
+    const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
     const links = {
       back: url
     };
 
     return (
-      <Header title='Rendering'>
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Rendering'
+        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
@@ -92,10 +92,9 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Edit Rendering'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-      >
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
@@ -105,9 +104,8 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Delete Rendering'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-      >
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
@@ -117,9 +115,8 @@ class View extends React.Component<IProps, any> {
       <Header
         title='New Rendering'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-      >
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
@@ -134,10 +131,9 @@ class View extends React.Component<IProps, any> {
       <Header
         title='Renderings'
         breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-      >
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 }

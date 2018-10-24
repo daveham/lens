@@ -5,14 +5,12 @@ import Paper from '@material-ui/core/Paper';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
-import SourceThumbnail from 'components/sourceThumbnail';
 import Header from '../components/header';
 import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
 import simulationShowRenderFunction from './simulationShow';
 import simulationDeleteRenderFunction from './simulationDelete';
-import ListToolbar from '../components/listToolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/editorView';
 
@@ -73,10 +71,11 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Simulation'>
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Simulation'
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
@@ -87,28 +86,31 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Edit Simulation'>
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Edit Simulation'
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 
   private renderSimulationDeleteToolbar = (): any => {
     const { thumbnailUrl } = this.props;
     return (
-      <Header title='Delete Simulation'>
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Delete Simulation'
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
   private renderSimulationNewToolbar = (): any => {
     const { thumbnailUrl } = this.props;
     return (
-      <Header title='New Simulation'>
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='New Simulation'
+        thumbnailUrl={thumbnailUrl}
+      />
     );
   };
 
@@ -120,10 +122,11 @@ class View extends React.Component<IProps, any> {
     };
 
     return (
-      <Header title='Simulations'>
-        <ListToolbar links={links} />
-        {thumbnailUrl && <SourceThumbnail thumbnailUrl={thumbnailUrl} />}
-      </Header>
+      <Header
+        title='Simulations'
+        thumbnailUrl={thumbnailUrl}
+        toolbarLinks={links}
+      />
     );
   };
 }

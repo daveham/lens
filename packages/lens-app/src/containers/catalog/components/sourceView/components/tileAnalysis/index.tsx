@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import path from 'path';
 import Histogram from './histogram';
 import Menu from './menu';
-import styles from './styles.scss';
 
 interface IProps {
+  classes: any;
   row: number;
   col: number;
   offsetX: number;
@@ -29,13 +30,67 @@ const channelMap = {
   l: 'luminance'
 };
 
-const channelStylesMap = {
-  r: styles.histBarRed,
-  g: styles.histBarGreen,
-  b: styles.histBarBlue,
-  h: styles.histBarHue,
-  s: styles.histBarSaturation,
-  l: styles.histBarLuminance
+const infoTextColor = '#222';
+const infoWidth = 150;
+const infoHeight = 170;
+const histContainerWidth = infoWidth;
+const histContainerHeight = infoHeight - 40;
+
+const styles: any = {
+  histBarRed: {
+    stroke: '#fcc',
+    strokeWidth: 1,
+    fill: '#ffd8d8',
+  },
+  histBarGreen: {
+    stroke: '#ada',
+    strokeWidth: 1,
+    fill: '#c8eec8',
+  },
+  histBarBlue: {
+    stroke: '#cce',
+    strokeWidth: 1,
+    fill: '#d8d8ff',
+  },
+  histBarHue: {
+    stroke: '#9dd',
+    strokeWidth: 1,
+    fill: '#aee',
+  },
+  histBarSaturation: {
+    stroke: '#fcf',
+    strokeWidth: 1,
+    fill: '#ffd8ff',
+  },
+  histBarLuminance: {
+    stroke: '#f0e68c',
+    strokeWidth: 1,
+    fill: '#fdff62',
+  },
+  infoContainer: {
+    color: infoTextColor,
+    fontSize: 8,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    minWidth: infoWidth,
+    minHeight: infoHeight,
+  },
+  histContainer: {
+    width: histContainerWidth,
+    height: histContainerHeight,
+  },
+  statsTitle: {
+    paddingLeft: 2,
+    display: 'flex',
+    minHeight: 26,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  statsFilename: {
+    paddingLeft: 2,
+  },
 };
 
 class TileAnalysis extends React.Component<IProps, IState> {
@@ -45,13 +100,24 @@ class TileAnalysis extends React.Component<IProps, IState> {
     super(props);
     this.relativeMaxMap = { r: 0, g: 0, b: 0, h: 0, s: 0, l: 0 };
     this.state = { channel: 'r' };
+
+    const { classes } = props;
+    // @ts-ignore
+    this.channelStylesMap = {
+      r: classes.histBarRed,
+      g: classes.histBarGreen,
+      b: classes.histBarBlue,
+      h: classes.histBarHue,
+      s: classes.histBarSaturation,
+      l: classes.histBarLuminance
+    };
   }
 
   public render(): any {
-    const { loading, data } = this.props.stats;
+    const { classes, stats: { loading, data } } = this.props;
     const hasData = !loading && data && data.filename;
     return (
-      <div className={styles.infoContainer}>
+      <div className={classes.infoContainer}>
         {this.renderMenu()}
         {this.renderHistogram(hasData)}
         {this.renderDetails(hasData)}
@@ -69,7 +135,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
 
   private renderHistogram(hasData: boolean): any {
     if (!hasData) {
-      return <div className={styles.histContainer}/>;
+      return <div className={this.props.classes.histContainer}/>;
     }
 
     const histogram = this.channelData();
@@ -82,7 +148,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
     const filename = hasData ? path.basename(this.props.stats.data.filename) : '...';
     const filenameOrLoading = `file: ${filename}`;
     return (
-      <div className={styles.statsTitle}>
+      <div className={this.props.classes.statsTitle}>
         <div>{filenameOrLoading}</div>
         <div>{formatTitle(this.props)}</div>
       </div>
@@ -104,7 +170,8 @@ class TileAnalysis extends React.Component<IProps, IState> {
   }
 
   private channelStyle(): any {
-    return channelStylesMap[this.state.channel] || styles.histBarRed;
+    // @ts-ignore
+    return this.channelStylesMap[this.state.channel] || this.channelStylesMap.r;
   }
 
   private handleChannelChanged = (channel) => {
@@ -114,4 +181,4 @@ class TileAnalysis extends React.Component<IProps, IState> {
   };
 }
 
-export default TileAnalysis;
+export default withStyles(styles)(TileAnalysis);

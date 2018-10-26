@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import { throttle } from 'lodash';
 import { makeTileImageKeyFromPrototype } from '@lens/image-descriptors';
 import { IViewport, ITileSpec, ISelectedTile } from '../../interfaces';
@@ -8,12 +9,19 @@ import Selection from './selection';
 import Tile from './tile';
 import TileAnalysis from '../tileAnalysis';
 
-import styles from './styles.scss';
-
 // import _debug from 'debug';
 // const debug = _debug('lens:source-tiles');
 
+const styles: any = {
+  root: {
+    position: 'relative',
+    display: 'flex',
+    flex: '1 0 auto',
+  },
+};
+
 interface IProps {
+  classes: any;
   statsTileSpec: ITileSpec;
   displayTileSpec: ITileSpec;
   imageKeys: ReadonlyArray<string>;
@@ -39,7 +47,10 @@ function generateImageKey(props: IProps, group: number = 0, x: number = 0, y: nu
 }
 
 const initialViewport: IViewport = {
-  top: 0, right: 0, bottom: 0, left: 0
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0
 };
 
 class Tiles extends React.Component<IProps, IState> {
@@ -126,7 +137,7 @@ class Tiles extends React.Component<IProps, IState> {
 
   public render() {
     const { viewport } = this.state;
-    const { imageKeys, images, displayTileSpec } = this.props;
+    const { classes, imageKeys, images, displayTileSpec } = this.props;
     const { res } = displayTileSpec;
 
     const tiles = [];
@@ -154,7 +165,7 @@ class Tiles extends React.Component<IProps, IState> {
 
     return (
       <div
-        className={styles.container}
+        className={classes.root}
         ref={(node) => this.containerNode = node}
       >
         {tiles}
@@ -211,7 +222,8 @@ class Tiles extends React.Component<IProps, IState> {
         const { left, top } = this.state.viewport;
         this.setState({
           viewport: {
-            left, top,
+            left,
+            top,
             right: left + clientWidth,
             bottom: top + clientHeight
           }
@@ -279,4 +291,4 @@ class Tiles extends React.Component<IProps, IState> {
   };
 }
 
-export default Tiles;
+export default withStyles(styles)(Tiles);

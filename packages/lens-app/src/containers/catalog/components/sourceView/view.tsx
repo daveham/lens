@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 import {
   makeTileImageDescriptor,
   makeTileStatsDescriptor,
@@ -15,28 +17,56 @@ import {
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
 import SourceThumbnail from 'components/sourceThumbnail';
 import { Details, Tiles, Toolbar } from './components';
-// import { withStyles } from '@material-ui/core/styles';
 
-import styles from './styles.scss';
+const styles: any = (theme) => ({
+  root: {
+    display: 'flex',
+    flex: '1 0 100%',
+    flexFlow: 'column',
+  },
+  statsHeader: {
+    paddingTop: 5,
+    display: 'flex',
+  },
+  thumbnailWrapper: {
+    minWidth: 230,
+  },
+  statsAndTools: {
+    display: 'flex',
+    flexFlow: 'column',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  thumbnailLoading: {
+    color: theme.palette.secondary.main,
+    textAlign: 'center',
+    marginTop: 30,
+  },
+  toolbar: {
+    padding: 4,
+  },
+  imageViewContainer: {
+    display: 'flex',
+    flex: '1 0 auto',
+  },
+  tilesWrapper: {
+    overflow: 'hidden',
+    display: 'flex',
+    flexFlow: 'column',
+    flex: '1 0 auto',
+  },
+  alternateWrapper: {
+    flex: '1 0 auto',
+  },
+});
 
 // import _debug from 'debug';
 // const debug = _debug('lens:sourceView');
 
-// const styles = {
-//   root: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     height: '100%'
-//   },
-//   featureContainer: {
-//     display: 'flex',
-//     flexGrow: 1
-//   }
-// };
-
 export const displayTileResolution = 512;
 
 interface IProps {
+  classes: any;
   sourceId: string;
   resolution: number;
   sourceStatsDescriptor: IStatsDescriptor;
@@ -210,23 +240,22 @@ class View extends React.Component<IProps, IState> {
   }
 
   public render() {
+    const { classes } = this.props;
     return (
-      <div className={styles.container}>
-        <div className={styles.divider}>
-          <div className={styles.statsHeader}>
-            <div className={styles.thumbnailWrapper}>
-              <SourceThumbnail
-                thumbnailUrl={this.props.thumbnailUrl}
-                link={'/Catalog'}
-              />
-            </div>
-            <div className={styles.statsAndTools}>
-              {this.renderStats()}
-              {this.renderTools()}
-            </div>
+      <div className={classes.root}>
+        <div className={classes.statsHeader}>
+          <div className={classes.thumbnailWrapper}>
+            <SourceThumbnail
+              thumbnailUrl={this.props.thumbnailUrl}
+              link={'/Catalog'}
+            />
           </div>
-          {this.renderTiles()}
+          <div className={classes.statsAndTools}>
+            {this.renderStats()}
+            {this.renderTools()}
+          </div>
         </div>
+        {this.renderTiles()}
       </div>
     );
   }
@@ -236,7 +265,7 @@ class View extends React.Component<IProps, IState> {
       return <Details stats={this.props.sourceStats}/>;
     } else {
       return (
-        <div className={styles.thumbnailLoading}>
+        <div className={this.props.classes.thumbnailLoading}>
           <Loading pulse={true}/>
         </div>
       );
@@ -246,7 +275,7 @@ class View extends React.Component<IProps, IState> {
   private renderTools() {
     if (this.state.statsSpec) {
       return (
-        <div className={styles.toolbar}>
+        <div className={this.props.classes.toolbar}>
           <Toolbar
             resolution={this.props.resolution}
             onChangeRes={this.handleChangeRes}
@@ -260,10 +289,11 @@ class View extends React.Component<IProps, IState> {
   }
 
   private renderTiles() {
+    const { classes } = this.props;
     if (this.state.statsSpec) {
       const alternateView = this.state.isSplit ?
         (
-          <div key='alternate' className={styles.alternateWrapper}>
+          <div key='alternate' className={classes.alternateWrapper}>
             alternate
           </div>
         ) : null;
@@ -271,8 +301,8 @@ class View extends React.Component<IProps, IState> {
       const statsKey = makeStatsKey(this.state.selectedStatsDescriptor);
 
       return (
-        <div className={styles.imageViewContainer}>
-          <div key='tiles' className={styles.tilesWrapper}>
+        <Paper className={classes.imageViewContainer}>
+          <div key='tiles' className={classes.tilesWrapper}>
             <Tiles
               statsTileSpec={this.state.statsSpec}
               displayTileSpec={this.state.displaySpec}
@@ -285,7 +315,7 @@ class View extends React.Component<IProps, IState> {
             />
           </div>
           {alternateView}
-        </div>
+        </Paper>
       );
     }
     return null;
@@ -373,4 +403,4 @@ class View extends React.Component<IProps, IState> {
   }
 }
 
-export default View;
+export default withStyles(styles)(View);

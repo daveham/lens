@@ -1,13 +1,32 @@
 import * as React from 'react';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+
+const infoWidth = 150;
+const infoHeight = 170;
+const svgWidth = infoWidth - 4;
+const svgHeight = infoHeight - 44;
+const histContainerWidth = infoWidth;
+const histContainerHeight = infoHeight - 40;
+
+const styles: any = {
+  histContainer: {
+    width: histContainerWidth,
+    height: histContainerHeight,
+  },
+  svgBox: {
+    width: svgWidth,
+    height: svgHeight,
+  },
+};
 
 interface IProps {
+  classes: any;
   data: number[];
   barStyle: string;
   barMax: number;
 }
 
-export default ({ data, barStyle, barMax }: IProps) => {
+export default withStyles(styles)(({ classes, data, barStyle, barMax }: IProps) => {
   const barHeight = 10;
   const count = data.length - 1;
   const widths = data.map((value, index) => ({ value, index }));
@@ -27,12 +46,12 @@ export default ({ data, barStyle, barMax }: IProps) => {
   });
 
   return (
-    <div className={styles.histContainer}>
-      <svg className={styles.svgBox}>
+    <div className={classes.histContainer}>
+      <svg className={classes.svgBox}>
         <g transform={`translate(${0},${0}) scale(.95, 1)`}>
           {rects}
         </g>
       </svg>
     </div>
   );
-};
+});

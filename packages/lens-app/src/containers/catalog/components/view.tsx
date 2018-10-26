@@ -11,15 +11,14 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
   root: {
+    boxSizing: 'border-box',
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flex: '1 0 auto',
+    flexFlow: 'column',
   },
   content: {
-    height: '100vh',
-    overflow: 'auto',
-    width: '100%',
+    display: 'flex',
+    flex: '1 0 auto',
   }
 };
 

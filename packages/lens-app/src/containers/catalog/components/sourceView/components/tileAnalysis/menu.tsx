@@ -1,8 +1,28 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles: any = {
+  menuContainer: {
+    width: '100%',
+    display: 'flex',
+  },
+  menuItem: {
+    padding: '2px 4px',
+    margin: '0 4px',
+    border: 'solid 1px #eee',
+    borderRadius: 4,
+    userSelect: 'none',
+    '&:hover': {
+      border: 'solid 1px #ccc',
+    },
+  },
+  menuItemSelected: {
+    borderColor: '#777',
+  }
+};
 
 interface IProps {
+  classes: any;
   initialChannel?: string;
   onChannelChanged?: (channel: string) => void;
 }
@@ -30,7 +50,7 @@ class Menu extends React.Component<IProps, IState> {
 
     return (
       <div
-        className={styles.menuContainer}
+        className={this.props.classes.menuContainer}
         onMouseEnter={this.handleMouseEnterMenu}
         onMouseLeave={this.handleMouseLeaveMenu}
       >
@@ -43,11 +63,12 @@ class Menu extends React.Component<IProps, IState> {
     const { currentChannel } = this.state;
     return ['r', 'g', 'b', 'h', 's', 'l'].map((item) => {
       const isSelected = item === currentChannel;
-      const classes = classNames(styles.menuItem, isSelected && styles.selected);
+      const { classes } = this.props;
+      const className = isSelected ? classes.menuItemSelected : classes.menuItem;
       return (
         <div
           key={item}
-          className={classes}
+          className={className}
           onClick={this.handleItemClicked(item)}
           onMouseEnter={this.handleMouseEnterMenuItem(item)}
           onMouseLeave={this.handleMouseLeaveMenuItem(item)}
@@ -60,8 +81,8 @@ class Menu extends React.Component<IProps, IState> {
 
   private renderCollapsed(): any {
     const { currentChannel } = this.state;
-    const classes = classNames(styles.menuItem, styles.selected);
-    return <div key={currentChannel} className={classes}>{currentChannel}</div>;
+    const { classes } = this.props;
+    return <div key={currentChannel} className={classes.menuItemSelected}>{currentChannel}</div>;
   }
 
   private handleMouseEnterMenu = () => {
@@ -103,4 +124,4 @@ class Menu extends React.Component<IProps, IState> {
   };
 }
 
-export default Menu;
+export default withStyles(styles)(Menu);

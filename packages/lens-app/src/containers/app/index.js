@@ -23,6 +23,15 @@ const connected = createSelector(socketSelector, socket => Boolean(socket));
 const socketId = createSelector(socketSelector, socket => socket ? socket.id : null);
 const command = createSelector(commonSelector, ({ command }) => command);
 
-const mapStateToProps = createStructuredSelector({ connected, connecting, socketId, command });
+const uiSelector = ({ ui }) => ui;
+const title = createSelector(uiSelector, ({ title }) => title);
+
+const mapStateToProps = createStructuredSelector({
+  connected,
+  connecting,
+  socketId,
+  command,
+  title,
+});
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Dashboard));

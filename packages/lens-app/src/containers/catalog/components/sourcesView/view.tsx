@@ -1,5 +1,4 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import ThumbnailCard from 'components/thumbnailCard';
 import { IImageDescriptor, ISourceDescriptor } from 'src/interfaces';
 import { withStyles } from '@material-ui/core/styles';
@@ -7,30 +6,22 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = (theme) => ({
   root: {
     display: 'flex',
-    flexDirection: 'column',
-    paddingLeft: theme.spacing.unit,
-    paddingTop: theme.spacing.unit
-  },
-  title: {
-    flexGrow: 1
-  },
-  thumbnailsContainer: {
-    display: 'flex',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: '100%',
   },
   thumbnailContainer: {
-    padding: 20
+    padding: theme.spacing.unit * 4
   }
 });
 
 interface IProps {
   classes: any;
   sources: ReadonlyArray<ISourceDescriptor>;
-  catalogName: string;
   thumbnailImageDescriptors: ReadonlyArray<IImageDescriptor>;
   thumbnailImageKeys: ReadonlyArray<string>;
   thumbnailImages: any;
   ensureImages: (payload: {[imageDescriptors: string]: ReadonlyArray<IImageDescriptor>}) => void;
+  ensureCatalogTitle: (sourceId?: string) => void;
 }
 
 interface IState {
@@ -47,6 +38,8 @@ class SourcesView extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(): any {
+    setTimeout(() => this.props.ensureCatalogTitle());
+
     const idCount = this.props.thumbnailImageDescriptors.length;
     if (idCount && Object.keys(this.props.thumbnailImages).length < idCount) {
       this.requestImages();
@@ -74,21 +67,16 @@ class SourcesView extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { classes, thumbnailImages, sources, catalogName } = this.props;
+    const { classes, thumbnailImages, sources } = this.props;
     const { resolution } = this.state;
     return (
       <div className={classes.root}>
-        <Typography variant='h4' gutterBottom noWrap className={classes.title}>
-          {catalogName}
-        </Typography>
-        <div className={classes.thumbnailsContainer}>
-          {this.props.thumbnailImageKeys.map((key, index) =>
-            this.renderThumbnailCard(
-              resolution,
-              sources[index],
-              thumbnailImages[key],
-              key))}
-        </div>
+        {this.props.thumbnailImageKeys.map((key, index) =>
+          this.renderThumbnailCard(
+            resolution,
+            sources[index],
+            thumbnailImages[key],
+            key))}
       </div>
     );
   }

@@ -60,8 +60,8 @@ const styles: any = (theme) => ({
   },
 });
 
-// import _debug from 'debug';
-// const debug = _debug('lens:sourceView');
+import _debug from 'debug';
+const debug = _debug('lens:sourceView');
 
 export const displayTileResolution = 512;
 
@@ -79,6 +79,7 @@ interface IProps {
   ensureStats: (payload: {[name: string]: IStatsDescriptor}) => void;
   deleteStats: (payload: any) => void;
   ensureImages: (payload: {[imageDescriptors: string]: ReadonlyArray<IImageDescriptor>}) => void;
+  ensureCatalogTitle: (sourceId?: string) => void;
   history: any;
 }
 
@@ -182,7 +183,17 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(): void {
-    const { sourceStats, resolution, thumbnailUrl } = this.props;
+    const {
+      sourceId,
+      sourceStats,
+      resolution,
+      thumbnailUrl,
+      ensureCatalogTitle,
+    } = this.props;
+
+    if (sourceId) {
+      setTimeout(() => ensureCatalogTitle(sourceId));
+    }
 
     if (sourceStats) {
       this.calculateTileSpecs(sourceStats, resolution);
@@ -211,6 +222,15 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
+    const {
+      sourceId,
+      ensureCatalogTitle,
+    } = this.props;
+
+    if (sourceId !== prevProps.sourceId) {
+      ensureCatalogTitle(sourceId);
+    }
+
     const { viewport } = this.state;
     if (prevState.viewport !== viewport) {
       const { pendingImageDescriptors, displayImageKeys } = calcTileKeysAndMissingDescriptors(

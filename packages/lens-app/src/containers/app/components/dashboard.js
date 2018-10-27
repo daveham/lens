@@ -85,7 +85,7 @@ const styles = theme => {
       },
     },
     content: {
-      backgroundColor: '#f0f0f0',
+      backgroundColor: theme.palette.app.background,
       flexGrow: 1,
       padding: `70px ${contentPadding}px ${contentPadding}px ${contentPadding}px`,
       height: '100vh',
@@ -121,7 +121,8 @@ class Dashboard extends Component {
     command: PropTypes.object,
     connectSocket: PropTypes.func.isRequired,
     sendSocketCommand: PropTypes.func.isRequired,
-    sendPing: PropTypes.func.isRequired
+    sendPing: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -133,9 +134,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     if (!(this.props.connected || this.props.connecting)) {
-      setTimeout(() => {
-        this.props.connectSocket();
-      }, 0);
+      setTimeout(() => this.props.connectSocket());
     }
   }
 
@@ -164,8 +163,9 @@ class Dashboard extends Component {
   };
 
   render() {
-    const { classes, location: { pathname } } = this.props;
+    const { classes, location: { pathname }, title } = this.props;
 
+    const appTitle = title ? `Lens: ${title}` : 'Lens';
     return (
       <Fragment>
         <CssBaseline />
@@ -187,7 +187,7 @@ class Dashboard extends Component {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" color="inherit" noWrap className={classes.title}>
-                Lens
+                {appTitle}
               </Typography>
               <CommandBar
                 connected={this.props.connected}

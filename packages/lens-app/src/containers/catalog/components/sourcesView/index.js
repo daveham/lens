@@ -5,18 +5,18 @@ import { thumbnailImagesSelector } from 'modules/images/selectors';
 import { ensureImages } from 'modules/images/actions';
 import {
   sources,
-  catalogName,
   thumbnailImageDescriptors,
   thumbnailImageKeys
-} from '../../selectors';
+} from 'containers/catalog/selectors';
+import { ensureCatalogTitle } from '../../modules/actions';
 
 const mapDispatchToProps = {
-  ensureImages
+  ensureImages,
+  ensureCatalogTitle,
 };
 
 const mapStateToProps = createStructuredSelector({
   sources,
-  catalogName,
   thumbnailImageDescriptors,
   thumbnailImageKeys,
   thumbnailImages: thumbnailImagesSelector

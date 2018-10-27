@@ -5,17 +5,17 @@ import { requestCatalog } from './modules/actions';
 import {
   catalogIsLoading,
   catalogIsLoaded,
-  thumbnailImageDescriptors
+  thumbnailImageDescriptors,
 } from './selectors';
 
 const mapDispatchToProps = {
-  requestCatalog
+  requestCatalog,
 };
 
 const mapStateToProps = createStructuredSelector({
   catalogIsLoading,
   catalogIsLoaded,
-  thumbnailImageDescriptors
+  thumbnailImageDescriptors,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(View);

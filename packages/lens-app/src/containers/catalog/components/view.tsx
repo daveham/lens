@@ -32,11 +32,14 @@ interface IProps {
 
 class AppView extends React.Component<IProps, any> {
   public componentDidMount(): any {
-    const { catalogIsLoaded, catalogIsLoading, requestCatalog } = this.props;
+    const {
+      catalogIsLoaded,
+      catalogIsLoading,
+      requestCatalog,
+    } = this.props;
+
     if (!(catalogIsLoaded || catalogIsLoading)) {
-      setTimeout(() => {
-        requestCatalog();
-      }, 0);
+      setTimeout(() => requestCatalog());
     }
   }
 

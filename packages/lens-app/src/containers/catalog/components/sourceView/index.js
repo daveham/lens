@@ -12,6 +12,7 @@ import {
   statsSelector,
   tileStatsSelector
 } from 'modules/stats/selectors';
+import { ensureCatalogTitle } from '../../modules/actions';
 import { ensureStats, deleteStats } from 'modules/stats/actions';
 import { ensureImage, ensureImages } from 'modules/images/actions';
 import View, { displayTileResolution } from './view';
@@ -23,7 +24,8 @@ const mapDispatchToProps = {
   ensureStats,
   deleteStats,
   ensureImage,
-  ensureImages
+  ensureImages,
+  ensureCatalogTitle,
 };
 
 const mapStateToProps = (state, { match: { params: { id, res } } }) => {

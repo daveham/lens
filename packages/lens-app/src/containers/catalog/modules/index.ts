@@ -41,7 +41,7 @@ const sources = (state = { ids: [], byIds: {} }, { type, payload}) => {
 const catalogReducer: InsertableReducer = combineReducers({
   loading,
   name,
-  sources
+  sources,
 });
 
 catalogReducer.reducer = 'catalog';

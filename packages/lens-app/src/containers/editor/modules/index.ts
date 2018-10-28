@@ -1,46 +1,17 @@
 import { combineReducers } from 'redux';
-import { ACTIONS } from './constants';
 import { InsertableReducer } from 'modules/types';
 
-const simulationNames = (state = {}, { type, payload }) => {
-  if (type === ACTIONS.RECORD_PATH_NAMES && payload.simulationId) {
-    const { simulationId, simulationName } = payload;
-    return {
-      ...state,
-      [simulationId]: simulationName
-    };
+const placeHolder = (state = 0, { type, payload }) => {
+  if (type === 'PLACEHOLDER') {
+    return payload;
   }
   return state;
 };
 
-const executionNames = (state = {}, { type, payload }) => {
-  if (type === ACTIONS.RECORD_PATH_NAMES && payload.executionId) {
-    const { executionId, executionName } = payload;
-    return {
-      ...state,
-      [executionId]: executionName
-    };
-  }
-  return state;
-};
-
-const renderingNames = (state = {}, { type, payload }) => {
-  if (type === ACTIONS.RECORD_PATH_NAMES && payload.renderingId) {
-    const { renderingId, renderingName } = payload;
-    return {
-      ...state,
-      [renderingId]: renderingName
-    };
-  }
-  return state;
-};
-
-const simulationReducer: InsertableReducer = combineReducers({
-  simulationNames,
-  executionNames,
-  renderingNames
+const editorReducer: InsertableReducer = combineReducers({
+  placeHolder,
 });
 
-simulationReducer.reducer = 'simulation';
+editorReducer.reducer = 'editor';
 
-export default simulationReducer;
+export default editorReducer;

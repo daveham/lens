@@ -9,10 +9,10 @@ export const catalogRoute = asyncRoute({
   // getCommands
 });
 
-export const simulationRoute = asyncRoute({
-  getComponent: () => import(/* webpackChunkName: "simulationUI" */ './containers/editor'),
-  getReducers: () => import(/* webpackChunkName: "simulationReducers" */ './containers/editor/modules')
-//  getSagas: () => import(/* webpackChunkName: "featureASagas" */ './containers/featureA/sagas')
+export const editorRoute = asyncRoute({
+  getComponent: () => import(/* webpackChunkName: "editorUI" */ './containers/editor'),
+  getReducers: () => import(/* webpackChunkName: "editorReducers" */ './containers/editor/modules'),
+  getSagas: () => import(/* webpackChunkName: "editorSagas" */ './containers/editor/sagas')
   // getCommands
 });
 

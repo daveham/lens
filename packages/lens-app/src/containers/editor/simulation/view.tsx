@@ -23,6 +23,7 @@ interface IProps {
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
+  ensureEditorTitle: (sourceId?: string) => void;
 }
 
 class View extends React.Component<IProps, any> {
@@ -30,8 +31,12 @@ class View extends React.Component<IProps, any> {
     const {
       thumbnailUrl,
       thumbnailImageDescriptor,
-      ensureImage
+      ensureImage,
+      ensureEditorTitle,
+      match: { params: { sourceId } },
     } = this.props;
+
+    ensureEditorTitle(sourceId);
 
     if (!thumbnailUrl) {
       ensureImage({ imageDescriptor: thumbnailImageDescriptor });

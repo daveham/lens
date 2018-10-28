@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
 import Loading from 'components/loading';
-import { simulationRoute } from 'src/routes';
+import { editorRoute } from 'src/routes';
 import SourcesView from './sourcesView';
 import SourceView from './sourceView';
 import { withStyles } from '@material-ui/core/styles';
@@ -67,7 +67,7 @@ class AppView extends React.Component<IProps, any> {
         <div className={content}>
           <RouterSwitch>
             <RouterRoute path={`${path}/Source/:id/:res`} component={SourceView}/>
-            <RouterRoute path={`${path}/:sourceId/Simulation`} component={simulationRoute}/>
+            <RouterRoute path={`${path}/:sourceId/Simulation`} component={editorRoute}/>
             <RouterRoute component={SourcesView}/>
           </RouterSwitch>
         </div>

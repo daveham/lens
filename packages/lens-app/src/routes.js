@@ -16,9 +16,3 @@ export const editorRoute = asyncRoute({
   // getCommands
 });
 
-export const renderRoute = asyncRoute({
-  getComponent: () => import(/* webpackChunkName: "renderUI" */ './containers/render'),
-  getReducers: () => import(/* webpackChunkName: "renderReducers" */ './containers/render/reducer')
-  // getSagas
-  // getCommands
-});

@@ -1,25 +1,38 @@
 import * as React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles: any = {
-  menuContainer: {
+const styles: any = (theme) => ({
+  root: {
     width: '100%',
     display: 'flex',
+    fontFamily: theme.typography.fontFamily,
+    fontSize: '8pt',
   },
   menuItem: {
     padding: '2px 4px',
     margin: '0 4px',
-    border: 'solid 1px #eee',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#eee',
     borderRadius: 4,
     userSelect: 'none',
     '&:hover': {
-      border: 'solid 1px #ccc',
+      borderColor: '#ccc',
     },
   },
   menuItemSelected: {
+    padding: '2px 4px',
+    margin: '0 4px',
+    borderStyle: 'solid',
+    borderWidth: 1,
     borderColor: '#777',
+    borderRadius: 4,
+    userSelect: 'none',
+    '&:hover': {
+      borderColor: '#ccc',
+    },
   }
-};
+});
 
 interface IProps {
   classes: any;
@@ -50,7 +63,7 @@ class Menu extends React.Component<IProps, IState> {
 
     return (
       <div
-        className={this.props.classes.menuContainer}
+        className={this.props.classes.root}
         onMouseEnter={this.handleMouseEnterMenu}
         onMouseLeave={this.handleMouseLeaveMenu}
       >

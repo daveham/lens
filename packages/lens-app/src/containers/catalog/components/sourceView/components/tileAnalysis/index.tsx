@@ -4,6 +4,9 @@ import path from 'path';
 import Histogram from './histogram';
 import Menu from './menu';
 
+// import _debug from 'debug';
+// const debug = _debug('lens:catalog:tileAnalysis');
+
 interface IProps {
   classes: any;
   row: number;
@@ -36,7 +39,7 @@ const infoHeight = 170;
 const histContainerWidth = infoWidth;
 const histContainerHeight = infoHeight - 40;
 
-const styles: any = {
+const styles: any = (theme) => ({
   histBarRed: {
     stroke: '#fcc',
     strokeWidth: 1,
@@ -69,7 +72,8 @@ const styles: any = {
   },
   infoContainer: {
     color: infoTextColor,
-    fontSize: 8,
+    fontSize: '8pt',
+    fontFamily: theme.typography.fontFamily,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -91,7 +95,7 @@ const styles: any = {
   statsFilename: {
     paddingLeft: 2,
   },
-};
+});
 
 class TileAnalysis extends React.Component<IProps, IState> {
   private relativeMaxMap: any;

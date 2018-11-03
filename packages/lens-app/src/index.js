@@ -48,6 +48,60 @@ const theme = createMuiTheme({
       background: '#f0f0f0',
     },
   },
+  editor: {
+    // height:  menu + histogram + details
+    // histogram = 10 * 10 + 9 * 2 = 118
+    analysis: {
+      height: 188,
+      width: 150,
+      fontSize: '8pt',
+      menu: {
+        height: 20,
+        item: {
+          color: '#eee',
+          highlighted: '#ccc',
+          selected: '#777',
+        },
+      },
+      histogram: {
+        height: 126,
+      },
+      bars: {
+        height: 118,
+      },
+      details: {
+        height: 30,
+      },
+      bar: {
+        height: 10,
+        gap: 2,
+        barRed: {
+          strokeColor: '#fcc',
+          fillColor: '#ffd8d8',
+        },
+        barGreen: {
+          strokeColor: '#ada',
+          fillColor: '#c8eec8',
+        },
+        barBlue: {
+          strokeColor: '#cce',
+          fillColor: '#d8d8ff',
+        },
+        barHue: {
+          strokeColor: '#9dd',
+          fillColor: '#aee',
+        },
+        barSaturation: {
+          strokeColor: '#fcf',
+          fillColor: '#ffd8ff',
+        },
+        barLuminance: {
+          strokeColor: '#f0e68c',
+          fillColor: '#fdff62',
+        },
+      },
+    },
+  },
 });
 
 render(

@@ -15,7 +15,7 @@ import {
   IViewport
 } from './interfaces';
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
-import SourceThumbnail from 'components/sourceThumbnail';
+import { default as getConfig } from 'src/config';
 import { Details, Tiles, Toolbar } from './components';
 
 const styles: any = (theme) => ({
@@ -27,6 +27,9 @@ const styles: any = (theme) => ({
   statsHeader: {
     paddingTop: 5,
     display: 'flex',
+  },
+  thumbnail: {
+    boxShadow: theme.shadows[4],
   },
   thumbnailWrapper: {
     minWidth: 230,
@@ -260,15 +263,14 @@ class View extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { classes } = this.props;
+    const { classes, thumbnailUrl } = this.props;
+    const dataHost = getConfig().dataHost;
+    const fullUrl = `${dataHost}${thumbnailUrl}`;
     return (
       <div className={classes.root}>
         <div className={classes.statsHeader}>
           <div className={classes.thumbnailWrapper}>
-            <SourceThumbnail
-              thumbnailUrl={this.props.thumbnailUrl}
-              link={'/Catalog'}
-            />
+            <img className={classes.thumbnail} src={fullUrl}/>
           </div>
           <div className={classes.statsAndTools}>
             {this.renderStats()}

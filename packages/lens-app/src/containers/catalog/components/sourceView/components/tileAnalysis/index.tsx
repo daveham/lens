@@ -33,69 +33,66 @@ const channelMap = {
   l: 'luminance'
 };
 
-const infoTextColor = '#222';
-const infoWidth = 150;
-const infoHeight = 170;
-const histContainerWidth = infoWidth;
-const histContainerHeight = infoHeight - 40;
+const styles: any = (theme) => {
+  const { analysis } = theme.editor;
+  const { bar, details, histogram } = analysis;
 
-const styles: any = (theme) => ({
-  histBarRed: {
-    stroke: '#fcc',
-    strokeWidth: 1,
-    fill: '#ffd8d8',
-  },
-  histBarGreen: {
-    stroke: '#ada',
-    strokeWidth: 1,
-    fill: '#c8eec8',
-  },
-  histBarBlue: {
-    stroke: '#cce',
-    strokeWidth: 1,
-    fill: '#d8d8ff',
-  },
-  histBarHue: {
-    stroke: '#9dd',
-    strokeWidth: 1,
-    fill: '#aee',
-  },
-  histBarSaturation: {
-    stroke: '#fcf',
-    strokeWidth: 1,
-    fill: '#ffd8ff',
-  },
-  histBarLuminance: {
-    stroke: '#f0e68c',
-    strokeWidth: 1,
-    fill: '#fdff62',
-  },
-  infoContainer: {
-    color: infoTextColor,
-    fontSize: '8pt',
-    fontFamily: theme.typography.fontFamily,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    minWidth: infoWidth,
-    minHeight: infoHeight,
-  },
-  histContainer: {
-    width: histContainerWidth,
-    height: histContainerHeight,
-  },
-  statsTitle: {
-    paddingLeft: 2,
-    display: 'flex',
-    minHeight: 26,
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-  },
-  statsFilename: {
-    paddingLeft: 2,
-  },
-});
+  return {
+    histBarRed: {
+      stroke: bar.barRed.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barRed.fillColor,
+    },
+    histBarGreen: {
+      stroke: bar.barGreen.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barGreen.fillColor,
+    },
+    histBarBlue: {
+      stroke: bar.barBlue.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barBlue.fillColor,
+    },
+    histBarHue: {
+      stroke: bar.barHue.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barHue.fillColor,
+    },
+    histBarSaturation: {
+      stroke: bar.barSaturation.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barSaturation.fillColor,
+    },
+    histBarLuminance: {
+      stroke: bar.barLuminance.strokeColor,
+      strokeWidth: 1,
+      fill: bar.barLuminance.fillColor,
+    },
+    analysisContainer: {
+      minWidth: analysis.width,
+      minHeight: analysis.height,
+      color: theme.palette.text.primary,
+      fontSize: analysis.fontSize,
+      fontFamily: theme.typography.fontFamily,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    histogramContainer: {
+      minWidth: analysis.width,
+      minHeight: histogram.height,
+    },
+    detailsContainer: {
+      minWidth: analysis.width,
+      minHeight: details.height,
+      paddingLeft: 2,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+  };
+};
 
 class TileAnalysis extends React.Component<IProps, IState> {
   private relativeMaxMap: any;
@@ -121,7 +118,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
     const { classes, stats: { loading, data } } = this.props;
     const hasData = !loading && data && data.filename;
     return (
-      <div className={classes.infoContainer}>
+      <div className={classes.analysisContainer}>
         {this.renderMenu()}
         {this.renderHistogram(hasData)}
         {this.renderDetails(hasData)}
@@ -139,7 +136,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
 
   private renderHistogram(hasData: boolean): any {
     if (!hasData) {
-      return <div className={this.props.classes.histContainer}/>;
+      return <div className={this.props.classes.histogramContainer}/>;
     }
 
     const histogram = this.channelData();
@@ -152,7 +149,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
     const filename = hasData ? path.basename(this.props.stats.data.filename) : '...';
     const filenameOrLoading = `file: ${filename}`;
     return (
-      <div className={this.props.classes.statsTitle}>
+      <div className={this.props.classes.detailsContainer}>
         <div>{filenameOrLoading}</div>
         <div>{formatTitle(this.props)}</div>
       </div>

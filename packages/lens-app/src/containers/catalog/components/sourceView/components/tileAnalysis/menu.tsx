@@ -1,38 +1,44 @@
 import * as React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles: any = (theme) => ({
-  root: {
-    width: '100%',
-    display: 'flex',
-    fontFamily: theme.typography.fontFamily,
-    fontSize: '8pt',
-  },
-  menuItem: {
-    padding: '2px 4px',
-    margin: '0 4px',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#eee',
-    borderRadius: 4,
-    userSelect: 'none',
-    '&:hover': {
-      borderColor: '#ccc',
+const styles: any = (theme) => {
+  const { analysis } = theme.editor;
+  const { menu } = analysis;
+
+  return {
+    root: {
+      minWidth: analysis.width,
+      minHeight: menu.height,
+      display: 'flex',
+      fontFamily: theme.typography.fontFamily,
+      fontSize: analysis.fontSize,
     },
-  },
-  menuItemSelected: {
-    padding: '2px 4px',
-    margin: '0 4px',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderColor: '#777',
-    borderRadius: 4,
-    userSelect: 'none',
-    '&:hover': {
-      borderColor: '#ccc',
+    menuItem: {
+      padding: '2px 4px',
+      margin: '0 4px',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: menu.item.color,
+      borderRadius: 4,
+      userSelect: 'none',
+      '&:hover': {
+        borderColor: menu.item.highlighted,
+      },
     },
-  }
-});
+    menuItemSelected: {
+      padding: '2px 4px',
+      margin: '0 4px',
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: menu.item.selected,
+      borderRadius: 4,
+      userSelect: 'none',
+      '&:hover': {
+        borderColor: menu.item.highlighted,
+      },
+    }
+  };
+};
 
 interface IProps {
   classes: any;

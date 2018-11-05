@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import faStyles from 'font-awesome/scss/font-awesome.scss';
 import FontAwesome from 'react-fontawesome';
 
@@ -6,9 +7,15 @@ import ToolButton from 'components/toolButton';
 import ToolMultiButton from 'components/toolMultiButton';
 import { ResSmall, ResMedium, ResLarge } from './svg';
 
-import styles from './styles.scss';
+const styles = {
+  root: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+};
 
 interface IProps {
+  classes: any;
   resolution: number;
   onChangeRes: (index: number) => void;
   onResetStats: () => void;
@@ -24,7 +31,7 @@ class Toolbar extends React.Component<IProps, any> {
     ];
 
     return (
-      <div className={styles.container}>
+      <div className={this.props.classes.root}>
         <ToolButton
           key='split'
           clickHandler={this.props.onToggleSplit}
@@ -60,4 +67,4 @@ class Toolbar extends React.Component<IProps, any> {
   }
 }
 
-export default Toolbar;
+export default withStyles(styles)(Toolbar);

@@ -68,7 +68,7 @@ const styles: any = (theme) => {
       strokeWidth: 1,
       fill: bar.barLuminance.fillColor,
     },
-    analysisContainer: {
+    root: {
       minWidth: analysis.width,
       minHeight: analysis.height,
       color: theme.palette.text.primary,
@@ -118,7 +118,7 @@ class TileAnalysis extends React.Component<IProps, IState> {
     const { classes, stats: { loading, data } } = this.props;
     const hasData = !loading && data && data.filename;
     return (
-      <div className={classes.analysisContainer}>
+      <div className={classes.root}>
         {this.renderMenu()}
         {this.renderHistogram(hasData)}
         {this.renderDetails(hasData)}

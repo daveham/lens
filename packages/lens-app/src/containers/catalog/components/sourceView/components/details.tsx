@@ -2,6 +2,9 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 
+// import _debug from 'debug';
+// const debug = _debug('lens:catalog:sourceView/details');
+
 const addCommas = (v) => v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const formatDate =  (v) => moment(v).format('h:mm a, MM/DD/YY');
 
@@ -27,38 +30,40 @@ const createValueFromDetail = (value, converter) => {
   return converter ? converter(value) : value;
 };
 
-const styles: any = (theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 5,
-    fontFamily: theme.typography.fontFamily,
-    fontSize: '10pt',
-  },
-  row: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    lineHeight: '1.3',
-    width: '100%',
-  },
-  label: {
-    color: theme.palette.text.primary,
-    fontWeight: 900,
-    padding: '0 .5em',
-    '&:not(:first-child)': {
-      paddingLeft: '1em',
+const styles: any = (theme) => {
+  const { unit } = theme.spacing;
+  return {
+    root: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: unit / 2,
+      fontFamily: theme.typography.fontFamily,
+      fontSize: '10pt',
     },
-  },
-  detail: {
-    padding: '0 .5em 0 0',
-    textAlign: 'left',
-    color: theme.palette.text.secondary,
-    '&:last-child': {
-      flexGrow: 1,
-    }
-  },
-});
+    row: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      lineHeight: '1.5',
+      width: '100%',
+    },
+    label: {
+      color: theme.palette.text.primary,
+      fontWeight: 900,
+      padding: `0 ${unit / 2}px`,
+      '&:not(:first-child)': {
+        paddingLeft: unit * 2,
+      },
+    },
+    detail: {
+      textAlign: 'left',
+      color: theme.palette.text.secondary,
+      '&:last-child': {
+        flexGrow: 1,
+      }
+    },
+  };
+};
 
 interface IProps {
   classes: any;
@@ -76,7 +81,7 @@ class Details extends Component<IProps, any> {
     );
   }
 
-  private renderDetailRow = (detail, key = 0): any => {
+  private renderDetailRow = (detail, key): any => {
     const { classes } = this.props;
     const detailOrGroup = detail.g || detail;
 
@@ -91,15 +96,15 @@ class Details extends Component<IProps, any> {
     );
   };
 
-  private renderDetailColumns = (detail, key = 0): any => {
+  private renderDetailColumns = (detail): any => {
     const { classes, stats } = this.props;
 
     return (
-      <Fragment>
-        <div key={`${key}-l`} className={classes.label}>
+      <Fragment key={detail.k}>
+        <div key={detail.k} className={classes.label}>
           {detail.l}
         </div>
-        <div key={`${key}-d`} className={classes.detail}>
+        <div key={`${detail.k}-d`} className={classes.detail}>
           {createValueFromDetail(stats[detail.k], detail.c)}
         </div>
       </Fragment>

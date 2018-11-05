@@ -1,10 +1,31 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+import cx from 'classnames';
 
 const defaultMinSize = 100;
 
+const styles = (theme) => ({
+  root: {
+    position: 'absolute',
+    zIndex: 200,
+    padding: theme.spacing.unit / 2,
+    backgroundImage: 'linear-gradient(to top, #e3e3e3 0, #f0f0f0 20%, #fff 60%)',
+    borderRadius: 6,
+    boxShadow: '2px 3px 3px 0 rgba(0, 0, 0, .14), ' +
+      '2px 2px 6px 0 rgba(0, 0, 0, .12), ' +
+      '2px 4px 2px -2px rgba(0, 0, 0, .2)',
+    opacity: .9,
+    transition: 'opacity .2s ease-in',
+    cursor: 'default',
+  },
+  moving: {
+    opacity: .4,
+    cursor: 'grab',
+  },
+});
+
 interface IProps {
+  classes: any;
   initialTop: number;
   initialLeft: number;
   minWidth?: number;
@@ -75,10 +96,10 @@ class MovablePanel extends React.Component<IProps, IState> {
     const minHeight = this.props.minHeight || defaultMinSize;
     const { top, left, isMoving } = this.state;
     const inlineStyles = { top, left, minWidth, minHeight };
-    const classes = classNames(styles.container, isMoving && styles.moving);
+    const { classes } = this.props;
     return (
       <div
-        className={classes}
+        className={cx(classes.root, isMoving && classes.moving)}
         style={inlineStyles}
         onMouseDown={this.handleMouseDown}
       >
@@ -139,4 +160,5 @@ class MovablePanel extends React.Component<IProps, IState> {
   }
 }
 
-export default MovablePanel;
+// @ts-ignore
+export default withStyles(styles)(MovablePanel);

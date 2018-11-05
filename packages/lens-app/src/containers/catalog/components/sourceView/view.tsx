@@ -16,55 +16,55 @@ import {
 } from './interfaces';
 import { createTileSpec, tileSizeFromSourceSpec } from './utils';
 import { default as getConfig } from 'src/config';
-import { Details, Tiles, Toolbar } from './components';
+import { Details, Tiles, Toolbar, ImageDetails } from './components';
 
-const styles: any = (theme) => ({
-  root: {
-    display: 'flex',
-    flex: '1 0 100%',
-    flexFlow: 'column',
-  },
-  statsHeader: {
-    paddingTop: 5,
-    display: 'flex',
-  },
-  thumbnail: {
-    boxShadow: theme.shadows[4],
-  },
-  thumbnailWrapper: {
-    minWidth: 230,
-  },
-  statsAndTools: {
-    display: 'flex',
-    flexFlow: 'column',
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
-  thumbnailLoading: {
-    color: theme.palette.secondary.main,
-    textAlign: 'center',
-    marginTop: 30,
-  },
-  toolbar: {
-    padding: 4,
-  },
-  imageViewContainer: {
-    display: 'flex',
-    flex: '1 0 auto',
-  },
-  tilesWrapper: {
-    overflow: 'hidden',
-    display: 'flex',
-    flexFlow: 'column',
-    flex: '1 0 auto',
-  },
-  alternateWrapper: {
-    flex: '1 0 auto',
-  },
-});
+// import _debug from 'debug';
+// const debug = _debug('lens:sourceView');
 
-import _debug from 'debug';
-const debug = _debug('lens:sourceView');
+const styles: any = (theme) => {
+  const { unit } = theme.spacing;
+
+  return {
+    root: {
+      display: 'flex',
+      flex: '1 0 100%',
+      flexFlow: 'column',
+    },
+    thumbnail: {
+      boxShadow: theme.shadows[4],
+    },
+    toolbar: {
+      padding: `${unit / 2}px 0`,
+      display: 'flex',
+      width: '100%',
+    },
+    detailsContainer: {
+      marginLeft: 'auto',
+    },
+    imageAndDetails: {
+      display: 'flex',
+      padding: unit,
+      backgroundColor: theme.palette.app.background,
+      backgroundImage: 'linear-gradient(to top, #e3e3e3 0, #f0f0f0 20%, #fff 60%)',
+    },
+    thumbnailLoading: {
+      color: theme.palette.secondary.main,
+    },
+    imageViewContainer: {
+      display: 'flex',
+      flex: '1 0 auto',
+    },
+    tilesWrapper: {
+      overflow: 'hidden',
+      display: 'flex',
+      flexFlow: 'column',
+      flex: '1 0 auto',
+    },
+    alternateWrapper: {
+      flex: '1 0 auto',
+    },
+  };
+};
 
 export const displayTileResolution = 512;
 
@@ -263,20 +263,10 @@ class View extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { classes, thumbnailUrl } = this.props;
-    const dataHost = getConfig().dataHost;
-    const fullUrl = `${dataHost}${thumbnailUrl}`;
+    const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <div className={classes.statsHeader}>
-          <div className={classes.thumbnailWrapper}>
-            <img className={classes.thumbnail} src={fullUrl}/>
-          </div>
-          <div className={classes.statsAndTools}>
-            {this.renderStats()}
-            {this.renderTools()}
-          </div>
-        </div>
+        {this.renderTools()}
         {this.renderTiles()}
       </div>
     );
@@ -295,15 +285,27 @@ class View extends React.Component<IProps, IState> {
   }
 
   private renderTools() {
+    const { classes, thumbnailUrl, resolution } = this.props;
+    const dataHost = getConfig().dataHost;
+    const fullUrl = `${dataHost}${thumbnailUrl}`;
+
     if (this.state.statsSpec) {
       return (
-        <div className={this.props.classes.toolbar}>
+        <div className={classes.toolbar}>
           <Toolbar
-            resolution={this.props.resolution}
+            resolution={resolution}
             onChangeRes={this.handleChangeRes}
             onResetStats={this.handleResetStats}
             onToggleSplit={this.handleToggleSplit}
           />
+          <div className={classes.detailsContainer}>
+            <ImageDetails>
+              <div className={classes.imageAndDetails}>
+                <img className={classes.thumbnail} src={fullUrl}/>
+                {this.renderStats()}
+              </div>
+            </ImageDetails>
+          </div>
         </div>
       );
     }

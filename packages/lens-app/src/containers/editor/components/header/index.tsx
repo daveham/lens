@@ -1,8 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import SourceThumbnail from 'components/sourceThumbnail';
 import ListToolbar from '../listToolbar';
+import { default as getConfig } from 'src/config';
 
 const styles: any = (theme) => ({
   root: {
@@ -18,7 +18,12 @@ const styles: any = (theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
-    paddingLeft: theme.spacing.unit * 2,
+    paddingLeft: theme.spacing.unit,
+  },
+  thumbnail: {
+    boxShadow: theme.shadows[4],
+    margin: `${theme.spacing.unit}px ${theme.spacing.unit / 2}px`,
+    borderRadius: theme.spacing.unit / 2,
   },
 });
 
@@ -42,8 +47,8 @@ const Header = (props: IProps): any => {
   } = props;
   const titleOrLoading = loading ? `${title} (loading...)` : title;
   const bcElement = breadcrumb ? breadcrumb : null;
-  const thumbnail = thumbnailUrl
-    ? <SourceThumbnail thumbnailUrl={thumbnailUrl} />
+  const fullUrl = thumbnailUrl
+    ? `${getConfig().dataHost}${thumbnailUrl}`
     : null;
   const toolbar = toolbarLinks
     ? <ListToolbar links={toolbarLinks} />
@@ -51,7 +56,7 @@ const Header = (props: IProps): any => {
 
   return (
     <div className={classes.root}>
-      {thumbnail}
+      {thumbnailUrl && <img className={classes.thumbnail} src={fullUrl} />}
       <div className={classes.titleContainer}>
         <Typography variant='h4'>{titleOrLoading}</Typography>
         {bcElement}

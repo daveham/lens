@@ -3,6 +3,7 @@ import moment from 'moment';
 import TextField from '@material-ui/core/TextField';
 import { timestampFormat } from 'editor/constants';
 import FormContainer from 'editor/components/formContainer';
+import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:execution:common:form');
@@ -35,6 +36,8 @@ export default ({
   isDelete
 }: IProps) => {
   const isShow = !(isNew || isEdit || isDelete);
+  const FieldElement = isShow ? ReadOnlyTextField : TextField;
+
   return (
     <FormContainer
       onCancel={onCancel}
@@ -42,7 +45,7 @@ export default ({
       onSave={onSave}
       tag={tag}
     >
-      <TextField
+      <FieldElement
         label='Name'
         margin='normal'
         multiline
@@ -54,14 +57,14 @@ export default ({
       />
       {!isNew && (
         <Fragment>
-          <TextField
+          <FieldElement
             label='Modified'
             margin='normal'
             value={moment(modified).format(timestampFormat)}
             fullWidth
             disabled
           />
-          <TextField
+          <FieldElement
             label='Created'
             margin='normal'
             value={moment(created).format(timestampFormat)}

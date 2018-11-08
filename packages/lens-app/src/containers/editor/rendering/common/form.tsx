@@ -36,7 +36,7 @@ export default ({
   isDelete
 }: IProps) => {
   const isShow = !(isNew || isEdit || isDelete);
-  const FieldElement = isShow ? ReadOnlyTextField : TextField;
+  const FieldElement = isEdit ? TextField : ReadOnlyTextField;
 
   return (
     <FormContainer
@@ -57,14 +57,14 @@ export default ({
       />
       {!isNew && (
         <Fragment>
-          <FieldElement
+          <ReadOnlyTextField
             label='Modified'
             margin='normal'
             value={moment(modified).format(timestampFormat)}
             fullWidth
             disabled
           />
-          <FieldElement
+          <ReadOnlyTextField
             label='Created'
             margin='normal'
             value={moment(created).format(timestampFormat)}

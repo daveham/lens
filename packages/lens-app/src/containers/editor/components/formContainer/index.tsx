@@ -1,8 +1,39 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import styles from './styles.scss';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles: any = (theme) => ({
+  root: {
+    display: 'flex',
+    justifyContent: 'center',
+    flex: '1 0 auto',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 20,
+    width: 400,
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: theme.spacing.unit * 2,
+    '& button': {
+      margin: theme.spacing.unit,
+      width: 60,
+    },
+  },
+  tag: {
+    color: theme.palette.text.disabled,
+    marginTop: theme.spacing.unit,
+    fontSize: theme.editor.annotation.fontSize,
+    fontFamily: theme.typography.fontFamily,
+    textAlign: 'right',
+  },
+});
 
 interface IProps {
+  classes: any;
   children: any;
   onCancel?: () => void;
   onConfirm?: () => void;
@@ -10,7 +41,8 @@ interface IProps {
   tag?: string;
 }
 
-export default ({
+export default withStyles(styles)(({
+  classes,
   children,
   onCancel,
   onConfirm,
@@ -21,11 +53,11 @@ export default ({
   const handler = onSave ? onSave : onConfirm;
   const showActions = handler || onCancel;
   return (
-    <div className={styles.container}>
-      <div className={styles.form}>
+    <div className={classes.root}>
+      <div className={classes.form}>
         {children}
         {showActions && (
-          <div className={styles.actions}>
+          <div className={classes.actions}>
             <Button
               color='primary'
               onClick={handler}
@@ -40,8 +72,8 @@ export default ({
             </Button>
           </div>
         )}
-        {tag && <div className={styles.tag}>{tag}</div>}
+        {tag && <div className={classes.tag}>{tag}</div>}
       </div>
     </div>
   );
-};
+});

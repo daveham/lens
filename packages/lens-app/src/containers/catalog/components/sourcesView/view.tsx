@@ -3,7 +3,7 @@ import ThumbnailCard from 'components/thumbnailCard';
 import { IImageDescriptor, ISourceDescriptor } from 'src/interfaces';
 import { withStyles } from '@material-ui/core/styles';
 
-const styles = (theme) => ({
+const styles: any = (theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
@@ -88,5 +88,4 @@ class SourcesView extends React.Component<IProps, IState> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(SourcesView);

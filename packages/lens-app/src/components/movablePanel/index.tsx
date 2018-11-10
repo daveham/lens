@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 const defaultMinSize = 100;
 
-const styles = (theme) => ({
+const styles: any = (theme) => ({
   root: {
     position: 'absolute',
     zIndex: 200,
@@ -160,5 +160,4 @@ class MovablePanel extends React.Component<IProps, IState> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(MovablePanel);

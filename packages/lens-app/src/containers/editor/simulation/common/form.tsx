@@ -4,11 +4,20 @@ import TextField from '@material-ui/core/TextField';
 import { timestampFormat } from 'editor/constants';
 import FormContainer from 'editor/components/formContainer';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
+import Paper from '@material-ui/core/Paper/Paper';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles: any = {
+  root: {
+    flex: '1 0 auto',
+  },
+};
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:simulation:common:form');
 
 interface IProps {
+  classes: any;
   created?: number;
   modified?: number;
   name: string;
@@ -22,7 +31,8 @@ interface IProps {
   isDelete?: boolean;
 }
 
-export default ({
+const Form = ({
+  classes,
   created,
   modified,
   name,
@@ -39,40 +49,44 @@ export default ({
   const FieldElement = isEdit ? TextField : ReadOnlyTextField;
 
   return (
-    <FormContainer
-      onCancel={onCancel}
-      onConfirm={onConfirm}
-      onSave={onSave}
-      tag={tag}
-    >
-      <FieldElement
-        label='Name'
-        margin='normal'
-        multiline
-        onChange={(isEdit || isNew) ? onNameChange : null}
-        value={name}
-        fullWidth
-        required={isEdit || isNew}
-        disabled={isDelete || isShow}
-      />
-      {!isNew && (
-        <Fragment>
-          <ReadOnlyTextField
-            label='Modified'
-            margin='normal'
-            value={moment(modified).format(timestampFormat)}
-            fullWidth
-            disabled
-          />
-          <ReadOnlyTextField
-            label='Created'
-            margin='normal'
-            value={moment(created).format(timestampFormat)}
-            fullWidth
-            disabled
-          />
-        </Fragment>
-      )}
-    </FormContainer>
+    <Paper className={classes.root}>
+      <FormContainer
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+        onSave={onSave}
+        tag={tag}
+      >
+        <FieldElement
+          label='Name'
+          margin='normal'
+          multiline
+          onChange={(isEdit || isNew) ? onNameChange : null}
+          value={name}
+          fullWidth
+          required={isEdit || isNew}
+          disabled={isDelete || isShow}
+        />
+        {!isNew && (
+          <Fragment>
+            <ReadOnlyTextField
+              label='Modified'
+              margin='normal'
+              value={moment(modified).format(timestampFormat)}
+              fullWidth
+              disabled
+            />
+            <ReadOnlyTextField
+              label='Created'
+              margin='normal'
+              value={moment(created).format(timestampFormat)}
+              fullWidth
+              disabled
+            />
+          </Fragment>
+        )}
+      </FormContainer>
+    </Paper>
   );
 };
+
+export default withStyles(styles)(Form);

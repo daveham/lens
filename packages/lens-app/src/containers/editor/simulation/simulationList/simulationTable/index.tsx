@@ -126,5 +126,4 @@ class SimulationTable extends React.Component<IProps, IState> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(SimulationTable);

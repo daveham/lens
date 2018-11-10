@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import _debug from 'debug';
 // const debug = _debug('lens:catalog:view');
 
-const styles = {
+const styles: any = {
   root: {
     boxSizing: 'border-box',
     display: 'flex',
@@ -75,5 +75,4 @@ class AppView extends React.Component<IProps, any> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(AppView);

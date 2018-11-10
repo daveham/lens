@@ -31,6 +31,10 @@ const theme = createMuiTheme({
     },
   },
   editor: {
+    fontSize: '10pt',
+    annotation: {
+      fontSize: '8pt',
+    },
     analysis: {
       height: 188,
       width: 150,

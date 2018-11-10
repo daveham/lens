@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:common:ListView');
 
-const styles = {
+const styles: any = {
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -48,5 +48,4 @@ class ListView extends React.Component<IProps, any> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(ListView);

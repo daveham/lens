@@ -1,6 +1,5 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Paper from '@material-ui/core/Paper';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
@@ -57,15 +56,13 @@ class View extends React.Component<IProps, any> {
           <Route path={path} render={this.renderExecutionListToolbar} />
         </Switch>
         <div className={classes.contents}>
-          <Paper>
-            <Switch>
-              <Route path={`${path}/new`} render={executionNewRenderFunction} />
-              <Route path={`${path}/:executionId/delete`} render={executionDeleteRenderFunction} />
-              <Route path={`${path}/:executionId/edit`} render={executionEditRenderFunction} />
-              <Route path={`${path}/:executionId`} render={executionShowRenderFunction} />
-              <Route path={path} render={executionListRenderFunction} />
-            </Switch>
-          </Paper>
+          <Switch>
+            <Route path={`${path}/new`} render={executionNewRenderFunction} />
+            <Route path={`${path}/:executionId/delete`} render={executionDeleteRenderFunction} />
+            <Route path={`${path}/:executionId/edit`} render={executionEditRenderFunction} />
+            <Route path={`${path}/:executionId`} render={executionShowRenderFunction} />
+            <Route path={path} render={executionListRenderFunction} />
+          </Switch>
         </div>
       </div>
     );
@@ -142,5 +139,4 @@ class View extends React.Component<IProps, any> {
   };
 }
 
-// @ts-ignore
 export default withStyles(styles)(View);

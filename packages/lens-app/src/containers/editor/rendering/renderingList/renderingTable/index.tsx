@@ -1,6 +1,7 @@
 import React from 'react';
 /* tslint:disable-next-line: no-implicit-dependencies */
 import moment from 'moment';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableHead from '@material-ui/core/TableHead';
@@ -38,19 +39,21 @@ class RenderingTable extends React.Component<IProps, IState> {
   public render(): any {
     const { classes, renderingRows } = this.props;
     return(
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell className={classes.toolbarCell} />
-            <TableCell className={classes.timestampCell}>Created</TableCell>
-            <TableCell className={classes.timestampCell}>Modified</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {renderingRows.map(this.renderRow)}
-        </TableBody>
-      </Table>
+      <Paper className={classes.root}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell className={classes.toolbarCell} />
+              <TableCell className={classes.timestampCell}>Created</TableCell>
+              <TableCell className={classes.timestampCell}>Modified</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {renderingRows.map(this.renderRow)}
+          </TableBody>
+        </Table>
+      </Paper>
     );
   }
 
@@ -96,5 +99,4 @@ class RenderingTable extends React.Component<IProps, IState> {
   }
 }
 
-// @ts-ignore
 export default withStyles(styles)(RenderingTable);

@@ -8,7 +8,7 @@ import Popover from '@material-ui/core/Popover';
 // const debug = _debug('lens:catalog:imageDetails');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   children: any;
 }
 

@@ -28,7 +28,7 @@ const styles = {
 };
 
 interface IProps {
-  classes: any;
+  classes?: any;
   children?: any;
   thumbnailUrl?: string;
   label: string;

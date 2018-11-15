@@ -14,7 +14,7 @@ const styles = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
 }
 
 export default withStyles(styles)(({ classes }: IProps) => {

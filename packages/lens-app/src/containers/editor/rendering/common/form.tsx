@@ -17,7 +17,7 @@ const styles: any = {
 // const debug = _debug('lens:editor:rendering:common:form');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   created?: number;
   modified?: number;
   name: string;

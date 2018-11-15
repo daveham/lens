@@ -17,7 +17,7 @@ const styles = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   simulationName: string;
   simulationLink: string;
   executionName: string;

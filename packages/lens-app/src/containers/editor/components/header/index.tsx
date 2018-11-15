@@ -28,7 +28,7 @@ const styles: any = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   loading: boolean;
   title: string;
   breadcrumb?: object;

@@ -23,7 +23,7 @@ const styles: any = {
 };
 
 interface IProps {
-  classes: any;
+  classes?: any;
   match: any;
   catalogIsLoading?: boolean;
   catalogIsLoaded?: boolean;

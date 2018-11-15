@@ -18,7 +18,7 @@ import _debug from 'debug';
 const debug = _debug('lens:editor:simulationTable');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   simulationRows: ReadonlyArray<ISimulation>;
   url: string;
 }

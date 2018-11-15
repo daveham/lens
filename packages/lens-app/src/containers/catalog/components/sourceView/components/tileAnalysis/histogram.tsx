@@ -21,7 +21,7 @@ const styles: any = (theme) => {
 
 interface IProps {
   theme: any;
-  classes: any;
+  classes?: any;
   data: number[];
   barStyle: string;
   barMax: number;

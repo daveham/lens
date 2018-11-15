@@ -15,7 +15,7 @@ const styles: any = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   sources: ReadonlyArray<ISourceDescriptor>;
   thumbnailImageDescriptors: ReadonlyArray<IImageDescriptor>;
   thumbnailImageKeys: ReadonlyArray<string>;

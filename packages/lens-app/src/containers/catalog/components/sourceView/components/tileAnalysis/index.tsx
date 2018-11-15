@@ -8,7 +8,7 @@ import Menu from './menu';
 // const debug = _debug('lens:catalog:tileAnalysis');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   row: number;
   col: number;
   offsetX: number;

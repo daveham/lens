@@ -18,7 +18,7 @@ import { styles } from 'editor/styles/tables';
 // const debug = _debug('lens:renderingTable');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   renderingRows: ReadonlyArray<IRendering>;
   url: string;
 }

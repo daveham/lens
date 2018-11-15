@@ -13,7 +13,7 @@ const styles: any = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   InputProps: any;
 }
 

@@ -19,7 +19,7 @@ import { styles } from 'editor/styles/tables';
 // const debug = _debug('lens:executionTable');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   executionRows: ReadonlyArray<IExecution>;
   url: string;
 }

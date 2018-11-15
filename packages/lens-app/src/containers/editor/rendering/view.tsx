@@ -19,7 +19,7 @@ import { styles } from 'editor/styles/editorView';
 // const debug = _debug('lens:editor:rendering:view');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   match: any;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;

@@ -25,7 +25,7 @@ const styles: any = (theme) => ({
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   initialTop: number;
   initialLeft: number;
   minWidth?: number;

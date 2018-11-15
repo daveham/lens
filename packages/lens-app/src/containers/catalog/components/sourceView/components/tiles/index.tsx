@@ -21,7 +21,7 @@ const styles: any = {
 };
 
 interface IProps {
-  classes: any;
+  classes?: any;
   statsTileSpec: ITileSpec;
   displayTileSpec: ITileSpec;
   imageKeys: ReadonlyArray<string>;

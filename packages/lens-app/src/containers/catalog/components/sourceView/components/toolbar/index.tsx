@@ -15,7 +15,7 @@ const styles = {
 };
 
 interface IProps {
-  classes: any;
+  classes?: any;
   resolution: number;
   onChangeRes: (index: number) => void;
   onResetStats: () => void;

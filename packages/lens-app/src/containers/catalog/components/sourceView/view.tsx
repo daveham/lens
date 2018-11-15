@@ -69,7 +69,7 @@ const styles: any = (theme) => {
 export const displayTileResolution = 512;
 
 interface IProps {
-  classes: any;
+  classes?: any;
   sourceId: string;
   resolution: number;
   sourceStatsDescriptor: IStatsDescriptor;

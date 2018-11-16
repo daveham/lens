@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
@@ -17,7 +17,7 @@ import { styles } from 'editor/styles/editorView';
 // const debug = _debug('lens:editor:simulation:view');
 
 interface IProps {
-  classes: any;
+  classes?: any;
   match: any;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
@@ -53,7 +53,7 @@ class View extends React.Component<IProps, any> {
           <Route path={`${path}/:simulationId`} render={this.renderSimulationShowToolbar} />
           <Route path={path} render={this.renderSimulationListToolbar} />
         </Switch>
-        <div className={classes.contents}>
+        <Fragment>
           <Switch>
             <Route path={`${path}/new`} render={simulationNewRenderFunction} />
             <Route path={`${path}/:simulationId/delete`} render={simulationDeleteRenderFunction} />
@@ -61,7 +61,7 @@ class View extends React.Component<IProps, any> {
             <Route path={`${path}/:simulationId`} render={simulationShowRenderFunction} />
             <Route path={path} render={simulationListRenderFunction} />
           </Switch>
-        </div>
+        </Fragment>
       </div>
     );
   }

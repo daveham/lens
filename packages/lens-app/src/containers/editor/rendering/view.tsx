@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
@@ -55,7 +55,7 @@ class View extends React.Component<IProps, any> {
           <Route path={`${path}/:renderingId`} render={this.renderRenderingShowToolbar} />
           <Route path={path} render={this.renderRenderingListToolbar} />
         </Switch>
-        <div className={classes.contents}>
+        <Fragment>
           <Switch>
             <Route path={`${path}/new`} render={renderingNewRenderFunction} />
             <Route path={`${path}/:renderingId/delete`} render={renderingDeleteRenderFunction} />
@@ -63,7 +63,7 @@ class View extends React.Component<IProps, any> {
             <Route path={`${path}/:renderingId`} render={renderingShowRenderFunction} />
             <Route path={path} render={renderingListRenderFunction} />
           </Switch>
-        </div>
+        </Fragment>
       </div>
     );
   }

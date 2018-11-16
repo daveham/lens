@@ -2,6 +2,8 @@ import React from 'react';
 import { ISimulation } from 'editor/interfaces';
 
 import Form from '../common/form';
+import Tabs from '../common/tabs';
+import Hike from '../common/hike';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:simulation:simulationShow:view');
@@ -35,7 +37,13 @@ class View extends React.Component<IProps, any> {
         created={created}
         modified={modified}
         tag={`${sourceId}:${simulationId}`}
-      />
+      >
+        <Tabs
+          hikeContent={<Hike />}
+          trailsContent={(<div>trails</div>)}
+          hikersContent={(<div>hikers</div>)}
+        />
+      </Form>
     );
   }
 }

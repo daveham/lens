@@ -6,12 +6,11 @@ const styles: any = (theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
-    flex: '1 0 auto',
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    padding: 20,
+    paddingLeft: theme.spacing.unit * 2,
     width: 400,
   },
   actions: {
@@ -28,12 +27,11 @@ const styles: any = (theme) => ({
     marginTop: theme.spacing.unit,
     fontSize: theme.editor.annotation.fontSize,
     fontFamily: theme.typography.fontFamily,
-    textAlign: 'right',
   },
 });
 
 interface IProps {
-  classes: any;
+  classes?: any;
   children: any;
   onCancel?: () => void;
   onConfirm?: () => void;

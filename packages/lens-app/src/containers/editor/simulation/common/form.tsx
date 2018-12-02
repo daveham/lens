@@ -21,8 +21,14 @@ const styles: any = (theme) => {
       padding: `${padding}px ${padding}px 0`,
     },
     splitRight: {
+      display: 'flex',
+      flexDirection: 'column',
       flex: '1 0 auto',
-      paddingLeft: padding,
+      padding: `${padding}px ${padding}px ${padding * 2}px`,
+    },
+    paper: {
+      flex: '1 0 auto',
+      padding,
     },
   };
 };
@@ -103,7 +109,9 @@ const Form = ({
           )}
         </FormContainer>
         <div className={classes.splitRight}>
-          {children}
+          <Paper elevation={8} className={classes.paper}>
+            {children}
+          </Paper>
         </div>
       </div>
     </Paper>

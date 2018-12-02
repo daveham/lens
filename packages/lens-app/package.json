@@ -21,7 +21,7 @@
   "dependencies": {
     "@lens/data-jobs": "^0.1.0",
     "@lens/image-descriptors": "^0.1.0",
-    "@material-ui/core": "^3.2.0",
+    "@material-ui/core": "^3.6.0",
     "@material-ui/icons": "^3.0.1",
     "@types/node": "^10.5.4",
     "apollo-boost": "^0.1.10",

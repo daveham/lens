@@ -6,9 +6,11 @@ import FormContainer from 'editor/components/formContainer';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 import Paper from '@material-ui/core/Paper/Paper';
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography/Typography';
 
 const styles: any = (theme) => {
-  const padding = theme.spacing.unit * 2;
+  const paddingHalf = theme.spacing.unit;
+  const padding = paddingHalf * 2;
   return {
     root: {
       display: 'flex',
@@ -18,7 +20,6 @@ const styles: any = (theme) => {
     split: {
       display: 'flex',
       flex: '1 0 auto',
-      padding: `${padding}px ${padding}px 0`,
     },
     splitRight: {
       display: 'flex',
@@ -26,9 +27,32 @@ const styles: any = (theme) => {
       flex: '1 0 auto',
       padding: `${padding}px ${padding}px ${padding * 2}px`,
     },
-    paper: {
+    splitLeft: {
+      width: theme.spacing.unit * 30,
+      borderRight: `solid 1px ${theme.palette.divider}`,
+      padding: `${padding}px ${padding}px ${padding * 2}px`,
+    },
+    contents: {
       flex: '1 0 auto',
       padding,
+    },
+    formHeader: {
+      backgroundColor: theme.palette.primary.dark,
+      display: 'flex',
+    },
+    formTitle: {
+      padding: `${paddingHalf}px ${padding}px`,
+      width: theme.spacing.unit * 30,
+    },
+    formTitleColor: {
+      color: theme.palette.primary.contrastText,
+    },
+    formControls: {
+      color: theme.palette.primary.contrastText,
+      flex: '1 0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
     },
   };
 };
@@ -38,6 +62,7 @@ const styles: any = (theme) => {
 
 interface IProps {
   classes?: any;
+  controls?: any;
   children?: any;
   created?: number;
   modified?: number;
@@ -55,6 +80,7 @@ interface IProps {
 const Form = ({
   classes,
   children,
+  controls,
   created,
   modified,
   name,
@@ -69,49 +95,68 @@ const Form = ({
 }: IProps) => {
   const isShow = !(isNew || isEdit || isDelete);
   const FieldElement = isEdit ? TextField : ReadOnlyTextField;
+  const formTitleColorClasses: any = {
+    colorTextPrimary: classes.formTitleColor
+  };
 
   return (
     <Paper className={classes.root}>
+      <div className={classes.formHeader}>
+        <div className={classes.formTitle}>
+          <Typography
+            classes={formTitleColorClasses}
+            color='textPrimary'
+            variant='h5'
+          >
+            Simulation
+          </Typography>
+        </div>
+        <div className={classes.formControls}>
+          {controls}
+        </div>
+      </div>
       <div className={classes.split}>
-        <FormContainer
-          onCancel={onCancel}
-          onConfirm={onConfirm}
-          onSave={onSave}
-          tag={tag}
-        >
-          <FieldElement
-            label='Name'
-            margin='normal'
-            multiline
-            onChange={(isEdit || isNew) ? onNameChange : null}
-            value={name}
-            fullWidth
-            required={isEdit || isNew}
-            disabled={isDelete || isShow}
-          />
-          {!isNew && (
-            <Fragment>
-              <ReadOnlyTextField
-                label='Modified'
-                margin='normal'
-                value={moment(modified).format(timestampFormat)}
-                fullWidth
-                disabled
-              />
-              <ReadOnlyTextField
-                label='Created'
-                margin='normal'
-                value={moment(created).format(timestampFormat)}
-                fullWidth
-                disabled
-              />
-            </Fragment>
-          )}
-        </FormContainer>
+        <div className={classes.splitLeft}>
+          <FormContainer
+            onCancel={onCancel}
+            onConfirm={onConfirm}
+            onSave={onSave}
+            tag={tag}
+          >
+            <FieldElement
+              label='Name'
+              margin='normal'
+              multiline
+              onChange={(isEdit || isNew) ? onNameChange : null}
+              value={name}
+              fullWidth
+              required={isEdit || isNew}
+              disabled={isDelete || isShow}
+            />
+            {!isNew && (
+              <Fragment>
+                <ReadOnlyTextField
+                  label='Modified'
+                  margin='normal'
+                  value={moment(modified).format(timestampFormat)}
+                  fullWidth
+                  disabled
+                />
+                <ReadOnlyTextField
+                  label='Created'
+                  margin='normal'
+                  value={moment(created).format(timestampFormat)}
+                  fullWidth
+                  disabled
+                />
+              </Fragment>
+            )}
+          </FormContainer>
+        </div>
         <div className={classes.splitRight}>
-          <Paper elevation={8} className={classes.paper}>
+          <div className={classes.contents}>
             {children}
-          </Paper>
+          </div>
         </div>
       </div>
     </Paper>

@@ -14,8 +14,8 @@ import { timestampFormat } from 'editor/constants';
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/tables';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulationTable');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:simulationTable');
 
 interface IProps {
   classes?: any;
@@ -59,28 +59,28 @@ class SimulationTable extends React.Component<IProps, IState> {
   }
 
   private handleMouseEnter = (id) => () => {
-    debug('handleMouseEnter', id);
+    // debug('handleMouseEnter', id);
     if (this.state.activeId !== id) {
       this.setState({ activeId: id });
     }
   };
 
   private handleMouseLeave = (id) => () => {
-    debug('handleMouseLeave', id);
+    // debug('handleMouseLeave', id);
     if (this.state.activeId === id) {
       this.setState({ activeId: null });
     }
   };
 
   private handleMouseOver = (id) => () => {
-    debug('handleMouseOver', id);
+    // debug('handleMouseOver', id);
     if (this.state.activeId !== id) {
       this.setState({ activeId: id });
     }
   };
 
   private handleMouseOut = (id) => () => {
-    debug('handleMouseOut', id);
+    // debug('handleMouseOut', id);
   };
 
   private renderToolbar = (row: ISimulation): any => {

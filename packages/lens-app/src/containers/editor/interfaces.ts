@@ -24,3 +24,26 @@ export interface IRendering {
   simulationId: number;
   name: string;
 }
+
+export interface IHiker {
+  id: number;
+  name?: string;
+  type?: string;
+}
+
+export interface ITrail {
+  id: number;
+  name?: string;
+  type?: string;
+  hikers: ReadonlyArray<IHiker>;
+}
+
+export interface IHike {
+  id: number;
+  name?: string;
+  type?: string;
+  size?: string;
+  logger?: string;
+  trackWriter?: string;
+  trails: ReadonlyArray<ITrail>;
+}

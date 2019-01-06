@@ -1,19 +1,19 @@
 import React from 'react';
 import AdjustableList from './adjustableList';
-import { ITrail } from 'editor/interfaces';
+import { IHiker } from 'editor/interfaces';
 
 // import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:trails');
+// const debug = _debug('lens:editor:simulation:hikers');
 
 interface IProps {
   disabled?: boolean;
-  items: ReadonlyArray<ITrail>;
+  items: ReadonlyArray<IHiker>;
   selectedIndex: number;
-  onListChanged: (items: ReadonlyArray<ITrail>) => void;
+  onListChanged: (items: ReadonlyArray<IHiker>) => void;
   onSelectionChanged: (index: number) => void;
 }
 
-class Trails extends React.Component<IProps, any> {
+class Hikers extends React.Component<IProps, any> {
   public render(): any {
     const {
       disabled,
@@ -25,7 +25,7 @@ class Trails extends React.Component<IProps, any> {
     return (
       <AdjustableList
         disabled={disabled}
-        label='Trails'
+        label='Hikers'
         items={items}
         selectedIndex={selectedIndex}
         displayProp='name'
@@ -36,4 +36,4 @@ class Trails extends React.Component<IProps, any> {
   }
 }
 
-export default Trails;
+export default Hikers;

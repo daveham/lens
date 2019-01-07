@@ -12,11 +12,13 @@ import {
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 import Layout from '../common/layout';
 import Hike from '../common/hike';
+import Trail from '../common/trail';
 import Trails from '../common/trails';
+import Hiker from '../common/hiker';
 import Hikers from '../common/hikers';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:simulationShow:view');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:simulation:simulationShow:view');
 
 const hikeData = {
   id: 1,
@@ -184,6 +186,10 @@ class View extends React.Component<IProps, IState> {
     const {
       activeTab,
       hike,
+      trailList,
+      selectedTrailIndex,
+      hikerList,
+      selectedHikerIndex,
     } = this.state;
 
     if (activeTab === 0) {
@@ -191,36 +197,76 @@ class View extends React.Component<IProps, IState> {
         <Hike
           disabled
           hike={hike}
-          onChange={this.handleFieldChange}
+          onChange={this.handleHikeFieldChange}
         />
       );
     }
 
     if (activeTab === 1) {
       return (
-        <div>Trails TODO</div>
+        <Trail
+          disabled
+          trail={trailList[selectedTrailIndex]}
+          onChange={this.handleTrailFieldChange}
+        />
       );
     }
 
     return (
-      <div>Hikers TODO</div>
+      <Hiker
+        disabled
+        hiker={hikerList[selectedHikerIndex]}
+        onChange={this.handleHikerFieldChange}
+      />
     );
   }
 
   private handleTabChange = (e, value) =>
     this.setState({ activeTab: value });
 
-  private handleFieldChange = ({ target: { name, value } }) => {
+  private handleHikeFieldChange = ({ target: { name, value } }) => {
     this.setState(({ hike }) => ({
-      hike: {
-        ...hike,
-        [name]: value,
-      },
+      hike: reduceItem(hike, { [name]: value })
     }));
   };
 
+  private handleTrailFieldChange = ({ target: { name, value } }) => {
+    this.setState(({
+      hike,
+      trailList,
+      selectedTrailIndex,
+    }) => {
+      const newTrail = reduceItem(trailList[selectedTrailIndex], { [name]: value });
+      const newTrails = reduceList(trailList, selectedTrailIndex, newTrail);
+      const newHike = reduceItem(hike, { trails: newTrails });
+      return {
+        hike: newHike,
+        trailList: newTrails,
+      };
+    });
+  };
+
+  private handleHikerFieldChange = ({ target: { name, value } }) => {
+    this.setState(({
+      hike,
+      trailList,
+      selectedTrailIndex,
+      hikerList,
+      selectedHikerIndex,
+    }) => {
+      const newHiker = reduceItem(hikerList[selectedHikerIndex], { [name]: value });
+      const newHikers = reduceList(hikerList, selectedHikerIndex, newHiker);
+      const newTrails = reduceListItem(trailList, selectedTrailIndex, { hikers: newHikers });
+      const newHike = reduceItem(hike, { trails: newTrails });
+      return {
+        hike: newHike,
+        trailList: newTrails,
+        hikerList: newHikers,
+      };
+    });
+  };
+
   private handleTrailsSelectionChanged = (index) => {
-    debug('handleTrailsSelectionChanged', { index });
     this.setState((prevState) => ({
       selectedTrailIndex: index,
       selectedHikerIndex: 0,
@@ -229,33 +275,48 @@ class View extends React.Component<IProps, IState> {
   };
 
   private handleHikersSelectionChanged = (index) => {
-    debug('handleHikersSelectionChanged', { index });
     this.setState({
       selectedHikerIndex: index,
     });
   };
 
   private handleTrailsListChanged = (items) => {
-    this.setState((prevState) => ({
-      hike: { ...prevState.hike, trails: items },
+    this.setState(({ hike }) => ({
+      hike: reduceItem(hike, { trails: items }),
       trailList: items,
     }));
   };
 
   private handleHikersListChanged = (items) => {
-    this.setState((prevState) => {
-      const newTrailList = prevState.trailList.map((t, index) => {
-        return index === prevState.selectedTrailIndex
-          ? { ...t, hikers: items }
-          : t;
-      });
+    this.setState(({ hike, trailList, selectedTrailIndex }) => {
+      const newTrails = reduceListItem(trailList, selectedTrailIndex, { hikers: items });
       return {
-        hike: { ...prevState.hike, trails: newTrailList },
-        trailList: newTrailList,
+        hike: reduceItem(hike, { trails: newTrails }),
+        trailList: newTrails,
         hikerList: items
       };
     });
   };
+}
+
+function reduceItem(item, changes) {
+  return { ...item, ...changes };
+}
+
+function reduceListItem(list, itemIndex, itemChanges) {
+  return list.map((item, index) => {
+    return index === itemIndex
+      ? reduceItem(item, itemChanges)
+      : item;
+  });
+}
+
+function reduceList(list, itemIndex, newItem) {
+  return list.map((item, index) => {
+    return index === itemIndex
+      ? newItem
+      : item;
+  });
 }
 
 export default withStyles(styles)(View);

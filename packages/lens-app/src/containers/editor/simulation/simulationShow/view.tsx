@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import {
   ISimulation,
@@ -29,6 +30,7 @@ import {
 
 interface IProps {
   classes?: any;
+  editMode?: boolean;
   sourceId: string;
   simulationId: number;
   simulation: ISimulation;
@@ -38,6 +40,7 @@ interface IProps {
 
 interface IState {
   activeTab: number;
+  simulation: ISimulation;
   hike: IHike;
   trails: ReadonlyArray<ITrail>;
   hikers: ReadonlyArray<IHiker>;
@@ -61,6 +64,7 @@ class View extends React.Component<IProps, IState> {
 
     this.state = {
       activeTab: 0,
+      simulation: { ...props.simulation },
       hike,
       selectedTrailIndex: 0,
       trails,
@@ -70,12 +74,17 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: IProps, prevState: IState): void {
-    const { hike } = this.props;
+    const { hike, simulation } = this.props;
     if (prevProps.hike !== hike) {
       this.setState({
         hike,
         trails: hike.trails,
         hikers: hike.trails[0].hikers,
+      });
+    }
+    if (prevProps.simulation !== simulation) {
+      this.setState({
+        simulation: { ...simulation }
       });
     }
   }
@@ -113,32 +122,54 @@ class View extends React.Component<IProps, IState> {
   }
 
   private renderSimulation(): any {
-    const { simulation: { name } } = this.props;
+    const { editMode } = this.props;
     const {
+      simulation: { name },
       trails,
       selectedTrailIndex,
       hikers,
       selectedHikerIndex,
     } = this.state;
+
+    if (!name) {
+      return null;
+    }
     return (
       <Fragment>
-        <ReadOnlyTextField
-          label='Name'
-          margin='dense'
-          multiline
-          value={name}
-          fullWidth
-          disabled
-        />
+        {!editMode && (
+          <ReadOnlyTextField
+            label='Name'
+            margin='dense'
+            multiline
+            value={name}
+            fullWidth
+            disabled
+          />
+        )}
+        {editMode && (
+          <TextField
+            label='Name'
+            margin='normal'
+            multiline
+            onChange={this.handleSimulationFieldChange}
+            inputProps={{
+              name: 'name',
+              id: 'simulation-name'
+            }}
+            value={name}
+            fullWidth
+            required
+          />
+        )}
         <Trails
-          disabled
+          disabled={!editMode}
           items={trails}
           selectedIndex={selectedTrailIndex}
           onListChanged={this.handleTrailsListChanged}
           onSelectionChanged={this.handleTrailsSelectionChanged}
         />
         <Hikers
-          disabled
+          disabled={!editMode}
           items={hikers}
           selectedIndex={selectedHikerIndex}
           onListChanged={this.handleHikersListChanged}
@@ -149,6 +180,7 @@ class View extends React.Component<IProps, IState> {
   }
 
   private renderContent(): any {
+    const { editMode } = this.props;
     const {
       activeTab,
       hike,
@@ -161,7 +193,7 @@ class View extends React.Component<IProps, IState> {
     if (activeTab === 0) {
       return (
         <Hike
-          disabled
+          disabled={!editMode}
           hike={hike}
           onChange={this.handleHikeFieldChange}
         />
@@ -171,7 +203,7 @@ class View extends React.Component<IProps, IState> {
     if (activeTab === 1) {
       return (
         <Trail
-          disabled
+          disabled={!editMode}
           trail={trails[selectedTrailIndex]}
           onChange={this.handleTrailFieldChange}
         />
@@ -180,7 +212,7 @@ class View extends React.Component<IProps, IState> {
 
     return (
       <Hiker
-        disabled
+        disabled={!editMode}
         hiker={hikers[selectedHikerIndex]}
         onChange={this.handleHikerFieldChange}
       />
@@ -189,6 +221,12 @@ class View extends React.Component<IProps, IState> {
 
   private handleTabChange = (e, value) =>
     this.setState({ activeTab: value });
+
+  private handleSimulationFieldChange = ({ target: { name, value } }) => {
+    this.setState(({ simulation }) => ({
+      simulation: reduceItemWithChanges(simulation, { [name]: value })
+    }));
+  };
 
   private handleHikeFieldChange = ({ target: { name, value } }) => {
     this.setState(({ hike }) => ({

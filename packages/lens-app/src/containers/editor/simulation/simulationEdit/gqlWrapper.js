@@ -21,6 +21,7 @@ export default View => props => {
       <View
         key={simulationId}
         simulation={simulation}
+        editMode={true}
         error={error}
         loading={loading}
         sourceId={sourceId}

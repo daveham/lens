@@ -84,7 +84,7 @@ class View extends React.Component<IProps, any> {
   private renderSimulationEditToolbar = (): any => {
     const { thumbnailUrl, match: { url } } = this.props;
     const links = {
-      back: backupUrl(url, 2)
+      back: url
     };
 
     return (

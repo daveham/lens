@@ -22,17 +22,32 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}-{{ checksum "packages/lens-app/package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: yarn install
+      - run:
+          name: yarn install top
+          command: yarn install
+
+      - run:
+          name: Lerna Bootstrap
+          command: yarn run bootstrap
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - packages/lens-app/node_modules
+          key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}-{{ checksum "packages/lens-app/package.json" }}
+
+      - run:
+          name: Gulp Build
+          command: yarn run build
+
+      - run:
+          name: Lerna Build
+          command: yarn run buildall
 
       # run tests!
-      - run: yarn test
+      # - run: yarn test
 

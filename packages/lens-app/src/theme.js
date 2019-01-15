@@ -27,7 +27,7 @@ const theme = createMuiTheme({
     // E.g., shift from Red 500 to Red 300 or Red 700.
     tonalOffset: 0.2,
     app: {
-      background: '#f0f0f0',
+      background: '#d0d0d0',
     },
   },
   editor: {

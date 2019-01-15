@@ -19,7 +19,6 @@ const styles = (theme) => ({
   guide: {
     width: theme.spacing.unit * 50,
     display: 'flex',
-    flex: '1 0 auto',
     flexFlow: 'column',
   },
   detail: {

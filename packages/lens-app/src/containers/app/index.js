@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
+import { titleSelector as title } from 'src/modules/ui';
 
 import Dashboard from './components/dashboard';
 
@@ -22,9 +23,6 @@ const socketSelector = createSelector(commonSelector, ({ socket }) => socket);
 const connected = createSelector(socketSelector, socket => Boolean(socket));
 const socketId = createSelector(socketSelector, socket => socket ? socket.id : null);
 const command = createSelector(commonSelector, ({ command }) => command);
-
-const uiSelector = ({ ui }) => ui;
-const title = createSelector(uiSelector, ({ title }) => title);
 
 const mapStateToProps = createStructuredSelector({
   connected,

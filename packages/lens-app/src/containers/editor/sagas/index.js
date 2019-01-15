@@ -14,9 +14,12 @@ export function* ensureTitleSaga({ payload }) {
   if (payload) {
     const catalogSources = yield select(catalogSourcesSelector);
     const sourceName = catalogSources.byIds[payload].name;
-    yield put(setTitle(`${catalogName} - ${sourceName}`));
+    yield put(setTitle({
+      catalogName,
+      sourceName,
+    }));
   } else {
-    yield put(setTitle(catalogName));
+    yield put(setTitle({ catalogName }));
   }
 }
 

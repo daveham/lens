@@ -14,8 +14,8 @@ import { timestampFormat } from 'editor/constants';
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/tables';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulationTable');
+import _debug from 'debug';
+const debug = _debug('lens:editor:simulationTable');
 
 interface IProps {
   classes?: any;
@@ -38,6 +38,7 @@ class SimulationTable extends React.Component<IProps, IState> {
 
   public render(): any {
     const { classes, simulationRows } = this.props;
+    debug('render', { simulationRows });
     return (
       <Paper className={classes.root}>
         <Table>

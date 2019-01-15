@@ -31,6 +31,14 @@ export const GET_SIMULATIONS = gql`
       modified
       sourceId
       name
+      executions {
+        id
+        name
+        renderings {
+          id
+          name
+        }
+      }
       executionCount
     }
   }

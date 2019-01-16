@@ -6,14 +6,18 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
 
 import { withStyles } from '@material-ui/core/styles';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:guide');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:guide');
 
 const styles: any = (theme) => {
   const { unit } = theme.spacing;
@@ -24,12 +28,6 @@ const styles: any = (theme) => {
       display: 'flex',
       flexDirection: 'column',
       // border: '1px solid #f00',
-    },
-    contents: {
-      width: '100%',
-      flex: '1 0 auto',
-      display: 'flex',
-      flexDirection: 'column',
     },
     card: {
       maxWidth: unit * 50,
@@ -46,6 +44,22 @@ const styles: any = (theme) => {
     },
     avatar: {
       backgroundColor: theme.palette.secondary.main,
+    },
+    content: {
+      // border: '2px solid #f00',
+      padding: unit,
+      '&:last-child': {
+        padding: unit,
+      },
+    },
+    heading: {
+      // border: '2px solid #0f0',
+      flexBasis: '33%',
+      flexShrink: 0,
+    },
+    secondaryHeading: {
+      // border: '2px solid #00f',
+      color: theme.palette.text.secondary,
     },
   };
 };
@@ -79,47 +93,113 @@ class View extends React.Component<IProps, any> {
   }
 
   public render(): any {
+    const { classes } = this.props;
+
+    return (
+      <div className={classes.root}>
+        <Card className={classes.card}>
+          {this.renderHeader()}
+          {this.renderMedia()}
+          {this.renderContents()}
+        </Card>
+      </div>
+    );
+  }
+
+  private renderHeader(): any {
     const {
       classes,
       thumbnailUrl,
       photo,
-      label,
     } = this.props;
-    debug('render', { thumbnailUrl, photo, label});
 
-    if (thumbnailUrl) {
-      const dataHost = getConfig().dataHost;
-      const fullUrl = `${dataHost}${thumbnailUrl}`;
+    const headerContent = thumbnailUrl
+      ? null
+      : <Loading pulse={true} />;
 
-      return (
-        <div className={classes.root}>
-          <Card className={classes.card}>
-            <CardHeader
-              avatar={(
-                <Avatar className={classes.avatar}>
-                  P
-                </Avatar>
-              )}
-              title={photo}
-            />
-            <CardMedia
-              // component='img'
-              className={classes.media}
-              image={fullUrl}
-              title={label}
-            />
-            <CardContent>
-              <Typography variant='h5' component='h2'>{label}</Typography>
-            </CardContent>
-          </Card>
-        </div>
-      );
+    return (
+      <CardHeader
+        avatar={(
+          <Avatar className={classes.avatar}>
+            P
+          </Avatar>
+        )}
+        title={photo}
+      >
+        {headerContent}
+      </CardHeader>
+    );
+  }
+
+  private renderMedia(): any {
+    const {
+      classes,
+      thumbnailUrl,
+    } = this.props;
+
+    const fullUrl = thumbnailUrl
+      ? `${getConfig().dataHost}${thumbnailUrl}`
+      : null;
+
+    return (
+      <CardMedia
+        className={classes.media}
+        image={fullUrl}
+      />
+    );
+  }
+
+  private renderContents(): any {
+    const {
+      classes,
+      thumbnailUrl,
+    } = this.props;
+
+    if (!thumbnailUrl) {
+      return null;
     }
 
     return (
-      <div>
-        <Loading pulse={true} />
-      </div>
+      <CardContent classes={{ root: classes.content }}>
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>Simulations</Typography>
+            <Typography className={classes.secondaryHeading}>Current Simulation</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography>
+              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
+              maximus est, id dignissim quam.
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>Executions</Typography>
+            <Typography className={classes.secondaryHeading}>Current Execution</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography>
+              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
+              maximus est, id dignissim quam.
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+
+        <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography className={classes.heading}>Renderings</Typography>
+            <Typography className={classes.secondaryHeading}>Current Rendering</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography>
+              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
+              maximus est, id dignissim quam.
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </CardContent>
     );
   }
 }

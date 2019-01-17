@@ -85,6 +85,9 @@ const theme = createMuiTheme({
         },
       },
     },
+    guide: {
+      background: '#f0f0f0',
+    },
   },
 });
 

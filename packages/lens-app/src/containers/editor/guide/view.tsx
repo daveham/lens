@@ -21,6 +21,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles: any = (theme) => {
   const { unit } = theme.spacing;
+  const { borderRadius } = theme.shape;
   return {
     root: {
       padding: unit * 2,
@@ -30,9 +31,18 @@ const styles: any = (theme) => {
       // border: '1px solid #f00',
     },
     card: {
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.primary.contrastText,
       maxWidth: unit * 50,
       // maxWidth: 225,
       // minWidth: 225,
+    },
+    cardHeader: {
+      backgroundColor: 'inherit',
+      color: 'inherit',
+    },
+    cardHeaderTitle: {
+      color: 'inherit',
     },
     cardAction: {
       width: '100%',
@@ -45,21 +55,42 @@ const styles: any = (theme) => {
     avatar: {
       backgroundColor: theme.palette.secondary.main,
     },
-    content: {
-      // border: '2px solid #f00',
+    cardContent: {
+      backgroundColor: 'inherit',
+      color: 'inherit',
       padding: unit,
       '&:last-child': {
         padding: unit,
       },
     },
-    heading: {
-      // border: '2px solid #0f0',
+    expansion: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+      borderRadius: borderRadius * 2,
+      margin: `${unit}px 0`,
+      '&:first-child': {
+        borderRadius: borderRadius * 2,
+        margin: `${unit}px 0`,
+      },
+      '&:last-child': {
+        borderRadius: borderRadius * 2,
+        margin: `${unit}px 0`,
+      },
+    },
+    expansionHeading: {
       flexBasis: '33%',
       flexShrink: 0,
+      color: theme.palette.primary.contrastText,
+      fontWeight: 600,
     },
-    secondaryHeading: {
-      // border: '2px solid #00f',
-      color: theme.palette.text.secondary,
+    expansionSecondaryHeading: {
+      color: theme.palette.primary.contrastText,
+    },
+    expansionDetails: {
+      backgroundColor: theme.editor.guide.background,
+      borderRadius: borderRadius * 2,
+      // borderBottomLeftRadius: borderRadius * 2,
+      // borderBottomRightRadius: borderRadius * 2,
     },
   };
 };
@@ -119,6 +150,10 @@ class View extends React.Component<IProps, any> {
 
     return (
       <CardHeader
+        classes={{
+          root: classes.cardHeader,
+          title: classes.cardHeaderTitle,
+        }}
         avatar={(
           <Avatar className={classes.avatar}>
             P
@@ -160,40 +195,40 @@ class View extends React.Component<IProps, any> {
     }
 
     return (
-      <CardContent classes={{ root: classes.content }}>
-        <ExpansionPanel>
+      <CardContent classes={{ root: classes.cardContent }}>
+        <ExpansionPanel classes={{ root: classes.expansion }}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className={classes.heading}>Simulations</Typography>
-            <Typography className={classes.secondaryHeading}>Current Simulation</Typography>
+            <Typography classes={{ body2: classes.expansionHeading }}>Simulations</Typography>
+            <Typography className={classes.expansionSecondaryHeading}>Current Simulation</Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <Typography>
+          <ExpansionPanelDetails classes={{ root: classes.expansionDetails }}>
+            <Typography color='textSecondary'>
               Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
               maximus est, id dignissim quam.
             </Typography>
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
-        <ExpansionPanel>
+        <ExpansionPanel classes={{ root: classes.expansion }}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className={classes.heading}>Executions</Typography>
-            <Typography className={classes.secondaryHeading}>Current Execution</Typography>
+            <Typography classes={{ body2: classes.expansionHeading }}>Executions</Typography>
+            <Typography className={classes.expansionSecondaryHeading}>Current Execution</Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <Typography>
+          <ExpansionPanelDetails classes={{ root: classes.expansionDetails }}>
+            <Typography color='textSecondary'>
               Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
               maximus est, id dignissim quam.
             </Typography>
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
-        <ExpansionPanel>
+        <ExpansionPanel classes={{ root: classes.expansion }}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography className={classes.heading}>Renderings</Typography>
-            <Typography className={classes.secondaryHeading}>Current Rendering</Typography>
+            <Typography classes={{ body2: classes.expansionHeading }}>Renderings</Typography>
+            <Typography className={classes.expansionSecondaryHeading}>Current Rendering</Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <Typography>
+          <ExpansionPanelDetails classes={{ root: classes.expansionDetails }}>
+            <Typography color='textSecondary'>
               Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
               maximus est, id dignissim quam.
             </Typography>

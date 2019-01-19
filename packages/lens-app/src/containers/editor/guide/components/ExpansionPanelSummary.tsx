@@ -4,16 +4,19 @@ import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 
 const styles = (theme) => {
   const { unit } = theme.spacing;
+  const panelHeight = 6 * unit;
+  const margin = `${unit}px 0`;
   return {
     root: {
-      minHeight: 6 * unit,
+      minHeight: panelHeight,
       '&$expanded': {
-        minHeight: 6 * unit,
+        minHeight: panelHeight,
       },
     },
     content: {
+      margin,
       '&$expanded': {
-        margin: '12px 0',
+        margin,
       },
     },
     expanded: {},

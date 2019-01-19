@@ -10,6 +10,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from './components/ExpansionPanel';
 import ExpansionPanelSummary from './components/ExpansionPanelSummary';
 import ExpansionPanelDetails from './components/ExpansionPanelDetails';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
@@ -27,14 +33,11 @@ const styles: any = (theme) => {
       flex: '1 0 auto',
       display: 'flex',
       flexDirection: 'column',
-      // border: '1px solid #f00',
     },
     card: {
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.primary.contrastText,
       maxWidth: unit * 50,
-      // maxWidth: 225,
-      // minWidth: 225,
     },
     cardHeader: {
       backgroundColor: 'inherit',
@@ -70,6 +73,14 @@ const styles: any = (theme) => {
     },
     expansionSecondaryHeading: {
       color: theme.palette.primary.contrastText,
+    },
+    list: {
+      width: '100%',
+      maxHeight: unit * 12,
+      overflow: 'auto',
+    },
+    listIcon: {
+      fontSize: '16px',
     },
   };
 };
@@ -181,10 +192,27 @@ class View extends React.Component<IProps, any> {
             <Typography className={classes.expansionSecondaryHeading}>Current Simulation</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography color='textSecondary'>
-              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
-              maximus est, id dignissim quam.
-            </Typography>
+
+            <List dense disablePadding classes={{ root: classes.list }}>
+              <ListItem key={1} dense button>
+                <ListItemText primary='one' />
+                <ListItemSecondaryAction>
+                  <IconButton classes={{ root: classes.listIcon }}>
+                    <MoreVertIcon fontSize='inherit' />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem key={2} dense button>
+                <ListItemText primary='two' />
+              </ListItem>
+              <ListItem key={3} dense button>
+                <ListItemText primary='three' />
+              </ListItem>
+              <ListItem key={4} dense button>
+                <ListItemText primary='four' />
+              </ListItem>
+            </List>
+
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
@@ -194,10 +222,22 @@ class View extends React.Component<IProps, any> {
             <Typography className={classes.expansionSecondaryHeading}>Current Execution</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography color='textSecondary'>
-              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
-              maximus est, id dignissim quam.
-            </Typography>
+
+            <List dense disablePadding classes={{ root: classes.list }}>
+              <ListItem key={1} dense button>
+                <ListItemText primary='one' />
+              </ListItem>
+              <ListItem key={2} dense button>
+                <ListItemText primary='two' />
+              </ListItem>
+              <ListItem key={3} dense button>
+                <ListItemText primary='three' />
+              </ListItem>
+              <ListItem key={4} dense button>
+                <ListItemText primary='four' />
+              </ListItem>
+            </List>
+
           </ExpansionPanelDetails>
         </ExpansionPanel>
 
@@ -207,10 +247,22 @@ class View extends React.Component<IProps, any> {
             <Typography className={classes.expansionSecondaryHeading}>Current Rendering</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography color='textSecondary'>
-              Nulla facilisi. Phasellus sollicitudin nulla et quam mattis feugiat. Aliquam eget
-              maximus est, id dignissim quam.
-            </Typography>
+
+            <List dense disablePadding classes={{ root: classes.list }}>
+              <ListItem key={1} dense button>
+                <ListItemText primary='one' />
+              </ListItem>
+              <ListItem key={2} dense button>
+                <ListItemText primary='two' />
+              </ListItem>
+              <ListItem key={3} dense button>
+                <ListItemText primary='three' />
+              </ListItem>
+              <ListItem key={4} dense button>
+                <ListItemText primary='four' />
+              </ListItem>
+            </List>
+
           </ExpansionPanelDetails>
         </ExpansionPanel>
       </CardContent>

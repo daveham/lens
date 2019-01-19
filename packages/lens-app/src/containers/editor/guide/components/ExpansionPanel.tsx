@@ -4,34 +4,27 @@ import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 
 const styles = (theme) => {
   const { unit } = theme.spacing;
-  const { borderRadius } = theme.shape;
+  const panelHeight = 6 * unit;
+  const borderRadius = theme.shape.borderRadius * 2;
+  const margin = `${unit}px 0`;
   return {
     root: {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.primary.contrastText,
-      borderRadius: borderRadius * 2,
-      margin: `${unit}px 0`,
+      borderRadius,
+      margin,
       '&:first-child': {
-        borderRadius: borderRadius * 2,
-        margin: `${unit}px 0`,
+        borderRadius,
+        margin,
       },
       '&:last-child': {
-        borderRadius: borderRadius * 2,
-        margin: `${unit}px 0`,
+        borderRadius,
+        margin,
       },
     },
-    //   border: '1px solid rgba(0,0,0,.125)',
-    //   boxShadow: 'none',
-    //   '&:not(:last-child)': {
-    //     borderBottom: 0,
-    //   },
-    //   '&:before': {
-    //     display: 'none',
-    //   },
-    // },
     expanded: {
-      margin: `${unit}px 0`,
-      minHeight: unit * 6,
+      margin,
+      minHeight: panelHeight,
     },
   };
 };

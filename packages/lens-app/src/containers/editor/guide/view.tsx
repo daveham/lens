@@ -87,6 +87,7 @@ const styles: any = (theme) => {
 
 interface IProps {
   classes?: any;
+  history: any;
   match: any;
   photo?: string;
   thumbnailUrl?: string;
@@ -95,20 +96,27 @@ interface IProps {
   ensureEditorTitle: (sourceId?: string) => void;
 }
 
-interface IState {
-  expandedPanel?: any;
-  panelSelections: object;
+interface IPanelSelections {
+  simulationIndex?: number;
+  executionIndex?: number;
+  renderingIndex?: number;
 }
 
-function createMockData(spec) {
+interface IState {
+  expandedPanel?: any;
+  panelSelections: IPanelSelections;
+}
+
+function createMockData({ id, name, renderingsPerExecution}) {
   return {
-    name: spec.name,
-    executions: spec.renderingsPerExecution.map((rpe, executionIndex) => ({
-      id: executionIndex,
-      name: `Execution ${spec.id}.${executionIndex}`,
+    id,
+    name,
+    executions: renderingsPerExecution.map((rpe, executionIndex) => ({
+      id: executionIndex + 1,
+      name: `Execution ${id}.${executionIndex + 1}`,
       renderings: Array.from({ length: rpe }, (v, renderingIndex) => ({
-        id: renderingIndex,
-        name: `Rendering ${spec.id}.${executionIndex}.${renderingIndex}`,
+        id: renderingIndex + 1,
+        name: `Rendering ${id}.${executionIndex + 1}.${renderingIndex + 1}`,
       }))
     }))
   };
@@ -116,23 +124,31 @@ function createMockData(spec) {
 
 const mockData = {
   simulations: [{
-    id: 0,
-    name: 'Simulation Zero',
-    renderingsPerExecution: [2, 5, 3],
-  }, {
     id: 1,
     name: 'Simulation One',
-    renderingsPerExecution: [7, 2, 8],
+    renderingsPerExecution: [2, 5, 3],
   }, {
     id: 2,
     name: 'Simulation Two',
-    renderingsPerExecution: [1, 8, 2],
+    renderingsPerExecution: [7, 2, 8],
   }, {
     id: 3,
     name: 'Simulation Three',
+    renderingsPerExecution: [1, 8, 2],
+  }, {
+    id: 4,
+    name: 'Simulation Four',
     renderingsPerExecution: [9, 15, 11],
   }].map((spec) => createMockData(spec))
 };
+
+function panelKeyFromTitle(title) {
+  return title === 'Simulations'
+    ? 'simulationIndex'
+    : title === 'Executions'
+      ? 'executionIndex'
+      : 'renderingIndex';
+}
 
 class View extends React.Component<IProps, IState> {
   constructor(props) {
@@ -159,6 +175,29 @@ class View extends React.Component<IProps, IState> {
     }
   }
 
+  public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
+    const { panelSelections } = this.state;
+    if (prevState.panelSelections !== panelSelections) {
+      const { match, history } = this.props;
+      const { params: { sourceId } } = match;
+
+      const { simulationIndex = 0, executionIndex = 0, renderingIndex = 0 } = panelSelections;
+      const simulation = mockData.simulations[simulationIndex];
+      const execution = simulation.executions[executionIndex];
+      const rendering = execution.renderings[renderingIndex];
+
+      if (simulationIndex !== prevState.panelSelections.simulationIndex) {
+        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/show`);
+      } else if (executionIndex !== prevState.panelSelections.executionIndex) {
+        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/Execution` +
+          `/${execution.id}/show`);
+      } else if (renderingIndex !== prevState.panelSelections.renderingIndex) {
+        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}` +
+          `/Execution/${execution.id}/Rendering/${rendering.id}/show`);
+      }
+    }
+  }
+
   public render(): any {
     const { classes } = this.props;
 
@@ -181,20 +220,19 @@ class View extends React.Component<IProps, IState> {
 
   private handlePanelListItemChange = (panel, index) => () => {
     this.setState((priorState) => {
+      const key = panelKeyFromTitle(panel);
       const newState = {
         expandedPanel: null,
         panelSelections: {
           ...priorState.panelSelections,
-          [panel]: index,
+          [key]: index,
         }
       };
       if (panel !== 'Renderings') {
-        // @ts-ignore
-        newState.panelSelections.Renderings = 0;
+        newState.panelSelections.renderingIndex = 0;
       }
       if (panel === 'Simulations') {
-        // @ts-ignore
-        newState.panelSelections.Executions = 0;
+        newState.panelSelections.executionIndex = 0;
       }
       return newState;
     });
@@ -259,13 +297,9 @@ class View extends React.Component<IProps, IState> {
       return null;
     }
 
-    // @ts-ignore
-    const currentSimulationIndex = this.state.panelSelections.Simulations || 0;
-    // @ts-ignore
-    const currentExecutionIndex = this.state.panelSelections.Executions || 0;
-
-    const currentSimulation = data.simulations[currentSimulationIndex];
-    const currentExecution = currentSimulation.executions[currentExecutionIndex];
+    const { simulationIndex = 0, executionIndex = 0 } = this.state.panelSelections;
+    const currentSimulation = data.simulations[simulationIndex];
+    const currentExecution = currentSimulation.executions[executionIndex];
 
     return (
       <CardContent classes={{ root: classes.cardContent }}>
@@ -280,7 +314,8 @@ class View extends React.Component<IProps, IState> {
     const { classes } = this.props;
     const { expandedPanel } = this.state;
 
-    const currentIndex = this.state.panelSelections[title] || 0;
+    const key = panelKeyFromTitle(title);
+    const currentIndex = this.state.panelSelections[key] || 0;
 
     const listItems = items.map((item, index) => (
       <ListItem

@@ -8,8 +8,8 @@ import { withStyles} from '@material-ui/core/styles';
 import { IHike } from 'editor/interfaces';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:hike');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:simulation:hike');
 
 const styles: any = (theme) => ({
   root: {
@@ -123,8 +123,6 @@ class Hike extends Component<IProps, any> {
       hike,
       onChange,
     } = this.props;
-
-    debug('renderEnabled', { hike });
 
     return (
       <Fragment>

@@ -88,7 +88,6 @@ const styles: any = (theme) => {
 interface IProps {
   classes?: any;
   match: any;
-  label: string;
   photo?: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
@@ -96,7 +95,54 @@ interface IProps {
   ensureEditorTitle: (sourceId?: string) => void;
 }
 
-class View extends React.Component<IProps, any> {
+interface IState {
+  expandedPanel?: any;
+  panelSelections: object;
+}
+
+function createMockData(spec) {
+  return {
+    name: spec.name,
+    executions: spec.renderingsPerExecution.map((rpe, executionIndex) => ({
+      id: executionIndex,
+      name: `Execution ${spec.id}.${executionIndex}`,
+      renderings: Array.from({ length: rpe }, (v, renderingIndex) => ({
+        id: renderingIndex,
+        name: `Rendering ${spec.id}.${executionIndex}.${renderingIndex}`,
+      }))
+    }))
+  };
+}
+
+const mockData = {
+  simulations: [{
+    id: 0,
+    name: 'Simulation Zero',
+    renderingsPerExecution: [2, 5, 3],
+  }, {
+    id: 1,
+    name: 'Simulation One',
+    renderingsPerExecution: [7, 2, 8],
+  }, {
+    id: 2,
+    name: 'Simulation Two',
+    renderingsPerExecution: [1, 8, 2],
+  }, {
+    id: 3,
+    name: 'Simulation Three',
+    renderingsPerExecution: [9, 15, 11],
+  }].map((spec) => createMockData(spec))
+};
+
+class View extends React.Component<IProps, IState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandedPanel: null,
+      panelSelections: {},
+    };
+  }
+
   public componentDidMount(): void {
     const {
       thumbnailUrl,
@@ -121,11 +167,38 @@ class View extends React.Component<IProps, any> {
         <Card className={classes.card}>
           {this.renderHeader()}
           {this.renderMedia()}
-          {this.renderContents()}
+          {this.renderContents(mockData)}
         </Card>
       </div>
     );
   }
+
+  private handlePanelChange = (panel) => (event, expanded) => {
+    this.setState({
+      expandedPanel: expanded ? panel : null,
+    });
+  };
+
+  private handlePanelListItemChange = (panel, index) => () => {
+    this.setState((priorState) => {
+      const newState = {
+        expandedPanel: null,
+        panelSelections: {
+          ...priorState.panelSelections,
+          [panel]: index,
+        }
+      };
+      if (panel !== 'Renderings') {
+        // @ts-ignore
+        newState.panelSelections.Renderings = 0;
+      }
+      if (panel === 'Simulations') {
+        // @ts-ignore
+        newState.panelSelections.Executions = 0;
+      }
+      return newState;
+    });
+  };
 
   private renderHeader(): any {
     const {
@@ -162,9 +235,11 @@ class View extends React.Component<IProps, any> {
       thumbnailUrl,
     } = this.props;
 
-    const fullUrl = thumbnailUrl
-      ? `${getConfig().dataHost}${thumbnailUrl}`
-      : null;
+    if (!thumbnailUrl) {
+      return null;
+    }
+
+    const fullUrl = `${getConfig().dataHost}${thumbnailUrl}`;
 
     return (
       <CardMedia
@@ -174,7 +249,7 @@ class View extends React.Component<IProps, any> {
     );
   }
 
-  private renderContents(): any {
+  private renderContents(data): any {
     const {
       classes,
       thumbnailUrl,
@@ -184,88 +259,60 @@ class View extends React.Component<IProps, any> {
       return null;
     }
 
+    // @ts-ignore
+    const currentSimulationIndex = this.state.panelSelections.Simulations || 0;
+    // @ts-ignore
+    const currentExecutionIndex = this.state.panelSelections.Executions || 0;
+
+    const currentSimulation = data.simulations[currentSimulationIndex];
+    const currentExecution = currentSimulation.executions[currentExecutionIndex];
+
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography classes={{ body2: classes.expansionHeading }}>Simulations</Typography>
-            <Typography className={classes.expansionSecondaryHeading}>Current Simulation</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-
-            <List dense disablePadding classes={{ root: classes.list }}>
-              <ListItem key={1} dense button>
-                <ListItemText primary='one' />
-                <ListItemSecondaryAction>
-                  <IconButton classes={{ root: classes.listIcon }}>
-                    <MoreVertIcon fontSize='inherit' />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-              <ListItem key={2} dense button>
-                <ListItemText primary='two' />
-              </ListItem>
-              <ListItem key={3} dense button>
-                <ListItemText primary='three' />
-              </ListItem>
-              <ListItem key={4} dense button>
-                <ListItemText primary='four' />
-              </ListItem>
-            </List>
-
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography classes={{ body2: classes.expansionHeading }}>Executions</Typography>
-            <Typography className={classes.expansionSecondaryHeading}>Current Execution</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-
-            <List dense disablePadding classes={{ root: classes.list }}>
-              <ListItem key={1} dense button>
-                <ListItemText primary='one' />
-              </ListItem>
-              <ListItem key={2} dense button>
-                <ListItemText primary='two' />
-              </ListItem>
-              <ListItem key={3} dense button>
-                <ListItemText primary='three' />
-              </ListItem>
-              <ListItem key={4} dense button>
-                <ListItemText primary='four' />
-              </ListItem>
-            </List>
-
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-
-        <ExpansionPanel>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography classes={{ body2: classes.expansionHeading }}>Renderings</Typography>
-            <Typography className={classes.expansionSecondaryHeading}>Current Rendering</Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-
-            <List dense disablePadding classes={{ root: classes.list }}>
-              <ListItem key={1} dense button>
-                <ListItemText primary='one' />
-              </ListItem>
-              <ListItem key={2} dense button>
-                <ListItemText primary='two' />
-              </ListItem>
-              <ListItem key={3} dense button>
-                <ListItemText primary='three' />
-              </ListItem>
-              <ListItem key={4} dense button>
-                <ListItemText primary='four' />
-              </ListItem>
-            </List>
-
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+        {this.renderContentsPanel('Simulations', data.simulations)}
+        {this.renderContentsPanel('Executions', currentSimulation.executions)}
+        {this.renderContentsPanel('Renderings', currentExecution.renderings)}
       </CardContent>
+    );
+  }
+
+  private renderContentsPanel(title, items): any {
+    const { classes } = this.props;
+    const { expandedPanel } = this.state;
+
+    const currentIndex = this.state.panelSelections[title] || 0;
+
+    const listItems = items.map((item, index) => (
+      <ListItem
+        key={index}
+        onClick={this.handlePanelListItemChange(title, index)}
+        dense
+        button
+      >
+        <ListItemText primary={item.name} />
+        <ListItemSecondaryAction>
+          <IconButton classes={{ root: classes.listIcon }}>
+            <MoreVertIcon fontSize='inherit' />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
+
+    return (
+      <ExpansionPanel
+        expanded={expandedPanel === title}
+        onChange={this.handlePanelChange(title)}
+      >
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
+          <Typography className={classes.expansionSecondaryHeading}>{items[currentIndex].name}</Typography>
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <List dense disablePadding classes={{ root: classes.list }}>
+            {listItems}
+          </List>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     );
   }
 }

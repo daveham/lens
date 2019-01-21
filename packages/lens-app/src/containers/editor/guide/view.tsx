@@ -17,6 +17,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IThumbnailDescriptor } from 'src/interfaces';
+import { ISimulation } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
 
@@ -94,6 +95,7 @@ interface IProps {
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
   ensureEditorTitle: (sourceId?: string) => void;
+  simulations?: ReadonlyArray<ISimulation>;
 }
 
 interface IPanelSelections {
@@ -106,41 +108,6 @@ interface IState {
   expandedPanel?: any;
   panelSelections: IPanelSelections;
 }
-
-function createMockData({ id, name, renderingsPerExecution}) {
-  return {
-    id,
-    name,
-    executions: renderingsPerExecution.map((rpe, executionIndex) => ({
-      id: executionIndex + 1,
-      name: `Execution ${id}.${executionIndex + 1}`,
-      renderings: Array.from({ length: rpe }, (v, renderingIndex) => ({
-        id: renderingIndex + 1,
-        name: `Rendering ${id}.${executionIndex + 1}.${renderingIndex + 1}`,
-      }))
-    }))
-  };
-}
-
-const mockData = {
-  simulations: [{
-    id: 1,
-    name: 'Simulation One',
-    renderingsPerExecution: [2, 5, 3],
-  }, {
-    id: 2,
-    name: 'Simulation Two',
-    renderingsPerExecution: [7, 2, 8],
-  }, {
-    id: 3,
-    name: 'Simulation Three',
-    renderingsPerExecution: [1, 8, 2],
-  }, {
-    id: 4,
-    name: 'Simulation Four',
-    renderingsPerExecution: [9, 15, 11],
-  }].map((spec) => createMockData(spec))
-};
 
 function panelKeyFromTitle(title) {
   return title === 'Simulations'
@@ -178,22 +145,24 @@ class View extends React.Component<IProps, IState> {
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
     const { panelSelections } = this.state;
     if (prevState.panelSelections !== panelSelections) {
-      const { match, history } = this.props;
+      const { match, history, simulations } = this.props;
       const { params: { sourceId } } = match;
 
-      const { simulationIndex = 0, executionIndex = 0, renderingIndex = 0 } = panelSelections;
-      const simulation = mockData.simulations[simulationIndex];
-      const execution = simulation.executions[executionIndex];
-      const rendering = execution.renderings[renderingIndex];
+      if (simulations) {
+        const { simulationIndex = 0, executionIndex = 0, renderingIndex = 0 } = panelSelections;
+        const simulation = simulations[simulationIndex];
+        const execution = simulation.executions[executionIndex];
+        const rendering = execution.renderings[renderingIndex];
 
-      if (simulationIndex !== prevState.panelSelections.simulationIndex) {
-        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/show`);
-      } else if (executionIndex !== prevState.panelSelections.executionIndex) {
-        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/Execution` +
-          `/${execution.id}/show`);
-      } else if (renderingIndex !== prevState.panelSelections.renderingIndex) {
-        history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}` +
-          `/Execution/${execution.id}/Rendering/${rendering.id}/show`);
+        if (simulationIndex !== prevState.panelSelections.simulationIndex) {
+          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/show`);
+        } else if (executionIndex !== prevState.panelSelections.executionIndex) {
+          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/Execution` +
+            `/${execution.id}/show`);
+        } else if (renderingIndex !== prevState.panelSelections.renderingIndex) {
+          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}` +
+            `/Execution/${execution.id}/Rendering/${rendering.id}/show`);
+        }
       }
     }
   }
@@ -206,7 +175,7 @@ class View extends React.Component<IProps, IState> {
         <Card className={classes.card}>
           {this.renderHeader()}
           {this.renderMedia()}
-          {this.renderContents(mockData)}
+          {this.renderContents()}
         </Card>
       </div>
     );
@@ -287,23 +256,23 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
-  private renderContents(data): any {
+  private renderContents(): any {
     const {
       classes,
-      thumbnailUrl,
+      simulations,
     } = this.props;
 
-    if (!thumbnailUrl) {
+    if (!simulations) {
       return null;
     }
 
     const { simulationIndex = 0, executionIndex = 0 } = this.state.panelSelections;
-    const currentSimulation = data.simulations[simulationIndex];
+    const currentSimulation = simulations[simulationIndex];
     const currentExecution = currentSimulation.executions[executionIndex];
 
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        {this.renderContentsPanel('Simulations', data.simulations)}
+        {this.renderContentsPanel('Simulations', simulations)}
         {this.renderContentsPanel('Executions', currentSimulation.executions)}
         {this.renderContentsPanel('Renderings', currentExecution.renderings)}
       </CardContent>

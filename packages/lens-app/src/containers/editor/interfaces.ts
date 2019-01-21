@@ -1,10 +1,10 @@
-export interface ISimulation {
+export interface IRendering {
   id: number;
-  sourceId: string;
   created: number;
   modified: number;
+  executionId: number;
+  simulationId: number;
   name: string;
-  executionCount: number;
 }
 
 export interface IExecution {
@@ -14,15 +14,17 @@ export interface IExecution {
   simulationId: number;
   name: string;
   renderingCount: number;
+  renderings?: ReadonlyArray<IRendering>;
 }
 
-export interface IRendering {
+export interface ISimulation {
   id: number;
+  sourceId: string;
   created: number;
   modified: number;
-  executionId: number;
-  simulationId: number;
   name: string;
+  executionCount: number;
+  executions?: ReadonlyArray<IExecution>;
 }
 
 export interface IHiker {

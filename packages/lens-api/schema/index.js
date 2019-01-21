@@ -172,10 +172,16 @@ function generateMockSimulation(sourceId, renderingCounts) {
   return simulation;
 }
 
-generateMockSimulation('1001', [2, 3, 1]);
-generateMockSimulation('1001', [3, 1]);
-generateMockSimulation('1002', [2]);
-generateMockSimulation('1003', [2, 1, 3]);
+generateMockSimulation('1001', [4, 3, 7]);
+generateMockSimulation('1001', [3, 2, 9, 6, 4]);
+generateMockSimulation('1001', [8, 2, 1, 2]);
+generateMockSimulation('1001', [4, 5, 6, 1, 8]);
+generateMockSimulation('1002', [2, 5, 3, 6, 4]);
+generateMockSimulation('1003', [2, 1, 3, 6, 5]);
+generateMockSimulation('1004', [4, 2, 5, 1]);
+generateMockSimulation('1004', [7, 3, 4]);
+generateMockSimulation('1004', [5, 6, 1, 8]);
+generateMockSimulation('1004', [2, 7, 5, 3]);
 
 const getSimulationData = simulation => simulation ? ({
   ...simulation,

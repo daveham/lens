@@ -33,7 +33,15 @@ const SimulationRouteSwitch = ({ classes, match: { path } }) => (
     <div className={classes.guide}>
       <Switch>
         <Route
-          path={path}
+          path={`${path}/:simulationId/Execution/:executionId/Rendering/:renderingId?`}
+          component={Guide}
+        />
+        <Route
+          path={`${path}/:simulationId/Execution/:executionId?`}
+          component={Guide}
+        />
+        <Route
+          path={`${path}/:simulationId?`}
           component={Guide}
         />
       </Switch>

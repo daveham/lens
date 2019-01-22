@@ -17,14 +17,18 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { IThumbnailDescriptor } from 'src/interfaces';
-import { ISimulation } from 'editor/interfaces';
+import {
+  ISimulation,
+  IExecution,
+  IRendering,
+} from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
 
 import { withStyles } from '@material-ui/core/styles';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:guide');
+import _debug from 'debug';
+const debug = _debug('lens:editor:guide');
 
 const styles: any = (theme) => {
   const { unit } = theme.spacing;
@@ -99,22 +103,49 @@ interface IProps {
 }
 
 interface IPanelSelections {
-  simulationIndex?: number;
-  executionIndex?: number;
-  renderingIndex?: number;
+  simulation?: ISimulation;
+  execution?: IExecution;
+  rendering?: IRendering;
 }
 
 interface IState {
-  expandedPanel?: any;
+  expandedPanel?: string;
+  activePanel?: string;
   panelSelections: IPanelSelections;
 }
 
+const panelTitles = {
+  simulation: 'Simulations',
+  execution: 'Executions',
+  rendering: 'Renderings',
+};
+
 function panelKeyFromTitle(title) {
-  return title === 'Simulations'
-    ? 'simulationIndex'
-    : title === 'Executions'
-      ? 'executionIndex'
-      : 'renderingIndex';
+  return title === panelTitles.simulation
+    ? 'simulation'
+    : title === panelTitles.execution
+      ? 'execution'
+      : 'rendering';
+}
+
+function getFirstExecution(simulation) {
+  if (simulation) {
+    const { executions } = simulation;
+    if (executions && executions.length) {
+      return executions[0];
+    }
+  }
+  return null;
+}
+
+function getFirstRendering(execution) {
+  if (execution) {
+    const { renderings } = execution;
+    if (renderings && renderings.length) {
+      return renderings[0];
+    }
+  }
+  return null;
 }
 
 class View extends React.Component<IProps, IState> {
@@ -122,7 +153,7 @@ class View extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       expandedPanel: null,
-      panelSelections: {},
+      ...this.determineSelectionsFromRoute(props),
     };
   }
 
@@ -143,25 +174,37 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
-    const { panelSelections } = this.state;
-    if (prevState.panelSelections !== panelSelections) {
+    if (this.props.simulations && !prevProps.simulations) {
+      this.setState({ ...this.determineSelectionsFromRoute(this.props) });
+    }
+
+    const { panelSelections, activePanel } = this.state;
+    if (prevState.panelSelections !== panelSelections || prevState.activePanel !== activePanel) {
       const { match, history, simulations } = this.props;
-      const { params: { sourceId } } = match;
 
       if (simulations) {
-        const { simulationIndex = 0, executionIndex = 0, renderingIndex = 0 } = panelSelections;
-        const simulation = simulations[simulationIndex];
-        const execution = simulation.executions[executionIndex];
-        const rendering = execution.renderings[renderingIndex];
+        const { params: { sourceId } } = match;
+        const { simulation, execution, rendering } = panelSelections;
 
-        if (simulationIndex !== prevState.panelSelections.simulationIndex) {
-          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/show`);
-        } else if (executionIndex !== prevState.panelSelections.executionIndex) {
-          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}/Execution` +
-            `/${execution.id}/show`);
-        } else if (renderingIndex !== prevState.panelSelections.renderingIndex) {
-          history.push(`/Catalog/${sourceId}/Simulation/${simulation.id}` +
-            `/Execution/${execution.id}/Rendering/${rendering.id}/show`);
+        const {
+          simulation: prevSimulation,
+          execution: prevExecution,
+          rendering: prevRendering,
+        } = prevState.panelSelections;
+
+        if (rendering !== prevRendering ||
+          execution !== prevExecution ||
+          simulation !== prevSimulation ||
+          activePanel !== prevState.activePanel) {
+          let url = `/Catalog/${sourceId}/Simulation/${simulation.id}`;
+          if (activePanel !== panelTitles.simulation) {
+            url = `${url}/Execution/${execution.id}`;
+          }
+          if (activePanel === panelTitles.rendering) {
+            url = `${url}/Rendering/${rendering.id}`;
+          }
+          url = `${url}/show`;
+          history.push(url);
         }
       }
     }
@@ -182,28 +225,37 @@ class View extends React.Component<IProps, IState> {
   }
 
   private handlePanelChange = (panel) => (event, expanded) => {
-    this.setState({
+    debug('handlePanelChange', { panel });
+    const newState: any = {
       expandedPanel: expanded ? panel : null,
-    });
+    };
+    if (!expanded) {
+      newState.activePanel = panel;
+    }
+    this.setState(newState);
   };
 
-  private handlePanelListItemChange = (panel, index) => () => {
+  private handlePanelListItemChange = (panel, item) => () => {
+    const key = panelKeyFromTitle(panel);
+    debug('handlePanelListItemChange', { panel, key, item });
     this.setState((priorState) => {
-      const key = panelKeyFromTitle(panel);
-      const newState = {
-        expandedPanel: null,
-        panelSelections: {
-          ...priorState.panelSelections,
-          [key]: index,
-        }
+      const panelSelections = {
+        ...priorState.panelSelections,
+        [key]: item,
       };
-      if (panel !== 'Renderings') {
-        newState.panelSelections.renderingIndex = 0;
+
+      if (panel === panelTitles.simulation) {
+        panelSelections.execution = getFirstExecution(item);
+        panelSelections.rendering = getFirstRendering(panelSelections.execution);
+      } else if (panel === panelTitles.execution) {
+        panelSelections.rendering = getFirstRendering(item);
       }
-      if (panel === 'Simulations') {
-        newState.panelSelections.executionIndex = 0;
-      }
-      return newState;
+
+      return {
+        expandedPanel: null,
+        activePanel: panel,
+        panelSelections,
+      };
     });
   };
 
@@ -266,15 +318,15 @@ class View extends React.Component<IProps, IState> {
       return null;
     }
 
-    const { simulationIndex = 0, executionIndex = 0 } = this.state.panelSelections;
-    const currentSimulation = simulations[simulationIndex];
-    const currentExecution = currentSimulation.executions[executionIndex];
+    const { simulation, execution } = this.state.panelSelections;
+    const executions = simulation ? simulation.executions : [];
+    const renderings = execution ? execution.renderings : [];
 
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        {this.renderContentsPanel('Simulations', simulations)}
-        {this.renderContentsPanel('Executions', currentSimulation.executions)}
-        {this.renderContentsPanel('Renderings', currentExecution.renderings)}
+        {this.renderContentsPanel(panelTitles.simulation, simulations)}
+        {this.renderContentsPanel(panelTitles.execution, executions)}
+        {this.renderContentsPanel(panelTitles.rendering, renderings)}
       </CardContent>
     );
   }
@@ -282,14 +334,13 @@ class View extends React.Component<IProps, IState> {
   private renderContentsPanel(title, items): any {
     const { classes } = this.props;
     const { expandedPanel } = this.state;
-
     const key = panelKeyFromTitle(title);
-    const currentIndex = this.state.panelSelections[key] || 0;
+    const currentItem = this.state.panelSelections[key];
 
-    const listItems = items.map((item, index) => (
+    const listItems = items.map((item) => (
       <ListItem
-        key={index}
-        onClick={this.handlePanelListItemChange(title, index)}
+        key={item.id}
+        onClick={this.handlePanelListItemChange(title, item)}
         dense
         button
       >
@@ -309,7 +360,9 @@ class View extends React.Component<IProps, IState> {
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
-          <Typography className={classes.expansionSecondaryHeading}>{items[currentIndex].name}</Typography>
+          {currentItem && (
+            <Typography className={classes.expansionSecondaryHeading}>{currentItem.name}</Typography>
+          )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
           <List dense disablePadding classes={{ root: classes.list }}>
@@ -318,6 +371,42 @@ class View extends React.Component<IProps, IState> {
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
+  }
+
+  private determineSelectionsFromRoute(props) {
+    const { simulations, match: { params: {
+      simulationId = -1,
+      executionId = -1,
+      renderingId = -1,
+    } } } = props;
+    debug('determineSelectionsFromRoute', { simulationId, executionId, renderingId });
+
+    const panelSelections = {
+      simulation: null,
+      execution: null,
+      rendering: null,
+    };
+    let activePanel = null;
+    if (renderingId > -1) {
+      activePanel = panelTitles.rendering;
+    } else if (executionId > -1) {
+      activePanel = panelTitles.execution;
+    } else if (simulationId > -1) {
+      activePanel = panelTitles.simulation;
+    }
+
+    if (simulations) {
+      panelSelections.simulation = simulations.find((s) => s.id === simulationId);
+      if (panelSelections.simulation) {
+        const { executions } = panelSelections.simulation;
+        panelSelections.execution = executions.find((e) => e.id === executionId) || executions[0];
+        if (panelSelections.execution) {
+          const { renderings } = panelSelections.execution;
+          panelSelections.rendering = renderings.find((r) => r.id === renderingId) || renderings[0];
+        }
+      }
+    }
+    return { activePanel, panelSelections };
   }
 }
 

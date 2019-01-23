@@ -7,15 +7,14 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from './components/ExpansionPanel';
-import ExpansionPanelSummary from './components/ExpansionPanelSummary';
-import ExpansionPanelDetails from './components/ExpansionPanelDetails';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { withStyles } from '@material-ui/core/styles';
+
 import { IThumbnailDescriptor } from 'src/interfaces';
 import {
   ISimulation,
@@ -25,7 +24,9 @@ import {
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
 
-import { withStyles } from '@material-ui/core/styles';
+import ExpansionPanel from './components/ExpansionPanel';
+import ExpansionPanelSummary from './components/ExpansionPanelSummary';
+import ExpansionPanelDetails from './components/ExpansionPanelDetails';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide');
@@ -148,12 +149,47 @@ function getFirstRendering(execution) {
   return null;
 }
 
+function determineSelectionsFromRoute(props) {
+  const { simulations, match: { params: {
+    simulationId = -1,
+    executionId = -1,
+    renderingId = -1,
+  } } } = props;
+
+  const panelSelections = {
+    simulation: null,
+    execution: null,
+    rendering: null,
+  };
+  let activePanel = null;
+  if (renderingId > -1) {
+    activePanel = panelTitles.rendering;
+  } else if (executionId > -1) {
+    activePanel = panelTitles.execution;
+  } else if (simulationId > -1) {
+    activePanel = panelTitles.simulation;
+  }
+
+  if (simulations) {
+    panelSelections.simulation = simulations.find((s) => s.id === simulationId);
+    if (panelSelections.simulation) {
+      const { executions } = panelSelections.simulation;
+      panelSelections.execution = executions.find((e) => e.id === executionId) || executions[0];
+      if (panelSelections.execution) {
+        const { renderings } = panelSelections.execution;
+        panelSelections.rendering = renderings.find((r) => r.id === renderingId) || renderings[0];
+      }
+    }
+  }
+  return { activePanel, panelSelections };
+}
+
 class View extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
       expandedPanel: null,
-      ...this.determineSelectionsFromRoute(props),
+      ...determineSelectionsFromRoute(props),
     };
   }
 
@@ -174,28 +210,22 @@ class View extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
-    if (this.props.simulations && !prevProps.simulations) {
-      this.setState({ ...this.determineSelectionsFromRoute(this.props) });
+    const { simulations } = this.props;
+    if (simulations && !prevProps.simulations) {
+      this.setState({ ...determineSelectionsFromRoute(this.props) });
     }
 
     const { panelSelections, activePanel } = this.state;
     if (prevState.panelSelections !== panelSelections || prevState.activePanel !== activePanel) {
-      const { match, history, simulations } = this.props;
-
       if (simulations) {
+        const { match, history } = this.props;
         const { params: { sourceId } } = match;
         const { simulation, execution, rendering } = panelSelections;
 
-        const {
-          simulation: prevSimulation,
-          execution: prevExecution,
-          rendering: prevRendering,
-        } = prevState.panelSelections;
-
-        if (rendering !== prevRendering ||
-          execution !== prevExecution ||
-          simulation !== prevSimulation ||
-          activePanel !== prevState.activePanel) {
+        if (activePanel !== prevState.activePanel ||
+          rendering !== prevState.panelSelections.rendering ||
+          execution !== prevState.panelSelections.execution ||
+          simulation !== prevState.panelSelections.simulation) {
           let url = `/Catalog/${sourceId}/Simulation/${simulation.id}`;
           if (activePanel !== panelTitles.simulation) {
             url = `${url}/Execution/${execution.id}`;
@@ -371,42 +401,6 @@ class View extends React.Component<IProps, IState> {
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
-  }
-
-  private determineSelectionsFromRoute(props) {
-    const { simulations, match: { params: {
-      simulationId = -1,
-      executionId = -1,
-      renderingId = -1,
-    } } } = props;
-    debug('determineSelectionsFromRoute', { simulationId, executionId, renderingId });
-
-    const panelSelections = {
-      simulation: null,
-      execution: null,
-      rendering: null,
-    };
-    let activePanel = null;
-    if (renderingId > -1) {
-      activePanel = panelTitles.rendering;
-    } else if (executionId > -1) {
-      activePanel = panelTitles.execution;
-    } else if (simulationId > -1) {
-      activePanel = panelTitles.simulation;
-    }
-
-    if (simulations) {
-      panelSelections.simulation = simulations.find((s) => s.id === simulationId);
-      if (panelSelections.simulation) {
-        const { executions } = panelSelections.simulation;
-        panelSelections.execution = executions.find((e) => e.id === executionId) || executions[0];
-        if (panelSelections.execution) {
-          const { renderings } = panelSelections.execution;
-          panelSelections.rendering = renderings.find((r) => r.id === renderingId) || renderings[0];
-        }
-      }
-    }
-    return { activePanel, panelSelections };
   }
 }
 

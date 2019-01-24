@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -11,8 +11,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
@@ -29,6 +27,7 @@ import Loading from 'src/components/loading';
 import ExpansionPanel from './components/ExpansionPanel';
 import ExpansionPanelSummary from './components/ExpansionPanelSummary';
 import ExpansionPanelDetails from './components/ExpansionPanelDetails';
+import GuideMenu from './components/guideMenu';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide');
@@ -126,7 +125,6 @@ interface IState {
   expandedPanel?: string;
   activePanel?: string;
   panelSelections: IPanelSelections;
-  guideAnchorElement?: HTMLElement;
 }
 
 const panelTitles = {
@@ -204,7 +202,6 @@ class View extends React.Component<IProps, IState> {
     this.state = {
       expandedPanel: null,
       ...determineSelectionsFromRoute(props),
-      guideAnchorElement: null,
     };
   }
 
@@ -304,22 +301,12 @@ class View extends React.Component<IProps, IState> {
     });
   };
 
-  private handleGuideMenuClick = (event) => {
-    this.setState({ guideAnchorElement: event.currentTarget });
-  };
-
-  private handleGuideMenuClose = () => {
-    this.setState({ guideAnchorElement: null });
-  };
-
   private renderHeader(): any {
     const {
       classes,
       thumbnailUrl,
       photo,
     } = this.props;
-    const { guideAnchorElement } = this.state;
-    const guideMenuOpen = Boolean(guideAnchorElement);
 
     const headerContent = thumbnailUrl
       ? null
@@ -336,47 +323,7 @@ class View extends React.Component<IProps, IState> {
             P
           </Avatar>
         )}
-        action={(
-          <Fragment>
-            <IconButton onClick={this.handleGuideMenuClick}>
-              <MoreVertIcon />
-            </IconButton>
-            <Menu
-              classes={{ paper: classes.guideMenu }}
-              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-              transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-              id='guideMenu'
-              anchorEl={guideAnchorElement}
-              open={guideMenuOpen}
-              onClick={this.handleGuideMenuClose}
-            >
-              <MenuItem
-                classes={{ root: classes.guideMenuItem }}
-                dense
-                key='new-simulation'
-                onClick={this.handleGuideMenuClose}
-              >
-                New Simulation
-              </MenuItem>
-              <MenuItem
-                classes={{ root: classes.guideMenuItem }}
-                dense
-                key='new-simulation2'
-                onClick={this.handleGuideMenuClose}
-              >
-                New Simulation 2
-              </MenuItem>
-              <MenuItem
-                classes={{ root: classes.guideMenuItem }}
-                dense
-                key='new-simulation3'
-                onClick={this.handleGuideMenuClose}
-              >
-                New Simulation 3
-              </MenuItem>
-            </Menu>
-          </Fragment>
-        )}
+        action={<GuideMenu />}
         title={photo}
       >
         {headerContent}

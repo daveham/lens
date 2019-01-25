@@ -183,7 +183,7 @@ function determineSelectionsFromRoute(props) {
   }
 
   if (simulations) {
-    panelSelections.simulation = simulations.find((s) => s.id === simulationId);
+    panelSelections.simulation = simulations.find((s) => s.id === simulationId) || simulations[0];
     if (panelSelections.simulation) {
       const { executions } = panelSelections.simulation;
       panelSelections.execution = executions.find((e) => e.id === executionId) || executions[0];

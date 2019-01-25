@@ -1,11 +1,16 @@
 {
   "presets": [
-    ["env", { "targets": { "node": "current" } }],
-    "stage-0"
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "node": true
+        }
+      }
+    ]
   ],
   "plugins": [
-    "add-module-exports",
-    "transform-runtime",
+    "@babel/transform-runtime",
     [
       "module-resolver", {
       "root": ["."]

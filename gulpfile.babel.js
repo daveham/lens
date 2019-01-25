@@ -67,8 +67,10 @@ function compile(watching) {
     .pipe(describeFiles('Compiling'))
     .pipe(renameSrcToLib())
     .pipe(babel({
-      presets: ['env', 'stage-0'],
-      plugins: ['add-module-exports', 'transform-runtime'],
+      presets: [
+        ['@babel/env', { targets: { node: true } }]
+      ],
+      plugins: ['@babel/transform-runtime'],
       babelrc: false
     }))
     .pipe(gulp.dest(dest));

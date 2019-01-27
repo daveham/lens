@@ -3,12 +3,12 @@ import faStyles from 'font-awesome/scss/font-awesome.scss';
 import FontAwesome from 'react-fontawesome';
 import styles from './styles.scss';
 
-interface IProps {
+interface ILoadingProps {
   pulse?: boolean;
   name?: string;
 }
 
-export default ({ name, pulse }: IProps) => {
+export const Loading = ({ name, pulse }: ILoadingProps) => {
   const iconProps = {
     name: name || 'spinner',
     pulse: Boolean(pulse)
@@ -19,3 +19,5 @@ export default ({ name, pulse }: IProps) => {
     </div>
   );
 };
+
+export default Loading;

@@ -31,7 +31,7 @@ const styles: any = (theme) => {
   };
 };
 
-class ImageDetails extends React.Component<IProps, IState> {
+export class ImageDetails extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = { anchor: null };

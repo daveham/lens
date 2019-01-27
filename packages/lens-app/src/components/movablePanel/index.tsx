@@ -24,7 +24,7 @@ const styles: any = (theme) => ({
   },
 });
 
-interface IProps {
+export interface IMovablePanelProps {
   classes?: any;
   initialTop: number;
   initialLeft: number;
@@ -49,7 +49,7 @@ function nullifyEvent(e: any) {
   }
 }
 
-function coercePosition({ minWidth, minHeight, constrainRect }: IProps, position: any): any {
+function coercePosition({ minWidth, minHeight, constrainRect }: IMovablePanelProps, position: any): any {
   const { height, width } = constrainRect;
 
   const checkHeight = minHeight || defaultMinSize;
@@ -61,13 +61,13 @@ function coercePosition({ minWidth, minHeight, constrainRect }: IProps, position
   };
 }
 
-class MovablePanel extends React.Component<IProps, IState> {
+export class MovablePanel extends React.Component<IMovablePanelProps, IState> {
   private trackLeft: number;
   private trackTop: number;
   private trackX: number;
   private trackY: number;
 
-  constructor(props: IProps) {
+  constructor(props: IMovablePanelProps) {
     super(props);
 
     const position = coercePosition(props, { top: props.initialTop, left: props.initialLeft });
@@ -79,7 +79,7 @@ class MovablePanel extends React.Component<IProps, IState> {
     };
   }
 
-  public componentDidUpdate(prevProps: IProps, prevState: IState): void {
+  public componentDidUpdate(prevProps: IMovablePanelProps, prevState: IState): void {
     const prevRect = prevProps.constrainRect;
     const curRect = this.props.constrainRect;
     if ((prevRect.right !== curRect.right) || (prevRect.bottom !== curRect.bottom)) {

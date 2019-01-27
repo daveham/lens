@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import styles from './styles.scss';
 
 interface IProps {
-  selectedIndex: number;
+  selectedIndex?: number;
   titles?: string[];
   disabled?: boolean;
   clickHandler: (index: number) => void;
@@ -15,7 +15,7 @@ const prevent = (e) => e.preventDefault();
 
 class ToolMultiButton extends React.Component<IProps, any> {
   public render(): any {
-    const { titles, children, disabled, selectedIndex } = this.props;
+    const { titles, children, disabled, selectedIndex = -1 } = this.props;
     let count = 0;
     if (titles) {
       count = titles.length;

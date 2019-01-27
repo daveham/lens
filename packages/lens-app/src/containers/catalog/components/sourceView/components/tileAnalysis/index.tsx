@@ -94,7 +94,7 @@ const styles: any = (theme) => {
   };
 };
 
-class TileAnalysis extends React.Component<IProps, IState> {
+export class TileAnalysis extends React.Component<IProps, IState> {
   private relativeMaxMap: any;
 
   constructor(props: IProps) {

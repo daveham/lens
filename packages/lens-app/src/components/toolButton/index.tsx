@@ -3,7 +3,7 @@ import React from 'react';
 
 import styles from './styles.scss';
 
-interface IProps {
+interface IToolButtonProps {
   title?: string;
   disabled?: boolean;
   clickHandler: () => void;
@@ -12,7 +12,7 @@ interface IProps {
 
 const prevent = (e) => e.preventDefault();
 
-const ToolButton = ({ title, children, disabled, clickHandler }: IProps) => {
+export const ToolButton = ({ title, children, disabled, clickHandler }: IToolButtonProps) => {
   const buttonStyles = classNames(styles.button, disabled && styles.disabled);
 
   return (

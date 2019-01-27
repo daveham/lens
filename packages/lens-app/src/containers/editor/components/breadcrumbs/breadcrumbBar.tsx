@@ -48,7 +48,7 @@ function renderSegmentElement(classes, prefix, inner) {
   );
 }
 
-const BreadcrumbBar = (props: IProps): any => {
+export const BreadcrumbBar = (props: IProps): any => {
   const {
     classes,
     simulationName, simulationLink,

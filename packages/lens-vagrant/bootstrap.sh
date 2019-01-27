@@ -133,6 +133,7 @@ sudo firewall-cmd --zone=public --permanent --add-port=8081/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=5857/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=5858/tcp
 sudo firewall-cmd --zone=public --permanent --add-port=5859/tcp
+sudo firewall-cmd --zone=public --permanent --add-port=6060/tcp
 
 # These units will be started if not running or restart if running
 sudo systemctl restart firewalld

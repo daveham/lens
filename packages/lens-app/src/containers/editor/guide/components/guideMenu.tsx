@@ -33,7 +33,7 @@ interface IState {
   guideAnchorElement?: HTMLElement;
 }
 
-class GuideMenu extends React.Component<IProps, IState> {
+export class GuideMenu extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {

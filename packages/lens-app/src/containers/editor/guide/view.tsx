@@ -196,7 +196,7 @@ function determineSelectionsFromRoute(props) {
   return { activePanel, panelSelections };
 }
 
-class View extends React.Component<IProps, IState> {
+export class EditorGuideView extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -341,7 +341,9 @@ class View extends React.Component<IProps, IState> {
       return null;
     }
 
-    const fullUrl = `${getConfig().dataHost}${thumbnailUrl}`;
+    const fullUrl = thumbnailUrl.indexOf('http') > -1
+      ? thumbnailUrl
+      : `${getConfig().dataHost}${thumbnailUrl}`;
 
     return (
       <CardMedia
@@ -417,4 +419,4 @@ class View extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(View);
+export default withStyles(styles)(EditorGuideView);

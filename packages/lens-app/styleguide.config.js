@@ -9,10 +9,10 @@ module.exports = {
       components: 'src/components/**/*.{js,jsx,ts,tsx}',
     }, {
       name: 'Catalog Components',
-      components: 'src/containers/catalog/components/**/*.{js,jsx,ts,tsx}',
+      components: 'src/containers/catalog/**/*.{js,jsx,ts,tsx}',
     }, {
       name: 'Editor Components',
-      components: 'src/containers/editor/components/**/*.{js,jsx,ts,tsx}',
+      components: 'src/containers/editor/**/*.{js,jsx,ts,tsx}',
     }
   ],
   resolver: require('react-docgen').resolver.findAllComponentDefinitions,

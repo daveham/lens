@@ -1,3 +1,5 @@
+Default
+
 ```jsx
 const MoreVert = require('@material-ui/icons/MoreVert').default;
 const MoreHoriz = require('@material-ui/icons/MoreHoriz').default;
@@ -10,6 +12,8 @@ const UnfoldMore = require('@material-ui/icons/UnfoldMore').default;
   <UnfoldMore key='more'/>
 </ToolMultiButton>
 ```
+
+Selected Button
 
 ```jsx
 const MoreVert = require('@material-ui/icons/MoreVert').default;

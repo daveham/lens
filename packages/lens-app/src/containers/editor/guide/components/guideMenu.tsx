@@ -1,22 +1,19 @@
-import React, { Fragment } from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import React from 'react';
+import DropDownMenu from 'editor/components/dropDownMenu';
 import { withStyles } from '@material-ui/core/styles';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:guide:menu');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:guide:menu');
 
-const styles: any = (theme) => {
-  const { unit } = theme.spacing;
+const styles: any = ({ spacing: { unit }, palette }) => {
   return {
     guideMenu: {
-      backgroundColor: theme.palette.primary.dark,
-      color: theme.palette.primary.contrastText,
+      backgroundColor: palette.primary.dark,
+      color: palette.primary.contrastText,
     },
     guideMenuItem: {
-      color: theme.palette.primary.contrastText,
+      backgroundColor: palette.primary.dark,
+      color: palette.primary.contrastText,
       fontSize: '.8rem',
       height: 20,
       paddingTop: unit / 2,
@@ -27,65 +24,22 @@ const styles: any = (theme) => {
 
 interface IProps {
   classes?: any;
+  menuItems: ReadonlyArray<string>;
+  onMenuSelection: (index: number) => {};
 }
 
-interface IState {
-  guideAnchorElement?: HTMLElement;
-}
-
-export class GuideMenu extends React.Component<IProps, IState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      guideAnchorElement: null,
-    };
-  }
-
-  public render(): any {
-    const { classes } = this.props;
-    const { guideAnchorElement } = this.state;
-    const guideMenuOpen = Boolean(guideAnchorElement);
-
-    return (
-      <Fragment>
-        <IconButton onClick={this.handleGuideMenuClick}>
-          <MoreVertIcon />
-        </IconButton>
-        <Menu
-          classes={{ paper: classes.guideMenu }}
-          anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-          transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-          id='guideMenu'
-          anchorEl={guideAnchorElement}
-          getContentAnchorEl={null}
-          open={guideMenuOpen}
-          onClick={this.handleGuideMenuClose}
-        >
-          <MenuItem
-            classes={{ root: classes.guideMenuItem }}
-            dense
-            key='new-simulation'
-            onClick={this.handleGuideMenuItemClick(0)}
-          >
-            New Simulation
-          </MenuItem>
-        </Menu>
-      </Fragment>
-    );
-  }
-
-  private handleGuideMenuClick = (event) => {
-    this.setState({ guideAnchorElement: event.currentTarget });
-  };
-
-  private handleGuideMenuClose = () => {
-    this.setState({ guideAnchorElement: null });
-  };
-
-  private handleGuideMenuItemClick = (index) => () => {
-    debug('handleGuideMenuClick', { index });
-    this.handleGuideMenuClose();
-  };
-}
+export const GuideMenu = ({
+  classes,
+  menuItems,
+  onMenuSelection,
+}: IProps): any => (
+  <DropDownMenu
+    onMenuSelection={onMenuSelection}
+    id='guideMenu'
+    menuItems={menuItems}
+    menuClasses={classes.guideMenu}
+    menuItemClasses={classes.guideMenuItem}
+  />
+);
 
 export default withStyles(styles)(GuideMenu);

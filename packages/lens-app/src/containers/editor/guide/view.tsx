@@ -28,6 +28,7 @@ import ExpansionPanel from './components/ExpansionPanel';
 import ExpansionPanelSummary from './components/ExpansionPanelSummary';
 import ExpansionPanelDetails from './components/ExpansionPanelDetails';
 import GuideMenu from './components/guideMenu';
+import GuideListMenu from './components/guideListMenu';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide');
@@ -72,17 +73,6 @@ const styles: any = (theme) => {
         padding: unit,
       },
     },
-    guideMenu: {
-      backgroundColor: theme.palette.primary.dark,
-      color: theme.palette.primary.contrastText,
-    },
-    guideMenuItem: {
-      color: theme.palette.primary.contrastText,
-      fontSize: '.8rem',
-      height: 20,
-      paddingTop: unit / 2,
-      paddingBottom: unit / 2,
-    },
     expansionHeading: {
       flexBasis: '33%',
       flexShrink: 0,
@@ -97,8 +87,13 @@ const styles: any = (theme) => {
       maxHeight: unit * 12,
       overflow: 'auto',
     },
-    listIcon: {
-      fontSize: '16px',
+    listItem: {
+      '&:hover $listItemSecondaryAction': {
+        visibility: 'inherit',
+      },
+    },
+    listItemSecondaryAction: {
+      visibility: 'hidden',
     },
   };
 };
@@ -301,6 +296,14 @@ export class EditorGuideView extends React.Component<IProps, IState> {
     });
   };
 
+  private handleGuideMenuSelection = (index) => {
+    debug('handleGuideMenuSelection', { index });
+  };
+
+  private handleListMenuSelection = (panel) => (index) => {
+    debug('handleListMenuSelection', { panel, index });
+  };
+
   private renderHeader(): any {
     const {
       classes,
@@ -323,7 +326,12 @@ export class EditorGuideView extends React.Component<IProps, IState> {
             P
           </Avatar>
         )}
-        action={<GuideMenu />}
+        action={
+          <GuideMenu
+            onMenuSelection={this.handleGuideMenuSelection}
+            menuItems={['Add Simulation']}
+          />
+        }
         title={photo}
       >
         {headerContent}
@@ -384,16 +392,19 @@ export class EditorGuideView extends React.Component<IProps, IState> {
 
     const listItems = items.map((item) => (
       <ListItem
+        classes={{ container: classes.listItem }}
         key={item.id}
         onClick={this.handlePanelListItemChange(title, item)}
         dense
         button
       >
         <ListItemText primary={item.name} />
-        <ListItemSecondaryAction>
-          <IconButton classes={{ root: classes.listIcon }}>
-            <MoreVertIcon fontSize='inherit' />
-          </IconButton>
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          <GuideListMenu
+            id={item.name}
+            onMenuSelection={this.handleListMenuSelection(title)}
+            menuItems={['Menu List Item One', 'Menu List Item Two', 'Menu List Item Three']}
+          />
         </ListItemSecondaryAction>
       </ListItem>
     ));

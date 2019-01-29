@@ -5,24 +5,19 @@ import { withStyles } from '@material-ui/core/styles';
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:guide:menu');
 
-const styles: any = ({ spacing: { unit } /* , palette */ }) => {
+const styles: any = ({ spacing: { unit } }) => {
   return {
-    // listMenu: {
-    //   backgroundColor: palette.primary.dark,
-    //   color: palette.primary.contrastText,
-    // },
-    listMenuItem: {
-      // color: palette.primary.contrastText,
-      fontSize: '.8rem',
-      height: 20,
-      paddingTop: unit / 2,
-      paddingBottom: unit / 2,
-    },
     listMenuButton: {
-      padding: unit / 2,
+      padding: unit,
     },
     listMenuIcon: {
-      fontSize: '14px',
+      fontSize: '16px',
+    },
+    listMenuItem: {
+      fontSize: '.8rem',
+      height: unit * 1.5,
+      paddingTop: unit / 2,
+      paddingBottom: unit / 2,
     },
   };
 };

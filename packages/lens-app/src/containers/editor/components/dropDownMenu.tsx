@@ -15,19 +15,19 @@ const styles: any = ({ spacing: { unit }, palette }) => {
       backgroundColor: palette.background.default,
       color: palette.text.primary,
     },
-    menuItem: {
-      backgroundColor: palette.background.default,
-      color: palette.text.primary,
-      fontSize: '.8rem',
-      height: 2.5 * unit,
-      paddingTop: unit / 2,
-      paddingBottom: unit / 2,
-    },
     menuButton: {
       padding: unit * 1.5,
     },
     menuIcon: {
       fontSize: '24px',
+    },
+    menuItem: {
+      backgroundColor: palette.background.default,
+      color: palette.text.primary,
+      fontSize: '1rem',
+      height: 2.5 * unit,
+      paddingTop: unit,
+      paddingBottom: unit,
     },
   };
 };

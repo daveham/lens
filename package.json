@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "description": "inference lens generative image system",
   "scripts": {
+    "postinstall": "./node_modules/.bin/lerna bootstrap",
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
-    "build": "./node_modules/.bin/gulp build",
+    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build",
+    "buildgulp": "./node_modules/.bin/gulp build",
     "buildall": "./node_modules/.bin/lerna run build",
     "dev": "./node_modules/.bin/gulp dev",
     "lint": "./node_modules/.bin/gulp lint",

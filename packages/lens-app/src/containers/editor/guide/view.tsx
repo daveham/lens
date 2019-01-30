@@ -375,16 +375,24 @@ export class EditorGuideView extends React.Component<IProps, IState> {
     const executions = simulation ? simulation.executions : [];
     const renderings = execution ? execution.renderings : [];
 
+    const panelListMenu = (
+      <GuideListMenu
+        id='only-one'
+        onMenuSelection={this.handleListMenuSelection('todo')}
+        menuItems={['Menu List Item One', 'Menu List Item Two', 'Menu List Item Three']}
+      />
+    );
+
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        {this.renderContentsPanel(panelTitles.simulation, simulations)}
-        {this.renderContentsPanel(panelTitles.execution, executions)}
-        {this.renderContentsPanel(panelTitles.rendering, renderings)}
+        {this.renderContentsPanel(panelTitles.simulation, simulations, panelListMenu)}
+        {this.renderContentsPanel(panelTitles.execution, executions, panelListMenu)}
+        {this.renderContentsPanel(panelTitles.rendering, renderings, panelListMenu)}
       </CardContent>
     );
   }
 
-  private renderContentsPanel(title, items): any {
+  private renderContentsPanel(title, items, menu): any {
     const { classes } = this.props;
     const { expandedPanel } = this.state;
     const key = panelKeyFromTitle(title);
@@ -400,11 +408,7 @@ export class EditorGuideView extends React.Component<IProps, IState> {
       >
         <ListItemText primary={item.name} />
         <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          <GuideListMenu
-            id={item.name}
-            onMenuSelection={this.handleListMenuSelection(title)}
-            menuItems={['Menu List Item One', 'Menu List Item Two', 'Menu List Item Three']}
-          />
+          {menu}
         </ListItemSecondaryAction>
       </ListItem>
     ));

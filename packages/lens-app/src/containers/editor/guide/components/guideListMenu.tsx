@@ -39,7 +39,6 @@ export const GuideListMenu = ({
     onMenuSelection={onMenuSelection}
     id={id}
     menuItems={menuItems}
-    // menuClasses={classes.listMenu}
     menuItemClasses={classes.listMenuItem}
     menuIconClasses={classes.listMenuIcon}
     menuButtonClasses={classes.listMenuButton}

@@ -1,6 +1,10 @@
 # Lens: The Inference Lens
 
-[Project Site](https://daveham.github.io/lens/info/intro/overview)
+[Project Documentation](https://daveham.github.io/lens/info/intro/overview)
+
+[Style Guide](https://damp-everglades-77125.herokuapp.com)
+
+Note: The Style Guide is running on a free Heroku dyno which may take a few minutes to wake up.
 
 ````
 +----------+           +----------+               +----------+

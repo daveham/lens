@@ -5,14 +5,16 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/lerna bootstrap",
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
-    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build",
+    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build && cd ./packages/lens-app && yarn styleguidist build",
     "buildgulp": "./node_modules/.bin/gulp build",
     "buildall": "./node_modules/.bin/lerna run build",
     "dev": "./node_modules/.bin/gulp dev",
     "lint": "./node_modules/.bin/gulp lint",
     "clean": "./node_modules/.bin/lerna clean",
     "watch": "./node_modules/.bin/gulp watch",
-    "start": "./node_modules/.bin/lerna run --parallel start"
+    "start": "./node_modules/.bin/lerna run --parallel start",
+    "styleguide": "cd ./packages/lens-app && yarn styleguidist server",
+    "styleguide:build": "cd ./packages/lens-app && yarn styleguidist build"
   },
   "repository": {
     "type": "git",

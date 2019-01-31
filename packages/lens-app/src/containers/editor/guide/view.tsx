@@ -11,8 +11,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { withStyles } from '@material-ui/core/styles';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
@@ -122,19 +120,19 @@ interface IState {
   panelSelections: IPanelSelections;
 }
 
+const KEY_SIMULATION = 'simulation';
+const KEY_EXECUTION = 'execution';
+const KEY_RENDERING = 'rendering';
+
 const panelTitles = {
   simulation: 'Simulations',
   execution: 'Executions',
   rendering: 'Renderings',
 };
 
-function panelKeyFromTitle(title) {
-  return title === panelTitles.simulation
-    ? 'simulation'
-    : title === panelTitles.execution
-      ? 'execution'
-      : 'rendering';
-}
+const simulationsMenuItems = ['Edit', 'Add Execution', 'Delete'];
+const executionsMenuItems = ['Edit', 'Add Rendering', 'Delete'];
+const renderingsMenuItems = ['Render', 'View', 'Delete'];
 
 function getFirstExecution(simulation) {
   if (simulation) {
@@ -170,11 +168,11 @@ function determineSelectionsFromRoute(props) {
   };
   let activePanel = null;
   if (renderingId > -1) {
-    activePanel = panelTitles.rendering;
+    activePanel = KEY_RENDERING;
   } else if (executionId > -1) {
-    activePanel = panelTitles.execution;
+    activePanel = KEY_EXECUTION;
   } else if (simulationId > -1) {
-    activePanel = panelTitles.simulation;
+    activePanel = KEY_SIMULATION;
   }
 
   if (simulations) {
@@ -234,10 +232,10 @@ export class EditorGuideView extends React.Component<IProps, IState> {
           execution !== prevState.panelSelections.execution ||
           simulation !== prevState.panelSelections.simulation) {
           let url = `/Catalog/${sourceId}/Simulation/${simulation.id}`;
-          if (activePanel !== panelTitles.simulation) {
+          if (activePanel !== KEY_SIMULATION) {
             url = `${url}/Execution/${execution.id}`;
           }
-          if (activePanel === panelTitles.rendering) {
+          if (activePanel === KEY_RENDERING) {
             url = `${url}/Rendering/${rendering.id}`;
           }
           url = `${url}/show`;
@@ -261,36 +259,35 @@ export class EditorGuideView extends React.Component<IProps, IState> {
     );
   }
 
-  private handlePanelChange = (panel) => (event, expanded) => {
-    debug('handlePanelChange', { panel });
+  private handlePanelChange = (key) => (event, expanded) => {
+    debug('handlePanelChange', { key });
     const newState: any = {
-      expandedPanel: expanded ? panel : null,
+      expandedPanel: expanded ? key : null,
     };
     if (!expanded) {
-      newState.activePanel = panel;
+      newState.activePanel = key;
     }
     this.setState(newState);
   };
 
-  private handlePanelListItemChange = (panel, item) => () => {
-    const key = panelKeyFromTitle(panel);
-    debug('handlePanelListItemChange', { panel, key, item });
+  private handlePanelListItemChange = (key, item) => () => {
+    debug('handlePanelListItemChange', { key, item });
     this.setState((priorState) => {
       const panelSelections = {
         ...priorState.panelSelections,
         [key]: item,
       };
 
-      if (panel === panelTitles.simulation) {
+      if (key === KEY_SIMULATION) {
         panelSelections.execution = getFirstExecution(item);
         panelSelections.rendering = getFirstRendering(panelSelections.execution);
-      } else if (panel === panelTitles.execution) {
+      } else if (key === KEY_EXECUTION) {
         panelSelections.rendering = getFirstRendering(item);
       }
 
       return {
         expandedPanel: null,
-        activePanel: panel,
+        activePanel: key,
         panelSelections,
       };
     });
@@ -300,8 +297,8 @@ export class EditorGuideView extends React.Component<IProps, IState> {
     debug('handleGuideMenuSelection', { index });
   };
 
-  private handleListMenuSelection = (panel) => (index) => {
-    debug('handleListMenuSelection', { panel, index });
+  private handleListMenuSelection = (key) => (index) => {
+    debug('handleListMenuSelection', { key, index });
   };
 
   private renderHeader(): any {
@@ -375,34 +372,32 @@ export class EditorGuideView extends React.Component<IProps, IState> {
     const executions = simulation ? simulation.executions : [];
     const renderings = execution ? execution.renderings : [];
 
-    const panelListMenu = (
-      <GuideListMenu
-        id='only-one'
-        onMenuSelection={this.handleListMenuSelection('todo')}
-        menuItems={['Menu List Item One', 'Menu List Item Two', 'Menu List Item Three']}
-      />
-    );
-
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        {this.renderContentsPanel(panelTitles.simulation, simulations, panelListMenu)}
-        {this.renderContentsPanel(panelTitles.execution, executions, panelListMenu)}
-        {this.renderContentsPanel(panelTitles.rendering, renderings, panelListMenu)}
+        {this.renderPanel(KEY_SIMULATION, simulations, simulationsMenuItems)}
+        {this.renderPanel(KEY_EXECUTION, executions, executionsMenuItems)}
+        {this.renderPanel(KEY_RENDERING, renderings, renderingsMenuItems)}
       </CardContent>
     );
   }
 
-  private renderContentsPanel(title, items, menu): any {
-    const { classes } = this.props;
-    const { expandedPanel } = this.state;
-    const key = panelKeyFromTitle(title);
-    const currentItem = this.state.panelSelections[key];
+  private renderListMenu(key, menuItems) {
+    return (
+      <GuideListMenu
+        id={`${key}-list-menu`}
+        onMenuSelection={this.handleListMenuSelection(key)}
+        menuItems={menuItems}
+      />
+    );
+  }
 
-    const listItems = items.map((item) => (
+  private renderListItems(key, items, menu) {
+    const { classes } = this.props;
+    return items.map((item) => (
       <ListItem
         classes={{ container: classes.listItem }}
         key={item.id}
-        onClick={this.handlePanelListItemChange(title, item)}
+        onClick={this.handlePanelListItemChange(key, item)}
         dense
         button
       >
@@ -412,11 +407,21 @@ export class EditorGuideView extends React.Component<IProps, IState> {
         </ListItemSecondaryAction>
       </ListItem>
     ));
+  }
+
+  private renderPanel(key, items, menuItems) {
+    const { classes } = this.props;
+    const { expandedPanel, panelSelections } = this.state;
+    const currentItem = panelSelections[key];
+    const title = panelTitles[key];
+
+    const menu = this.renderListMenu(key, menuItems);
+    const listItems = this.renderListItems(key, items, menu);
 
     return (
       <ExpansionPanel
-        expanded={expandedPanel === title}
-        onChange={this.handlePanelChange(title)}
+        expanded={expandedPanel === key}
+        onChange={this.handlePanelChange(key)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>

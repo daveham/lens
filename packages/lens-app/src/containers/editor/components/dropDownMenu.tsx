@@ -6,8 +6,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cx from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:dropDownMenu');
+import _debug from 'debug';
+const debug = _debug('lens:editor:dropDownMenu');
 
 const styles: any = ({ spacing: { unit }, palette }) => {
   return {
@@ -73,6 +73,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     } = this.props;
     const { anchorElement } = this.state;
     const menuOpen = Boolean(anchorElement);
+    debug('render', { menuOpen, anchorElement });
 
     const menuPaperClass = cx(classes.menu, menuClasses);
     const menuItemRootClass = cx(classes.menuItem, menuItemClasses);
@@ -98,7 +99,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
 
     return (
       <Fragment>
-        <IconButton onClick={this.handleMenuClick} classes={{ root: menuButtonRootClass }}>
+        <IconButton onClick={this.handleMenuButtonClick} classes={{ root: menuButtonRootClass }}>
           {menuAnchor}
         </IconButton>
         <Menu
@@ -109,7 +110,9 @@ export class DropDownMenu extends React.Component<IProps, IState> {
           anchorEl={anchorElement}
           getContentAnchorEl={null}
           open={menuOpen}
-          onClick={this.handleMenuClose}
+          onClose={this.handleMenuClose}
+          onClick={this.handleMenuClick}
+          onEntering={this.handleMenuEntering}
         >
           {menuItemElements}
         </Menu>
@@ -117,16 +120,27 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     );
   }
 
-  private handleMenuClick = (event) => {
-    this.setState({ anchorElement: event.currentTarget });
+  private handleMenuButtonClick = ({ currentTarget }) => {
+    debug('handleMenuButtonClick', { currentTarget });
+    this.setState({ anchorElement: currentTarget });
   };
 
-  private handleMenuClose = () => {
+  private handleMenuClick = ({ currentTarget }) => {
+    debug('handleMenuClick', { currentTarget });
     this.setState({ anchorElement: null });
   };
 
+  private handleMenuClose = ({ currentTarget }) => {
+    debug('handleMenuClose', { currentTarget });
+  };
+
+  private handleMenuEntering = () => {
+    // debug('handleMenuEntering', { id });
+  };
+
   private handleMenuItemClick = (index) => () => {
-    this.handleMenuClose();
+    debug('handleMenuItemClick', { index, menuItem: this.props.menuItems[index] });
+    this.setState({ anchorElement: null });
     this.props.onMenuSelection(index);
   };
 }

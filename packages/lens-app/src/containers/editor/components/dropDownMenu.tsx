@@ -48,6 +48,7 @@ interface IProps {
 
 interface IState {
   anchorElement?: HTMLElement;
+  closedAfterOpen: boolean;
 }
 
 export class DropDownMenu extends React.Component<IProps, IState> {
@@ -55,6 +56,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       anchorElement: null,
+      closedAfterOpen: true,
     };
   }
 
@@ -71,9 +73,8 @@ export class DropDownMenu extends React.Component<IProps, IState> {
       transformOrigin,
       menuItems,
     } = this.props;
-    const { anchorElement } = this.state;
+    const { anchorElement, closedAfterOpen } = this.state;
     const menuOpen = Boolean(anchorElement);
-    debug('render', { menuOpen, anchorElement });
 
     const menuPaperClass = cx(classes.menu, menuClasses);
     const menuItemRootClass = cx(classes.menuItem, menuItemClasses);
@@ -86,7 +87,8 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     const menuAnchor = children ||
       <MoreVertIcon classes={{ root: menuIconRootClass }} />;
 
-    const menuItemElements = menuItems.map((item, index) => (
+    const showMenu = menuOpen || (!menuOpen && !closedAfterOpen);
+    const menuItemElements = showMenu && menuItems.map((item, index) => (
       <MenuItem
         classes={{ root: menuItemRootClass }}
         dense
@@ -127,11 +129,23 @@ export class DropDownMenu extends React.Component<IProps, IState> {
 
   private handleMenuClick = ({ currentTarget }) => {
     debug('handleMenuClick', { currentTarget });
-    this.setState({ anchorElement: null });
+    this.setState({
+      anchorElement: null,
+      closedAfterOpen: false,
+    });
+    // defer actual close to allow for animations
+    setTimeout(() => {
+      this.setState({
+        closedAfterOpen: true,
+      });
+    }, 250);
   };
 
   private handleMenuClose = ({ currentTarget }) => {
     debug('handleMenuClose', { currentTarget });
+    this.setState({
+      closedAfterOpen: true,
+    });
   };
 
   private handleMenuEntering = () => {

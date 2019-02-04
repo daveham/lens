@@ -3,6 +3,7 @@ const configFactory = require('./config/webpack.config');
 
 module.exports = {
   title: 'Lens Style Guide',
+  pagePerSection: true,
   sections: [
     {
       name: 'Common Components',

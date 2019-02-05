@@ -15,6 +15,7 @@
     "object-literal-sort-keys": false,
     "object-literal-key-quotes": [true, "as-needed"],
     "semicolon": [true, "always", "ignore-bound-class-methods"],
-    "no-implicit-dependencies": false
+    "no-implicit-dependencies": false,
+    "arrow-parens": false
   }
 }

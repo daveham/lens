@@ -11,7 +11,7 @@ interface IProps {
   title?: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
-  ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
+  ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
   ensureEditorTitle: (sourceId?: string) => void;
   simulations?: ReadonlyArray<ISimulation>;
 }
@@ -23,7 +23,9 @@ export class EditorGuideView extends React.Component<IProps, any> {
       thumbnailImageDescriptor,
       ensureImage,
       ensureEditorTitle,
-      match: { params: { sourceId } },
+      match: {
+        params: { sourceId },
+      },
     } = this.props;
 
     ensureEditorTitle(sourceId);
@@ -38,12 +40,9 @@ export class EditorGuideView extends React.Component<IProps, any> {
       title,
       thumbnailUrl,
       simulations,
-      match: { params: {
-        sourceId,
-        simulationId,
-        executionId,
-        renderingId,
-      }},
+      match: {
+        params: { sourceId, simulationId, executionId, renderingId },
+      },
     } = this.props;
 
     return (
@@ -60,7 +59,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
     );
   }
 
-  private handlePathChange = (path) => {
+  private handlePathChange = path => {
     debug('handlePathChange', { path });
   };
 }

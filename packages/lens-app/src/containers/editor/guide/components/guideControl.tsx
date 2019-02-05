@@ -12,11 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import { withStyles } from '@material-ui/core/styles';
 
-import {
-  ISimulation,
-  IExecution,
-  IRendering,
-} from 'editor/interfaces';
+import { ISimulation, IExecution, IRendering } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
 import Loading from 'src/components/loading';
 
@@ -29,7 +25,7 @@ import GuideListMenu from './guideListMenu';
 import _debug from 'debug';
 const debug = _debug('lens:editor:guideControl');
 
-const styles: any = (theme) => {
+const styles: any = theme => {
   const { unit } = theme.spacing;
   return {
     root: {
@@ -94,7 +90,7 @@ const styles: any = (theme) => {
         backgroundColor: theme.palette.background.paper,
       },
     },
-    listItemSelected: { },
+    listItemSelected: {},
     listItemSecondaryAction: {
       visibility: 'hidden',
     },
@@ -167,13 +163,7 @@ function getFirstRendering(execution) {
 }
 
 function determineSelections(props) {
-  const {
-    simulations,
-    simulationId = -1,
-    executionId = -1,
-    renderingId = -1,
-    action,
-  } = props;
+  const { simulations, simulationId = -1, executionId = -1, renderingId = -1, action } = props;
 
   let activePanel = null;
   if (renderingId > -1) {
@@ -190,13 +180,13 @@ function determineSelections(props) {
     rendering: null,
   };
   if (simulations) {
-    panelSelections.simulation = simulations.find((s) => s.id === simulationId) || simulations[0];
+    panelSelections.simulation = simulations.find(s => s.id === simulationId) || simulations[0];
     if (panelSelections.simulation) {
       const { executions } = panelSelections.simulation;
-      panelSelections.execution = executions.find((e) => e.id === executionId) || executions[0];
+      panelSelections.execution = executions.find(e => e.id === executionId) || executions[0];
       if (panelSelections.execution) {
         const { renderings } = panelSelections.execution;
-        panelSelections.rendering = renderings.find((r) => r.id === renderingId) || renderings[0];
+        panelSelections.rendering = renderings.find(r => r.id === renderingId) || renderings[0];
       }
     }
   }
@@ -227,10 +217,12 @@ export class GuideControl extends React.Component<IProps, IState> {
         const { onPathChanged, sourceId } = this.props;
         const { simulation, execution, rendering } = panelSelections;
 
-        if (activePanel !== prevState.activePanel ||
+        if (
+          activePanel !== prevState.activePanel ||
           rendering !== prevState.panelSelections.rendering ||
           execution !== prevState.panelSelections.execution ||
-          simulation !== prevState.panelSelections.simulation) {
+          simulation !== prevState.panelSelections.simulation
+        ) {
           let path = `/Catalog/${sourceId}/Simulation/${simulation.id}`;
           if (activePanel !== KEY_SIMULATION) {
             path = `${path}/Execution/${execution.id}`;
@@ -259,7 +251,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private handlePanelChange = (key) => (event, expanded) => {
+  private handlePanelChange = key => (event, expanded) => {
     debug('handlePanelChange', { key, locked: this.state.locked });
     if (this.state.locked) {
       return;
@@ -280,7 +272,7 @@ export class GuideControl extends React.Component<IProps, IState> {
       return;
     }
 
-    this.setState((priorState) => {
+    this.setState(priorState => {
       const panelSelections = {
         ...priorState.panelSelections,
         [key]: item,
@@ -301,11 +293,11 @@ export class GuideControl extends React.Component<IProps, IState> {
     });
   };
 
-  private handleGuideMenuSelection = (index) => {
+  private handleGuideMenuSelection = index => {
     debug('handleGuideMenuSelection', { index });
   };
 
-  private handleListMenuSelection = (key, itemIndex) => (menuIndex) => {
+  private handleListMenuSelection = (key, itemIndex) => menuIndex => {
     debug('handleListMenuSelection', { locked: this.state.locked });
     if (this.state.locked) {
       return;
@@ -324,7 +316,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   //   debug('handleListMenuEnter', { key, listIndex });
   // };
 
-  private getItemsForKey = (key) => {
+  private getItemsForKey = key => {
     if (key === KEY_SIMULATION) {
       return this.props.simulations;
     }
@@ -336,15 +328,9 @@ export class GuideControl extends React.Component<IProps, IState> {
   };
 
   private renderHeader(): any {
-    const {
-      classes,
-      thumbnailUrl,
-      title,
-    } = this.props;
+    const { classes, thumbnailUrl, title } = this.props;
 
-    const headerContent = thumbnailUrl
-      ? null
-      : <Loading pulse={true} />;
+    const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
 
     return (
       <CardHeader
@@ -352,11 +338,7 @@ export class GuideControl extends React.Component<IProps, IState> {
           root: classes.cardHeader,
           title: classes.cardHeaderTitle,
         }}
-        avatar={(
-          <Avatar className={classes.avatar}>
-            P
-          </Avatar>
-        )}
+        avatar={<Avatar className={classes.avatar}>P</Avatar>}
         action={
           <GuideMenu
             onMenuSelection={this.handleGuideMenuSelection}
@@ -371,32 +353,20 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   private renderMedia(): any {
-    const {
-      classes,
-      thumbnailUrl,
-    } = this.props;
+    const { classes, thumbnailUrl } = this.props;
 
     if (!thumbnailUrl) {
       return null;
     }
 
-    const fullUrl = thumbnailUrl.indexOf('http') > -1
-      ? thumbnailUrl
-      : `${getConfig().dataHost}${thumbnailUrl}`;
+    const fullUrl =
+      thumbnailUrl.indexOf('http') > -1 ? thumbnailUrl : `${getConfig().dataHost}${thumbnailUrl}`;
 
-    return (
-      <CardMedia
-        className={classes.media}
-        image={fullUrl}
-      />
-    );
+    return <CardMedia className={classes.media} image={fullUrl} />;
   }
 
   private renderContents(): any {
-    const {
-      classes,
-      simulations,
-    } = this.props;
+    const { classes, simulations } = this.props;
 
     if (!simulations) {
       return null;
@@ -459,28 +429,21 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   private renderPanel(key, items) {
     const { classes } = this.props;
-    const {
-      expandedPanel,
-      activePanel,
-      panelSelections,
-      locked,
-    } = this.state;
+    const { expandedPanel, activePanel, panelSelections, locked } = this.state;
     const currentItem = panelSelections[key];
     const { title } = panelDetails[key];
 
     const listItems = this.renderListItems(key, items);
-    const expanded = (expandedPanel === key) ||
-      (locked && activePanel === key);
+    const expanded = expandedPanel === key || (locked && activePanel === key);
 
     return (
-      <ExpansionPanel
-        expanded={expanded}
-        onChange={this.handlePanelChange(key)}
-      >
+      <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
           {currentItem && (
-            <Typography className={classes.expansionSecondaryHeading}>{currentItem.name}</Typography>
+            <Typography className={classes.expansionSecondaryHeading}>
+              {currentItem.name}
+            </Typography>
           )}
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>

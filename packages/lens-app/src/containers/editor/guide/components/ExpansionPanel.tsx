@@ -2,7 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 
-const styles = (theme) => {
+const styles = theme => {
   const { unit } = theme.spacing;
   const panelHeight = 6 * unit;
   const borderRadius = theme.shape.borderRadius * 2;
@@ -29,5 +29,4 @@ const styles = (theme) => {
   };
 };
 
-export default withStyles(styles)((props) =>
-  <MuiExpansionPanel {...props} />);
+export default withStyles(styles)(props => <MuiExpansionPanel {...props} />);

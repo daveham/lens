@@ -29,12 +29,7 @@ interface IProps {
   onMenuSelection: (index: number) => {};
 }
 
-export const GuideListMenu = ({
-  classes,
-  id,
-  menuItems,
-  onMenuSelection,
-}: IProps): any => (
+export const GuideListMenu = ({ classes, id, menuItems, onMenuSelection }: IProps): any => (
   <DropDownMenu
     onMenuSelection={onMenuSelection}
     id={id}

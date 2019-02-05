@@ -84,20 +84,21 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     const menuAnchorOrigin = anchorOrigin || { horizontal: 'left', vertical: 'bottom' };
     const menuTransformOrigin = transformOrigin || { horizontal: 'left', vertical: 'top' };
 
-    const menuAnchor = children ||
-      <MoreVertIcon classes={{ root: menuIconRootClass }} />;
+    const menuAnchor = children || <MoreVertIcon classes={{ root: menuIconRootClass }} />;
 
     const showMenu = menuOpen || (!menuOpen && !closedAfterOpen);
-    const menuItemElements = showMenu && menuItems.map((item, index) => (
-      <MenuItem
-        classes={{ root: menuItemRootClass }}
-        dense
-        key={`menu-item-${item}`}
-        onClick={this.handleMenuItemClick(index)}
-      >
-        {item}
-      </MenuItem>
-    ));
+    const menuItemElements =
+      showMenu &&
+      menuItems.map((item, index) => (
+        <MenuItem
+          classes={{ root: menuItemRootClass }}
+          dense
+          key={`menu-item-${item}`}
+          onClick={this.handleMenuItemClick(index)}
+        >
+          {item}
+        </MenuItem>
+      ));
 
     return (
       <Fragment>
@@ -152,7 +153,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     // debug('handleMenuEntering', { id });
   };
 
-  private handleMenuItemClick = (index) => () => {
+  private handleMenuItemClick = index => () => {
     debug('handleMenuItemClick', { index, menuItem: this.props.menuItems[index] });
     this.setState({ anchorElement: null });
     this.props.onMenuSelection(index);

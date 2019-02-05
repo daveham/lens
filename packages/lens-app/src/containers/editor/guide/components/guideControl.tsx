@@ -1,5 +1,6 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -19,6 +20,7 @@ import Loading from 'src/components/loading';
 import ExpansionPanel from './ExpansionPanel';
 import ExpansionPanelSummary from './ExpansionPanelSummary';
 import ExpansionPanelDetails from './ExpansionPanelDetails';
+import ExpansionPanelActions from './ExpansionPanelActions';
 import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
 
@@ -27,6 +29,7 @@ const debug = _debug('lens:editor:guideControl');
 
 const styles: any = theme => {
   const { unit } = theme.spacing;
+  const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {
       padding: unit * 2,
@@ -79,13 +82,20 @@ const styles: any = theme => {
       maxHeight: unit * 12,
       overflow: 'auto',
     },
-    listItem: {
+    listItemContainer: {
+      '&:last-child': {
+        borderBottomLeftRadius: borderRadius,
+        borderBottomRightRadius: borderRadius,
+      },
+      '&:last-child $listItemRoot': {
+        borderBottomLeftRadius: borderRadius,
+        borderBottomRightRadius: borderRadius,
+      },
       '&:hover $listItemSecondaryAction': {
         visibility: 'inherit',
       },
     },
     listItemRoot: {
-      backgroundColor: theme.palette.background.default,
       '&$listItemSelected': {
         backgroundColor: theme.palette.background.paper,
       },
@@ -409,7 +419,7 @@ export class GuideControl extends React.Component<IProps, IState> {
         <ListItem
           classes={{
             root: classes.listItemRoot,
-            container: classes.listItem,
+            container: classes.listItemContainer,
             selected: classes.listItemSelected,
           }}
           key={item.id}
@@ -427,14 +437,35 @@ export class GuideControl extends React.Component<IProps, IState> {
     });
   }
 
+  private renderDetails(key, items, isPanelLocked) {
+    const { classes } = this.props;
+    const listItems = this.renderListItems(key, items);
+    if (isPanelLocked) {
+      return (
+        <ExpansionPanelActions>
+          <Button size='small'>Cancel</Button>
+          <Button size='small' color='primary'>Save</Button>
+        </ExpansionPanelActions>
+      );
+    }
+
+    return (
+      <ExpansionPanelDetails>
+        <List dense disablePadding classes={{ root: classes.list }}>
+          {listItems}
+        </List>
+      </ExpansionPanelDetails>
+    );
+  }
+
   private renderPanel(key, items) {
     const { classes } = this.props;
     const { expandedPanel, activePanel, panelSelections, locked } = this.state;
     const currentItem = panelSelections[key];
     const { title } = panelDetails[key];
 
-    const listItems = this.renderListItems(key, items);
-    const expanded = expandedPanel === key || (locked && activePanel === key);
+    const isPanelLocked = (locked && activePanel === key);
+    const expanded = expandedPanel === key || isPanelLocked;
 
     return (
       <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>
@@ -446,11 +477,7 @@ export class GuideControl extends React.Component<IProps, IState> {
             </Typography>
           )}
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <List dense disablePadding classes={{ root: classes.list }}>
-            {listItems}
-          </List>
-        </ExpansionPanelDetails>
+        {this.renderDetails(key, items, isPanelLocked)}
       </ExpansionPanel>
     );
   }

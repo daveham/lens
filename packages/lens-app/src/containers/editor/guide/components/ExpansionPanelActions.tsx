@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import MuiExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 
 const styles = theme => {
   const borderRadius = theme.shape.borderRadius * 2;
@@ -16,4 +16,4 @@ const styles = theme => {
   };
 };
 
-export default withStyles(styles)(props => <MuiExpansionPanelDetails {...props} />);
+export default withStyles(styles)(props => <MuiExpansionPanelActions {...props} />);

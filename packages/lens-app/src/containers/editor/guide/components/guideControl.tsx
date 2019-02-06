@@ -96,13 +96,24 @@ const styles: any = theme => {
       },
     },
     listItemRoot: {
+      backgroundColor: theme.palette.grey[100],
+      '&:hover': {
+        backgroundColor: theme.palette.grey[200],
+      },
       '&$listItemSelected': {
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: theme.palette.secondary.light,
+      },
+      '&:hover$listItemSelected': {
+        backgroundColor: theme.palette.grey[400],
       },
     },
     listItemSelected: {},
     listItemSecondaryAction: {
       visibility: 'hidden',
+    },
+    lockedPanelMessage: {
+      padding: unit,
+      width: '100%',
     },
   };
 };
@@ -322,6 +333,14 @@ export class GuideControl extends React.Component<IProps, IState> {
     debug('handleListMenuSelection', { menuIndex });
   };
 
+  private handleCancelLock = () => {
+    this.setState({ locked: false });
+  };
+
+  private handleCommitLock = () => {
+    this.setState({ locked: false });
+  };
+
   // private handleListMenuEnter = (key, listIndex) => () => {
   //   debug('handleListMenuEnter', { key, listIndex });
   // };
@@ -440,12 +459,14 @@ export class GuideControl extends React.Component<IProps, IState> {
   private renderDetails(key, items, isPanelLocked) {
     const { classes } = this.props;
     const listItems = this.renderListItems(key, items);
+    const message = 'This panel is locked.';
     if (isPanelLocked) {
       return (
-        <ExpansionPanelActions>
-          <Button size='small'>Cancel</Button>
-          <Button size='small' color='primary'>Save</Button>
-        </ExpansionPanelActions>
+        <ExpansionPanelDetails>
+          <Typography className={classes.lockedPanelMessage} component='div' align='center'>
+            {message}
+          </Typography>
+        </ExpansionPanelDetails>
       );
     }
 
@@ -458,13 +479,27 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
+  private renderActions(key, items) {
+    debug('renderActions', { key, items });
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={this.handleCancelLock}>
+          Cancel
+        </Button>
+        <Button size='small' onClick={this.handleCommitLock} color='primary'>
+          Save
+        </Button>
+      </ExpansionPanelActions>
+    );
+  }
+
   private renderPanel(key, items) {
     const { classes } = this.props;
     const { expandedPanel, activePanel, panelSelections, locked } = this.state;
     const currentItem = panelSelections[key];
     const { title } = panelDetails[key];
 
-    const isPanelLocked = (locked && activePanel === key);
+    const isPanelLocked = locked && activePanel === key;
     const expanded = expandedPanel === key || isPanelLocked;
 
     return (
@@ -478,6 +513,7 @@ export class GuideControl extends React.Component<IProps, IState> {
           )}
         </ExpansionPanelSummary>
         {this.renderDetails(key, items, isPanelLocked)}
+        {isPanelLocked && this.renderActions(key, items)}
       </ExpansionPanel>
     );
   }

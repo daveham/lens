@@ -28,5 +28,5 @@ module.exports = {
   styleguideComponents: {
     Wrapper: path.join(__dirname, 'style-guide-wrapper'),
   },
-  usageMode: 'expand',
+  usageMode: 'collapse',
 };

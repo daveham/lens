@@ -53,6 +53,7 @@ interface IProps {
   transformOrigin?: any;
   menuItems: ReadonlyArray<TMenuItem>;
   onMenuSelection: (index: number) => {};
+  onMenuEnter?: (id: string) => {};
 }
 
 interface IState {
@@ -82,6 +83,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
       transformOrigin,
       menuItems,
     } = this.props;
+    debug('render', { id });
     const { anchorElement, closedAfterOpen } = this.state;
     const menuOpen = Boolean(anchorElement);
 
@@ -100,7 +102,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
       showMenu &&
       menuItems.map((item, index) =>
         item === '-' ? (
-          <Divider />
+          <Divider key={`menu-item-divider-${index}`} />
         ) : (
           <MenuItem
             classes={{ root: menuItemRootClass }}
@@ -129,7 +131,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
           open={menuOpen}
           onClose={this.handleMenuClose}
           onClick={this.handleMenuClick}
-          onEntering={this.handleMenuEntering}
+          onEnter={this.handleMenuEnter}
         >
           {menuItemElements}
         </Menu>
@@ -163,8 +165,12 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     });
   };
 
-  private handleMenuEntering = () => {
-    // debug('handleMenuEntering', { id });
+  private handleMenuEnter = () => {
+    debug('handleMenuEnter', { id: this.props.id });
+    const { id, onMenuEnter } = this.props;
+    if (onMenuEnter) {
+      onMenuEnter(id);
+    }
   };
 
   private handleMenuItemClick = index => () => {

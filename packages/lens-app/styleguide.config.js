@@ -29,4 +29,7 @@ module.exports = {
     Wrapper: path.join(__dirname, 'style-guide-wrapper'),
   },
   usageMode: 'collapse',
+  context: {
+    styleguideData: path.resolve(__dirname, 'src/style-guide-data'),
+  },
 };

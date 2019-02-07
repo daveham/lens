@@ -1,5 +1,5 @@
 import React from 'react';
-import DropDownMenu from 'editor/components/dropDownMenu';
+import DropDownMenu, { TMenuItem } from 'editor/components/dropDownMenu';
 import { withStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
@@ -25,7 +25,7 @@ const styles: any = ({ spacing: { unit } }) => {
 interface IProps {
   classes?: any;
   id: string;
-  menuItems: ReadonlyArray<string>;
+  menuItems: ReadonlyArray<TMenuItem>;
   onMenuSelection: (index: number) => {};
 }
 

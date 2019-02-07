@@ -2,6 +2,11 @@
 <GuideListMenu
   id='listOne'
   onMenuSelection={() => {}}
-  menuItems={['Menu List Item One', 'Menu List Item Two', 'Menu List Item Three']}
+  menuItems={[
+    { label: 'Menu List Item One' },
+    { label: 'Menu List Item Two' },
+    '-',
+    { label: 'Menu List Item Three' },
+  ]}
 />
 ```

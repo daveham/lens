@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cx from 'classnames';
@@ -32,6 +33,14 @@ const styles: any = ({ spacing: { unit }, palette }) => {
   };
 };
 
+export interface IMenuItem {
+  label: string;
+  value?: any;
+  disabled?: boolean;
+}
+
+export type TMenuItem = IMenuItem | string;
+
 interface IProps {
   classes?: any;
   children?: any;
@@ -42,7 +51,7 @@ interface IProps {
   menuIconClasses?: object;
   anchorOrigin?: any;
   transformOrigin?: any;
-  menuItems: ReadonlyArray<string>;
+  menuItems: ReadonlyArray<TMenuItem>;
   onMenuSelection: (index: number) => {};
 }
 
@@ -89,16 +98,21 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     const showMenu = menuOpen || (!menuOpen && !closedAfterOpen);
     const menuItemElements =
       showMenu &&
-      menuItems.map((item, index) => (
-        <MenuItem
-          classes={{ root: menuItemRootClass }}
-          dense
-          key={`menu-item-${item}`}
-          onClick={this.handleMenuItemClick(index)}
-        >
-          {item}
-        </MenuItem>
-      ));
+      menuItems.map((item, index) =>
+        item === '-' ? (
+          <Divider />
+        ) : (
+          <MenuItem
+            classes={{ root: menuItemRootClass }}
+            dense
+            disabled={(item as IMenuItem).disabled}
+            key={`menu-item-${(item as IMenuItem).value || (item as IMenuItem).label}`}
+            onClick={this.handleMenuItemClick(index)}
+          >
+            {(item as IMenuItem).label}
+          </MenuItem>
+        ),
+      );
 
     return (
       <Fragment>

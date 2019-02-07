@@ -151,15 +151,36 @@ const KEY_RENDERING = 'rendering';
 const panelDetails = {
   simulation: {
     title: 'Simulations',
-    menuItems: ['Edit', 'Add Execution', 'Delete'],
+    menuItems: [
+      { label: 'View' },
+      { label: 'Edit' },
+      '-',
+      { label: 'Add New Execution' },
+      '-',
+      { label: 'Delete' },
+    ],
   },
   execution: {
     title: 'Executions',
-    menuItems: ['Edit', 'Add Rendering', 'Delete'],
+    menuItems: [
+      { label: 'View' },
+      { label: 'Edit' },
+      { label: 'Run' },
+      '-',
+      { label: 'Add New Rendering' },
+      '-',
+      { label: 'Delete' },
+    ],
   },
   rendering: {
     title: 'Renderings',
-    menuItems: ['Render', 'View', 'Delete'],
+    menuItems: [
+      { label: 'View' },
+      { label: 'Edit' },
+      { label: 'Render' },
+      '-',
+      { label: 'Delete' },
+    ],
   },
 };
 
@@ -371,7 +392,7 @@ export class GuideControl extends React.Component<IProps, IState> {
         action={
           <GuideMenu
             onMenuSelection={this.handleGuideMenuSelection}
-            menuItems={['Add Simulation']}
+            menuItems={[{ label: 'Add Simulation' }]}
           />
         }
         title={title}

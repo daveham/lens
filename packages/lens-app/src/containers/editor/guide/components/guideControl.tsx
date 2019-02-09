@@ -77,6 +77,10 @@ const styles: any = theme => {
     expansionSecondaryHeading: {
       color: theme.palette.primary.contrastText,
     },
+    detailsContent: {
+      width: '100%',
+      transition: theme.transitions.create('height'),
+    },
     list: {
       width: '100%',
       maxHeight: unit * 12,
@@ -148,38 +152,54 @@ const KEY_SIMULATION = 'simulation';
 const KEY_EXECUTION = 'execution';
 const KEY_RENDERING = 'rendering';
 
+const KEY_SIMULATION_VIEW = 1001;
+const KEY_SIMULATION_EDIT = 1002;
+const KEY_SIMULATION_ADD_EXE = 1003;
+const KEY_SIMULATION_DELETE = 1004;
+
+const KEY_EXECUTION_VIEW = 2001;
+const KEY_EXECUTION_EDIT = 2002;
+const KEY_EXECUTION_RUN = 2003;
+const KEY_EXECUTION_ADD_REN = 2004;
+const KEY_EXECUTION_DELETE = 2005;
+
+const KEY_RENDERING_VIEW = 3001;
+const KEY_RENDERING_EDIT = 3002;
+const KEY_RENDERING_RENDER = 3003;
+const KEY_RENDERING_DELETE = 3004;
+
 const panelDetails = {
   simulation: {
     title: 'Simulations',
     menuItems: [
-      { label: 'View' },
-      { label: 'Edit' },
+      { label: 'View', value: KEY_SIMULATION_VIEW },
+      { label: 'Edit', value: KEY_SIMULATION_EDIT },
       '-',
-      { label: 'Add New Execution' },
+      { label: 'Add New Execution', value: KEY_SIMULATION_ADD_EXE },
       '-',
-      { label: 'Delete' },
+      { label: 'Delete', value: KEY_SIMULATION_DELETE },
     ],
   },
   execution: {
     title: 'Executions',
     menuItems: [
-      { label: 'View' },
-      { label: 'Edit' },
-      { label: 'Run' },
+      { label: 'View', value: KEY_EXECUTION_VIEW },
+      { label: 'Edit', value: KEY_EXECUTION_EDIT },
+      { label: 'Run', value: KEY_EXECUTION_RUN },
       '-',
-      { label: 'Add New Rendering' },
+      { label: 'Add New Rendering', value: KEY_EXECUTION_ADD_REN },
       '-',
-      { label: 'Delete' },
+      { label: 'Delete', value: KEY_EXECUTION_DELETE },
     ],
   },
   rendering: {
     title: 'Renderings',
     menuItems: [
-      { label: 'View' },
-      { label: 'Edit' },
-      { label: 'Render' },
+      { label: 'View', value: KEY_RENDERING_VIEW },
+      { label: 'Edit', value: KEY_RENDERING_EDIT },
+      { label: 'Render', value: KEY_RENDERING_RENDER },
       '-',
-      { label: 'Delete' },
+      { label: 'Delete', value: KEY_RENDERING_DELETE },
     ],
   },
 };
@@ -308,12 +328,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     this.setState(newState);
   };
 
-  private handlePanelListItemChange = (key, item) => () => {
-    debug('handlePanelListItemChange', { key, item, locked: this.state.locked });
-    if (this.state.locked) {
-      return;
-    }
-
+  private setSelectedItem = (key, item, changes = {}) => {
     this.setState(priorState => {
       const panelSelections = {
         ...priorState.panelSelections,
@@ -321,44 +336,61 @@ export class GuideControl extends React.Component<IProps, IState> {
       };
 
       if (key === KEY_SIMULATION) {
-        panelSelections.execution = getFirstExecution(item);
-        panelSelections.rendering = getFirstRendering(panelSelections.execution);
+        panelSelections[KEY_EXECUTION] = getFirstExecution(item);
+        panelSelections[KEY_RENDERING] = getFirstRendering(panelSelections.execution);
       } else if (key === KEY_EXECUTION) {
-        panelSelections.rendering = getFirstRendering(item);
+        panelSelections[KEY_RENDERING] = getFirstRendering(item);
       }
 
       return {
         expandedPanel: null,
         activePanel: key,
         panelSelections,
+        ...changes,
       };
     });
   };
 
-  private handleGuideMenuSelection = index => {
-    debug('handleGuideMenuSelection', { index });
-  };
-
-  private handleListMenuSelection = (key, itemIndex) => menuIndex => {
-    debug('handleListMenuSelection', { locked: this.state.locked });
+  private handlePanelListItemChange = (key, item) => () => {
+    debug('handlePanelListItemChange', { key, item, locked: this.state.locked });
     if (this.state.locked) {
       return;
     }
 
-    const items = this.getItemsForKey(key);
-    const item = items[itemIndex];
-    if (this.state.panelSelections[key] !== item) {
-      this.handlePanelListItemChange(key, item)();
+    const currentActiveItem = this.state.panelSelections[key];
+    if (item === currentActiveItem) {
+      debug('handlePanelListItemChange - same item', { currentActiveItem });
+      return;
     }
-    this.setState({ locked: true });
-    debug('handleListMenuSelection', { menuIndex });
+
+    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
+    this.setSelectedItem(key, item);
+  };
+
+  private handleGuideMenuSelection = menuItem => {
+    debug('handleGuideMenuSelection', { menuItem });
+  };
+
+  private handleListMenuSelection = (key, itemIndex) => menuItem => {
+    if (this.state.locked) {
+      return;
+    }
+
+    const item = this.getItemsForKey(key)[itemIndex];
+    this.setSelectedItem(key, item, { locked: true});
+
+    // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
+
+    debug('handleListMenuSelection', { key, item, menuItem });
   };
 
   private handleCancelLock = () => {
+    debug('handleCancelLock');
     this.setState({ locked: false });
   };
 
   private handleCommitLock = () => {
+    debug('handleCommitLock');
     this.setState({ locked: false });
   };
 
@@ -478,24 +510,23 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   private renderDetails(key, items, isPanelLocked) {
+    debug('renderDetails', { key, isPanelLocked });
     const { classes } = this.props;
     const listItems = this.renderListItems(key, items);
     const message = 'This panel is locked.';
-    if (isPanelLocked) {
-      return (
-        <ExpansionPanelDetails>
-          <Typography className={classes.lockedPanelMessage} component='div' align='center'>
-            {message}
-          </Typography>
-        </ExpansionPanelDetails>
-      );
-    }
+    const contents = isPanelLocked ? (
+      <Typography className={classes.lockedPanelMessage} component='div' align='center'>
+        {message}
+      </Typography>
+    ) : (
+      <List dense disablePadding classes={{ root: classes.list }}>
+        {listItems}
+      </List>
+    );
 
     return (
       <ExpansionPanelDetails>
-        <List dense disablePadding classes={{ root: classes.list }}>
-          {listItems}
-        </List>
+        <div className={classes.detailsContent}>{contents}</div>
       </ExpansionPanelDetails>
     );
   }
@@ -522,6 +553,7 @@ export class GuideControl extends React.Component<IProps, IState> {
 
     const isPanelLocked = locked && activePanel === key;
     const expanded = expandedPanel === key || isPanelLocked;
+    debug('renderPanel', { key, isPanelLocked, activePanel, expanded });
 
     return (
       <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>

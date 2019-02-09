@@ -26,7 +26,7 @@ interface IProps {
   classes?: any;
   id: string;
   menuItems: ReadonlyArray<TMenuItem>;
-  onMenuSelection: (index: number) => {};
+  onMenuSelection: (menuItem: TMenuItem) => {};
 }
 
 export const GuideListMenu = ({ classes, id, menuItems, onMenuSelection }: IProps): any => (

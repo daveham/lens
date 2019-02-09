@@ -25,7 +25,7 @@ const styles: any = ({ spacing: { unit }, palette }) => {
 interface IProps {
   classes?: any;
   menuItems: ReadonlyArray<TMenuItem>;
-  onMenuSelection: (index: number) => {};
+  onMenuSelection: (menuItem: TMenuItem) => {};
 }
 
 export const GuideMenu = ({ classes, menuItems, onMenuSelection }: IProps): any => (

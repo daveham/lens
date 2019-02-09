@@ -52,7 +52,7 @@ interface IProps {
   anchorOrigin?: any;
   transformOrigin?: any;
   menuItems: ReadonlyArray<TMenuItem>;
-  onMenuSelection: (index: number) => {};
+  onMenuSelection: (menuItem: TMenuItem) => {};
   onMenuEnter?: (id: string) => {};
 }
 
@@ -62,12 +62,19 @@ interface IState {
 }
 
 export class DropDownMenu extends React.Component<IProps, IState> {
+  private suppressStateChanges;
+
   constructor(props) {
     super(props);
     this.state = {
       anchorElement: null,
       closedAfterOpen: true,
     };
+    this.suppressStateChanges = false;
+  }
+
+  public componentWillUnmount(): void {
+    this.suppressStateChanges = true;
   }
 
   public render(): any {
@@ -83,7 +90,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
       transformOrigin,
       menuItems,
     } = this.props;
-    debug('render', { id });
+
     const { anchorElement, closedAfterOpen } = this.state;
     const menuOpen = Boolean(anchorElement);
 
@@ -126,6 +133,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
           anchorOrigin={menuAnchorOrigin}
           transformOrigin={menuTransformOrigin}
           id={id}
+          disableAutoFocusItem
           anchorEl={anchorElement}
           getContentAnchorEl={null}
           open={menuOpen}
@@ -152,9 +160,11 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     });
     // defer actual close to allow for animations
     setTimeout(() => {
-      this.setState({
-        closedAfterOpen: true,
-      });
+      if (!this.suppressStateChanges) {
+        this.setState({
+          closedAfterOpen: true,
+        });
+      }
     }, 250);
   };
 
@@ -174,9 +184,11 @@ export class DropDownMenu extends React.Component<IProps, IState> {
   };
 
   private handleMenuItemClick = index => () => {
-    debug('handleMenuItemClick', { index, menuItem: this.props.menuItems[index] });
+    debug('handleMenuItemClick', {
+      menuItem: this.props.menuItems[index],
+    });
     this.setState({ anchorElement: null });
-    this.props.onMenuSelection(index);
+    this.props.onMenuSelection(this.props.menuItems[index]);
   };
 }
 

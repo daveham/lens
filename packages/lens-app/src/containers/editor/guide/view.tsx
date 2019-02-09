@@ -1,7 +1,7 @@
 import React from 'react';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { ISimulation } from 'editor/interfaces';
-import GuideControl from './components/guideControl';
+import GuideControl, { controlSegmentKeys } from './components/guideControl';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide:view');
@@ -54,13 +54,28 @@ export class EditorGuideView extends React.Component<IProps, any> {
         simulationId={simulationId}
         executionId={executionId}
         renderingId={renderingId}
-        onPathChanged={this.handlePathChange}
+        onControlParametersChanged={this.handleControlParametersChanged}
       />
     );
   }
 
-  private handlePathChange = path => {
-    debug('handlePathChange', { path });
+  private handleControlParametersChanged = (params, active, action) => {
+    const {
+      match: {
+        params: { sourceId },
+      },
+    } = this.props;
+    const { simulationId, executionId, renderingId } = params;
+
+    let path = `/Catalog/${sourceId}/Simulation/${simulationId}`;
+    if (active !== controlSegmentKeys.simulation) {
+      path = `${path}/Execution/${executionId}`;
+    }
+    if (active === controlSegmentKeys.rendering) {
+      path = `${path}/Rendering/${renderingId}`;
+    }
+    path = `${path}/${action || 'show'}`;
+    debug('handleControlParametersChange', { path });
   };
 }
 

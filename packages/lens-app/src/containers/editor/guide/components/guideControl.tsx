@@ -132,7 +132,7 @@ interface IProps {
   title?: string;
   thumbnailUrl?: string;
   simulations?: ReadonlyArray<ISimulation>;
-  onPathChanged: (path: string) => void;
+  onControlParametersChanged: (params: object, active: string, action: string) => void;
 }
 
 interface IPanelSelections {
@@ -151,6 +151,12 @@ interface IState {
 const KEY_SIMULATION = 'simulation';
 const KEY_EXECUTION = 'execution';
 const KEY_RENDERING = 'rendering';
+
+export const controlSegmentKeys = {
+  simulation: KEY_SIMULATION,
+  execution: KEY_EXECUTION,
+  rendering: KEY_RENDERING,
+};
 
 const KEY_SIMULATION_VIEW = 1001;
 const KEY_SIMULATION_EDIT = 1002;
@@ -276,25 +282,22 @@ export class GuideControl extends React.Component<IProps, IState> {
     const { panelSelections, activePanel } = this.state;
     if (prevState.panelSelections !== panelSelections || prevState.activePanel !== activePanel) {
       if (simulations) {
-        const { onPathChanged, sourceId } = this.props;
-        const { simulation, execution, rendering } = panelSelections;
+        const { onControlParametersChanged } = this.props;
+        const {
+          simulation: { id: simulationId },
+          execution: { id: executionId },
+          rendering: { id: renderingId },
+        } = panelSelections;
 
-        if (
-          activePanel !== prevState.activePanel ||
-          rendering !== prevState.panelSelections.rendering ||
-          execution !== prevState.panelSelections.execution ||
-          simulation !== prevState.panelSelections.simulation
-        ) {
-          let path = `/Catalog/${sourceId}/Simulation/${simulation.id}`;
-          if (activePanel !== KEY_SIMULATION) {
-            path = `${path}/Execution/${execution.id}`;
-          }
-          if (activePanel === KEY_RENDERING) {
-            path = `${path}/Rendering/${rendering.id}`;
-          }
-          path = `${path}/show`;
-          onPathChanged(path);
-        }
+        onControlParametersChanged(
+          {
+            simulationId,
+            executionId,
+            renderingId,
+          },
+          activePanel,
+          'show',
+        );
       }
     }
   }
@@ -377,7 +380,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     const item = this.getItemsForKey(key)[itemIndex];
-    this.setSelectedItem(key, item, { locked: true});
+    this.setSelectedItem(key, item, { locked: true });
 
     // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
 

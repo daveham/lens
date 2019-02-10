@@ -132,7 +132,10 @@ interface IProps {
   title?: string;
   thumbnailUrl?: string;
   simulations?: ReadonlyArray<ISimulation>;
+  submitEnabled?: boolean;
   onControlParametersChanged: (params: object, active: string, action: string) => void;
+  onControlActionSubmit: () => void;
+  onControlActionCancel: () => void;
 }
 
 interface IPanelSelections {
@@ -146,6 +149,7 @@ interface IState {
   activePanel?: string;
   panelSelections: IPanelSelections;
   locked: boolean;
+  action?: string;
 }
 
 const KEY_SIMULATION = 'simulation';
@@ -179,33 +183,33 @@ const panelDetails = {
     title: 'Simulations',
     menuItems: [
       { label: 'View', value: KEY_SIMULATION_VIEW },
-      { label: 'Edit', value: KEY_SIMULATION_EDIT },
+      { label: 'Edit', value: KEY_SIMULATION_EDIT, action: 'edit' },
       '-',
-      { label: 'Add New Execution', value: KEY_SIMULATION_ADD_EXE },
+      { label: 'Add New Execution', value: KEY_SIMULATION_ADD_EXE, action: 'new' },
       '-',
-      { label: 'Delete', value: KEY_SIMULATION_DELETE },
+      { label: 'Delete', value: KEY_SIMULATION_DELETE, action: 'delete' },
     ],
   },
   execution: {
     title: 'Executions',
     menuItems: [
       { label: 'View', value: KEY_EXECUTION_VIEW },
-      { label: 'Edit', value: KEY_EXECUTION_EDIT },
-      { label: 'Run', value: KEY_EXECUTION_RUN },
+      { label: 'Edit', value: KEY_EXECUTION_EDIT, action: 'edit' },
+      { label: 'Run', value: KEY_EXECUTION_RUN, action: 'run' },
       '-',
-      { label: 'Add New Rendering', value: KEY_EXECUTION_ADD_REN },
+      { label: 'Add New Rendering', value: KEY_EXECUTION_ADD_REN, action: 'new' },
       '-',
-      { label: 'Delete', value: KEY_EXECUTION_DELETE },
+      { label: 'Delete', value: KEY_EXECUTION_DELETE, action: 'delete' },
     ],
   },
   rendering: {
     title: 'Renderings',
     menuItems: [
       { label: 'View', value: KEY_RENDERING_VIEW },
-      { label: 'Edit', value: KEY_RENDERING_EDIT },
-      { label: 'Render', value: KEY_RENDERING_RENDER },
+      { label: 'Edit', value: KEY_RENDERING_EDIT, action: 'edit' },
+      { label: 'Render', value: KEY_RENDERING_RENDER, action: 'run' },
       '-',
-      { label: 'Delete', value: KEY_RENDERING_DELETE },
+      { label: 'Delete', value: KEY_RENDERING_DELETE, action: 'delete' },
     ],
   },
 };
@@ -261,7 +265,7 @@ function determineSelections(props) {
 
   const locked = action === 'add' || action === 'edit' || action === 'delete';
 
-  return { activePanel, panelSelections, locked };
+  return { activePanel, panelSelections, locked, action };
 }
 
 export class GuideControl extends React.Component<IProps, IState> {
@@ -279,26 +283,28 @@ export class GuideControl extends React.Component<IProps, IState> {
       this.setState({ ...determineSelections(this.props) });
     }
 
-    const { panelSelections, activePanel } = this.state;
-    if (prevState.panelSelections !== panelSelections || prevState.activePanel !== activePanel) {
-      if (simulations) {
-        const { onControlParametersChanged } = this.props;
-        const {
-          simulation: { id: simulationId },
-          execution: { id: executionId },
-          rendering: { id: renderingId },
-        } = panelSelections;
+    const { panelSelections, activePanel, action } = this.state;
+    if (
+      simulations &&
+      (prevState.panelSelections !== panelSelections ||
+        prevState.activePanel !== activePanel ||
+        prevState.action !== action)
+    ) {
+      const {
+        simulation: { id: simulationId },
+        execution: { id: executionId },
+        rendering: { id: renderingId },
+      } = panelSelections;
 
-        onControlParametersChanged(
-          {
-            simulationId,
-            executionId,
-            renderingId,
-          },
-          activePanel,
-          'show',
-        );
-      }
+      this.props.onControlParametersChanged(
+        {
+          simulationId,
+          executionId,
+          renderingId,
+        },
+        activePanel,
+        action || 'show',
+      );
     }
   }
 
@@ -380,26 +386,33 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     const item = this.getItemsForKey(key)[itemIndex];
-    this.setSelectedItem(key, item, { locked: true });
-
-    // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
 
     debug('handleListMenuSelection', { key, item, menuItem });
+    const actionChanges = this.getActionChangesForMenuItem(key, menuItem);
+    this.setSelectedItem(key, item, actionChanges);
   };
 
   private handleCancelLock = () => {
     debug('handleCancelLock');
-    this.setState({ locked: false });
+    this.setState({ locked: false, action: '' });
+    this.props.onControlActionCancel();
   };
 
   private handleCommitLock = () => {
     debug('handleCommitLock');
-    this.setState({ locked: false });
+    this.setState({ locked: false, action: '' });
+    this.props.onControlActionSubmit();
   };
 
   // private handleListMenuEnter = (key, listIndex) => () => {
   //   debug('handleListMenuEnter', { key, listIndex });
   // };
+
+  private getActionChangesForMenuItem = (key, menuItem) => {
+    // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
+    const { action } = menuItem;
+    return action ? { locked: true, action } : {};
+  };
 
   private getItemsForKey = key => {
     if (key === KEY_SIMULATION) {
@@ -414,6 +427,7 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   private renderHeader(): any {
     const { classes, thumbnailUrl, title } = this.props;
+    const { locked } = this.state;
 
     const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
 
@@ -428,6 +442,7 @@ export class GuideControl extends React.Component<IProps, IState> {
           <GuideMenu
             onMenuSelection={this.handleGuideMenuSelection}
             menuItems={[{ label: 'Add Simulation' }]}
+            disabled={locked}
           />
         }
         title={title}
@@ -516,7 +531,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     debug('renderDetails', { key, isPanelLocked });
     const { classes } = this.props;
     const listItems = this.renderListItems(key, items);
-    const message = 'This panel is locked.';
+    const message = `This ${key} panel is locked.`;
     const contents = isPanelLocked ? (
       <Typography className={classes.lockedPanelMessage} component='div' align='center'>
         {message}
@@ -535,13 +550,19 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   private renderActions(key, items) {
+    const { submitEnabled } = this.props;
     debug('renderActions', { key, items });
     return (
       <ExpansionPanelActions>
         <Button size='small' onClick={this.handleCancelLock}>
           Cancel
         </Button>
-        <Button size='small' onClick={this.handleCommitLock} color='primary'>
+        <Button
+          size='small'
+          disabled={!submitEnabled}
+          onClick={this.handleCommitLock}
+          color='primary'
+        >
           Save
         </Button>
       </ExpansionPanelActions>

@@ -20,6 +20,8 @@ Simulation, Execution, Rendering Selected
   executionId={20}
   renderingId={201}
   onControlParametersChanged={() => {}}
+  onControlActionSubmit={() => {}}
+  onControlActionCancel={() => {}}
   thumbnailUrl='https://via.placeholder.com/400x267.png/F0F0E0/D0D0C0?text=photo%20thumbnail'
   simulations={styleguideData.simulations}
 />
@@ -36,6 +38,8 @@ Edit Mode
   renderingId={201}
   action='edit'
   onControlParametersChanged={() => {}}
+  onControlActionSubmit={() => {}}
+  onControlActionCancel={() => {}}
   thumbnailUrl='https://via.placeholder.com/400x267.png/F0F0E0/D0D0C0?text=photo%20thumbnail'
   simulations={styleguideData.simulations}
 />

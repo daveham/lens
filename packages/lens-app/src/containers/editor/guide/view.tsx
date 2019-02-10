@@ -55,9 +55,19 @@ export class EditorGuideView extends React.Component<IProps, any> {
         executionId={executionId}
         renderingId={renderingId}
         onControlParametersChanged={this.handleControlParametersChanged}
+        onControlActionSubmit={this.handleControlActionSubmit}
+        onControlActionCancel={this.handleControlActionCancel}
       />
     );
   }
+
+  private handleControlActionSubmit = () => {
+    debug('handleControlActionSubmit');
+  };
+
+  private handleControlActionCancel = () => {
+    debug('handleControlActionCancel');
+  };
 
   private handleControlParametersChanged = (params, active, action) => {
     const {

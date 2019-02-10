@@ -24,14 +24,16 @@ const styles: any = ({ spacing: { unit }, palette }) => {
 
 interface IProps {
   classes?: any;
+  disabled?: boolean;
   menuItems: ReadonlyArray<TMenuItem>;
   onMenuSelection: (menuItem: TMenuItem) => {};
 }
 
-export const GuideMenu = ({ classes, menuItems, onMenuSelection }: IProps): any => (
+export const GuideMenu = ({ classes, disabled, menuItems, onMenuSelection }: IProps): any => (
   <DropDownMenu
     onMenuSelection={onMenuSelection}
     id='guideMenu'
+    disabled={disabled}
     menuItems={menuItems}
     menuClasses={classes.guideMenu}
     menuItemClasses={classes.guideMenuItem}

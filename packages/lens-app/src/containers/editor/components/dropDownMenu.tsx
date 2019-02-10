@@ -52,6 +52,7 @@ interface IProps {
   anchorOrigin?: any;
   transformOrigin?: any;
   menuItems: ReadonlyArray<TMenuItem>;
+  disabled?: boolean;
   onMenuSelection: (menuItem: TMenuItem) => {};
   onMenuEnter?: (id: string) => {};
 }
@@ -82,6 +83,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
       classes,
       children,
       id,
+      disabled,
       menuClasses,
       menuButtonClasses,
       menuItemClasses,
@@ -125,7 +127,11 @@ export class DropDownMenu extends React.Component<IProps, IState> {
 
     return (
       <Fragment>
-        <IconButton onClick={this.handleMenuButtonClick} classes={{ root: menuButtonRootClass }}>
+        <IconButton
+          disabled={disabled}
+          onClick={this.handleMenuButtonClick}
+          classes={{ root: menuButtonRootClass }}
+        >
           {menuAnchor}
         </IconButton>
         <Menu

@@ -496,62 +496,136 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderListItems(key, items) {
+  private renderSimulationListItems(items, isPanelExpanded, currentItemId) {
     const { classes } = this.props;
-    const { expandedPanel, panelSelections, locked } = this.state;
-    const currentItem = panelSelections[key];
-
-    return items.map((item, itemIndex) => {
-      if (locked && expandedPanel === key && currentItem.id === item.id) {
-        debug('renderListItems - render selected contents', { item });
-      }
-      return (
-        <ListItem
-          classes={{
-            root: classes.listItemRoot,
-            container: classes.listItemContainer,
-            selected: classes.listItemSelected,
-          }}
-          key={item.id}
-          onClick={this.handlePanelListItemChange(key, item)}
-          dense
-          button
-          selected={expandedPanel === key && item.id === currentItem.id}
-        >
-          <ListItemText primary={item.name} />
-          <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-            {this.renderListMenu(key, itemIndex)}
-          </ListItemSecondaryAction>
-        </ListItem>
-      );
-    });
+    const listItemClasses = {
+      root: classes.listItemRoot,
+      container: classes.listItemContainer,
+      selected: classes.listItemSelected,
+    };
+    return items.map((item, itemIndex) => (
+      <ListItem
+        classes={listItemClasses}
+        key={item.id}
+        onClick={this.handlePanelListItemChange(controlSegmentKeys.simulation, item)}
+        dense
+        button
+        selected={isPanelExpanded && item.id === currentItemId}
+      >
+        <ListItemText primary={item.name} secondary='simulation details' />
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          {this.renderListMenu(controlSegmentKeys.simulation, itemIndex)}
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
   }
 
-  private renderDetails(key, items, isPanelLocked) {
-    debug('renderDetails', { key, isPanelLocked });
+  private renderExecutionListItems(items, isPanelExpanded, currentItemId) {
     const { classes } = this.props;
-    const listItems = this.renderListItems(key, items);
-    const message = `This ${key} panel is locked.`;
-    const contents = isPanelLocked ? (
-      <Typography className={classes.lockedPanelMessage} component='div' align='center'>
-        {message}
-      </Typography>
-    ) : (
-      <List dense disablePadding classes={{ root: classes.list }}>
-        {listItems}
-      </List>
-    );
+    const listItemClasses = {
+      root: classes.listItemRoot,
+      container: classes.listItemContainer,
+      selected: classes.listItemSelected,
+    };
+    return items.map((item, itemIndex) => (
+      <ListItem
+        classes={listItemClasses}
+        key={item.id}
+        onClick={this.handlePanelListItemChange(controlSegmentKeys.execution, item)}
+        dense
+        button
+        selected={isPanelExpanded && item.id === currentItemId}
+      >
+        <ListItemText primary={item.name} secondary='execution details' />
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          {this.renderListMenu(controlSegmentKeys.execution, itemIndex)}
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
+  }
 
+  private renderRenderingListItems(items, isPanelExpanded, currentItemId) {
+    const { classes } = this.props;
+    const listItemClasses = {
+      root: classes.listItemRoot,
+      container: classes.listItemContainer,
+      selected: classes.listItemSelected,
+    };
+    return items.map((item, itemIndex) => (
+      <ListItem
+        classes={listItemClasses}
+        key={item.id}
+        onClick={this.handlePanelListItemChange(controlSegmentKeys.rendering, item)}
+        dense
+        button
+        selected={isPanelExpanded && item.id === currentItemId}
+      >
+        <ListItemText primary={item.name} secondary='rendering details' />
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          {this.renderListMenu(controlSegmentKeys.rendering, itemIndex)}
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
+  }
+
+  private renderListItems(key, items) {
+    const { expandedPanel, panelSelections } = this.state;
+    const { currentItem } = panelSelections[key];
+    const currentItemId = currentItem ? currentItem.id : null;
+    const isPanelExpanded = expandedPanel === key;
+
+    if (key === controlSegmentKeys.simulation) {
+      return this.renderSimulationListItems(items, isPanelExpanded, currentItemId);
+    }
+    if (key === controlSegmentKeys.execution) {
+      return this.renderExecutionListItems(items, isPanelExpanded, currentItemId);
+    }
+    if (key === controlSegmentKeys.rendering) {
+      return this.renderRenderingListItems(items, isPanelExpanded, currentItemId);
+    }
+  }
+
+  private renderLockedDetails(key) {
+    const { classes } = this.props;
+    const { action } = this.state;
+    let message;
+    switch (action) {
+      case 'new':
+        message = `Add a new ${key}.`;
+        break;
+      case 'edit':
+        message = `Edit the current ${key}.`;
+        break;
+      case 'delete':
+        message = `Delete this ${key}?`;
+        break;
+    }
     return (
       <ExpansionPanelDetails>
-        <div className={classes.detailsContent}>{contents}</div>
+        <div className={classes.detailsContent}>
+          <Typography className={classes.lockedPanelMessage} component='div' align='center'>
+            {message}
+          </Typography>
+        </div>
       </ExpansionPanelDetails>
     );
   }
 
-  private renderActions(key, items) {
-    const { submitEnabled } = this.props;
-    debug('renderActions', { key, items });
+  private renderDetails(key, items) {
+    const { classes } = this.props;
+    const listItems = this.renderListItems(key, items);
+    return (
+      <ExpansionPanelDetails>
+        <div className={classes.detailsContent}>
+          <List dense disablePadding classes={{ root: classes.list }}>
+            {listItems}
+          </List>
+        </div>
+      </ExpansionPanelDetails>
+    );
+  }
+
+  private renderActionsForNew() {
     return (
       <ExpansionPanelActions>
         <Button size='small' onClick={this.handleCancelLock}>
@@ -559,7 +633,25 @@ export class GuideControl extends React.Component<IProps, IState> {
         </Button>
         <Button
           size='small'
-          disabled={!submitEnabled}
+          disabled={!this.props.submitEnabled}
+          onClick={this.handleCommitLock}
+          color='primary'
+        >
+          Add
+        </Button>
+      </ExpansionPanelActions>
+    );
+  }
+
+  private renderActionsForEdit() {
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={this.handleCancelLock}>
+          Cancel
+        </Button>
+        <Button
+          size='small'
+          disabled={!this.props.submitEnabled}
           onClick={this.handleCommitLock}
           color='primary'
         >
@@ -567,6 +659,36 @@ export class GuideControl extends React.Component<IProps, IState> {
         </Button>
       </ExpansionPanelActions>
     );
+  }
+
+  private renderActionsForDelete() {
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={this.handleCancelLock}>
+          Cancel
+        </Button>
+        <Button
+          size='small'
+          disabled={!this.props.submitEnabled}
+          onClick={this.handleCommitLock}
+          color='primary'
+        >
+          OK
+        </Button>
+      </ExpansionPanelActions>
+    );
+  }
+
+  private renderActions() {
+    const { action } = this.state;
+    switch (action) {
+      case 'new':
+        return this.renderActionsForNew();
+      case 'edit':
+        return this.renderActionsForEdit();
+      case 'delete':
+        return this.renderActionsForDelete();
+    }
   }
 
   private renderPanel(key, items) {
@@ -589,8 +711,8 @@ export class GuideControl extends React.Component<IProps, IState> {
             </Typography>
           )}
         </ExpansionPanelSummary>
-        {this.renderDetails(key, items, isPanelLocked)}
-        {isPanelLocked && this.renderActions(key, items)}
+        {isPanelLocked ? this.renderLockedDetails(key) : this.renderDetails(key, items)}
+        {isPanelLocked && this.renderActions()}
       </ExpansionPanel>
     );
   }

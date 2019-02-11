@@ -214,6 +214,8 @@ const panelDetails = {
   },
 };
 
+const lockingActions = ['new', 'edit', 'delete'];
+
 function getFirstExecution(simulation) {
   if (simulation) {
     const { executions } = simulation;
@@ -411,7 +413,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   private getActionChangesForMenuItem = (key, menuItem) => {
     // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
     const { action } = menuItem;
-    return action ? { locked: true, action } : {};
+    return action && lockingActions.includes(action) ? { locked: true, action } : {};
   };
 
   private getItemsForKey = key => {
@@ -599,6 +601,8 @@ export class GuideControl extends React.Component<IProps, IState> {
       case 'delete':
         message = `Delete this ${key}?`;
         break;
+      default:
+        return null;
     }
     return (
       <ExpansionPanelDetails>

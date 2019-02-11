@@ -4,14 +4,14 @@
     "outDir": "build/dist",
     "sourceMap": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "es2016",
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "allowJs": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "lib": [
-      "es6",
+      "es7",
       "dom"
     ],
     "typeRoots": [

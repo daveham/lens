@@ -11,6 +11,7 @@ const styles = theme => {
       '&:last-child': {
         borderBottomLeftRadius: borderRadius,
         borderBottomRightRadius: borderRadius,
+        overflow: 'hidden',
       },
     },
   };

@@ -1,6 +1,7 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Badge from '@material-ui/core/Badge';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -68,11 +69,22 @@ const styles: any = theme => {
         padding: unit,
       },
     },
-    expansionHeading: {
-      flexBasis: '33%',
-      flexShrink: 0,
+    badgeContent: {
+      transform: 'scale(1) translate(-130%, 0%)',
+      transformOrigin: '0% 0%',
       color: theme.palette.primary.contrastText,
-      fontWeight: 600,
+      backgroundColor: theme.palette.primary.dark,
+      opacity: .6,
+      right: 'auto',
+    },
+    expansionHeadingContainer: {
+      flexBasis: '30%',
+      flexShrink: 0,
+      paddingLeft: unit * 2,
+    },
+    expansionHeading: {
+      color: theme.palette.primary.contrastText,
+      fontWeight: 500,
     },
     expansionSecondaryHeading: {
       color: theme.palette.primary.contrastText,
@@ -708,7 +720,14 @@ export class GuideControl extends React.Component<IProps, IState> {
     return (
       <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
+          <div className={classes.expansionHeadingContainer}>
+            <Badge
+              badgeContent={items.length}
+              classes={{ badge: classes.badgeContent }}
+            >
+              <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
+            </Badge>
+          </div>
           {currentItem && (
             <Typography className={classes.expansionSecondaryHeading}>
               {currentItem.name}

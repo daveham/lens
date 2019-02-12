@@ -12,7 +12,7 @@
     "lint": "./node_modules/.bin/gulp lint",
     "clean": "./node_modules/.bin/lerna clean",
     "watch": "./node_modules/.bin/gulp watch",
-    "start": "./node_modules/.bin/lerna run --parallel start",
+    "start": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run --parallel start",
     "styleguide": "cd ./packages/lens-app && yarn styleguidist server",
     "styleguide:build": "cd ./packages/lens-app && yarn styleguidist build"
   },
@@ -78,7 +78,7 @@
     "gulp-util": "^3.0.8",
     "gulp-watch": "^5.0.1",
     "jest": "^23.4.2",
-    "lerna": "^3.0.0-rc.0",
+    "lerna": "^3.11.1",
     "moment": "^2.22.2",
     "morgan": "^1.9.0",
     "node-resque": "^5.4.0",

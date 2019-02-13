@@ -584,7 +584,7 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   private renderListItems(key, items) {
     const { expandedPanel, panelSelections } = this.state;
-    const { currentItem } = panelSelections[key];
+    const currentItem = panelSelections[key];
     const currentItemId = currentItem ? currentItem.id : null;
     const isPanelExpanded = expandedPanel === key;
 

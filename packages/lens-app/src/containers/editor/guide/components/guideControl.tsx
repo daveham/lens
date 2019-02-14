@@ -74,7 +74,7 @@ const styles: any = theme => {
       transformOrigin: '0% 0%',
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.dark,
-      opacity: .6,
+      opacity: 0.6,
       right: 'auto',
     },
     expansionHeadingContainer: {
@@ -174,6 +174,16 @@ export const controlSegmentKeys = {
   rendering: KEY_RENDERING,
 };
 
+export const controlSegmentActions = {
+  new: 'new',
+  edit: 'edit',
+  delete: 'delete',
+  run: 'run',
+  render: 'render',
+};
+
+const KEY_SIMULATION_ADD = 1000;
+
 const KEY_SIMULATION_VIEW = 1001;
 const KEY_SIMULATION_EDIT = 1002;
 const KEY_SIMULATION_ADD_EXE = 1003;
@@ -195,38 +205,50 @@ const panelDetails = {
     title: 'Simulations',
     menuItems: [
       { label: 'View', value: KEY_SIMULATION_VIEW },
-      { label: 'Edit', value: KEY_SIMULATION_EDIT, action: 'edit' },
+      { label: 'Edit', value: KEY_SIMULATION_EDIT, action: controlSegmentActions.edit },
       '-',
-      { label: 'Add New Execution', value: KEY_SIMULATION_ADD_EXE, action: 'new' },
+      {
+        label: 'Add New Execution',
+        value: KEY_SIMULATION_ADD_EXE,
+        action: controlSegmentActions.new,
+      },
       '-',
-      { label: 'Delete', value: KEY_SIMULATION_DELETE, action: 'delete' },
+      { label: 'Delete', value: KEY_SIMULATION_DELETE, action: controlSegmentActions.delete },
     ],
   },
   execution: {
     title: 'Executions',
     menuItems: [
       { label: 'View', value: KEY_EXECUTION_VIEW },
-      { label: 'Edit', value: KEY_EXECUTION_EDIT, action: 'edit' },
-      { label: 'Run', value: KEY_EXECUTION_RUN, action: 'run' },
+      { label: 'Edit', value: KEY_EXECUTION_EDIT, action: controlSegmentActions.edit },
+      { label: 'Run', value: KEY_EXECUTION_RUN, action: controlSegmentActions.run },
       '-',
-      { label: 'Add New Rendering', value: KEY_EXECUTION_ADD_REN, action: 'new' },
+      {
+        label: 'Add New Rendering',
+        value: KEY_EXECUTION_ADD_REN,
+        action: controlSegmentActions.new,
+      },
       '-',
-      { label: 'Delete', value: KEY_EXECUTION_DELETE, action: 'delete' },
+      { label: 'Delete', value: KEY_EXECUTION_DELETE, action: controlSegmentActions.delete },
     ],
   },
   rendering: {
     title: 'Renderings',
     menuItems: [
       { label: 'View', value: KEY_RENDERING_VIEW },
-      { label: 'Edit', value: KEY_RENDERING_EDIT, action: 'edit' },
-      { label: 'Render', value: KEY_RENDERING_RENDER, action: 'run' },
+      { label: 'Edit', value: KEY_RENDERING_EDIT, action: controlSegmentActions.edit },
+      { label: 'Render', value: KEY_RENDERING_RENDER, action: controlSegmentActions.run },
       '-',
-      { label: 'Delete', value: KEY_RENDERING_DELETE, action: 'delete' },
+      { label: 'Delete', value: KEY_RENDERING_DELETE, action: controlSegmentActions.delete },
     ],
   },
 };
 
-const lockingActions = ['new', 'edit', 'delete'];
+const lockingActions = [
+  controlSegmentActions.new,
+  controlSegmentActions.edit,
+  controlSegmentActions.delete,
+];
 
 function getFirstExecution(simulation) {
   if (simulation) {
@@ -304,20 +326,15 @@ export class GuideControl extends React.Component<IProps, IState> {
         prevState.activePanel !== activePanel ||
         prevState.action !== action)
     ) {
-      const {
-        simulation: { id: simulationId },
-        execution: { id: executionId },
-        rendering: { id: renderingId },
-      } = panelSelections;
-
+      const { simulation, execution, rendering } = panelSelections;
       this.props.onControlParametersChanged(
         {
-          simulationId,
-          executionId,
-          renderingId,
+          simulationId: simulation ? simulation.id : -1,
+          executionId: execution ? execution.id : -1,
+          renderingId: rendering ? rendering.id : -1,
         },
         activePanel,
-        action || 'show',
+        action,
       );
     }
   }
@@ -359,10 +376,10 @@ export class GuideControl extends React.Component<IProps, IState> {
       };
 
       if (key === KEY_SIMULATION) {
-        panelSelections[KEY_EXECUTION] = getFirstExecution(item);
-        panelSelections[KEY_RENDERING] = getFirstRendering(panelSelections.execution);
+        panelSelections[KEY_EXECUTION] = item ? getFirstExecution(item) : null;
+        panelSelections[KEY_RENDERING] = item ? getFirstRendering(panelSelections.execution) : null;
       } else if (key === KEY_EXECUTION) {
-        panelSelections[KEY_RENDERING] = getFirstRendering(item);
+        panelSelections[KEY_RENDERING] = item ? getFirstRendering(item) : null;
       }
 
       return {
@@ -392,6 +409,10 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   private handleGuideMenuSelection = menuItem => {
     debug('handleGuideMenuSelection', { menuItem });
+    const { action } = menuItem;
+    if (action === controlSegmentActions.new) {
+      this.setSelectedItem(controlSegmentKeys.simulation, null, { locked: true, action });
+    }
   };
 
   private handleListMenuSelection = (key, itemIndex) => menuItem => {
@@ -400,10 +421,20 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     const item = this.getItemsForKey(key)[itemIndex];
-
     debug('handleListMenuSelection', { key, item, menuItem });
-    const actionChanges = this.getActionChangesForMenuItem(key, menuItem);
-    this.setSelectedItem(key, item, actionChanges);
+
+    const { action } = menuItem;
+    if (action === controlSegmentActions.new) {
+      const lowerKey =
+        key === controlSegmentKeys.execution
+          ? controlSegmentKeys.rendering
+          : controlSegmentKeys.execution;
+      this.setSelectedItem(lowerKey, null, { locked: true, action });
+    } else {
+      const actionChanges =
+        action && lockingActions.includes(action) ? { locked: true, action } : {};
+      this.setSelectedItem(key, item, actionChanges);
+    }
   };
 
   private handleCancelLock = () => {
@@ -418,25 +449,17 @@ export class GuideControl extends React.Component<IProps, IState> {
     this.props.onControlActionSubmit();
   };
 
-  // private handleListMenuEnter = (key, listIndex) => () => {
-  //   debug('handleListMenuEnter', { key, listIndex });
-  // };
-
-  private getActionChangesForMenuItem = (key, menuItem) => {
-    // const menuItem = panelDetails[key].menuItems.find(item => item.id ===)
-    const { action } = menuItem;
-    return action && lockingActions.includes(action) ? { locked: true, action } : {};
-  };
-
   private getItemsForKey = key => {
     if (key === KEY_SIMULATION) {
-      return this.props.simulations;
+      return this.props.simulations || [];
     }
     const { panelSelections } = this.state;
     if (key === KEY_EXECUTION) {
-      return panelSelections[KEY_SIMULATION].executions;
+      const simulation = panelSelections[KEY_SIMULATION];
+      return simulation ? simulation.executions : [];
     }
-    return panelSelections[KEY_EXECUTION].renderings;
+    const execution = panelSelections[KEY_EXECUTION];
+    return execution ? execution.renderings : [];
   };
 
   private renderHeader(): any {
@@ -455,7 +478,13 @@ export class GuideControl extends React.Component<IProps, IState> {
         action={
           <GuideMenu
             onMenuSelection={this.handleGuideMenuSelection}
-            menuItems={[{ label: 'Add Simulation' }]}
+            menuItems={[
+              {
+                label: 'Add New Simulation',
+                value: KEY_SIMULATION_ADD,
+                action: controlSegmentActions.new,
+              },
+            ]}
             disabled={locked}
           />
         }
@@ -604,13 +633,13 @@ export class GuideControl extends React.Component<IProps, IState> {
     const { action } = this.state;
     let message;
     switch (action) {
-      case 'new':
+      case controlSegmentActions.new:
         message = `Add a new ${key}.`;
         break;
-      case 'edit':
+      case controlSegmentActions.edit:
         message = `Edit the current ${key}.`;
         break;
-      case 'delete':
+      case controlSegmentActions.delete:
         message = `Delete this ${key}?`;
         break;
       default:
@@ -698,11 +727,11 @@ export class GuideControl extends React.Component<IProps, IState> {
   private renderActions() {
     const { action } = this.state;
     switch (action) {
-      case 'new':
+      case controlSegmentActions.new:
         return this.renderActionsForNew();
-      case 'edit':
+      case controlSegmentActions.edit:
         return this.renderActionsForEdit();
-      case 'delete':
+      case controlSegmentActions.delete:
         return this.renderActionsForDelete();
     }
   }
@@ -721,10 +750,7 @@ export class GuideControl extends React.Component<IProps, IState> {
       <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.expansionHeadingContainer}>
-            <Badge
-              badgeContent={items.length}
-              classes={{ badge: classes.badgeContent }}
-            >
+            <Badge badgeContent={items.length} classes={{ badge: classes.badgeContent }}>
               <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
             </Badge>
           </div>

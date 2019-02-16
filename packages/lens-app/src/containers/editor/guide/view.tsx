@@ -41,9 +41,24 @@ export class EditorGuideView extends React.Component<IProps, any> {
       thumbnailUrl,
       simulations,
       match: {
-        params: { sourceId, simulationId, executionId, renderingId },
+        params: { sourceId, simulationId, executionId, renderingId, action },
       },
     } = this.props;
+
+    let resolvedSimulationId = simulationId;
+    let resolvedExecutionId = executionId;
+    let resolvedRenderingId = renderingId;
+    let resolvedAction = action;
+    if (renderingId === 'new') {
+      resolvedAction = action;
+      resolvedRenderingId = null;
+    } else if (executionId === 'new') {
+      resolvedAction = action;
+      resolvedExecutionId = null;
+    } else if (simulationId === 'new') {
+      resolvedAction = action;
+      resolvedSimulationId = null;
+    }
 
     return (
       <GuideControl
@@ -51,9 +66,10 @@ export class EditorGuideView extends React.Component<IProps, any> {
         thumbnailUrl={thumbnailUrl}
         simulations={simulations}
         sourceId={sourceId}
-        simulationId={simulationId}
-        executionId={executionId}
-        renderingId={renderingId}
+        simulationId={resolvedSimulationId}
+        executionId={resolvedExecutionId}
+        renderingId={resolvedRenderingId}
+        action={resolvedAction}
         onControlParametersChanged={this.handleControlParametersChanged}
         onControlActionSubmit={this.handleControlActionSubmit}
         onControlActionCancel={this.handleControlActionCancel}

@@ -272,13 +272,15 @@ function getFirstRendering(execution) {
 
 function determineSelections(props) {
   const { simulations, simulationId = -1, executionId = -1, renderingId = -1, action } = props;
+  debug('determineSelections', { simulationId, executionId, renderingId, action });
 
+  const isNewAction = action === controlSegmentActions.new;
   let activePanel = null;
-  if (renderingId > -1) {
+  if (renderingId > -1 || (executionId > -1 && isNewAction)) {
     activePanel = KEY_RENDERING;
-  } else if (executionId > -1) {
+  } else if (executionId > -1 || (simulationId > -1 && isNewAction)) {
     activePanel = KEY_EXECUTION;
-  } else if (simulationId > -1) {
+  } else if (simulationId > -1 || isNewAction) {
     activePanel = KEY_SIMULATION;
   }
 
@@ -299,8 +301,9 @@ function determineSelections(props) {
     }
   }
 
-  const locked = action === 'add' || action === 'edit' || action === 'delete';
+  const locked = lockingActions.includes(action);
 
+  debug('determineSelections - results', { activePanel, locked, action, panelSelections });
   return { activePanel, panelSelections, locked, action };
 }
 
@@ -642,6 +645,12 @@ export class GuideControl extends React.Component<IProps, IState> {
       case controlSegmentActions.delete:
         message = `Delete this ${key}?`;
         break;
+      case controlSegmentActions.run:
+        message = `Run this ${key}?`;
+        break;
+      case controlSegmentActions.render:
+        message = `Render this ${key}?`;
+        break;
       default:
         return null;
     }
@@ -732,6 +741,8 @@ export class GuideControl extends React.Component<IProps, IState> {
       case controlSegmentActions.edit:
         return this.renderActionsForEdit();
       case controlSegmentActions.delete:
+      case controlSegmentActions.run:
+      case controlSegmentActions.render:
         return this.renderActionsForDelete();
     }
   }

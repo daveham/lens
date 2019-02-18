@@ -272,7 +272,6 @@ function getFirstRendering(execution) {
 
 function determineSelections(props) {
   const { simulations, simulationId = -1, executionId = -1, renderingId = -1, action } = props;
-  debug('determineSelections', { simulationId, executionId, renderingId, action });
 
   const isNewAction = action === controlSegmentActions.new;
   let activePanel = null;
@@ -302,8 +301,6 @@ function determineSelections(props) {
   }
 
   const locked = lockingActions.includes(action);
-
-  debug('determineSelections - results', { activePanel, locked, action, panelSelections });
   return { activePanel, panelSelections, locked, action };
 }
 

@@ -10,7 +10,7 @@ import Rendering from './rendering';
 // import _debug from 'debug';
 // const debug = _debug('lens:containers:editor:index');
 
-const styles = (theme) => ({
+const styles = theme => ({
   root: {
     boxSizing: 'border-box',
     display: 'flex',
@@ -36,30 +36,21 @@ const SimulationRouteSwitch = ({ classes, match: { path } }) => (
           path={`${path}/:simulationId/Execution/:executionId/Rendering/:renderingId?/:action?`}
           component={Guide}
         />
-        <Route
-          path={`${path}/:simulationId/Execution/:executionId?/:action?`}
-          component={Guide}
-        />
-        <Route
-          path={`${path}/:simulationId?/:action?`}
-          component={Guide}
-        />
+        <Route path={`${path}/:simulationId/Execution/:executionId?/:action?`} component={Guide} />
+        <Route path={`${path}/:simulationId?/:action?`} component={Guide} />
       </Switch>
     </div>
     <div className={classes.detail}>
       <Switch>
         <Route
-          path={`${path}/:simulationId/Execution/:executionId/Rendering`}
+          path={`${path}/:simulationId/Execution/:executionId/Rendering/:renderingId?/:action?`}
           component={Rendering}
         />
         <Route
-          path={`${path}/:simulationId/Execution`}
+          path={`${path}/:simulationId/Execution/:executionId?/:action?`}
           component={Execution}
         />
-        <Route
-          path={path}
-          component={Simulation}
-        />
+        <Route path={`${path}/:simulationId?/:action?`} component={Simulation} />
       </Switch>
     </div>
   </div>

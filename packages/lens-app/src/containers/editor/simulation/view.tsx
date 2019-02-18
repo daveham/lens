@@ -4,7 +4,8 @@ import { Switch, Route } from 'react-router-dom';
 import { IThumbnailDescriptor } from 'src/interfaces';
 import { backupUrl } from 'src/helpers';
 
-import simulationListRenderFunction from './simulationList';
+import simulationEmptyStateRenderFunction from './simulationEmptyState';
+// import simulationListRenderFunction from './simulationList';
 import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
 import simulationShowRenderFunction from './simulationShow';
@@ -62,7 +63,7 @@ class View extends React.Component<IProps, any> {
           <Route path={`${path}/:simulationId/delete`} render={simulationDeleteRenderFunction} />
           <Route path={`${path}/:simulationId/edit`} render={simulationEditRenderFunction} />
           <Route path={`${path}/:simulationId`} render={simulationShowRenderFunction} />
-          <Route path={path} render={simulationListRenderFunction} />
+          <Route path={path} render={simulationEmptyStateRenderFunction} />
         </Switch>
       </div>
     );

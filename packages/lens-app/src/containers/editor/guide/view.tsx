@@ -8,6 +8,7 @@ const debug = _debug('lens:editor:guide:view');
 
 interface IProps {
   match: any;
+  history: any;
   title?: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
@@ -91,6 +92,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
       match: {
         params: { sourceId },
       },
+      history,
     } = this.props;
     const { simulationId, executionId, renderingId } = params;
 
@@ -99,17 +101,31 @@ export class EditorGuideView extends React.Component<IProps, any> {
 
     switch (active) {
       case controlSegmentKeys.simulation:
-        path = `${path}/${isNewAction ? controlSegmentActions.new : simulationId}`;
+        if (isNewAction) {
+          path = `${path}/${controlSegmentActions.new}`;
+        } else if (simulationId) {
+          path = `${path}/${simulationId}`;
+        }
         break;
       case controlSegmentKeys.execution:
-        path = `${path}/${simulationId}/Execution/${
-          isNewAction ? controlSegmentActions.new : executionId
-        }`;
+        if (isNewAction) {
+          path = `${path}/${simulationId}/Execution/${controlSegmentActions.new}`;
+        } else if (executionId) {
+          path = `${path}/${simulationId}/Execution/${executionId}`;
+        } else {
+          path = `${path}/${simulationId}/Execution`;
+        }
         break;
       case controlSegmentKeys.rendering:
-        path = `${path}/${simulationId}/Execution/${executionId}/Rendering/${
-          isNewAction ? controlSegmentActions.new : renderingId
-        }`;
+        if (isNewAction) {
+          path = `${path}/${simulationId}/Execution/${executionId}/Rendering/${
+            controlSegmentActions.new
+          }`;
+        } else if (renderingId) {
+          path = `${path}/${simulationId}/Execution/${executionId}/Rendering/${renderingId}`;
+        } else {
+          path = `${path}/${simulationId}/Execution/${executionId}/Rendering`;
+        }
         break;
     }
 
@@ -118,6 +134,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
     }
 
     debug('handleControlParametersChange', { path });
+    history.push(path);
   };
 }
 

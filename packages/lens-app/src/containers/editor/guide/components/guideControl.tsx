@@ -329,9 +329,9 @@ export class GuideControl extends React.Component<IProps, IState> {
       const { simulation, execution, rendering } = panelSelections;
       this.props.onControlParametersChanged(
         {
-          simulationId: simulation ? simulation.id : -1,
-          executionId: execution ? execution.id : -1,
-          renderingId: rendering ? rendering.id : -1,
+          simulationId: simulation ? simulation.id : null,
+          executionId: execution ? execution.id : null,
+          renderingId: rendering ? rendering.id : null,
         },
         activePanel,
         action,

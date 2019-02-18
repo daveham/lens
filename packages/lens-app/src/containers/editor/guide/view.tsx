@@ -49,15 +49,16 @@ export class EditorGuideView extends React.Component<IProps, any> {
     let resolvedExecutionId = executionId;
     let resolvedRenderingId = renderingId;
     let resolvedAction = action;
-    if (renderingId === 'new') {
-      resolvedAction = action;
-      resolvedRenderingId = null;
-    } else if (executionId === 'new') {
-      resolvedAction = action;
-      resolvedExecutionId = null;
-    } else if (simulationId === 'new') {
-      resolvedAction = action;
-      resolvedSimulationId = null;
+    const re = /^[a-z]+$/;
+    if (renderingId && re.test(renderingId)) {
+      resolvedAction = renderingId;
+      resolvedRenderingId = undefined;
+    } else if (executionId && re.test(executionId)) {
+      resolvedAction = executionId;
+      resolvedExecutionId = undefined;
+    } else if (simulationId && re.test(simulationId)) {
+      resolvedAction = simulationId;
+      resolvedSimulationId = undefined;
     }
 
     return (

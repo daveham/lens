@@ -9,7 +9,7 @@ const debug = _debug('lens:editor:guide:view');
 interface IProps {
   match: any;
   history: any;
-  title?: string;
+  photo?: string;
   thumbnailUrl?: string;
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
@@ -38,7 +38,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
 
   public render(): any {
     const {
-      title,
+      photo,
       thumbnailUrl,
       simulations,
       match: {
@@ -64,7 +64,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
 
     return (
       <GuideControl
-        title={title}
+        title={photo}
         thumbnailUrl={thumbnailUrl}
         simulations={simulations}
         sourceId={sourceId}

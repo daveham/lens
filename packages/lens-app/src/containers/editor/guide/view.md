@@ -1,6 +1,6 @@
 ```jsx
 <EditorGuideView
-  title='Photo Title'
+  photo='Photo Title'
   history={{ push: () => {} }}
   match={{ params: {
     sourceId: '1001',

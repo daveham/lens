@@ -70,24 +70,33 @@ const styles: any = theme => {
       },
     },
     badgeContent: {
-      transform: 'scale(1) translate(-130%, 0%)',
+      transform: 'scale(1) translate(-130%, 80%)',
       transformOrigin: '0% 0%',
       color: theme.palette.primary.contrastText,
       backgroundColor: theme.palette.primary.dark,
-      opacity: 0.6,
+      opacity: 0.5,
       right: 'auto',
     },
     expansionHeadingContainer: {
-      flexBasis: '30%',
-      flexShrink: 0,
+      width: '100%',
       paddingLeft: unit * 2,
+      position: 'relative',
+      left: -4,
+      top: -8,
     },
     expansionHeading: {
       color: theme.palette.primary.contrastText,
-      fontWeight: 500,
+      fontWeight: 400,
+      fontSize: '11px',
+      opacity: 0.6,
     },
     expansionSecondaryHeading: {
       color: theme.palette.primary.contrastText,
+      position: 'relative',
+      left: 10,
+      top: 0,
+      fontWeight: 500,
+      fontSize: '14px',
     },
     detailsContent: {
       width: '100%',
@@ -761,12 +770,12 @@ export class GuideControl extends React.Component<IProps, IState> {
             <Badge badgeContent={items.length} classes={{ badge: classes.badgeContent }}>
               <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
             </Badge>
+            {currentItem && (
+              <Typography className={classes.expansionSecondaryHeading}>
+                {currentItem.name}
+              </Typography>
+            )}
           </div>
-          {currentItem && (
-            <Typography className={classes.expansionSecondaryHeading}>
-              {currentItem.name}
-            </Typography>
-          )}
         </ExpansionPanelSummary>
         {isPanelLocked ? this.renderLockedDetails(key) : this.renderDetails(key, items)}
         {isPanelLocked && this.renderActions()}

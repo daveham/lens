@@ -171,6 +171,8 @@ interface IState {
   panelSelections: IPanelSelections;
   locked: boolean;
   action?: string;
+  delayedAction?: string;
+  delayedUnlock?: boolean;
 }
 
 const KEY_SIMULATION = 'simulation';
@@ -328,7 +330,7 @@ export class GuideControl extends React.Component<IProps, IState> {
       this.setState({ ...determineSelections(this.props) });
     }
 
-    const { panelSelections, activePanel, action } = this.state;
+    const { panelSelections, activePanel, action, delayedAction, delayedUnlock } = this.state;
     if (
       simulations &&
       (prevState.panelSelections !== panelSelections ||
@@ -345,6 +347,14 @@ export class GuideControl extends React.Component<IProps, IState> {
         activePanel,
         action,
       );
+    }
+
+    if (delayedAction && !prevState.delayedAction) {
+      setTimeout(() => this.setState({ action: delayedAction, delayedAction: '' }), 250);
+    }
+
+    if (delayedUnlock && !prevState.delayedUnlock) {
+      setTimeout(() => this.setState({ action: '', delayedUnlock: false }), 250);
     }
   }
 
@@ -441,20 +451,20 @@ export class GuideControl extends React.Component<IProps, IState> {
       this.setSelectedItem(lowerKey, null, { locked: true, action });
     } else {
       const actionChanges =
-        action && lockingActions.includes(action) ? { locked: true, action } : {};
+        action && lockingActions.includes(action) ? { locked: true, delayedAction: action } : {};
       this.setSelectedItem(key, item, actionChanges);
     }
   };
 
   private handleCancelLock = () => {
     debug('handleCancelLock');
-    this.setState({ locked: false, action: '' });
+    this.setState({ locked: false, delayedUnlock: true });
     this.props.onControlActionCancel();
   };
 
   private handleCommitLock = () => {
     debug('handleCommitLock');
-    this.setState({ locked: false, action: '' });
+    this.setState({ locked: false, delayedUnlock: true });
     this.props.onControlActionSubmit();
   };
 
@@ -755,12 +765,19 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   private renderPanel(key, items) {
     const { classes } = this.props;
-    const { expandedPanel, activePanel, panelSelections, locked } = this.state;
+    const {
+      expandedPanel,
+      activePanel,
+      panelSelections,
+      locked,
+      delayedAction,
+      delayedUnlock,
+    } = this.state;
     const currentItem = panelSelections[key];
     const { title } = panelDetails[key];
 
     const isPanelLocked = locked && activePanel === key;
-    const expanded = expandedPanel === key || isPanelLocked;
+    const expanded = !delayedAction && (expandedPanel === key || isPanelLocked);
     debug('renderPanel', { key, isPanelLocked, activePanel, expanded });
 
     return (
@@ -777,8 +794,10 @@ export class GuideControl extends React.Component<IProps, IState> {
             )}
           </div>
         </ExpansionPanelSummary>
-        {isPanelLocked ? this.renderLockedDetails(key) : this.renderDetails(key, items)}
-        {isPanelLocked && this.renderActions()}
+        {(isPanelLocked || delayedUnlock) && !delayedAction
+          ? this.renderLockedDetails(key)
+          : this.renderDetails(key, items)}
+        {(isPanelLocked || delayedUnlock) && this.renderActions()}
       </ExpansionPanel>
     );
   }

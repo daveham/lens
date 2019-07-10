@@ -1,4 +1,6 @@
-export const styles = (theme) => ({
+import { createStyles } from '@material-ui/core/styles';
+
+export const styles = (theme) => createStyles({
   root: {
     padding: `0 ${theme.spacing.unit * 2}px`,
     width: '100%',

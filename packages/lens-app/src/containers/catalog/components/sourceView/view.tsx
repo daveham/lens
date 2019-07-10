@@ -7,7 +7,7 @@ import {
   makeImageKey,
   makeStatsKey
 } from '@lens/image-descriptors';
-import Loading from 'components/loading';
+import { Loading } from 'components/loading';
 import {
   IStatsDescriptor,
   IImageDescriptor,
@@ -130,16 +130,17 @@ function calcTileKeysAndMissingDescriptors(sourceId: string, displayImages: any,
   const lastX = Math.min(tilesWide, maxX) - 1;
   const lastY = Math.min(tilesHigh, maxY) - 1;
 
-  const pendingImageDescriptors = [];
-  const displayImageKeys = [];
+  const pendingImageDescriptors: Array<IImageDescriptor> = [];
+  const displayImageKeys: Array<string> = [];
   for (let yIndex = y; yIndex <= lastY; yIndex++) {
     const tileHeight = yIndex === tilesHigh - 1 ? lastHeight : res;
     for (let xIndex = x; xIndex <= lastX; xIndex++) {
       const left = xIndex * res;
       const top = yIndex * res;
       const tileWidth = xIndex === tilesWide - 1 ? lastWidth : res;
-      const imageDescriptor = makeTileImageDescriptor(sourceId, res, left, top, tileWidth, tileHeight);
-      const imageKey = makeImageKey(imageDescriptor);
+      const imageDescriptor: IImageDescriptor =
+        makeTileImageDescriptor(sourceId, res, left, top, tileWidth, tileHeight);
+      const imageKey: string = makeImageKey(imageDescriptor);
       displayImageKeys.push(imageKey);
       if (!displayImages[imageKey]) {
         pendingImageDescriptors.push(imageDescriptor);
@@ -178,7 +179,7 @@ function calcInitialState(props: IProps): IState {
   };
 }
 
-class View extends React.Component<IProps, IState> {
+class SourceViewCmp extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -254,7 +255,8 @@ class View extends React.Component<IProps, IState> {
     }
 
     const { selectedStatsDescriptor } = this.state;
-    if (prevState.selectedStatsDescriptor !== selectedStatsDescriptor) {
+    if (selectedStatsDescriptor &&
+      prevState.selectedStatsDescriptor !== selectedStatsDescriptor) {
       const statsKey = makeStatsKey(selectedStatsDescriptor);
       if (!this.props.tileStats[statsKey]) {
         this.requestTileStat(selectedStatsDescriptor);
@@ -301,7 +303,7 @@ class View extends React.Component<IProps, IState> {
           <div className={classes.detailsContainer}>
             <ImageDetails>
               <div className={classes.imageAndDetails}>
-                <img className={classes.thumbnail} src={fullUrl}/>
+                <img alt='thumbnail' className={classes.thumbnail} src={fullUrl}/>
                 {this.renderStats()}
               </div>
             </ImageDetails>
@@ -427,4 +429,4 @@ class View extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(View);
+export const SourceView = withStyles(styles)(SourceViewCmp);

@@ -4,6 +4,6 @@
     <option name="languageLevel" value="JSX" />
   </component>
   <component name="WebPackConfiguration">
-    <option name="path" value="$PROJECT_DIR$/packages/lens-app/config/webpack.config.dev.js" />
+    <option name="path" value="$PROJECT_DIR$/packages/lens-app/config/webpack.config.js" />
   </component>
 </project>

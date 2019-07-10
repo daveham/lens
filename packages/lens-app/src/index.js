@@ -29,7 +29,7 @@ render(
       </ApolloProvider>
     </Provider>
   </Router>,
-  target
+  target,
 );
 
 registerServiceWorker();

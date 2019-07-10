@@ -21,7 +21,7 @@ export const renderMainListItems = (pathname) => (
       selected={pathname === '/'}
     >
       <ListItemIcon><CameraIcon /></ListItemIcon>
-      <ListItemText primary="Home" />
+      <ListItemText primary='Home' />
     </ListItem>
     <ListItem
       button
@@ -29,7 +29,7 @@ export const renderMainListItems = (pathname) => (
       selected={pathname.includes('/Catalog')}
     >
       <ListItemIcon><CameraRollIcon /></ListItemIcon>
-      <ListItemText primary="Catalog" />
+      <ListItemText primary='Catalog' />
     </ListItem>
     <ListItem
       button
@@ -37,7 +37,7 @@ export const renderMainListItems = (pathname) => (
       selected={pathname === '/Activity'}
     >
       <ListItemIcon><AutoRenewIcon /></ListItemIcon>
-      <ListItemText primary="Activity" />
+      <ListItemText primary='Activity' />
     </ListItem>
     <ListItem
       button
@@ -45,7 +45,7 @@ export const renderMainListItems = (pathname) => (
       selected={pathname === '/Statistics'}
     >
       <ListItemIcon><BarChartIcon /></ListItemIcon>
-      <ListItemText primary="Statistics" />
+      <ListItemText primary='Statistics' />
     </ListItem>
     <ListItem
       button
@@ -53,7 +53,7 @@ export const renderMainListItems = (pathname) => (
       selected={pathname === '/Maintenance'}
     >
       <ListItemIcon><BuildIcon /></ListItemIcon>
-      <ListItemText primary="Maintenance" />
+      <ListItemText primary='Maintenance' />
     </ListItem>
   </div>
 );
@@ -67,7 +67,7 @@ export const renderSecondaryListItems = (pathname) => (
       selected={pathname.includes('/Recent/Today')}
     >
       <ListItemIcon><CollectionsIcon /></ListItemIcon>
-      <ListItemText primary="Today" />
+      <ListItemText primary='Today' />
     </ListItem>
     <ListItem
       button
@@ -75,7 +75,7 @@ export const renderSecondaryListItems = (pathname) => (
       selected={pathname.includes('/Recent/Yesterday')}
     >
       <ListItemIcon><CollectionsIcon /></ListItemIcon>
-      <ListItemText primary="Yesterday" />
+      <ListItemText primary='Yesterday' />
     </ListItem>
     <ListItem
       button
@@ -83,7 +83,7 @@ export const renderSecondaryListItems = (pathname) => (
       selected={pathname.includes('/Recent/ThisWeek')}
     >
       <ListItemIcon><CollectionsIcon /></ListItemIcon>
-      <ListItemText primary="This Week" />
+      <ListItemText primary='This Week' />
     </ListItem>
   </div>
 );

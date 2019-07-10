@@ -52,7 +52,7 @@ interface IState {
 }
 
 class Menu extends React.Component<IProps, IState> {
-  private preHoverChannel: string;
+  private preHoverChannel: string = '';
 
   constructor(props: IProps) {
     super(props);

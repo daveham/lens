@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import classNames from 'classnames';
-import Loading from '../loading';
+import { Loading } from '../loading';
 import { default as getConfig } from 'src/config';
 import styles from './styles.scss';
 

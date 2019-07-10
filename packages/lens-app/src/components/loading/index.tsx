@@ -19,5 +19,3 @@ export const Loading = ({ name, pulse }: ILoadingProps) => {
     </div>
   );
 };
-
-export default Loading;

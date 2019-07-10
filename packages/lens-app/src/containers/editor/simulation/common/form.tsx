@@ -127,7 +127,7 @@ const Form = ({
               label='Name'
               margin='normal'
               multiline
-              onChange={(isEdit || isNew) ? onNameChange : null}
+              onChange={(isEdit || isNew) ? onNameChange : undefined}
               value={name}
               fullWidth
               required={isEdit || isNew}

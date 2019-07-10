@@ -17,7 +17,7 @@ interface IProps {
   classes?: any;
 }
 
-export default withStyles(styles)(({ classes }: IProps) => {
+export const ResSmall = withStyles(styles)(({ classes }: IProps) => {
   return (
     <svg className={classes.svgResButtonBox}>
       <g className={classes.resButtonRect}>

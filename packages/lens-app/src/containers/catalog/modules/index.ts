@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { ACTIONS } from './actions';
-import { InsertableReducer } from 'modules/types';
+import { InsertableReducerType } from 'modules/types';
 
 // reducers
 const loading = (state = false, { type }) => {
@@ -38,12 +38,18 @@ const sources = (state = { ids: [], byIds: {} }, { type, payload}) => {
   }
 };
 
-const catalogReducer: InsertableReducer = combineReducers({
+const catalogModuleReducer = combineReducers({
   loading,
   name,
   sources,
 });
 
-catalogReducer.reducer = 'catalog';
+export type CatalogModuleState = ReturnType<typeof catalogModuleReducer>;
+export type InsertableCatalogModuleReducer = typeof catalogModuleReducer
+  & InsertableReducerType;
 
-export default catalogReducer;
+const insertableCatalogModuleReducer: InsertableCatalogModuleReducer = catalogModuleReducer;
+
+insertableCatalogModuleReducer.reducer = 'catalog';
+
+export default insertableCatalogModuleReducer;

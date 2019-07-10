@@ -28,7 +28,7 @@ interface IState {
   resolution: number;
 }
 
-class SourcesView extends React.Component<IProps, IState> {
+class SourcesViewCmp extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
@@ -88,4 +88,4 @@ class SourcesView extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(SourcesView);
+export const SourcesView = withStyles(styles)(SourcesViewCmp);

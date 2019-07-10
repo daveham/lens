@@ -23,7 +23,8 @@ const styles = theme => {
   };
 };
 
-const ExpansionPanelSummary = withStyles(styles)(props => <MuiExpansionPanelSummary {...props} />);
+const ExpansionPanelSummary = withStyles(styles)((props: any) =>
+  <MuiExpansionPanelSummary {...props} />);
 
 // @ts-ignore
 ExpansionPanelSummary.muiName = 'ExpansionPanelSummary';

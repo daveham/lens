@@ -24,7 +24,7 @@ class ToolMultiButton extends React.Component<IProps, any> {
       count = children.length;
     }
 
-    const buttons = [];
+    const buttons: Array<any> = [];
     for (let i = 0; i < count; i++) {
       const buttonStyles = classNames(styles.button,
         disabled && styles.disabled,

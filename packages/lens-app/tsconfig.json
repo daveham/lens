@@ -1,37 +1,38 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "outDir": "build/dist",
-    "sourceMap": true,
-    "module": "esnext",
-    "target": "es2016",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
     "moduleResolution": "node",
-    "lib": [
-      "es7",
-      "dom"
-    ],
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "baseUrl": "./src/",
     "paths": {
-      "react": ["node_modules/@types/react"],
-      "src/*": ["src/*"],
-      "config/*": ["config/*"],
-      "containers/*": ["src/containers/*"],
-      "catalog/*": ["src/containers/catalog/*"],
-      "editor/*": ["src/containers/editor/*"],
-      "components/*": ["src/components/*"],
-      "modules/*": ["src/modules/*"],
-      "sagas/*": ["src/sagas/*"]
+      "src/*": ["*"],
+      "config/*": ["../config/*"],
+      "containers/*": ["./containers/*"],
+      "catalog/*": ["./containers/catalog/*"],
+      "editor/*": ["./containers/editor/*"],
+      "components/*": ["./components/*"],
+      "modules/*": ["./modules/*"],
+      "sagas/*": ["./sagas/*"]
     }
   },
   "include": [
-    "src/**/*"
+    "src"
   ],
   "exclude": [
     "dist",

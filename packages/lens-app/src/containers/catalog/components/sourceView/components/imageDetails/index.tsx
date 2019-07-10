@@ -31,7 +31,7 @@ const styles: any = (theme) => {
   };
 };
 
-export class ImageDetails extends React.Component<IProps, IState> {
+export class ImageDetailsCmp extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = { anchor: null };
@@ -76,4 +76,4 @@ export class ImageDetails extends React.Component<IProps, IState> {
   private handleClose = () => this.setState({ anchor: null });
 }
 
-export default withStyles(styles)(ImageDetails);
+export const ImageDetails = withStyles(styles)(ImageDetailsCmp);

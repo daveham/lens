@@ -52,7 +52,7 @@ interface IProps {
   disabled?: boolean;
   label?: string;
   displayProp: string;
-  items: any[];
+  items: ReadonlyArray<any>;
   selectedIndex: number;
   onListChanged: (list: any[]) => void;
   onSelectionChanged: (index: number) => void;
@@ -96,7 +96,7 @@ class AdjustableList extends React.Component<IProps, any> {
     }
   }
 
-  public render(): any {
+  public render(): JSX.Element {
     const {
       classes,
       disabled,

@@ -15,7 +15,7 @@ import {
 import { ensureCatalogTitle } from '../../modules/actions';
 import { ensureStats, deleteStats } from 'modules/stats/actions';
 import { ensureImage, ensureImages } from 'modules/images/actions';
-import View, { displayTileResolution } from './view';
+import { SourceView as View, displayTileResolution } from './view';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:sourceView:index');
@@ -54,4 +54,4 @@ const mapStateToProps = (state, { match: { params: { id, res } } }) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(View);
+export const SourceView = connect(mapStateToProps, mapDispatchToProps)(View);

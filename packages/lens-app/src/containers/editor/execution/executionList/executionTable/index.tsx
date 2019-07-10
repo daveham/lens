@@ -33,7 +33,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      activeId: null
+      activeId: 0
     };
   }
 
@@ -67,7 +67,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
 
   private handleMouseLeave = () => {
     if (this.state.activeId) {
-      this.setState({ activeId: null });
+      this.setState({ activeId: 0 });
     }
   };
 

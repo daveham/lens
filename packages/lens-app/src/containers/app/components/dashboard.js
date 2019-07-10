@@ -171,13 +171,13 @@ class Dashboard extends Component {
         <CssBaseline />
         <div className={classes.root}>
           <AppBar
-            position="absolute"
+            position='absolute'
             className={cx(classes.appBar, this.state.open && classes.appBarShift)}
           >
             <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
               <IconButton
-                color="inherit"
-                aria-label="Open drawer"
+                color='inherit'
+                aria-label='Open drawer'
                 onClick={this.handleDrawerOpen}
                 className={cx(
                   classes.menuButton,
@@ -186,7 +186,7 @@ class Dashboard extends Component {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" color="inherit" noWrap className={classes.title}>
+              <Typography variant='h6' color='inherit' noWrap className={classes.title}>
                 {appTitle}
               </Typography>
               <CommandBar
@@ -198,7 +198,7 @@ class Dashboard extends Component {
             </Toolbar>
           </AppBar>
           <Drawer
-            variant="permanent"
+            variant='permanent'
             classes={{
               paper: cx(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
             }}

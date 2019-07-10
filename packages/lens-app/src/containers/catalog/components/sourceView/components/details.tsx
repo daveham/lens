@@ -70,7 +70,7 @@ interface IProps {
   stats: any;
 }
 
-class Details extends Component<IProps, any> {
+class DetailsCmp extends Component<IProps, any> {
   public render(): any {
     const { classes } = this.props;
 
@@ -112,4 +112,4 @@ class Details extends Component<IProps, any> {
   };
 }
 
-export default withStyles(styles)(Details);
+export const Details = withStyles(styles)(DetailsCmp);

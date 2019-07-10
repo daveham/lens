@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { ReactReduxContext } from 'react-redux';
 import { injectReducers, injectSagas, injectCommands } from './store/registry/actions';
+
+// import _debug from 'debug';
+// const debug = _debug('lens:asyncRoute');
 
 const moduleDefaultExport = module => module.default || module;
 
@@ -14,13 +17,7 @@ const esModule = (module, forceArray) => {
 };
 
 export default function asyncRoute({ getComponent, getReducers, getSagas, getCommands }) {
-  return class AsyncRoute extends Component {
-    static contextTypes = {
-      store: PropTypes.shape({
-        dispatch: PropTypes.func.isRequired
-      })
-    };
-
+  class AsyncRoute extends Component {
     static Component = null;
     static ReducersLoaded = false;
     static SagasLoaded = false;
@@ -59,7 +56,7 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
           getReducers()
           .then(module => {
             const reducers = esModule(module, true);
-            this.context.store.dispatch(injectReducers(reducers));
+            this.props.store.dispatch(injectReducers(reducers));
             AsyncRoute.ReducersLoaded = true;
           })
         );
@@ -70,7 +67,7 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
           getSagas()
           .then(module => {
             const sagas = esModule(module);
-            this.context.store.dispatch(injectSagas(sagas));
+            this.props.store.dispatch(injectSagas(sagas));
             AsyncRoute.SagasLoaded = true;
           })
         );
@@ -81,7 +78,7 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
           getCommands()
           .then(module => {
             const commands = esModule(module);
-            this.context.store.dispatch(injectCommands(commands));
+            this.props.store.dispatch(injectCommands(commands));
             AsyncRoute.CommandsLoaded = true;
           })
         );
@@ -106,5 +103,15 @@ export default function asyncRoute({ getComponent, getReducers, getSagas, getCom
       const { Component } = this.state;
       return Component ? <Component {...this.props} /> : null;
     }
-  };
+  }
+
+  function RouteStoreShim(props) {
+    return (
+      <ReactReduxContext.Consumer>
+        {({ store }) => <AsyncRoute {...props} store={store} />}
+      </ReactReduxContext.Consumer>
+    );
+  }
+
+  return RouteStoreShim;
 }

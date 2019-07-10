@@ -55,6 +55,8 @@ class Trail extends Component<IProps, any> {
   private renderDisabled(): any {
     const { trail } = this.props;
 
+    const trailTypeValue = trail.type ? trailTypeLabels[trail.type] : '';
+
     return (
       <Fragment>
         <ReadOnlyTextField
@@ -68,7 +70,7 @@ class Trail extends Component<IProps, any> {
         <ReadOnlyTextField
           label='Type'
           margin='dense'
-          value={trailTypeLabels[trail.type]}
+          value={trailTypeValue}
           fullWidth
           disabled
         />

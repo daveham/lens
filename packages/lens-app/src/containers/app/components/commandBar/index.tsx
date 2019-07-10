@@ -10,8 +10,8 @@ import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalC
 
 interface ICommand {
   command?: string;
-  flashId?: number;
-  jobId?: number;
+  flashId: number;
+  jobId: number;
 }
 
 interface IProps {

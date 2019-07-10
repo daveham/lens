@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import View from './components/view';
+import { CatalogView } from './components/view';
 import { requestCatalog } from './modules/actions';
 import {
   catalogIsLoading,
@@ -18,4 +18,4 @@ const mapStateToProps = createStructuredSelector({
   thumbnailImageDescriptors,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(View);
+export default connect(mapStateToProps, mapDispatchToProps)(CatalogView);

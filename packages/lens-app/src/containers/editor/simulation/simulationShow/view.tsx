@@ -41,7 +41,7 @@ interface IProps {
 interface IState {
   activeTab: number;
   simulation: ISimulation;
-  hike: IHike;
+  hike?: IHike;
   trails: ReadonlyArray<ITrail>;
   hikers: ReadonlyArray<IHiker>;
   selectedTrailIndex: number;
@@ -78,8 +78,8 @@ class View extends React.Component<IProps, IState> {
     if (prevProps.hike !== hike) {
       this.setState({
         hike,
-        trails: hike.trails,
-        hikers: hike.trails[0].hikers,
+        trails: hike ? hike.trails : [],
+        hikers: hike && hike.trails[0] ? hike.trails[0].hikers : [],
       });
     }
     if (prevProps.simulation !== simulation) {
@@ -179,7 +179,7 @@ class View extends React.Component<IProps, IState> {
     );
   }
 
-  private renderContent(): any {
+  private renderContent(): JSX.Element | undefined {
     const { editMode } = this.props;
     const {
       activeTab,
@@ -191,7 +191,7 @@ class View extends React.Component<IProps, IState> {
     } = this.state;
 
     if (activeTab === 0) {
-      return (
+      return hike && (
         <Hike
           disabled={!editMode}
           hike={hike}
@@ -271,10 +271,10 @@ class View extends React.Component<IProps, IState> {
   };
 
   private handleTrailsSelectionChanged = (index) => {
-    this.setState((prevState) => ({
+    this.setState(({ hike}) => ({
       selectedTrailIndex: index,
       selectedHikerIndex: 0,
-      hikers: prevState.hike.trails[index].hikers,
+      hikers: hike && hike.trails[index] ? hike.trails[index].hikers : [],
     }));
   };
 

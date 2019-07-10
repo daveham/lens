@@ -7,7 +7,7 @@ import { sizeFromViewport, calculateTileDimensions } from '../../utils';
 import MovablePanel from 'components/movablePanel';
 import Selection from './selection';
 import Tile from './tile';
-import TileAnalysis from '../tileAnalysis';
+import { TileAnalysis } from '../tileAnalysis';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:source-tiles');
@@ -27,9 +27,9 @@ interface IProps {
   imageKeys: ReadonlyArray<string>;
   images: {[id: string]: any};
   stats: {[id: string]: any};
-  selectedStatsKey?: string;
-  onSizeChanged?: (left: number, top: number, width: number, height: number) => void;
-  onTileSelectionChanged?: (key: string, top: number, left: number) => void;
+  selectedStatsKey: string;
+  onSizeChanged: (left: number, top: number, width: number, height: number) => void;
+  onTileSelectionChanged: (key: string, top: number, left: number) => void;
 }
 
 interface IState {
@@ -53,7 +53,7 @@ const initialViewport: IViewport = {
   left: 0
 };
 
-class Tiles extends React.Component<IProps, IState> {
+class TilesCmp extends React.Component<IProps, IState> {
   private containerNode: any;
   private controlledResize: () => void;
 
@@ -140,7 +140,7 @@ class Tiles extends React.Component<IProps, IState> {
     const { classes, imageKeys, images, displayTileSpec } = this.props;
     const { res } = displayTileSpec;
 
-    const tiles = [];
+    const tiles: Array<any> = [];
     imageKeys.forEach((key) => {
       const image = images[key];
       if (image) {
@@ -291,4 +291,4 @@ class Tiles extends React.Component<IProps, IState> {
   };
 }
 
-export default withStyles(styles)(Tiles);
+export const Tiles = withStyles(styles)(TilesCmp);

@@ -55,6 +55,8 @@ class Hiker extends Component<IProps, any> {
   private renderDisabled(): any {
     const { hiker } = this.props;
 
+    const hikerTypeValue = hiker.type ? hikerTypeLabels[hiker.type] : '';
+
     return (
       <Fragment>
         <ReadOnlyTextField
@@ -68,7 +70,7 @@ class Hiker extends Component<IProps, any> {
         <ReadOnlyTextField
           label='Type'
           margin='dense'
-          value={hikerTypeLabels[hiker.type]}
+          value={hikerTypeValue}
           fullWidth
           disabled
         />

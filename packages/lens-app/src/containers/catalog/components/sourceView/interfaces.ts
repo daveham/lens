@@ -1,3 +1,4 @@
+// @ts-ignore
 export { IStatsDescriptor, IImageDescriptor } from 'src/interfaces';
 
 export interface ITileSpec {

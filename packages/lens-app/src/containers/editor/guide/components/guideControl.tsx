@@ -16,7 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import { ISimulation, IExecution, IRendering } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
-import Loading from 'src/components/loading';
+import { Loading } from 'components/loading';
 
 import ExpansionPanel from './ExpansionPanel';
 import ExpansionPanelSummary from './ExpansionPanelSummary';
@@ -154,7 +154,7 @@ interface IProps {
   thumbnailUrl?: string;
   simulations?: ReadonlyArray<ISimulation>;
   submitEnabled?: boolean;
-  onControlParametersChanged: (params: object, active: string, action: string) => void;
+  onControlParametersChanged: (params: object, active?: string, action?: string) => void;
   onControlActionSubmit: () => void;
   onControlActionCancel: () => void;
 }
@@ -285,7 +285,7 @@ function determineSelections(props) {
   const { simulations, simulationId = -1, executionId = -1, renderingId = -1, action } = props;
 
   const isNewAction = action === controlSegmentActions.new;
-  let activePanel = null;
+  let activePanel: string = '';
   if (renderingId > -1 || (executionId > -1 && isNewAction)) {
     activePanel = KEY_RENDERING;
   } else if (executionId > -1 || (simulationId > -1 && isNewAction)) {
@@ -294,19 +294,23 @@ function determineSelections(props) {
     activePanel = KEY_SIMULATION;
   }
 
-  const panelSelections = {
-    simulation: null,
-    execution: null,
-    rendering: null,
+  const panelSelections: IPanelSelections = {
+    simulation: undefined,
+    execution: undefined,
+    rendering: undefined,
   };
   if (simulations) {
     panelSelections.simulation = simulations.find(s => s.id === simulationId) || simulations[0];
     if (panelSelections.simulation) {
       const { executions } = panelSelections.simulation;
-      panelSelections.execution = executions.find(e => e.id === executionId) || executions[0];
-      if (panelSelections.execution) {
-        const { renderings } = panelSelections.execution;
-        panelSelections.rendering = renderings.find(r => r.id === renderingId) || renderings[0];
+      if (executions) {
+        panelSelections.execution = executions.find(e => e.id === executionId) || executions[0];
+        if (panelSelections.execution) {
+          const { renderings } = panelSelections.execution;
+          if (renderings) {
+            panelSelections.rendering = renderings.find(r => r.id === renderingId) || renderings[0];
+          }
+        }
       }
     }
   }
@@ -319,7 +323,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      expandedPanel: null,
+      expandedPanel: undefined,
       ...determineSelections(props),
     };
   }
@@ -388,21 +392,24 @@ export class GuideControl extends React.Component<IProps, IState> {
   };
 
   private setSelectedItem = (key, item, changes = {}) => {
-    this.setState(priorState => {
+    this.setState(prevState => {
       const panelSelections = {
-        ...priorState.panelSelections,
+        ...prevState.panelSelections,
         [key]: item,
       };
 
       if (key === KEY_SIMULATION) {
-        panelSelections[KEY_EXECUTION] = item ? getFirstExecution(item) : null;
-        panelSelections[KEY_RENDERING] = item ? getFirstRendering(panelSelections.execution) : null;
+        panelSelections[KEY_EXECUTION] =
+          item ? getFirstExecution(item) : undefined;
+        panelSelections[KEY_RENDERING] =
+          item ? getFirstRendering(panelSelections.execution) : undefined;
       } else if (key === KEY_EXECUTION) {
-        panelSelections[KEY_RENDERING] = item ? getFirstRendering(item) : null;
+        panelSelections[KEY_RENDERING] =
+          item ? getFirstRendering(item) : undefined;
       }
 
       return {
-        expandedPanel: null,
+        expandedPanel: undefined,
         activePanel: key,
         panelSelections,
         ...changes,
@@ -475,10 +482,10 @@ export class GuideControl extends React.Component<IProps, IState> {
     const { panelSelections } = this.state;
     if (key === KEY_EXECUTION) {
       const simulation = panelSelections[KEY_SIMULATION];
-      return simulation ? simulation.executions : [];
+      return simulation ? simulation.executions || [] : [];
     }
     const execution = panelSelections[KEY_EXECUTION];
-    return execution ? execution.renderings : [];
+    return execution ? execution.renderings || [] : [];
   };
 
   private renderHeader(): any {

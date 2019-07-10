@@ -75,6 +75,11 @@ class Hike extends Component<IProps, any> {
   private renderDisabled(): any {
     const { hike } = this.props;
 
+    const hikeTypeValue = hike.type ? hikeTypeLabels[hike.type] : '';
+    const hikeSizeValue = hike.size ? hikeSizeLabels[hike.size] : '';
+    const hikeLoggerValue = hike.logger ? hikeLoggerLabels[hike.logger] : '';
+    const hikeTrackWriterValue = hike.trackWriter ? hikeTrackWriterLabels[hike.trackWriter] : '';
+
     return (
       <Fragment>
         <ReadOnlyTextField
@@ -88,28 +93,28 @@ class Hike extends Component<IProps, any> {
         <ReadOnlyTextField
           label='Type'
           margin='dense'
-          value={hikeTypeLabels[hike.type]}
+          value={hikeTypeValue}
           fullWidth
           disabled
         />
         <ReadOnlyTextField
           label='Size'
           margin='dense'
-          value={hikeSizeLabels[hike.size]}
+          value={hikeSizeValue}
           fullWidth
           disabled
         />
         <ReadOnlyTextField
           label='Logger'
           margin='dense'
-          value={hikeLoggerLabels[hike.logger]}
+          value={hikeLoggerValue}
           fullWidth
           disabled
         />
         <ReadOnlyTextField
           label='Track Writer'
           margin='dense'
-          value={hikeTrackWriterLabels[hike.trackWriter]}
+          value={hikeTrackWriterValue}
           fullWidth
           disabled
         />

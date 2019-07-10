@@ -27,7 +27,7 @@ interface IProps {
   id: string;
   disabled?: boolean;
   menuItems: ReadonlyArray<TMenuItem>;
-  onMenuSelection: (menuItem: TMenuItem) => {};
+  onMenuSelection: (menuItem: TMenuItem) => void;
 }
 
 export const GuideListMenu = ({

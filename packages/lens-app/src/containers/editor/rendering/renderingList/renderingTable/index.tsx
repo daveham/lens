@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 
-import {IRendering } from 'editor/interfaces';
+import { IRendering } from 'editor/interfaces';
 import RowToolbar from 'editor/components/rowToolbar';
 import { timestampFormat } from 'editor/constants';
 import { withStyles } from '@material-ui/core/styles';
@@ -28,11 +28,11 @@ interface IState {
 }
 
 class RenderingTable extends React.Component<IProps, IState> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
 
     this.state = {
-      activeId: null
+      activeId: 0
     };
   }
 
@@ -57,7 +57,7 @@ class RenderingTable extends React.Component<IProps, IState> {
     );
   }
 
-  private handleMouseEnter = (id) => () => {
+  private handleMouseEnter = (id: number) => () => {
     if (this.state.activeId !== id) {
       this.setState({ activeId: id });
     }
@@ -65,7 +65,7 @@ class RenderingTable extends React.Component<IProps, IState> {
 
   private handleMouseLeave = () => {
     if (this.state.activeId) {
-      this.setState({ activeId: null });
+      this.setState({ activeId: 0 });
     }
   };
 

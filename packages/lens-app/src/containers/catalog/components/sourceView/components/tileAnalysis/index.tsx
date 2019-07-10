@@ -94,7 +94,7 @@ const styles: any = (theme) => {
   };
 };
 
-export class TileAnalysis extends React.Component<IProps, IState> {
+export class TileAnalysisCmp extends React.Component<IProps, IState> {
   private relativeMaxMap: any;
 
   constructor(props: IProps) {
@@ -182,4 +182,4 @@ export class TileAnalysis extends React.Component<IProps, IState> {
   };
 }
 
-export default withStyles(styles)(TileAnalysis);
+export const TileAnalysis = withStyles(styles)(TileAnalysisCmp);

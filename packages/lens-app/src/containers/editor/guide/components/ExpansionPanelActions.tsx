@@ -16,4 +16,4 @@ const styles = theme => {
   };
 };
 
-export default withStyles(styles)(props => <MuiExpansionPanelActions {...props} />);
+export default withStyles(styles)((props: any) => <MuiExpansionPanelActions {...props} />);

@@ -22,7 +22,7 @@ interface IProps {
   onToggleSplit: () => void;
 }
 
-class Toolbar extends React.Component<IProps, any> {
+class ToolbarCmp extends React.Component<IProps, any> {
   public render() {
     const multiSvg = [
       <ResLarge key={'large'}/>,
@@ -67,4 +67,4 @@ class Toolbar extends React.Component<IProps, any> {
   }
 }
 
-export default withStyles(styles)(Toolbar);
+export const Toolbar = withStyles(styles)(ToolbarCmp);

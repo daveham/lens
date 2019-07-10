@@ -26,7 +26,7 @@ interface IProps {
   classes?: any;
   disabled?: boolean;
   menuItems: ReadonlyArray<TMenuItem>;
-  onMenuSelection: (menuItem: TMenuItem) => {};
+  onMenuSelection: (menuItem: TMenuItem) => void;
 }
 
 export const GuideMenu = ({ classes, disabled, menuItems, onMenuSelection }: IProps): any => (

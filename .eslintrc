@@ -7,16 +7,15 @@
       "jsx": true
     }
   },
-  "extends": [
-    "eslint:recommended"
-  ],
+  "extends": "standard",
   "plugins": [
     "babel",
-    "promise",
-    "flowtype"
+    "jest",
+    "promise"
   ],
   "env": {
     "browser": true,
+    "jest/globals": true,
     "node": true
   },
   "globals": {
@@ -30,11 +29,12 @@
     "__BASENAME__": false
   },
   "rules": {
+    "comma-dangle": ["error", "only-multiline"],
     "semi": [2, "always"],
     "padded-blocks": 0,
     "space-before-function-paren": 0,
-    "jsx-quotes": [2, "prefer-single"],
-    "flowtype/define-flow-type": 1,
-    "flowtype/use-flow-type": 1
+    "no-console": 0,
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
+    "jsx-quotes": [2, "prefer-single"]
   }
 }

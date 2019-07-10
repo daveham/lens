@@ -36,6 +36,7 @@ const styles: any = ({ spacing: { unit }, palette }) => {
 export interface IMenuItem {
   label: string;
   value?: any;
+  action?: string;
   disabled?: boolean;
 }
 
@@ -53,8 +54,8 @@ interface IProps {
   transformOrigin?: any;
   menuItems: ReadonlyArray<TMenuItem>;
   disabled?: boolean;
-  onMenuSelection: (menuItem: TMenuItem) => {};
-  onMenuEnter?: (id: string) => {};
+  onMenuSelection: (menuItem: TMenuItem) => void;
+  onMenuEnter?: (id: string) => void;
 }
 
 interface IState {
@@ -68,7 +69,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      anchorElement: null,
+      anchorElement: undefined,
       closedAfterOpen: true,
     };
     this.suppressStateChanges = false;
@@ -161,7 +162,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
   private handleMenuClick = ({ currentTarget }) => {
     debug('handleMenuClick', { currentTarget });
     this.setState({
-      anchorElement: null,
+      anchorElement: undefined,
       closedAfterOpen: false,
     });
     // defer actual close to allow for animations
@@ -193,7 +194,7 @@ export class DropDownMenu extends React.Component<IProps, IState> {
     debug('handleMenuItemClick', {
       menuItem: this.props.menuItems[index],
     });
-    this.setState({ anchorElement: null });
+    this.setState({ anchorElement: undefined });
     this.props.onMenuSelection(this.props.menuItems[index]);
   };
 }

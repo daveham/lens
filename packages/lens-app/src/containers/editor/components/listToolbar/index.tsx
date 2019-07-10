@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export default ({ links, iconSize, buttonSize, disableGutters }: IProps) => {
-  const buttons = [];
+  const buttons: Array<JSX.Element> = [];
 
   let buttonStyle;
   let iconStyle;

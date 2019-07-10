@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles } from '@material-ui/core/styles';
 import cx from 'classnames';
 
 const defaultMinSize = 100;
 
-const styles: any = (theme) => ({
+const styles: any = (theme: any) => createStyles({
   root: {
     position: 'absolute',
     zIndex: 200,
@@ -62,10 +62,10 @@ function coercePosition({ minWidth, minHeight, constrainRect }: IMovablePanelPro
 }
 
 export class MovablePanel extends React.Component<IMovablePanelProps, IState> {
-  private trackLeft: number;
-  private trackTop: number;
-  private trackX: number;
-  private trackY: number;
+  private trackLeft: number = 0;
+  private trackTop: number = 0;
+  private trackX: number = 0;
+  private trackY: number = 0;
 
   constructor(props: IMovablePanelProps) {
     super(props);

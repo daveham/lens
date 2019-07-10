@@ -24,8 +24,10 @@ ignore = Name {*.md,LICENSE,*.log}
 ignore = Name {*.sublime-project,*.sublime-workspace,.idea}
 ignore = Name {.git,node_modules,lib,.DS_Store}
 prefer = $root_host
-repeat = 2
 terse = true
+dontchmod = true
+auto = true
+batch = true
 perms = 0
 sshargs = -F $ssh_config
 "
@@ -43,8 +45,10 @@ ignore = Path tiles
 ignore = Name {*.log}
 ignore = Name {.git,node_modules,.DS_Store,dump.*}
 prefer = $root_data_host
-repeat = 2
 terse = true
+dontchmod = true
+auto = true
+batch = true
 perms = 0
 sshargs = -F $ssh_config
 "

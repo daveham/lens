@@ -1,29 +1,37 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
+import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import cx from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:readOnlyTestField');
 
-const styles: any = (theme) => ({
+const styles = (theme) => createStyles({
   input: {
     color: theme.palette.text.primary,
   },
 });
 
 interface IProps {
-  classes?: any;
-  InputProps: any;
+  classes: {
+    input: string;
+  };
+  InputProps?: TextFieldProps["InputProps"];
+  label: TextFieldProps["label"];
+  margin: TextFieldProps["margin"];
+  multiline?: TextFieldProps["multiline"];
+  value: TextFieldProps["value"];
+  fullWidth?: TextFieldProps["fullWidth"];
+  disabled?: TextFieldProps["disabled"];
 }
 
-const ReadOnlyTextField = (props: IProps): any => {
+const ReadOnlyTextField = (props: IProps): JSX.Element => {
   const { classes, InputProps = {}, ...other } = props;
 
   const tmpClasses = InputProps.classes || {};
   const inputPropsClasses = {
     ...InputProps.classes,
-    input: cx(classes.input, { [tmpClasses.input]: tmpClasses.input }),
+    input: cx(classes.input, Boolean(tmpClasses.input) && tmpClasses.input),
   };
 
   const mergedInputProps = {

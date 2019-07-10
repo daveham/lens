@@ -32,7 +32,7 @@ class SimulationTable extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      activeId: null
+      activeId: 0
     };
   }
 
@@ -69,7 +69,7 @@ class SimulationTable extends React.Component<IProps, IState> {
   private handleMouseLeave = (id) => () => {
     // debug('handleMouseLeave', id);
     if (this.state.activeId === id) {
-      this.setState({ activeId: null });
+      this.setState({ activeId: 0 });
     }
   };
 

@@ -30,7 +30,7 @@ const initialState: IState = {
 };
 
 class View extends React.Component<IProps, any> {
-  constructor(props) {
+  constructor(props: IProps) {
     super(props);
     this.state = initialState;
   }
@@ -66,7 +66,7 @@ class View extends React.Component<IProps, any> {
 
     return (
       <Mutation mutation={UPDATE_RENDERING} key={renderingId}>
-        {(updateRendering) => (
+        {(updateRendering: any) => (
           <Form
             isEdit
             name={this.state.name}
@@ -86,7 +86,7 @@ class View extends React.Component<IProps, any> {
     this.setState({ name: this.props.rendering.name });
   }
 
-  private handleSaveClick = (mutateFunc) => () => {
+  private handleSaveClick = (mutateFunc: any) => () => {
     const { renderingId, executionId, onClose } = this.props;
     const { name } = this.state;
     mutateFunc({
@@ -96,7 +96,7 @@ class View extends React.Component<IProps, any> {
     onClose();
   };
 
-  private handleChange = (key: string) => (event) =>
+  private handleChange = (key: string) => (event: any) =>
     // @ts-ignore
     this.setState({ [key]: event.target.value });
 }

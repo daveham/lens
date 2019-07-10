@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Switch as RouterSwitch, Route as RouterRoute } from 'react-router-dom';
-import Loading from 'components/loading';
+import { Switch, Route } from 'react-router-dom';
+import { Loading } from 'components/loading';
 import { editorRoute } from 'src/routes';
-import SourcesView from './sourcesView';
-import SourceView from './sourceView';
+import { SourcesView } from './sourcesView';
+import { SourceView } from './sourceView';
 import { withStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
@@ -30,8 +30,8 @@ interface IProps {
   requestCatalog: () => void;
 }
 
-class AppView extends React.Component<IProps, any> {
-  public componentDidMount(): any {
+class CatalogViewCmp extends React.Component<IProps, any> {
+  componentDidMount(): void {
     const {
       catalogIsLoaded,
       catalogIsLoading,
@@ -43,7 +43,7 @@ class AppView extends React.Component<IProps, any> {
     }
   }
 
-  public render() {
+  render() {
     return (
       <div className={this.props.classes.root}>
         {this.renderLoading()}
@@ -65,14 +65,14 @@ class AppView extends React.Component<IProps, any> {
     return this.props.catalogIsLoaded &&
       (
         <div className={content}>
-          <RouterSwitch>
-            <RouterRoute path={`${path}/Source/:id/:res`} component={SourceView}/>
-            <RouterRoute path={`${path}/:sourceId/Simulation`} component={editorRoute}/>
-            <RouterRoute component={SourcesView}/>
-          </RouterSwitch>
+          <Switch>
+            <Route path={`${path}/Source/:id/:res`} component={SourceView}/>
+            <Route path={`${path}/:sourceId/Simulation`} component={editorRoute}/>
+            <Route component={SourcesView}/>
+          </Switch>
         </div>
       );
   }
 }
 
-export default withStyles(styles)(AppView);
+export const CatalogView = withStyles(styles)(CatalogViewCmp);

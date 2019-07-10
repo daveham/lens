@@ -29,7 +29,7 @@ const styles: any = (theme) => ({
 
 interface IProps {
   classes?: any;
-  loading: boolean;
+  loading?: boolean;
   title: string;
   breadcrumb?: object;
   thumbnailUrl?: string;
@@ -49,14 +49,14 @@ const Header = (props: IProps): any => {
   const bcElement = breadcrumb ? breadcrumb : null;
   const fullUrl = thumbnailUrl
     ? `${getConfig().dataHost}${thumbnailUrl}`
-    : null;
+    : '';
   const toolbar = toolbarLinks
     ? <ListToolbar links={toolbarLinks} />
     : <div />;
 
   return (
     <div className={classes.root}>
-      {thumbnailUrl && <img className={classes.thumbnail} src={fullUrl} />}
+      {thumbnailUrl && <img alt='thumbnail' className={classes.thumbnail} src={fullUrl} />}
       <div className={classes.titleContainer}>
         <Typography variant='h4'>{titleOrLoading}</Typography>
         {bcElement}

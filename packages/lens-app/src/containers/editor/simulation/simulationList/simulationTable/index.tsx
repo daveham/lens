@@ -110,7 +110,7 @@ class SimulationTable extends React.Component<IProps, IState> {
         onMouseLeave={this.handleMouseLeave(row.id)}
       >
         <TableCell>{row.name}</TableCell>
-        <TableCell>{row.executionCount}</TableCell>
+        <TableCell>{row.executionsCount}</TableCell>
         <TableCell
           className={this.props.classes.toolbarCell}
           onMouseEnter={this.handleMouseEnter(row.id)}

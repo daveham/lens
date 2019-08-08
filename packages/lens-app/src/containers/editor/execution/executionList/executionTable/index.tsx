@@ -94,7 +94,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
         onMouseLeave={this.handleMouseLeave}
       >
         <TableCell>{row.name}</TableCell>
-        <TableCell>{row.renderingCount}</TableCell>
+        <TableCell>{row.renderingsCount}</TableCell>
         <TableCell className={this.props.classes.toolbarCell}>{toolbar}</TableCell>
         <TableCell>{moment(row.created).format(timestampFormat)}</TableCell>
         <TableCell>{moment(row.modified).format(timestampFormat)}</TableCell>

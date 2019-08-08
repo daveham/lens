@@ -1,7 +1,10 @@
 import restify from 'restify';
 import corsMiddleware from 'restify-cors-middleware';
 import graphqlHTTP from 'express-graphql';
-import createSchema from '../schema';
+import {
+  createSchema,
+  createDataManager,
+} from '../schema';
 
 import config from '../config';
 
@@ -16,7 +19,7 @@ const cors = corsMiddleware({
 });
 
 const name = 'lens-rest-api';
-const log = bunyan.createLogger({
+const apiLogger = bunyan.createLogger({
   name,
   streams: [{
     level: 'info',
@@ -25,7 +28,7 @@ const log = bunyan.createLogger({
   serializers: bunyan.stdSerializers
 });
 
-const server = restify.createServer({ name, log });
+const server = restify.createServer({ name, log: apiLogger });
 
 server.pre(cors.preflight);
 server.use(cors.actual);
@@ -33,7 +36,7 @@ server.use(cors.actual);
 server.use(restify.plugins.bodyParser());
 
 server.on('uncaughtException', (req, res, route, err) => {
-  log.error(err.stack);
+  apiLogger.error(err.stack);
   res.send(err);
 });
 
@@ -46,17 +49,22 @@ server.get( /\/tiles\//, restify.plugins.serveStatic({
   directory: '/data'
 }));
 
-const schema = createSchema({ log: (e) => log.error(e) });
+createDataManager().then((mgr) => {
+  const schema = createSchema(({
+    logger: { log: (err) => apiLogger.error(err) },
+    dataManager: mgr,
+  }));
 
-server.post('/graphql', graphqlHTTP({
-  schema,
-  graphiql: false
-}));
+  server.post('/graphql', graphqlHTTP({
+    schema,
+    graphiql: false
+  }));
 
-server.get('/graphql', graphqlHTTP({
-  schema,
-  graphiql: true
-}));
+  server.get('/graphql', graphqlHTTP({
+    schema,
+    graphiql: true
+  }));
+});
 
 server.listen(config.server_port, config.server_host, () => {
   debug(`${server.name} listening at ${server.url}`);

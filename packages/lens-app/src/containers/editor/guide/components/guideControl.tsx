@@ -335,8 +335,9 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     const { panelSelections, activePanel, action, delayedAction, delayedUnlock } = this.state;
+    debug('componentDidUpdate', { action, delayedAction });
     if (
-      simulations &&
+      // simulations &&
       (prevState.panelSelections !== panelSelections ||
         prevState.activePanel !== activePanel ||
         prevState.action !== action)
@@ -437,6 +438,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     debug('handleGuideMenuSelection', { menuItem });
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
+      debug('create a new simulation item');
       this.setSelectedItem(controlSegmentKeys.simulation, null, { locked: true, action });
     }
   };

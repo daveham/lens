@@ -13,7 +13,7 @@ export interface IExecution {
   modified: number;
   simulationId: number;
   name: string;
-  renderingCount: number;
+  renderingsCount: number;
   renderings?: ReadonlyArray<IRendering>;
 }
 
@@ -23,7 +23,7 @@ export interface ISimulation {
   created: number;
   modified: number;
   name: string;
-  executionCount: number;
+  executionsCount: number;
   executions?: ReadonlyArray<IExecution>;
 }
 

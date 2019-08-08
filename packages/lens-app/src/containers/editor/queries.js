@@ -18,7 +18,7 @@ export const GET_SIMULATION = gql`
       modified
       sourceId
       name
-      executionCount
+      executionsCount
     }
   }
 `;
@@ -39,7 +39,7 @@ export const GET_SIMULATIONS = gql`
           name
         }
       }
-      executionCount
+      executionsCount
     }
   }
 `;
@@ -88,7 +88,7 @@ export const GET_EXECUTION = gql`
       modified
       simulationId
       name
-      renderingCount
+      renderingsCount
     }
   }
 `;
@@ -101,7 +101,7 @@ export const GET_EXECUTIONS = gql`
         created
         modified
         name
-        renderingCount
+        renderingsCount
       }
       simulationName
     }

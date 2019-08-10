@@ -4,14 +4,14 @@ import _debug from 'debug';
 const debug = _debug('lens:editor:queries');
 
 export const GET_BREADCRUMB_NAMES = gql`
-  query getBreadcrumbNames($simulationId: Int, $executionId: Int, $renderingId: Int) {
+  query getBreadcrumbNames($simulationId: String, $executionId: String, $renderingId: String) {
     getBreadcrumbNames(input: { simulationId: $simulationId,
       executionId: $executionId, renderingId: $renderingId })
   }
 `;
 
 export const GET_SIMULATION = gql`
-  query getSimulation($id: Int!) {
+  query getSimulation($id: String!) {
     getSimulation(id: $id) {
       id
       created
@@ -81,7 +81,7 @@ export function getSimulationsRefetchQueries(sourceId) {
 }
 
 export const GET_EXECUTION = gql`
-  query getExecution($id: Int!) {
+  query getExecution($id: String!) {
     getExecution(id: $id) {
       id
       created
@@ -94,7 +94,7 @@ export const GET_EXECUTION = gql`
 `;
 
 export const GET_EXECUTIONS = gql`
-  query getExecutions($simulationId: Int!) {
+  query getExecutions($simulationId: String!) {
     getExecutions(simulationId: $simulationId) {
       items {
         id
@@ -109,7 +109,7 @@ export const GET_EXECUTIONS = gql`
 `;
 
 export const CREATE_EXECUTION = gql`
-  mutation CreateExecution($simulationId: Int!, $name: String!) {
+  mutation CreateExecution($simulationId: String!, $name: String!) {
     createExecution(input: { simulationId: $simulationId, name: $name }) {
       id
       simulationId
@@ -160,7 +160,7 @@ export function getAddExecutionRefetchQueries(sourceId, simulationId) {
 }
 
 export const GET_RENDERING = gql`
-  query getRendering($id: Int!) {
+  query getRendering($id: String!) {
     getRendering(id: $id) {
       id
       created
@@ -173,7 +173,7 @@ export const GET_RENDERING = gql`
 `;
 
 export const GET_RENDERINGS = gql`
-  query getRenderings($executionId: Int!) {
+  query getRenderings($executionId: String!) {
     getRenderings(executionId: $executionId) {
       items {
         id
@@ -188,7 +188,7 @@ export const GET_RENDERINGS = gql`
 `;
 
 export const CREATE_RENDERING = gql`
-  mutation CreateRendering($executionId: Int!, $simulationId: Int!, $name: String!) {
+  mutation CreateRendering($executionId: String!, $simulationId: String!, $name: String!) {
     createRendering(input: { executionId: $executionId, simulationId: $simulationId, name: $name }) {
       id
       executionId

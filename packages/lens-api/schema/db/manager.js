@@ -26,15 +26,17 @@ class Manager {
       .then(() => simulation);
   }
 
-  getSimulation(id) {
+  getSimulation(id, deep = true) {
     return this.db.simulations.get(id)
       .then(simulation => {
-        return this.getExecutions(simulation.id)
-          .then(executions => ({
-            ...simulation,
-            executions,
-            executionsCount: executions.length,
-          }));
+        return deep
+          ? this.getExecutions(simulation.id)
+            .then(executions => ({
+              ...simulation,
+              executions,
+              executionsCount: executions.length,
+            }))
+          : simulation;
       })
       .catch(err => {
         debug('getSimulation', err.toString());
@@ -131,15 +133,17 @@ class Manager {
       .then(() => execution);
   }
 
-  getExecution(id) {
+  getExecution(id, deep = true) {
     return this.db.executions.get(id)
       .then(execution => {
-        return this.getRenderings(execution.id)
-          .then(renderings => ({
-            ...execution,
-            renderings,
-            renderingsCount: renderings.length,
-          }));
+        return deep
+          ? this.getRenderings(execution.id)
+            .then(renderings => ({
+              ...execution,
+              renderings,
+              renderingsCount: renderings.length,
+            }))
+          : execution;
       })
       .catch(err => {
         debug('getExecution', err.toString());
@@ -177,6 +181,7 @@ class Manager {
       gte: [simulationId],
       lt: [simulationId, '\xff'],
     };
+    debug('getExecutionsStream', { simulationId, deep });
     const executionIndexStream = this.db.executionsSimulationIdx.createValueStream(query);
     const getExecutionStream = _.wrapCallback(this.db.executions.get.bind(this.db.executions));
     const executionStream = _(executionIndexStream).flatMap(getExecutionStream);

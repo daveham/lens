@@ -23,8 +23,8 @@ const typeDefs = `
   scalar Date
   
   input RenderingInput {
-    executionId: Int!
-    simulationId: Int!
+    executionId: String!
+    simulationId: String!
     name: String!
   }
   
@@ -41,19 +41,19 @@ const typeDefs = `
     id: ID!
     created: Date!
     modified: Date!
-    executionId: Int!
-    simulationId: Int!
+    executionId: String!
+    simulationId: String!
     name: String!
   }
   
   type RenderingsWithNames {
-    items: [Rendering!]!
-    simulationName: String!
-    executionName: String!
+    items: [Rendering]!
+    simulationName: String
+    executionName: String
   }
     
   input ExecutionInput {
-    simulationId: Int!
+    simulationId: String!
     name: String!
   }
   
@@ -70,15 +70,15 @@ const typeDefs = `
     id: ID!
     created: Date!
     modified: Date!
-    simulationId: Int!
+    simulationId: String!
     name: String!
     renderings: [Rendering!]!
     renderingsCount: Int!
   }
   
   type ExecutionsWithNames {
-    items: [Execution!]!
-    simulationName: String!
+    items: [Execution]!
+    simulationName: String
   }
   
   input SimulationInput {
@@ -106,19 +106,19 @@ const typeDefs = `
   }
   
   input BreadcrumbQueryInput {
-    simulationId: Int
-    executionId: Int
-    renderingId: Int
+    simulationId: String
+    executionId: String
+    renderingId: String
   }
   
   type Query {
     getSimulations: [Simulation]
     getSimulationsForSource(sourceId: String!): [Simulation]
-    getSimulation(id: Int!): Simulation
-    getExecutions(simulationId: Int!): ExecutionsWithNames
-    getExecution(id: Int!): Execution
-    getRenderings(executionId: Int!): RenderingsWithNames
-    getRendering(id: Int!): Rendering
+    getSimulation(id: String!): Simulation
+    getExecutions(simulationId: String!): ExecutionsWithNames
+    getExecution(id: String!): Execution
+    getRenderings(executionId: String!): RenderingsWithNames
+    getRendering(id: String!): Rendering
     getBreadcrumbNames(input: BreadcrumbQueryInput!): [String!]
   }
 
@@ -200,17 +200,6 @@ generateMockSimulation('1004', [7, 3, 4]);
 generateMockSimulation('1004', [5, 6, 1, 8]);
 generateMockSimulation('1004', [2, 7, 5, 3]);
 
-const getSimulationData = simulation => simulation ? ({
-  ...simulation,
-  executionsCount: simulation.executions.length
-}) : null;
-const getExecutionData = execution => execution ? ({
-  ...execution,
-  renderingsCount: execution.renderings.length
-}) : null;
-const getRenderingData = rendering => rendering ? ({
-  ...rendering
-}) : null;
 const deleteSimulation = id => {
   const index = allSimulations.findIndex((item) => item.id === id);
   if (index > -1) {
@@ -234,172 +223,172 @@ const deleteRendering = id => {
 };
 
 
-const makeResolvers = dataManager => {
-  debug('makeResolvers', dataManager);
-
-  return {
-    Date: new GraphQLScalarType({
-      name: 'Date',
-      description: 'Date custom scalar type',
-      parseValue(value) {
-        return new Date(value); // value from the client
-      },
-      serialize(value) {
-        debug('serialize', { value, type: typeof value });
-        if (typeof value === 'number') {
-          return value;
-        }
-        return value.getTime(); // value from the server
-      },
-      parseLiteral(ast) {
-        if (ast.kind === Kind.INT) {
-          return parseInt(ast.value, 10); // ast value is always in string format
-        }
-        return null;
-      }
-    }),
-    Query: {
-      // getSimulations: () => allSimulations.map(getSimulationData),
-      getSimulations: () => {
-        debug('getSimulations');
-        return dataManager.getSimulations();
-      },
-      getSimulationsForSource: (_, { sourceId }) => {
-        debug('getSimulationsForSource', { sourceId });
-        return dataManager.getSimulationsForSource(sourceId);
-      },
-      // getSimulationsForSource: (_, { sourceId }) => {
-      //   const simulations = allSimulations
-      //     .filter(s => s.sourceId === sourceId)
-      //     .map(getSimulationData);
-      //   console.log('getSimulationsForSource', sourceId, simulations);
-      //   return simulations;
-      // },
-      getSimulation: (_, { id }) => getSimulationData(allSimulations.find(s => s.id === id)),
-      getExecutions: (_, { simulationId }) => ({
-        items: allExecutions.filter(e => e.simulationId === simulationId)
-          .map(getExecutionData),
-        simulationName: (allSimulations.find(s => s.id === simulationId)).name
-      }),
-      getExecution: (_, { id }) => getExecutionData(allExecutions.find(e => e.id === id)),
-      getRenderings: (_, { executionId }) => {
-        const execution = allExecutions.find(e => e.id === executionId);
-        return {
-          items: allRenderings.filter(r => r.executionId === executionId)
-            .map(getRenderingData),
-          simulationName: allSimulations.find(s => s.id === execution.simulationId).name,
-          executionName: allExecutions.find(e => e.id === executionId).name,
-        };
-      },
-      getRendering: (_, { id }) => getRenderingData(allRenderings.find(r => r.id === id)),
-      getBreadcrumbNames: (_, { input: { simulationId, executionId, renderingId } }) => {
-        console.log('getBreadcrumbNames', { simulationId, executionId, renderingId });
-        const names = [];
-        if (simulationId) {
-          names.push(allSimulations.find(s => s.id === simulationId).name);
-        }
-        if (executionId) {
-          names.push(allExecutions.find(e => e.id === executionId).name);
-        }
-        if (renderingId) {
-          names.push(allRenderings.find(r => r.id === renderingId).name);
-        }
-        return names;
-      }
+const makeResolvers = dataManager => ({
+  Date: new GraphQLScalarType({
+    name: 'Date',
+    description: 'Date custom scalar type',
+    parseValue(value) {
+      return new Date(value); // value from the client
     },
-    Mutation: {
-      createSimulation: (_, { input }) => dataManager.addSimulation({ ...input }),
-      // createSimulation: (_, { input }) => {
-      //   const created = new Date();
-      //   const simulation = { ...input, created, modified: created, executions: [], id: ++simulationIdIndex };
-      //   allSimulations.push(simulation);
-      //   console.log('createSimulation', simulation);
-      //   return simulation;
-      // },
-      updateSimulation: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const simulation = allSimulations.find((item) => item.id === id);
-        simulation.name = input.name;
-        simulation.modified = new Date();
-        console.log('updateSimulation', simulation);
-        return simulation;
-      },
-      deleteSimulation: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const simulation = deleteSimulation(id);
-        console.log('deleteSimulation', simulation);
-        simulation.executions.forEach(execution => {
-          console.log('deleteSimulation - delete owned execution', execution);
-          deleteExecution(execution.id);
-          execution.renderings.forEach(rendering => {
-            console.log('deleteSimulation - delete owned rendering', rendering);
-            deleteRendering(rendering.id);
-          });
+    serialize(value) {
+      debug('serialize', { value, type: typeof value });
+      if (typeof value === 'number') {
+        return value;
+      }
+      return value.getTime(); // value from the server
+    },
+    parseLiteral(ast) {
+      if (ast.kind === Kind.INT) {
+        return parseInt(ast.value, 10); // ast value is always in string format
+      }
+      return null;
+    }
+  }),
+  Query: {
+    getSimulations: () => {
+      debug('getSimulations');
+      return dataManager.getSimulations();
+    },
+    getSimulationsForSource: (_, { sourceId }) => {
+      debug('getSimulationsForSource', { sourceId });
+      return dataManager.getSimulationsForSource(sourceId);
+    },
+    getSimulation: (_, { id }) => {
+      debug('getSimulation', { id });
+      return dataManager.getSimulation(id);
+    },
+    getExecutions: (_, { simulationId }) => {
+      debug('getExecutions', { simulationId });
+      return dataManager.getSimulation(simulationId, false)
+        .then(simulation => {
+          if (!simulation) {
+            return {};
+          }
+          return dataManager.getExecutions(simulationId)
+            .then(items => ({
+              simulationName: simulation.name,
+              items,
+            }));
         });
-        return simulation;
-      },
-      createExecution: (_, { input }) => {
-        const created = new Date();
-        const execution = { ...input, created, modified: created, renderings: [], id: ++executionIdIndex };
-        allExecutions.push(execution);
-        const simulation = allSimulations.find((item) => item.id === input.simulationId);
-        simulation.executions.push(execution);
-        console.log('createExecution', execution);
-        return execution;
-      },
-      updateExecution: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const execution = allExecutions.find((item) => item.id === id);
-        execution.name = input.name;
-        execution.modified = new Date();
-        console.log('updateExecution', execution);
-        return execution;
-      },
-      deleteExecution: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const execution = deleteExecution(id);
-        console.log('deleteExecution', execution);
+    },
+    getExecution: (_, { id }) => {
+      debug('getExecution', { id });
+      return dataManager.getExecution(id);
+    },
+    getRenderings: (_, { executionId }) => {
+      debug('getRenderings', { executionId });
+      return dataManager.getRenderings(executionId)
+        .then(items => ({
+          simulationName: 'TODO',
+          executionName: 'TODO',
+          items,
+        }));
+    },
+    getRendering: (_, { id }) => {
+      debug('getRendering', { id });
+      return dataManager.getRendering(id);
+    },
+    getBreadcrumbNames: (_, { input: { simulationId, executionId, renderingId } }) => {
+      debug('getBreadcrumbNames', { simulationId, executionId, renderingId });
+      const promises = [];
+      if (simulationId) {
+        promises.push(dataManager.getSimulation(simulationId, false));
+      }
+      if (executionId) {
+        promises.push(dataManager.getExecution(executionId, false));
+      }
+      if (renderingId) {
+        promises.push(dataManager.getRendering(renderingId));
+      }
+      return Promise.all(promises)
+        .then(items => items.map(item => item.name));
+    }
+  },
+  Mutation: {
+    createSimulation: (_, { input }) => dataManager.addSimulation({ ...input }),
+    updateSimulation: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const simulation = allSimulations.find((item) => item.id === id);
+      simulation.name = input.name;
+      simulation.modified = new Date();
+      debug('updateSimulation', simulation);
+      return simulation;
+    },
+    deleteSimulation: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const simulation = deleteSimulation(id);
+      debug('deleteSimulation', simulation);
+      simulation.executions.forEach(execution => {
+        debug('deleteSimulation - delete owned execution', execution);
+        deleteExecution(execution.id);
         execution.renderings.forEach(rendering => {
-          console.log('deleteExecution - delete owned rendering', rendering);
+          debug('deleteSimulation - delete owned rendering', rendering);
           deleteRendering(rendering.id);
         });
-        const simulation = allSimulations.find((item) => item.id === execution.simulationId);
-        const index = simulation.executions.findIndex((item) => item.id === id);
-        simulation.executions.splice(index, 1);
-        console.log('deleteExecution - removing execution from owner simulation', simulation);
-        return execution;
-      },
-      createRendering: (_, { input }) => {
-        const created = new Date();
-        const rendering = { ...input, created, modified: created, id: ++renderingIdIndex };
-        allRenderings.push(rendering);
-        const execution = allExecutions.find((item) => item.id === input.executionId &&
-          item.simulationId === input.simulationId);
-        execution.renderings.push(rendering);
-        console.log('createRendering', rendering);
-        return rendering;
-      },
-      updateRendering: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const rendering = allRenderings.find((item) => item.id === id);
-        rendering.name = input.name;
-        rendering.modified = new Date();
-        console.log('updateRendering', rendering);
-        return rendering;
-      },
-      deleteRendering: (_, { input }) => {
-        const id = parseInt(input.id, 10);
-        const rendering = deleteRendering(id);
-        console.log('deleteRendering', rendering);
-        const execution = allExecutions.find((item) => item.id === rendering.executionId);
-        const index = execution.renderings.findIndex((item) => item.id === id);
-        execution.renderings.splice(index, 1);
-        console.log('deleteRendering - removing rendering from owner execution', execution);
-        return rendering;
-      },
-    }
-  };
-};
+      });
+      return simulation;
+    },
+    createExecution: (_, { input }) => {
+      const created = new Date();
+      const execution = { ...input, created, modified: created, renderings: [], id: ++executionIdIndex };
+      allExecutions.push(execution);
+      const simulation = allSimulations.find((item) => item.id === input.simulationId);
+      simulation.executions.push(execution);
+      debug('createExecution', execution);
+      return execution;
+    },
+    updateExecution: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const execution = allExecutions.find((item) => item.id === id);
+      execution.name = input.name;
+      execution.modified = new Date();
+      debug('updateExecution', execution);
+      return execution;
+    },
+    deleteExecution: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const execution = deleteExecution(id);
+      debug('deleteExecution', execution);
+      execution.renderings.forEach(rendering => {
+        debug('deleteExecution - delete owned rendering', rendering);
+        deleteRendering(rendering.id);
+      });
+      const simulation = allSimulations.find((item) => item.id === execution.simulationId);
+      const index = simulation.executions.findIndex((item) => item.id === id);
+      simulation.executions.splice(index, 1);
+      debug('deleteExecution - removing execution from owner simulation', simulation);
+      return execution;
+    },
+    createRendering: (_, { input }) => {
+      const created = new Date();
+      const rendering = { ...input, created, modified: created, id: ++renderingIdIndex };
+      allRenderings.push(rendering);
+      const execution = allExecutions.find((item) => item.id === input.executionId &&
+        item.simulationId === input.simulationId);
+      execution.renderings.push(rendering);
+      debug('createRendering', rendering);
+      return rendering;
+    },
+    updateRendering: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const rendering = allRenderings.find((item) => item.id === id);
+      rendering.name = input.name;
+      rendering.modified = new Date();
+      debug('updateRendering', rendering);
+      return rendering;
+    },
+    deleteRendering: (_, { input }) => {
+      const id = parseInt(input.id, 10);
+      const rendering = deleteRendering(id);
+      debug('deleteRendering', rendering);
+      const execution = allExecutions.find((item) => item.id === rendering.executionId);
+      const index = execution.renderings.findIndex((item) => item.id === id);
+      execution.renderings.splice(index, 1);
+      debug('deleteRendering - removing rendering from owner execution', execution);
+      return rendering;
+    },
+  }
+});
 
 export function createDataManager() {
   return defineDatabase(data, debugOptions)

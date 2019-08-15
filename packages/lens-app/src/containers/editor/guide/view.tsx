@@ -15,13 +15,15 @@ interface IProps {
   ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
   ensureEditorTitle: (sourceId?: string) => void;
   simulations?: ReadonlyArray<ISimulation>;
+  loading?: any;
+  error?: any;
 }
 
 export class EditorGuideView extends React.Component<IProps, any> {
   public componentDidMount(): void {
     const {
       thumbnailUrl,
-      thumbnailImageDescriptor,
+      thumbnailImageDescriptor: imageDescriptor,
       ensureImage,
       ensureEditorTitle,
       match: {
@@ -32,7 +34,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
     ensureEditorTitle(sourceId);
 
     if (!thumbnailUrl) {
-      ensureImage({ imageDescriptor: thumbnailImageDescriptor });
+      ensureImage({ imageDescriptor });
     }
   }
 
@@ -44,6 +46,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
       match: {
         params: { sourceId, simulationId, executionId, renderingId, action },
       },
+      loading,
     } = this.props;
 
     let resolvedSimulationId = simulationId;
@@ -51,19 +54,21 @@ export class EditorGuideView extends React.Component<IProps, any> {
     let resolvedRenderingId = renderingId;
     let resolvedAction = action;
     const re = /^[a-z]+$/;
+    debug('render', { simulationId, executionId, renderingId });
     if (renderingId && re.test(renderingId)) {
-      resolvedAction = renderingId;
+      resolvedAction = renderingId; // interpret id as rest action and clear id
       resolvedRenderingId = undefined;
     } else if (executionId && re.test(executionId)) {
-      resolvedAction = executionId;
+      resolvedAction = executionId; // interpret id as rest action and clear id
       resolvedExecutionId = undefined;
     } else if (simulationId && re.test(simulationId)) {
-      resolvedAction = simulationId;
+      resolvedAction = simulationId; // interpret id as rest action and clear id
       resolvedSimulationId = undefined;
     }
 
     return (
       <GuideControl
+        loading={loading}
         title={photo}
         thumbnailUrl={thumbnailUrl}
         simulations={simulations}
@@ -95,6 +100,12 @@ export class EditorGuideView extends React.Component<IProps, any> {
       history,
     } = this.props;
     const { simulationId, executionId, renderingId } = params;
+    debug('handleControlParametersChanged', {
+      active,
+      simulationId,
+      executionId,
+      renderingId,
+    });
 
     const isNewAction = action === controlSegmentActions.new;
     let path = `/Catalog/${sourceId}/Simulation`;
@@ -127,13 +138,15 @@ export class EditorGuideView extends React.Component<IProps, any> {
           path = `${path}/${simulationId}/Execution/${executionId}/Rendering`;
         }
         break;
+      default:
+        return;
     }
 
     if (action && !isNewAction) {
       path = `${path}/${action}`;
     }
 
-    debug('handleControlParametersChange', { path });
+    debug('handleControlParametersChange - navigate to', { path });
     history.push(path);
   };
 }

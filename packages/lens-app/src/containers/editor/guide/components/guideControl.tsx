@@ -145,6 +145,7 @@ const styles: any = theme => {
 
 interface IProps {
   classes?: any;
+  loading?: boolean;
   action?: string;
   sourceId?: string;
   simulationId?: number;
@@ -166,13 +167,13 @@ interface IPanelSelections {
 }
 
 interface IState {
-  expandedPanel?: string;
-  activePanel?: string;
+  expandedPanel: string;
+  activePanel: string;
   panelSelections: IPanelSelections;
   locked: boolean;
-  action?: string;
-  delayedAction?: string;
-  delayedUnlock?: boolean;
+  action: string;
+  delayedAction: string;
+  delayedUnlock: boolean;
 }
 
 const KEY_SIMULATION = 'simulation';
@@ -282,66 +283,106 @@ function getFirstRendering(execution) {
 }
 
 function determineSelections(props) {
-  const { simulations, simulationId = -1, executionId = -1, renderingId = -1, action } = props;
+  const {
+    simulations,
+    simulationId = '',
+    executionId = '',
+    renderingId = '',
+    action,
+  } = props;
 
-  const isNewAction = action === controlSegmentActions.new;
-  let activePanel: string = '';
-  if (renderingId > -1 || (executionId > -1 && isNewAction)) {
-    activePanel = KEY_RENDERING;
-  } else if (executionId > -1 || (simulationId > -1 && isNewAction)) {
-    activePanel = KEY_EXECUTION;
-  } else if (simulationId > -1 || isNewAction) {
-    activePanel = KEY_SIMULATION;
-  }
+  let simulation;
+  let execution;
+  let rendering;
 
-  const panelSelections: IPanelSelections = {
-    simulation: undefined,
-    execution: undefined,
-    rendering: undefined,
-  };
   if (simulations) {
-    panelSelections.simulation = simulations.find(s => s.id === simulationId) || simulations[0];
-    if (panelSelections.simulation) {
-      const { executions } = panelSelections.simulation;
+    simulation = simulations.find(s => s.id === simulationId) || simulations[0];
+    if (simulation) {
+      const { executions } = simulation;
       if (executions) {
-        panelSelections.execution = executions.find(e => e.id === executionId) || executions[0];
-        if (panelSelections.execution) {
-          const { renderings } = panelSelections.execution;
+        execution = executions.find(e => e.id === executionId) || executions[0];
+        if (execution) {
+          const { renderings } = execution;
           if (renderings) {
-            panelSelections.rendering = renderings.find(r => r.id === renderingId) || renderings[0];
+            rendering = renderings.find(r => r.id === renderingId) || renderings[0];
           }
         }
       }
     }
   }
 
+  const isNewAction = action === controlSegmentActions.new;
+  let activePanel: string = '';
+
+  if (rendering || (execution && isNewAction)) {
+    activePanel = KEY_RENDERING;
+  } else if (execution || (simulation && isNewAction)) {
+    activePanel = KEY_EXECUTION;
+  } else if (simulation || isNewAction) {
+    activePanel = KEY_SIMULATION;
+  }
+
   const locked = lockingActions.includes(action);
-  return { activePanel, panelSelections, locked, action };
+
+  debug('determineSelections', {
+    activePanel,
+    simulation,
+    execution,
+    rendering,
+    locked,
+    action,
+  });
+
+  return {
+    activePanel,
+    panelSelections: {
+      simulation,
+      execution,
+      rendering,
+    },
+    locked,
+    action,
+  };
 }
 
 export class GuideControl extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      expandedPanel: undefined,
-      ...determineSelections(props),
+      activePanel: '',
+      expandedPanel: '',
+      panelSelections: {},
+      action: '',
+      delayedAction: '',
+      locked: false,
+      delayedUnlock: false,
     };
+  }
+
+  public componentDidMount(): void {
+    this.setState({ ...determineSelections(this.props) });
   }
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
     const { simulations } = this.props;
     if (simulations && !prevProps.simulations) {
+      debug('componentDidUpdate - simulations detected');
       this.setState({ ...determineSelections(this.props) });
+      return;
     }
 
     const { panelSelections, activePanel, action, delayedAction, delayedUnlock } = this.state;
     debug('componentDidUpdate', { action, delayedAction });
     if (
-      // simulations &&
       (prevState.panelSelections !== panelSelections ||
         prevState.activePanel !== activePanel ||
         prevState.action !== action)
     ) {
+      debug('changes', {
+        selections: prevState.panelSelections !== panelSelections,
+        panel: prevState.activePanel !== activePanel,
+        action: prevState.action !== action,
+      });
       const { simulation, execution, rendering } = panelSelections;
       this.props.onControlParametersChanged(
         {
@@ -355,15 +396,17 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     if (delayedAction && !prevState.delayedAction) {
+      // delay the transition to an action for animation purposes
       setTimeout(() => this.setState({ action: delayedAction, delayedAction: '' }), 250);
     }
 
     if (delayedUnlock && !prevState.delayedUnlock) {
+      // delay the transition out of an action for animation purposes
       setTimeout(() => this.setState({ action: '', delayedUnlock: false }), 250);
     }
   }
 
-  public render(): any {
+  public render() {
     const { classes } = this.props;
 
     return (
@@ -384,7 +427,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     }
 
     const newState: any = {
-      expandedPanel: expanded ? key : null,
+      expandedPanel: expanded ? key : '',
     };
     if (!expanded) {
       newState.activePanel = key;
@@ -410,7 +453,7 @@ export class GuideControl extends React.Component<IProps, IState> {
       }
 
       return {
-        expandedPanel: undefined,
+        expandedPanel: '',
         activePanel: key,
         panelSelections,
         ...changes,
@@ -490,11 +533,17 @@ export class GuideControl extends React.Component<IProps, IState> {
     return execution ? execution.renderings || [] : [];
   };
 
-  private renderHeader(): any {
-    const { classes, thumbnailUrl, title } = this.props;
+  private renderHeader() {
+    const {
+      classes,
+      thumbnailUrl,
+      title,
+      loading,
+    } = this.props;
     const { locked } = this.state;
 
     const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
+    const avatar = loading ? 'L' : 'P';
 
     return (
       <CardHeader
@@ -502,7 +551,7 @@ export class GuideControl extends React.Component<IProps, IState> {
           root: classes.cardHeader,
           title: classes.cardHeaderTitle,
         }}
-        avatar={<Avatar className={classes.avatar}>P</Avatar>}
+        avatar={<Avatar className={classes.avatar}>{avatar}</Avatar>}
         action={
           <GuideMenu
             onMenuSelection={this.handleGuideMenuSelection}
@@ -523,7 +572,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderMedia(): any {
+  private renderMedia() {
     const { classes, thumbnailUrl } = this.props;
 
     if (!thumbnailUrl) {
@@ -536,7 +585,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     return <CardMedia className={classes.media} image={fullUrl} />;
   }
 
-  private renderContents(): any {
+  private renderContents() {
     const { classes, simulations } = this.props;
 
     if (!simulations) {
@@ -567,93 +616,33 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderSimulationListItems(items, isPanelExpanded, currentItemId) {
-    const { classes } = this.props;
-    const listItemClasses = {
-      root: classes.listItemRoot,
-      container: classes.listItemContainer,
-      selected: classes.listItemSelected,
-    };
-    return items.map((item, itemIndex) => (
-      <ListItem
-        classes={listItemClasses}
-        key={item.id}
-        onClick={this.handlePanelListItemChange(controlSegmentKeys.simulation, item)}
-        dense
-        button
-        selected={isPanelExpanded && item.id === currentItemId}
-      >
-        <ListItemText primary={item.name} secondary='simulation details' />
-        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          {this.renderListMenu(controlSegmentKeys.simulation, itemIndex)}
-        </ListItemSecondaryAction>
-      </ListItem>
-    ));
-  }
-
-  private renderExecutionListItems(items, isPanelExpanded, currentItemId) {
-    const { classes } = this.props;
-    const listItemClasses = {
-      root: classes.listItemRoot,
-      container: classes.listItemContainer,
-      selected: classes.listItemSelected,
-    };
-    return items.map((item, itemIndex) => (
-      <ListItem
-        classes={listItemClasses}
-        key={item.id}
-        onClick={this.handlePanelListItemChange(controlSegmentKeys.execution, item)}
-        dense
-        button
-        selected={isPanelExpanded && item.id === currentItemId}
-      >
-        <ListItemText primary={item.name} secondary='execution details' />
-        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          {this.renderListMenu(controlSegmentKeys.execution, itemIndex)}
-        </ListItemSecondaryAction>
-      </ListItem>
-    ));
-  }
-
-  private renderRenderingListItems(items, isPanelExpanded, currentItemId) {
-    const { classes } = this.props;
-    const listItemClasses = {
-      root: classes.listItemRoot,
-      container: classes.listItemContainer,
-      selected: classes.listItemSelected,
-    };
-    return items.map((item, itemIndex) => (
-      <ListItem
-        classes={listItemClasses}
-        key={item.id}
-        onClick={this.handlePanelListItemChange(controlSegmentKeys.rendering, item)}
-        dense
-        button
-        selected={isPanelExpanded && item.id === currentItemId}
-      >
-        <ListItemText primary={item.name} secondary='rendering details' />
-        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          {this.renderListMenu(controlSegmentKeys.rendering, itemIndex)}
-        </ListItemSecondaryAction>
-      </ListItem>
-    ));
-  }
-
   private renderListItems(key, items) {
+    const { classes } = this.props;
+    const listItemClasses = {
+      root: classes.listItemRoot,
+      container: classes.listItemContainer,
+      selected: classes.listItemSelected,
+    };
     const { expandedPanel, panelSelections } = this.state;
     const currentItem = panelSelections[key];
     const currentItemId = currentItem ? currentItem.id : null;
     const isPanelExpanded = expandedPanel === key;
 
-    if (key === controlSegmentKeys.simulation) {
-      return this.renderSimulationListItems(items, isPanelExpanded, currentItemId);
-    }
-    if (key === controlSegmentKeys.execution) {
-      return this.renderExecutionListItems(items, isPanelExpanded, currentItemId);
-    }
-    if (key === controlSegmentKeys.rendering) {
-      return this.renderRenderingListItems(items, isPanelExpanded, currentItemId);
-    }
+    return items.map((item, itemIndex) => (
+      <ListItem
+        classes={listItemClasses}
+        key={item.id}
+        onClick={this.handlePanelListItemChange(key, item)}
+        dense
+        button
+        selected={isPanelExpanded && item.id === currentItemId}
+      >
+        <ListItemText primary={item.name} secondary={`${key} details`} />
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          {this.renderListMenu(key, itemIndex)}
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
   }
 
   private renderLockedDetails(key) {
@@ -790,7 +779,11 @@ export class GuideControl extends React.Component<IProps, IState> {
     debug('renderPanel', { key, isPanelLocked, activePanel, expanded });
 
     return (
-      <ExpansionPanel expanded={expanded} onChange={this.handlePanelChange(key)}>
+      <ExpansionPanel
+        disabled={items.length === 0}
+        expanded={expanded}
+        onChange={this.handlePanelChange(key)}
+      >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.expansionHeadingContainer}>
             <Badge badgeContent={items.length} classes={{ badge: classes.badgeContent }}>
@@ -804,7 +797,9 @@ export class GuideControl extends React.Component<IProps, IState> {
           </div>
         </ExpansionPanelSummary>
         {(isPanelLocked || delayedUnlock) && !delayedAction
+          // locked details are rendered when the panel includes dialog buttons
           ? this.renderLockedDetails(key)
+          // regular details are rendered when the panel includes information
           : this.renderDetails(key, items)}
         {(isPanelLocked || delayedUnlock) && this.renderActions()}
       </ExpansionPanel>

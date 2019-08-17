@@ -2,7 +2,7 @@ import { makeExecutableSchema } from 'graphql-tools';
 import { GraphQLScalarType } from 'graphql';
 import { Kind } from 'graphql/language';
 
-import { data } from 'config/paths';
+import { database } from 'config/paths';
 import {
   createManager,
   defineDatabase,
@@ -391,7 +391,7 @@ const makeResolvers = dataManager => ({
 });
 
 export function createDataManager() {
-  return defineDatabase(data, debugOptions)
+  return defineDatabase(database, debugOptions)
     .then((db) => createManager(db))
     .catch(err => debug('caught error', { err }));
 }

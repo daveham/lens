@@ -3,7 +3,7 @@ import config from '../../config';
 import path from 'path';
 import fs from 'fs';
 import NodeCache from 'node-cache';
-import paths from '../../config/paths';
+import { dataFolder } from 'config/paths';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-utils');
@@ -25,7 +25,7 @@ export const enqueueJob = (job, cb) => {
 const catalogCacheKey = 'lens-catalog';
 const catalogCacheTTLSeconds = 10;
 const catalogCache = new NodeCache({ stdTTL: catalogCacheTTLSeconds });
-const catalogDataFile = path.join(paths.data, 'data.json');
+const catalogDataFile = path.join(dataFolder, 'data.json');
 
 export const loadCatalog = (cb) => {
   let catalog = catalogCache.get(catalogCacheKey);

@@ -16,26 +16,21 @@ const loading = (state = false, { type }) => {
 };
 
 const name = (state = '', { type, payload }) => {
-  switch (type) {
-    case ACTIONS.RECEIVE_CATALOG:
-      return payload.name;
-    default:
-      return state;
+  if (type === ACTIONS.RECEIVE_CATALOG) {
+    return payload.name;
   }
+  return state;
 };
 
 const sources = (state = { ids: [], byIds: {} }, { type, payload}) => {
-  switch (type) {
-    case ACTIONS.RECEIVE_CATALOG: {
-      const { sources } = payload;
-      const ids = sources.map((source) => source.id);
-      const byIds = {};
-      sources.forEach((source) => byIds[source.id] = source);
-      return { ids, byIds };
-    }
-    default:
-      return state;
+  if (type === ACTIONS.RECEIVE_CATALOG) {
+    const { sources } = payload;
+    const ids = sources.map((source) => source.id);
+    const byIds = {};
+    sources.forEach((source) => byIds[source.id] = source);
+    return { ids, byIds };
   }
+  return state;
 };
 
 const catalogModuleReducer = combineReducers({

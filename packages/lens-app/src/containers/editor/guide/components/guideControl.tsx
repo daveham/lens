@@ -153,7 +153,7 @@ interface IProps {
   renderingId?: number;
   title?: string;
   thumbnailUrl?: string;
-  simulations?: ReadonlyArray<ISimulation>;
+  simulations: ReadonlyArray<ISimulation>;
   submitEnabled?: boolean;
   onControlParametersChanged: (params: object, active?: string, action?: string) => void;
   onControlActionSubmit: () => void;
@@ -365,7 +365,7 @@ export class GuideControl extends React.Component<IProps, IState> {
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
     const { simulations } = this.props;
-    if (simulations && !prevProps.simulations) {
+    if (simulations !== prevProps.simulations) {
       debug('componentDidUpdate - simulations detected');
       this.setState({ ...determineSelections(this.props) });
       return;
@@ -436,6 +436,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   };
 
   private setSelectedItem = (key, item, changes = {}) => {
+    debug('setSelectedItem', { key, item, changes });
     this.setState(prevState => {
       const panelSelections = {
         ...prevState.panelSelections,

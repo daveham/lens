@@ -14,9 +14,9 @@ interface IProps {
   thumbnailImageDescriptor: IThumbnailDescriptor;
   ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
   ensureEditorTitle: (sourceId?: string) => void;
+  requestSimulationsForSource: (sourceId: string) => any;
   simulations?: ReadonlyArray<ISimulation>;
-  loading?: any;
-  error?: any;
+  simulationsLoading: boolean;
 }
 
 export class EditorGuideView extends React.Component<IProps, any> {
@@ -26,12 +26,14 @@ export class EditorGuideView extends React.Component<IProps, any> {
       thumbnailImageDescriptor: imageDescriptor,
       ensureImage,
       ensureEditorTitle,
+      requestSimulationsForSource,
       match: {
         params: { sourceId },
       },
     } = this.props;
 
     ensureEditorTitle(sourceId);
+    requestSimulationsForSource(sourceId);
 
     if (!thumbnailUrl) {
       ensureImage({ imageDescriptor });
@@ -46,7 +48,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
       match: {
         params: { sourceId, simulationId, executionId, renderingId, action },
       },
-      loading,
+      simulationsLoading,
     } = this.props;
 
     let resolvedSimulationId = simulationId;
@@ -68,7 +70,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
 
     return (
       <GuideControl
-        loading={loading}
+        loading={simulationsLoading}
         title={photo}
         thumbnailUrl={thumbnailUrl}
         simulations={simulations}

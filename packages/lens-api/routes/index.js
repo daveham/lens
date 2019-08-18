@@ -1,17 +1,20 @@
-import catalog from './catalog';
-import hello from './hello';
-import ping from './ping';
-import image from './image';
-import stats from './stats';
-import deleteStats from './admin/deleteStats';
+import { addRoutes as addCatalogRoutes } from './catalog';
+import { addRoutes as addEditorRoutes } from './editor';
 
-const routes = (server) => {
-  server.post('/ping', ping.post);
-  server.post('/image', image.post);
-  server.post('/stats', stats.post);
-  server.post('/deleteStats', deleteStats.post);
-  server.get('/catalog', catalog.get);
-  server.get('/hello/:name', hello.get);
+import { addRoutes as addHelloRoutes } from './hello';
+import { addRoutes as addPingRoutes } from './ping';
+import { addRoutes as addImageRoutes } from './image';
+import { addRoutes as addStatsRoutes } from './stats';
+import { addRoutes as addDeleteStatsRoutes } from './admin/deleteStats';
+
+const routes = (server, mgr) => {
+  addCatalogRoutes(server);
+  addEditorRoutes(server, mgr);
+  addPingRoutes(server);
+  addImageRoutes(server);
+  addStatsRoutes(server);
+  addDeleteStatsRoutes(server);
+  addHelloRoutes(server);
 };
 
 export default routes;

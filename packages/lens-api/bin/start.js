@@ -40,16 +40,20 @@ server.on('uncaughtException', (req, res, route, err) => {
   res.send(err);
 });
 
-routes(server);
-
-server.get( /\/thumbs\//, restify.plugins.serveStatic({
-  directory: '/data'
-}));
-server.get( /\/tiles\//, restify.plugins.serveStatic({
-  directory: '/data'
-}));
-
 createDataManager().then((mgr) => {
+  // static content
+  server.get( /\/thumbs\//, restify.plugins.serveStatic({
+    directory: '/data'
+  }));
+
+  server.get( /\/tiles\//, restify.plugins.serveStatic({
+    directory: '/data'
+  }));
+
+  // REST API
+  routes(server, mgr);
+
+  // graphQL
   const schema = createSchema(({
     logger: { log: (err) => apiLogger.error(err) },
     dataManager: mgr,
@@ -64,8 +68,9 @@ createDataManager().then((mgr) => {
     schema,
     graphiql: true
   }));
-});
 
-server.listen(config.server_port, config.server_host, () => {
-  debug(`${server.name} listening at ${server.url}`);
+  // start listening
+  server.listen(config.server_port, config.server_host, () => {
+    debug(`${server.name} listening at ${server.url}`);
+  });
 });

@@ -364,9 +364,22 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
-    const { simulations } = this.props;
-    if (simulations !== prevProps.simulations) {
-      debug('componentDidUpdate - simulations detected');
+    const {
+      simulations,
+      simulationId,
+      executionId,
+      renderingId,
+    } = this.props;
+    debug('componentDidUpdate', {
+      action: this.props.action,
+      simulationId,
+      executionId,
+      renderingId,
+    });
+
+    if (simulations !== prevProps.simulations ||
+      this.props.action !== prevProps.action) {
+      debug('componentDidUpdate - change in props detected');
       this.setState({ ...determineSelections(this.props) });
       return;
     }

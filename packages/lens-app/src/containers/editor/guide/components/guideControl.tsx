@@ -282,6 +282,12 @@ function getFirstRendering(execution) {
   return null;
 }
 
+const emptyPanelSelections: IPanelSelections = {
+  simulation: undefined,
+  execution: undefined,
+  rendering: undefined,
+};
+
 function determineSelections(props) {
   const {
     simulations,
@@ -333,13 +339,13 @@ function determineSelections(props) {
     action,
   });
 
+  const panelSelections = simulation || execution || rendering
+    ? { simulation, execution, rendering }
+    : emptyPanelSelections;
+
   return {
     activePanel,
-    panelSelections: {
-      simulation,
-      execution,
-      rendering,
-    },
+    panelSelections,
     locked,
     action,
   };
@@ -351,7 +357,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     this.state = {
       activePanel: '',
       expandedPanel: '',
-      panelSelections: {},
+      panelSelections: emptyPanelSelections,
       action: '',
       delayedAction: '',
       locked: false,
@@ -360,6 +366,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   public componentDidMount(): void {
+    debug('componentDidMount');
     this.setState({ ...determineSelections(this.props) });
   }
 
@@ -371,7 +378,7 @@ export class GuideControl extends React.Component<IProps, IState> {
       renderingId,
     } = this.props;
     debug('componentDidUpdate', {
-      action: this.props.action,
+      propsAction: this.props.action,
       simulationId,
       executionId,
       renderingId,
@@ -379,23 +386,34 @@ export class GuideControl extends React.Component<IProps, IState> {
 
     if (simulations !== prevProps.simulations ||
       this.props.action !== prevProps.action) {
-      debug('componentDidUpdate - change in props detected');
+      debug('componentDidUpdate - change in props detected', {
+        simulationsChanged: simulations !== prevProps.simulations,
+        actionChanged: this.props.action !== prevProps.action,
+      });
       this.setState({ ...determineSelections(this.props) });
       return;
     }
 
     const { panelSelections, activePanel, action, delayedAction, delayedUnlock } = this.state;
-    debug('componentDidUpdate', { action, delayedAction });
+    debug('componentDidUpdate', { stateAction: action, delayedAction });
     if (
       (prevState.panelSelections !== panelSelections ||
         prevState.activePanel !== activePanel ||
         prevState.action !== action)
     ) {
-      debug('changes', {
-        selections: prevState.panelSelections !== panelSelections,
-        panel: prevState.activePanel !== activePanel,
+      debug('componentDidUpdate - state changes', {
+        panelSelections: prevState.panelSelections !== panelSelections,
+        activePanel: prevState.activePanel !== activePanel,
         action: prevState.action !== action,
       });
+      if (prevState.panelSelections !== panelSelections) {
+        debug('componentDidUpdate - panelSelections from changes', {
+          ...prevState.panelSelections,
+        });
+        debug('componentDidUpdate - panelSelections to changes', {
+          ...panelSelections,
+        });
+      }
       const { simulation, execution, rendering } = panelSelections;
       this.props.onControlParametersChanged(
         {
@@ -451,10 +469,15 @@ export class GuideControl extends React.Component<IProps, IState> {
   private setSelectedItem = (key, item, changes = {}) => {
     debug('setSelectedItem', { key, item, changes });
     this.setState(prevState => {
-      const panelSelections = {
+      let panelSelections = {
         ...prevState.panelSelections,
         [key]: item,
       };
+      if (!(panelSelections.simulation ||
+        panelSelections.execution ||
+        panelSelections.rendering)) {
+        panelSelections = emptyPanelSelections;
+      }
 
       if (key === KEY_SIMULATION) {
         panelSelections[KEY_EXECUTION] =
@@ -708,6 +731,7 @@ export class GuideControl extends React.Component<IProps, IState> {
   }
 
   private renderActionsForNew() {
+    debug('renderActionsForNew', { submitEnabled: this.props.submitEnabled });
     return (
       <ExpansionPanelActions>
         <Button size='small' onClick={this.handleCancelLock}>

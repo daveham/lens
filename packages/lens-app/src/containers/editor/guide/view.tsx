@@ -15,8 +15,11 @@ interface IProps {
   ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
   ensureEditorTitle: (sourceId?: string) => void;
   requestSimulationsForSource: (sourceId: string) => any;
+  setActiveScope: (scope: string) => any;
   simulations?: ReadonlyArray<ISimulation>;
   simulationsLoading: boolean;
+  actionEnabled: boolean;
+  active: string;
 }
 
 export class EditorGuideView extends React.Component<IProps, any> {
@@ -49,6 +52,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
         params: { sourceId, simulationId, executionId, renderingId, action },
       },
       simulationsLoading,
+      actionEnabled,
     } = this.props;
 
     let resolvedSimulationId = simulationId;
@@ -79,6 +83,7 @@ export class EditorGuideView extends React.Component<IProps, any> {
         executionId={resolvedExecutionId}
         renderingId={resolvedRenderingId}
         action={resolvedAction}
+        submitEnabled={actionEnabled}
         onControlParametersChanged={this.handleControlParametersChanged}
         onControlActionSubmit={this.handleControlActionSubmit}
         onControlActionCancel={this.handleControlActionCancel}
@@ -100,6 +105,8 @@ export class EditorGuideView extends React.Component<IProps, any> {
         params: { sourceId },
       },
       history,
+      setActiveScope,
+      active : activeScope,
     } = this.props;
     const { simulationId, executionId, renderingId } = params;
     debug('handleControlParametersChanged', {
@@ -144,12 +151,24 @@ export class EditorGuideView extends React.Component<IProps, any> {
         return;
     }
 
+    if (active !== activeScope) {
+      debug('handleControlParametersChange - set active scope', { active });
+      setActiveScope(active);
+    }
+
     if (action && !isNewAction) {
       path = `${path}/${action}`;
     }
 
-    debug('handleControlParametersChange - navigate to', { path });
-    history.push(path);
+    if (path !== history.location.pathname) {
+      debug('handleControlParametersChange - navigate', {
+        fromPath: history.location.pathname,
+        toPath: path
+      });
+      history.push(path);
+    } else {
+      debug('handleControlParametersChange - NO navigate');
+    }
   };
 }
 

@@ -6,10 +6,14 @@ import { photoSelector } from 'src/modules/ui';
 import {
   ensureEditorTitle,
   requestSimulationsForSource,
+  setActiveScope,
 } from '../modules/actions';
 import {
   simulationsSelector,
   simulationsLoadingSelector,
+  actionEnabledSelector,
+  actionValidSelector,
+  activeSelector,
 } from '../modules/selectors';
 
 // import _debug from 'debug';
@@ -19,6 +23,7 @@ const mapDispatchToProps = {
   ensureImage,
   ensureEditorTitle,
   requestSimulationsForSource,
+  setActiveScope,
 };
 
 const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
@@ -27,6 +32,9 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
   const photo = photoSelector(state);
   const simulations = simulationsSelector(state);
   const simulationsLoading = simulationsLoadingSelector(state);
+  const actionEnabled = actionEnabledSelector(state);
+  const actionValid = actionValidSelector(state);
+  const active = activeSelector(state);
 
   return {
     photo,
@@ -34,6 +42,8 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
     thumbnailUrl,
     simulations,
     simulationsLoading,
+    actionEnabled: actionEnabled && actionValid && !simulationsLoading,
+    actionValid,
   };
 };
 

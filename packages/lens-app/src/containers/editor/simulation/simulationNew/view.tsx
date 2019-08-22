@@ -1,9 +1,9 @@
 import React from 'react';
-import { Mutation } from 'react-apollo';
-import {
-  CREATE_SIMULATION,
-  getSimulationsRefetchQueries
-} from 'editor/queries';
+// import { Mutation } from 'react-apollo';
+// import {
+//   CREATE_SIMULATION,
+//   // getSimulationsRefetchQueries
+// } from 'editor/queries';
 
 import Form from '../common/form';
 
@@ -47,23 +47,23 @@ class View extends React.Component<IProps, IState> {
       return null;
     }
 
-    const {
-      sourceId,
-      onClose
-    } = this.props;
+    // const {
+    // sourceId,
+    // onClose
+    // } = this.props;
 
+    // onSave={this.handleSaveClick(addSimulation)}
+    // onCancel={onClose}
+    // <Mutation mutation={CREATE_SIMULATION} key={sourceId}>
+    // {(addSimulation) => (
+    // )}
+    // </Mutation>
     return (
-      <Mutation mutation={CREATE_SIMULATION} key={sourceId}>
-        {(addSimulation) => (
-          <Form
-            isNew
-            name={this.state.name}
-            onNameChange={this.handleChange('name')}
-            onSave={this.handleSaveClick(addSimulation)}
-            onCancel={onClose}
-          />
-        )}
-      </Mutation>
+      <Form
+        isNew
+        name={this.state.name}
+        onNameChange={this.handleChange('name')}
+      />
     );
   }
 
@@ -71,15 +71,15 @@ class View extends React.Component<IProps, IState> {
     this.setState(initialState);
   }
 
-  private handleSaveClick = (mutateFunc) => () => {
-    const { sourceId, onClose } = this.props;
-    const { name } = this.state;
-    mutateFunc({
-      variables: { sourceId, name },
-      refetchQueries: getSimulationsRefetchQueries(sourceId)
-    });
-    onClose();
-  };
+  // private handleSaveClick = (mutateFunc) => () => {
+  //   const { sourceId, onClose } = this.props;
+  //   const { name } = this.state;
+  //   mutateFunc({
+  //     variables: { sourceId, name },
+  //     refetchQueries: getSimulationsRefetchQueries(sourceId)
+  //   });
+  //   onClose();
+  // };
 
   private handleChange = (key: string) => (event) =>
     // @ts-ignore

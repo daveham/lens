@@ -1,6 +1,25 @@
-import React from 'react';
-import { IThumbnailDescriptor } from 'src/interfaces';
-import { ISimulation } from 'editor/interfaces';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { makeThumbnailImageDescriptor } from '@lens/image-descriptors';
+
+import { photoSelector } from 'src/modules/ui';
+import { thumbnailUrlFromIdSelector } from 'modules/images/selectors';
+import {
+  simulationsSelector,
+  simulationsLoadingSelector,
+  actionEnabledSelector,
+  // actionValidSelector,
+  activeSelector,
+} from 'editor/modules/selectors';
+
+import { ensureImage } from 'modules/images/actions';
+import {
+  ensureEditorTitle,
+  requestSimulationsForSource,
+  setActiveScope,
+} from 'editor/modules/actions';
+
 import GuideControl, { controlSegmentKeys, controlSegmentActions } from './components/guideControl';
 
 import _debug from 'debug';
@@ -9,108 +28,53 @@ const debug = _debug('lens:editor:guide:view');
 interface IProps {
   match: any;
   history: any;
-  photo?: string;
-  thumbnailUrl?: string;
-  thumbnailImageDescriptor: IThumbnailDescriptor;
-  ensureImage: (payload: { [imageDescriptor: string]: IThumbnailDescriptor }) => void;
-  ensureEditorTitle: (sourceId?: string) => void;
-  requestSimulationsForSource: (sourceId: string) => any;
-  setActiveScope: (scope: string) => any;
-  simulations?: ReadonlyArray<ISimulation>;
-  simulationsLoading: boolean;
-  actionEnabled: boolean;
-  active: string;
 }
 
-export class EditorGuideView extends React.Component<IProps, any> {
-  public componentDidMount(): void {
-    const {
-      thumbnailUrl,
-      thumbnailImageDescriptor: imageDescriptor,
-      ensureImage,
-      ensureEditorTitle,
-      requestSimulationsForSource,
-      match: {
-        params: { sourceId },
+export const EditorGuideView = (props: IProps) => {
+  const {
+    history,
+    match: {
+      params: {
+        sourceId,
+        simulationId,
+        executionId,
+        renderingId,
+        action,
       },
-    } = this.props;
+    },
+  } = props;
 
-    ensureEditorTitle(sourceId);
-    requestSimulationsForSource(sourceId);
+  const thumbnailUrl = useSelector(state => thumbnailUrlFromIdSelector(state, sourceId));
+  const photo = useSelector(photoSelector);
+  const simulations = useSelector(simulationsSelector);
+  const simulationsLoading = useSelector(simulationsLoadingSelector);
+  // const actionValid = useSelector(actionValidSelector);
+  const active = useSelector(activeSelector);
+  const actionEnabled = useSelector(actionEnabledSelector);
 
-    if (!thumbnailUrl) {
-      ensureImage({ imageDescriptor });
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (sourceId) {
+      debug('useEffect', { sourceId });
+      dispatch(ensureEditorTitle(sourceId));
+      dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
+      dispatch(requestSimulationsForSource(sourceId));
     }
-  }
+  }, [dispatch, sourceId]);
 
-  public render(): any {
-    const {
-      photo,
-      thumbnailUrl,
-      simulations,
-      match: {
-        params: { sourceId, simulationId, executionId, renderingId, action },
-      },
-      simulationsLoading,
-      actionEnabled,
-    } = this.props;
-
-    let resolvedSimulationId = simulationId;
-    let resolvedExecutionId = executionId;
-    let resolvedRenderingId = renderingId;
-    let resolvedAction = action;
-    const re = /^[a-z]+$/;
-    debug('render', { simulationId, executionId, renderingId });
-    if (renderingId && re.test(renderingId)) {
-      resolvedAction = renderingId; // interpret id as rest action and clear id
-      resolvedRenderingId = undefined;
-    } else if (executionId && re.test(executionId)) {
-      resolvedAction = executionId; // interpret id as rest action and clear id
-      resolvedExecutionId = undefined;
-    } else if (simulationId && re.test(simulationId)) {
-      resolvedAction = simulationId; // interpret id as rest action and clear id
-      resolvedSimulationId = undefined;
-    }
-
-    return (
-      <GuideControl
-        loading={simulationsLoading}
-        title={photo}
-        thumbnailUrl={thumbnailUrl}
-        simulations={simulations}
-        sourceId={sourceId}
-        simulationId={resolvedSimulationId}
-        executionId={resolvedExecutionId}
-        renderingId={resolvedRenderingId}
-        action={resolvedAction}
-        submitEnabled={actionEnabled}
-        onControlParametersChanged={this.handleControlParametersChanged}
-        onControlActionSubmit={this.handleControlActionSubmit}
-        onControlActionCancel={this.handleControlActionCancel}
-      />
-    );
-  }
-
-  private handleControlActionSubmit = () => {
+  const handleControlActionSubmit = () => {
     debug('handleControlActionSubmit');
   };
 
-  private handleControlActionCancel = () => {
+  const handleControlActionCancel = () => {
     debug('handleControlActionCancel');
   };
 
-  private handleControlParametersChanged = (params, active, action) => {
-    const {
-      match: {
-        params: { sourceId },
-      },
-      history,
-      setActiveScope,
-      active : activeScope,
-    } = this.props;
+  const handleControlParametersChanged = (params, nextActive, action) => {
     const { simulationId, executionId, renderingId } = params;
     debug('handleControlParametersChanged', {
-      active,
+      nextActive,
       simulationId,
       executionId,
       renderingId,
@@ -118,42 +82,33 @@ export class EditorGuideView extends React.Component<IProps, any> {
 
     const isNewAction = action === controlSegmentActions.new;
     let path = `/Catalog/${sourceId}/Simulation`;
+    let id;
 
-    switch (active) {
+    switch (nextActive) {
       case controlSegmentKeys.simulation:
-        if (isNewAction) {
-          path = `${path}/${controlSegmentActions.new}`;
-        } else if (simulationId) {
-          path = `${path}/${simulationId}`;
-        }
+        id = simulationId;
         break;
       case controlSegmentKeys.execution:
-        if (isNewAction) {
-          path = `${path}/${simulationId}/Execution/${controlSegmentActions.new}`;
-        } else if (executionId) {
-          path = `${path}/${simulationId}/Execution/${executionId}`;
-        } else {
-          path = `${path}/${simulationId}/Execution`;
-        }
+        path = `${path}/${simulationId}/Execution`;
+        id = executionId;
         break;
       case controlSegmentKeys.rendering:
-        if (isNewAction) {
-          path = `${path}/${simulationId}/Execution/${executionId}/Rendering/${
-            controlSegmentActions.new
-          }`;
-        } else if (renderingId) {
-          path = `${path}/${simulationId}/Execution/${executionId}/Rendering/${renderingId}`;
-        } else {
-          path = `${path}/${simulationId}/Execution/${executionId}/Rendering`;
-        }
+        path = `${path}/${simulationId}/Execution/${executionId}/Rendering`;
+        id = renderingId;
         break;
       default:
         return;
     }
 
-    if (active !== activeScope) {
-      debug('handleControlParametersChange - set active scope', { active });
-      setActiveScope(active);
+    if (isNewAction) {
+      path = `${path}/${controlSegmentActions.new}`;
+    } else if (id) {
+      path = `${path}/${id}`;
+    }
+
+    if (nextActive !== active) {
+      debug('handleControlParametersChange - set active scope', { nextActive });
+      dispatch(setActiveScope(nextActive));
     }
 
     if (action && !isNewAction) {
@@ -166,10 +121,43 @@ export class EditorGuideView extends React.Component<IProps, any> {
         toPath: path
       });
       history.push(path);
-    } else {
-      debug('handleControlParametersChange - NO navigate');
     }
   };
-}
+
+  let resolvedSimulationId = simulationId;
+  let resolvedExecutionId = executionId;
+  let resolvedRenderingId = renderingId;
+  let resolvedAction = action;
+  const re = /^[a-z]+$/;
+  debug('render', { simulationId, executionId, renderingId });
+  if (renderingId && re.test(renderingId)) {
+    resolvedAction = renderingId; // interpret id as rest action and clear id
+    resolvedRenderingId = undefined;
+  } else if (executionId && re.test(executionId)) {
+    resolvedAction = executionId; // interpret id as rest action and clear id
+    resolvedExecutionId = undefined;
+  } else if (simulationId && re.test(simulationId)) {
+    resolvedAction = simulationId; // interpret id as rest action and clear id
+    resolvedSimulationId = undefined;
+  }
+
+  return (
+    <GuideControl
+      loading={simulationsLoading}
+      title={photo}
+      thumbnailUrl={thumbnailUrl}
+      simulations={simulations}
+      sourceId={sourceId}
+      simulationId={resolvedSimulationId}
+      executionId={resolvedExecutionId}
+      renderingId={resolvedRenderingId}
+      action={resolvedAction}
+      submitEnabled={actionEnabled}
+      onControlParametersChanged={handleControlParametersChanged}
+      onControlActionSubmit={handleControlActionSubmit}
+      onControlActionCancel={handleControlActionCancel}
+    />
+  );
+};
 
 export default EditorGuideView;

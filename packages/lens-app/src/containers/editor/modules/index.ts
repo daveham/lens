@@ -23,41 +23,11 @@ const simulations = (state = initialSimulationState, { type, payload }) => {
   return state;
 };
 
-const simulation = (state = null, { type, payload }) => {
+const form = (state = null, { type, payload }) => {
   switch(type) {
-    case ACTIONS.SET_SIMULATION:
+    case ACTIONS.SET_FORM:
       return payload;
-    case ACTIONS.UPDATE_SIMULATION:
-      const safeState = state || {};
-      return {
-        ...safeState,
-        ...payload,
-      };
-    default:
-      return state;
-  }
-};
-
-const execution = (state = null, { type, payload }) => {
-  switch(type) {
-    case ACTIONS.SET_EXECUTION:
-      return payload;
-    case ACTIONS.UPDATE_EXECUTION:
-      const safeState = state || {};
-      return {
-        ...safeState,
-        ...payload,
-      };
-    default:
-      return state;
-  }
-};
-
-const rendering = (state = null, { type, payload }) => {
-  switch(type) {
-    case ACTIONS.SET_RENDERING:
-      return payload;
-    case ACTIONS.UPDATE_RENDERING:
+    case ACTIONS.UPDATE_FORM:
       const safeState = state || {};
       return {
         ...safeState,
@@ -100,9 +70,7 @@ const active = (state = '', { type, payload }) => {
 const editorModuleReducer = combineReducers({
   loading,
   simulations,
-  simulation,
-  execution,
-  rendering,
+  form,
   actionEnabled,
   actionValid,
   active,

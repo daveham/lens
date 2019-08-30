@@ -17,7 +17,7 @@ const debug = _debug('lens:editor:simulation:adjustableList');
 
 const styles: any = (theme) => {
   const borderStyle = `1px solid ${theme.palette.divider}`;
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
   return {
     root: {
       display: 'flex',

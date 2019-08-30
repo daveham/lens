@@ -18,12 +18,12 @@ const styles: any = (theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
-    paddingLeft: theme.spacing.unit,
+    paddingLeft: theme.spacing(1),
   },
   thumbnail: {
     boxShadow: theme.shadows[4],
-    margin: `${theme.spacing.unit}px ${theme.spacing.unit / 2}px`,
-    borderRadius: theme.spacing.unit / 2,
+    margin: theme.spacing(1, .5),
+    borderRadius: theme.spacing(.5),
   },
 });
 

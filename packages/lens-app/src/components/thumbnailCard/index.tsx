@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -36,7 +36,8 @@ interface IProps {
   catalogLink: string;
 }
 
-const linkWrapper = (link) => (props) => <RouterLink to={link} {...props} />;
+// const linkWrapper = (link) =>
+//   React.forwardRef((props, ref) => <Link {...props} ref={ref} to={link} />);
 
 export default withStyles(styles)(({
   classes,
@@ -67,14 +68,14 @@ export default withStyles(styles)(({
         <CardActions classes={{ root: classes.cardButtons }}>
           <Button
             color='primary'
-            component={linkWrapper(catalogLink)}
+            href={catalogLink}
             size='small'
           >
             Definition
           </Button>
           <Button
             color='primary'
-            component={linkWrapper(imageDataLink)}
+            href={imageDataLink}
             size='small'
           >
             Data
@@ -84,6 +85,8 @@ export default withStyles(styles)(({
     );
   }
 
+  // component={linkWrapper(catalogLink)}
+  // component={linkWrapper(imageDataLink)}
   return (
     <div>
       <Loading pulse={true} />

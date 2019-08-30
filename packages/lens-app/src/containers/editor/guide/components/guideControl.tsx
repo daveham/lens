@@ -29,11 +29,10 @@ import _debug from 'debug';
 const debug = _debug('lens:editor:guideControl');
 
 const styles: any = theme => {
-  const { unit } = theme.spacing;
   const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {
-      padding: unit * 2,
+      padding: theme.spacing(2),
       flex: '1 0 auto',
       display: 'flex',
       flexDirection: 'column',
@@ -41,7 +40,7 @@ const styles: any = theme => {
     card: {
       backgroundColor: theme.palette.primary.dark,
       color: theme.palette.primary.contrastText,
-      maxWidth: unit * 50,
+      maxWidth: theme.spacing(50),
     },
     cardHeader: {
       backgroundColor: 'inherit',
@@ -64,9 +63,9 @@ const styles: any = theme => {
     cardContent: {
       backgroundColor: 'inherit',
       color: 'inherit',
-      padding: unit,
+      padding: theme.spacing(1),
       '&:last-child': {
-        padding: unit,
+        padding: theme.spacing(1),
       },
     },
     badgeContent: {
@@ -79,7 +78,7 @@ const styles: any = theme => {
     },
     expansionHeadingContainer: {
       width: '100%',
-      paddingLeft: unit * 2,
+      paddingLeft: theme.spacing(2),
       position: 'relative',
       left: -4,
       top: -8,
@@ -104,7 +103,7 @@ const styles: any = theme => {
     },
     list: {
       width: '100%',
-      maxHeight: unit * 12,
+      maxHeight: theme.spacing(12),
       overflow: 'auto',
     },
     listItemContainer: {
@@ -137,7 +136,7 @@ const styles: any = theme => {
       visibility: 'hidden',
     },
     lockedPanelMessage: {
-      padding: unit,
+      padding: theme.spacing(1),
       width: '100%',
     },
   };

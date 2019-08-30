@@ -11,7 +11,8 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import BuildIcon from '@material-ui/icons/Build';
 import CollectionsIcon from '@material-ui/icons/Collections';
 
-const linkWrapper = (link) => (props) => <Link to={link} {...props} />;
+const linkWrapper = (link) =>
+  React.forwardRef((props, ref) => <Link {...props} ref={ref} to={link} />);
 
 export const renderMainListItems = (pathname) => (
   <div>

@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:guide:menu');
 
-const styles: any = ({ spacing: { unit }, palette }) => {
+const styles: any = ({ spacing, palette }) => {
   return {
     guideMenu: {
       backgroundColor: palette.primary.dark,
@@ -16,8 +16,8 @@ const styles: any = ({ spacing: { unit }, palette }) => {
       color: palette.primary.contrastText,
       fontSize: '.8rem',
       height: 20,
-      paddingTop: unit / 2,
-      paddingBottom: unit / 2,
+      paddingTop: spacing(.5),
+      paddingBottom: spacing(.5),
     },
   };
 };

@@ -8,7 +8,7 @@ const styles = (theme) => ({
   },
   label: {
     color: theme.palette.primary.light,
-    paddingRight: theme.spacing.unit * 2,
+    paddingRight: theme.spacing(2),
   },
   prefix: {
     color: theme.palette.primary.dark,

@@ -1,13 +1,13 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor/simulation/simulationEmptyState/view');
 
-const styles: any = (theme => ({
+const useStyles: any = makeStyles((theme: any) => ({
   empty: {
-    padding: `${theme.spacing.unit * 10}px`,
+    padding: theme.spacing(10),
     border: `solid 1px ${theme.palette.grey['300']}`,
     borderRadius: theme.shape.borderRadius,
     display: 'flex',
@@ -20,37 +20,36 @@ const styles: any = (theme => ({
 }));
 
 interface IProps {
-  classes?: any;
+  classes: any;
   history: any;
   sourceId: string;
 }
 
-class View extends React.Component<IProps, any> {
-  public render(): any {
-    const { classes } = this.props;
-    return (
-      <div className={classes.empty}>
-        <Button
-          size='small'
-          onClick={this.handleAddNewSimulation}
-          color='primary'
-          variant='contained'
-        >
-          Add a new Simulation
-        </Button>
-      </div>
-    );
-  }
+const SimulationEmptyStateView = (props: IProps) => {
+  const classes = useStyles(props);
 
-  handleAddNewSimulation = () => {
+  const handleAddNewSimulation = () => {
     const {
       history,
       sourceId,
-    } = this.props;
+    } = props;
 
     const path = `/Catalog/${sourceId}/Simulation/new`;
     history.push(path);
   };
-}
 
-export default withStyles(styles)(View);
+  return (
+    <div className={classes.empty}>
+      <Button
+        size='small'
+        onClick={handleAddNewSimulation}
+        color='primary'
+        variant='contained'
+      >
+        Add a new Simulation
+      </Button>
+    </div>
+  );
+};
+
+export default SimulationEmptyStateView;

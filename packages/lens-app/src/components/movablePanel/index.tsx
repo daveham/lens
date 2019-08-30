@@ -8,7 +8,7 @@ const styles: any = (theme: any) => createStyles({
   root: {
     position: 'absolute',
     zIndex: 200,
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing(.5),
     backgroundImage: 'linear-gradient(to top, #e3e3e3 0, #f0f0f0 20%, #fff 60%)',
     borderRadius: 6,
     boxShadow: '2px 3px 3px 0 rgba(0, 0, 0, .14), ' +

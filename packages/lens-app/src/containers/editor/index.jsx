@@ -17,7 +17,7 @@ const styles = theme => ({
     flex: 'auto',
   },
   guide: {
-    width: theme.spacing.unit * 50,
+    width: theme.spacing(50),
     display: 'flex',
     flexFlow: 'column',
   },

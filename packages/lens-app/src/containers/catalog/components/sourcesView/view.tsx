@@ -10,7 +10,7 @@ const styles: any = (theme) => ({
     width: '100%',
   },
   thumbnailContainer: {
-    padding: theme.spacing.unit * 4
+    padding: theme.spacing(4)
   }
 });
 

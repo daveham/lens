@@ -30,7 +30,7 @@ interface IProps {
   history: any;
 }
 
-export const EditorGuideView = (props: IProps) => {
+const EditorGuideView = (props: IProps) => {
   const {
     history,
     match: {

@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography/Typography';
 
 const styles: any = (theme) => {
-  const paddingHalf = theme.spacing.unit;
+  const paddingHalf = theme.spacing(1);
   const padding = paddingHalf * 2;
   return {
     root: {
@@ -28,7 +28,7 @@ const styles: any = (theme) => {
       padding: `${padding}px ${padding}px ${padding * 2}px`,
     },
     splitLeft: {
-      width: theme.spacing.unit * 30,
+      width: theme.spacing(30),
       borderRight: `solid 1px ${theme.palette.divider}`,
       padding: `${padding}px ${padding}px ${padding * 2}px`,
     },
@@ -42,7 +42,7 @@ const styles: any = (theme) => {
     },
     formTitle: {
       padding: `${paddingHalf}px ${padding}px`,
-      width: theme.spacing.unit * 30,
+      width: theme.spacing(30),
     },
     formTitleColor: {
       color: theme.palette.primary.contrastText,

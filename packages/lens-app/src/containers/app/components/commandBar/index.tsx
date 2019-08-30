@@ -8,7 +8,7 @@ import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalC
 // import _debug from 'debug';
 // const debug = _debug('lens:containers:app:commandBar');
 
-interface ICommand {
+export interface ICommand {
   command?: string;
   flashId: number;
   jobId: number;

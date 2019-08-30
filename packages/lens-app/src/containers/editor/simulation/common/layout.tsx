@@ -4,9 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography/Typography';
 
 const styles: any = (theme) => {
-  const paddingHalf = theme.spacing.unit;
+  const paddingHalf = theme.spacing(1);
   const padding = paddingHalf * 2;
-  const fixedWidth = theme.spacing.unit * 34;
+  const fixedWidth = theme.spacing(34);
   return {
     root: {
       flex: '1 0 auto',

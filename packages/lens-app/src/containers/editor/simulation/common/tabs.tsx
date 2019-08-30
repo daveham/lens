@@ -9,7 +9,7 @@ const styles: any = (theme) => ({
     flexDirection: 'column',
   },
   content: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
   },
 });
 

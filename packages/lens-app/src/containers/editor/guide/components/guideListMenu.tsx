@@ -5,19 +5,19 @@ import { withStyles } from '@material-ui/core/styles';
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:guide:menu');
 
-const styles: any = ({ spacing: { unit } }) => {
+const styles: any = ({ spacing }) => {
   return {
     listMenuButton: {
-      padding: unit,
+      padding: spacing(1),
     },
     listMenuIcon: {
       fontSize: '16px',
     },
     listMenuItem: {
       fontSize: '.8rem',
-      height: unit * 1.5,
-      paddingTop: unit / 2,
-      paddingBottom: unit / 2,
+      height:spacing(1.5),
+      paddingTop: spacing(.5),
+      paddingBottom: spacing(.5),
     },
   };
 };

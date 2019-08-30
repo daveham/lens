@@ -27,7 +27,7 @@ interface IProps {
   barMax: number;
 }
 
-export default withTheme()(withStyles(styles)(({ theme, classes, data, barStyle, barMax }: IProps) => {
+export default withTheme(withStyles(styles)(({ theme, classes, data, barStyle, barMax }: IProps) => {
   const { height, gap } = theme.editor.analysis.bar;
   const count = data.length - 1;
   const widths = data.map((value, index) => ({ value, index }));

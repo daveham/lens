@@ -22,7 +22,7 @@ import { Details, Tiles, Toolbar, ImageDetails } from './components';
 // const debug = _debug('lens:sourceView');
 
 const styles: any = (theme) => {
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
 
   return {
     root: {

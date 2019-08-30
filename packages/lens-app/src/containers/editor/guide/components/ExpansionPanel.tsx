@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 
 const styles = theme => {
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
   const panelHeight = 6 * unit;
   const borderRadius = theme.shape.borderRadius * 2;
   const margin = `${unit}px 0`;

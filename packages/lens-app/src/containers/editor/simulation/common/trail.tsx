@@ -17,9 +17,9 @@ const styles: any = (theme) => ({
     flexDirection: 'column',
   },
   formControl: {
-    margin: theme.spacing.unit,
-    minWidth: theme.spacing.unit * 18,
-    maxWidth: theme.spacing.unit * 22,
+    margin: theme.spacing(1),
+    minWidth: theme.spacing(18),
+    maxWidth: theme.spacing(22),
   },
 });
 

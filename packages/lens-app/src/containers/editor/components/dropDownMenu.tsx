@@ -10,14 +10,14 @@ import { withStyles } from '@material-ui/core/styles';
 import _debug from 'debug';
 const debug = _debug('lens:editor:dropDownMenu');
 
-const styles: any = ({ spacing: { unit }, palette }) => {
+const styles: any = ({ spacing, palette }) => {
   return {
     menu: {
       backgroundColor: palette.background.default,
       color: palette.text.primary,
     },
     menuButton: {
-      padding: unit * 1.5,
+      padding: spacing(1.5),
     },
     menuIcon: {
       fontSize: '24px',
@@ -26,9 +26,9 @@ const styles: any = ({ spacing: { unit }, palette }) => {
       backgroundColor: palette.background.default,
       color: palette.text.primary,
       fontSize: '1rem',
-      height: 2.5 * unit,
-      paddingTop: unit,
-      paddingBottom: unit,
+      height: spacing(2.5),
+      paddingTop: spacing(1),
+      paddingBottom: spacing(1),
     },
   };
 };

@@ -10,21 +10,21 @@ const styles: any = (theme) => ({
   form: {
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: theme.spacing.unit * 2,
+    paddingLeft: theme.spacing(2),
     width: 400,
   },
   actions: {
     display: 'flex',
     justifyContent: 'flex-end',
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing(2),
     '& button': {
-      margin: theme.spacing.unit,
+      margin: theme.spacing(1),
       width: 60,
     },
   },
   tag: {
     color: theme.palette.text.disabled,
-    marginTop: theme.spacing.unit,
+    marginTop: theme.spacing(1),
     fontSize: theme.editor.annotation.fontSize,
     fontFamily: theme.typography.fontFamily,
   },

@@ -17,7 +17,7 @@ interface IState {
 }
 
 const styles: any = (theme) => {
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
   return {
     root: {
       color: theme.palette.text.primary,

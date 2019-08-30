@@ -16,7 +16,7 @@ import { withStyles } from '@material-ui/core/styles';
 // const debug = _debug('lens:editor:simulation:view');
 
 export const styles: any = (theme) => {
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
   return {
     root: {
       padding: unit * 2,

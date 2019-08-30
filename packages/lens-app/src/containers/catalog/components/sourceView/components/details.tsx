@@ -31,7 +31,7 @@ const createValueFromDetail = (value, converter) => {
 };
 
 const styles: any = (theme) => {
-  const { unit } = theme.spacing;
+  const unit = theme.spacing(1);
   return {
     root: {
       display: 'flex',

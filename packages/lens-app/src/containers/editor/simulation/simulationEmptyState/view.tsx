@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor/simulation/simulationEmptyState/view');
@@ -26,7 +26,7 @@ interface IProps {
 }
 
 const SimulationEmptyStateView = (props: IProps) => {
-  const classes = useStyles(props);
+  const classes = useStyles();
 
   const handleAddNewSimulation = () => {
     const {

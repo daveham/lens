@@ -6,6 +6,7 @@ const styles = theme => {
   const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {
+      color: theme.palette.primary.dark,
       backgroundColor: theme.editor.guide.background,
       padding: 0,
       '&:last-child': {

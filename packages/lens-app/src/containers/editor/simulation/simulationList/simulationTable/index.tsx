@@ -40,7 +40,7 @@ class SimulationTable extends React.Component<IProps, IState> {
     const { classes, simulationRows } = this.props;
     debug('render', { simulationRows });
     return (
-      <Paper className={classes.root}>
+      <Paper classes={{ root: classes.root }}>
         <Table>
           <TableHead>
             <TableRow>

@@ -327,7 +327,7 @@ class SourceViewCmp extends React.Component<IProps, IState> {
       const statsKey = makeStatsKey(this.state.selectedStatsDescriptor);
 
       return (
-        <Paper className={classes.imageViewContainer}>
+        <Paper classes={{ root: classes.imageViewContainer }}>
           <div key='tiles' className={classes.tilesWrapper}>
             <Tiles
               statsTileSpec={this.state.statsSpec}

@@ -40,7 +40,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
   public render(): any {
     const { classes, executionRows } = this.props;
     return(
-      <Paper className={classes.root}>
+      <Paper classes={{ root: classes.root }}>
         <Table>
           <TableHead>
             <TableRow>

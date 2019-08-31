@@ -707,7 +707,7 @@ export class GuideControl extends React.Component<IProps, IState> {
     return (
       <ExpansionPanelDetails>
         <div className={classes.detailsContent}>
-          <Typography className={classes.lockedPanelMessage} component='div' align='center'>
+          <Typography classes={{ root: classes.lockedPanelMessage }} component='div' align='center'>
             {message}
           </Typography>
         </div>

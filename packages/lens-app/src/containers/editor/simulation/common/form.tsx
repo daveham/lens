@@ -4,9 +4,9 @@ import TextField from '@material-ui/core/TextField';
 import { timestampFormat } from 'editor/constants';
 import FormContainer from 'editor/components/formContainer';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
-import Paper from '@material-ui/core/Paper/Paper';
+import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography/Typography';
+import Typography from '@material-ui/core/Typography';
 
 const styles: any = (theme) => {
   const paddingHalf = theme.spacing(1);
@@ -94,13 +94,13 @@ const Form = ({
   isDelete
 }: IProps) => {
   const isShow = !(isNew || isEdit || isDelete);
-  const FieldElement = isEdit ? TextField : ReadOnlyTextField;
+  const FieldElement = (isEdit || isNew) ? TextField : ReadOnlyTextField;
   const formTitleColorClasses: any = {
     colorTextPrimary: classes.formTitleColor
   };
 
   return (
-    <Paper className={classes.root}>
+    <Paper classes={{ root: classes.root }}>
       <div className={classes.formHeader}>
         <div className={classes.formTitle}>
           <Typography

@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import { timestampFormat } from 'editor/constants';
 import FormContainer from 'editor/components/formContainer';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
-import Paper from '@material-ui/core/Paper/Paper';
+import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles: any = {
@@ -49,7 +49,7 @@ const Form = ({
   const FieldElement = isEdit ? TextField : ReadOnlyTextField;
 
   return (
-    <Paper className={classes.root}>
+    <Paper classes={{ root: classes.root }}>
       <FormContainer
         onCancel={onCancel}
         onConfirm={onConfirm}

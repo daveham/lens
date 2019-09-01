@@ -1,91 +1,73 @@
-import React from 'react';
-import ThumbnailCard from 'components/thumbnailCard';
-import { IImageDescriptor, ISourceDescriptor } from 'src/interfaces';
-import { withStyles } from '@material-ui/core/styles';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 
-const styles: any = (theme) => ({
+import { ensureImages } from 'modules/images/actions';
+import { ensureCatalogTitle } from 'catalog/modules/actions';
+
+import {
+  sources as sourcesSelector,
+  thumbnailImageDescriptors as thumbnailImageDescriptorsSelector,
+  thumbnailImageKeys as thumbnailImageKeysSelector,
+} from 'catalog/selectors';
+import { thumbnailImagesSelector } from 'modules/images/selectors';
+
+import ThumbnailCard from 'components/thumbnailCard';
+
+const useStyles: any = makeStyles((theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
   },
   thumbnailContainer: {
-    padding: theme.spacing(4)
+    padding: theme.spacing(4),
   }
-});
+}));
 
-interface IProps {
-  classes?: any;
-  sources: ReadonlyArray<ISourceDescriptor>;
-  thumbnailImageDescriptors: ReadonlyArray<IImageDescriptor>;
-  thumbnailImageKeys: ReadonlyArray<string>;
-  thumbnailImages: any;
-  ensureImages: (payload: {[imageDescriptors: string]: ReadonlyArray<IImageDescriptor>}) => void;
-  ensureCatalogTitle: (sourceId?: string) => void;
-}
+const SourcesView = () => {
+  const classes = useStyles();
 
-interface IState {
-  resolution: number;
-}
+  const [resolution, setResolution] = useState(32);
 
-class SourcesViewCmp extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
+  const dispatch = useDispatch();
 
-    this.state = {
-      resolution: 32
-    };
-  }
+  const sources = useSelector(sourcesSelector);
+  const thumbnailImageDescriptors = useSelector(thumbnailImageDescriptorsSelector);
+  const thumbnailImageKeys = useSelector(thumbnailImageKeysSelector);
+  const thumbnailImages = useSelector(thumbnailImagesSelector);
 
-  public componentDidMount(): any {
-    setTimeout(() => this.props.ensureCatalogTitle());
-
-    const idCount = this.props.thumbnailImageDescriptors.length;
-    if (idCount && Object.keys(this.props.thumbnailImages).length < idCount) {
-      this.requestImages();
+  useEffect(() => { dispatch(ensureCatalogTitle()); }, [dispatch]);
+  useEffect(() => {
+    const idCount = thumbnailImageDescriptors.length;
+    if (idCount && Object.keys(thumbnailImages).length < idCount) {
+      dispatch(ensureImages({ imageDescriptors: thumbnailImageDescriptors }));
     }
-  }
-
-  public componentDidUpdate(prevProps: IProps): any {
-    if (prevProps.thumbnailImageDescriptors !== this.props.thumbnailImageDescriptors) {
-      this.requestImages();
+  }, [thumbnailImageDescriptors, thumbnailImages, dispatch]);
+  useEffect(() => {
+    if (thumbnailImageDescriptors.length) {
+      dispatch(ensureImages({ imageDescriptors: thumbnailImageDescriptors }));
     }
-  }
+  }, [thumbnailImageDescriptors, dispatch]);
 
-  public renderThumbnailCard(resolution, source, thumbnail, key) {
-    const { classes } = this.props;
-    return (
-      <div className={classes.thumbnailContainer} key={key}>
-        <ThumbnailCard
-          thumbnailUrl={thumbnail ? thumbnail.url : null}
-          label={source.name}
-          imageDataLink={`/Catalog/Source/${source.id}/${resolution}`}
-          catalogLink={`/Catalog/${source.id}/Simulation`}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className={classes.root}>
+      {thumbnailImageKeys.map((key, index) => {
+        const source = sources[index];
+        const thumbnail = thumbnailImages[key];
+        return (
+          <div className={classes.thumbnailContainer} key={key}>
+            <ThumbnailCard
+              thumbnailUrl={thumbnail ? thumbnail.url : null}
+              label={source.name}
+              imageDataLink={`/Catalog/Source/${source.id}/${resolution}`}
+              catalogLink={`/Catalog/${source.id}/Simulation`}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
-  public render() {
-    const { classes, thumbnailImages, sources } = this.props;
-    const { resolution } = this.state;
-    return (
-      <div className={classes.root}>
-        {this.props.thumbnailImageKeys.map((key, index) =>
-          this.renderThumbnailCard(
-            resolution,
-            sources[index],
-            thumbnailImages[key],
-            key))}
-      </div>
-    );
-  }
-
-  private requestImages(): void {
-    setTimeout(() => {
-      this.props.ensureImages({ imageDescriptors: this.props.thumbnailImageDescriptors });
-    }, 0);
-  }
-}
-
-export const SourcesView = withStyles(styles)(SourcesViewCmp);
+export default SourcesView;

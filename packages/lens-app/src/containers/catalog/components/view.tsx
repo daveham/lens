@@ -12,7 +12,7 @@ import {
 
 import { Loading } from 'components/loading';
 import { editorRoute } from 'src/routes';
-import { SourcesView } from './sourcesView';
+import SourcesView from './sourcesView';
 import { SourceView } from './sourceView';
 
 // import _debug from 'debug';

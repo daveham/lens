@@ -1,17 +1,18 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+
+import { Link, LinkProps } from 'react-router-dom';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import { Loading } from '../loading';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { default as getConfig } from 'src/config';
 
-const styles = {
+const useStyles: any = makeStyles((theme) => ({
   card: {
     maxWidth: 225,
     minWidth: 225,
@@ -25,28 +26,32 @@ const styles = {
   media: {
     height: 150,
   },
-};
+  loading: {
+    padding: theme.spacing(8),
+  },
+}));
 
 interface IProps {
-  classes?: any;
-  children?: any;
   thumbnailUrl?: string;
   label: string;
   imageDataLink: string;
   catalogLink: string;
 }
 
-// const linkWrapper = (link) =>
-//   React.forwardRef((props, ref) => <Link {...props} ref={ref} to={link} />);
+type ButtonLinkProps = ButtonProps<typeof Link, LinkProps>;
+const ButtonLink = (props: ButtonLinkProps) => (
+  <Button {...props} component={Link} />
+);
 
-export default withStyles(styles)(({
-  classes,
-  children,
-  thumbnailUrl,
-  label,
-  imageDataLink,
-  catalogLink,
-}: IProps) => {
+const ThumbnailCard = (props: IProps) => {
+  const classes = useStyles();
+  const {
+    thumbnailUrl,
+    label,
+    imageDataLink,
+    catalogLink,
+  } = props;
+
   if (thumbnailUrl) {
     const dataHost = getConfig().dataHost;
     const fullUrl = `${dataHost}${thumbnailUrl}`;
@@ -66,30 +71,30 @@ export default withStyles(styles)(({
           </CardContent>
         </CardActionArea>
         <CardActions classes={{ root: classes.cardButtons }}>
-          <Button
+          <ButtonLink
             color='primary'
-            href={catalogLink}
+            to={catalogLink}
             size='small'
           >
             Definition
-          </Button>
-          <Button
+          </ButtonLink>
+          <ButtonLink
             color='primary'
-            href={imageDataLink}
+            to={imageDataLink}
             size='small'
           >
             Data
-          </Button>
+          </ButtonLink>
         </CardActions>
       </Card>
     );
   }
 
-  // component={linkWrapper(catalogLink)}
-  // component={linkWrapper(imageDataLink)}
   return (
-    <div>
-      <Loading pulse={true} />
+    <div className={classes.loading}>
+      <CircularProgress size={80} />
     </div>
   );
-});
+};
+
+export default ThumbnailCard;

@@ -3,14 +3,20 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 
 const styles = theme => {
-  const unit = theme.spacing(1);
-  const panelHeight = 6 * unit;
-  const margin = `${unit}px 0`;
+  const margin = theme.spacing(1, 0);
+  const minHeight = theme.spacing(6);
+  const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {
-      minHeight: panelHeight,
+      borderRadius,
+      minHeight,
       '&$expanded': {
-        minHeight: panelHeight,
+        minHeight,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+      },
+      '&.Mui-focused': {
+        backgroundColor: theme.palette.primary.light,
       },
     },
     content: {

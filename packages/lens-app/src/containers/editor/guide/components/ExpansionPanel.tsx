@@ -3,10 +3,8 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 
 const styles = theme => {
-  const unit = theme.spacing(1);
-  const panelHeight = 6 * unit;
   const borderRadius = theme.shape.borderRadius * 2;
-  const margin = `${unit}px 0`;
+  const margin = theme.spacing(1, 0);
   return {
     root: {
       backgroundColor: theme.palette.primary.main,
@@ -24,7 +22,7 @@ const styles = theme => {
     },
     expanded: {
       margin,
-      minHeight: panelHeight,
+      minHeight: theme.spacing(6),
     },
   };
 };

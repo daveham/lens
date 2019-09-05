@@ -290,6 +290,8 @@ const makeResolvers = dataManager => ({
     },
     getBreadcrumbNames: (_, { input: { simulationId, executionId, renderingId } }) => {
       debug('getBreadcrumbNames', { simulationId, executionId, renderingId });
+      return Promise.resolve(['a', 'b', 'c']);
+      /*
       const promises = [];
       if (simulationId) {
         promises.push(dataManager.getSimulation(simulationId, false));
@@ -302,6 +304,7 @@ const makeResolvers = dataManager => ({
       }
       return Promise.all(promises)
         .then(items => items.map(item => item.name));
+       */
     }
   },
   Mutation: {

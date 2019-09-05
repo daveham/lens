@@ -1,9 +1,9 @@
 import { takeEvery, select, all, put } from 'redux-saga/effects';
-import { apiSaga, invokeRestService } from 'sagas/utils';
+// import { apiSaga, invokeRestService } from 'sagas/utils';
 import { ACTIONS } from '../modules/constants';
 import {
   receiveSimulationsForSource,
-  requestSimulationsForSourceFailed,
+  // requestSimulationsForSourceFailed,
 } from '../modules/actions';
 import {
   catalogName as catalogNameSelector,
@@ -28,12 +28,73 @@ export function* ensureTitleSaga({ payload }) {
   }
 }
 
+let globalId = 1001;
+function uuid() {
+  globalId += 1;
+  return `a-${globalId}`;
+}
+
+function generateMockRendering(simulationId, executionId) {
+  const created = Date.now();
+  const id = uuid();
+  return {
+    id,
+    created,
+    modified: created,
+    simulationId,
+    executionId,
+    name: `sim${simulationId}-ex${executionId}-ren${id}`,
+  };
+}
+
+function generateMockExecution(simulationId, renderingCount) {
+  const created = Date.now();
+  const id = uuid();
+  const execution = {
+    id,
+    created,
+    modified: created,
+    simulationId,
+    renderings: [],
+    name: `sim${simulationId}-ex${id}`,
+  };
+
+  for (let i = 0; i < renderingCount; i++) {
+    execution.renderings.push(generateMockRendering(simulationId, id));
+  }
+  return execution;
+}
+
+function generateMockSimulation(sourceId, renderingCounts) {
+  const created = Date.now();
+  const id = uuid();
+  return {
+    id,
+    created,
+    modified: created,
+    sourceId,
+    executions: renderingCounts.map(n => generateMockExecution(id, n)),
+    name: `sim${id}`,
+  };
+}
+
+function generateMockData(sourceId) {
+  const sims = [];
+  sims.push(generateMockSimulation(sourceId, [4, 3, 7]));
+  sims.push(generateMockSimulation(sourceId, [3, 2, 9, 6, 4]));
+  return sims;
+}
+
 export function* readSimulationsForSourceSaga({ payload }) {
   debug('readSimulationsForSourceSaga', { payload });
-  yield* apiSaga(invokeRestService,
-    [ `/simulations/${payload}` ],
-    receiveSimulationsForSource,
-    requestSimulationsForSourceFailed);
+
+  const mockData = generateMockData(payload);
+  yield put(receiveSimulationsForSource(mockData));
+
+  // yield* apiSaga(invokeRestService,
+  //   [ `/simulations/${payload}` ],
+  //   receiveSimulationsForSource,
+  //   requestSimulationsForSourceFailed);
 }
 
 export function* rootSaga() {

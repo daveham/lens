@@ -1,16 +1,17 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
-import { backupUrl } from 'src/helpers';
+// import { backupUrl } from 'src/helpers';
 
-import Header from '../components/header';
-import BreadcrumbBar from '../components/breadcrumbs';
-import renderingListRenderFunction from './renderingList';
-import renderingEditRenderFunction from './renderingEdit';
-import renderingNewRenderFunction from './renderingNew';
-import renderingShowRenderFunction from './renderingShow';
-import renderingDeleteRenderFunction from './renderingDelete';
+// import Header from '../components/header';
+// import BreadcrumbBar from '../components/breadcrumbs';
+import RenderingEmptyState from './renderingEmptyState';
+// import renderingListRenderFunction from './renderingList';
+// import renderingEditRenderFunction from './renderingEdit';
+// import renderingNewRenderFunction from './renderingNew';
+// import renderingShowRenderFunction from './renderingShow';
+// import renderingDeleteRenderFunction from './renderingDelete';
 
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/editorView';
@@ -44,10 +45,7 @@ class View extends React.Component<IProps, any> {
     }
   }
 
-  public render(): any {
-    const { classes, match: { path } } = this.props;
-    return (
-      <div className={classes.root}>
+  /*
         <Switch>
           <Route path={`${path}/new`} render={this.renderRenderingNewToolbar} />
           <Route path={`${path}/:renderingId/delete`} render={this.renderRenderingDeleteToolbar} />
@@ -64,80 +62,89 @@ class View extends React.Component<IProps, any> {
             <Route path={path} render={renderingListRenderFunction} />
           </Switch>
         </Fragment>
+   */
+
+  public render(): any {
+    const { classes, match: { path } } = this.props;
+    return (
+      <div className={classes.root}>
+        <Switch>
+          <Route path={path} component={RenderingEmptyState} />
+        </Switch>
       </div>
     );
   }
 
-  private renderRenderingShowToolbar = (): any => {
-    const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
-    const links = {
-      back: url
-    };
+  // private renderRenderingShowToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
+  //   const links = {
+  //     back: url
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Rendering'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 
-    return (
-      <Header
-        title='Rendering'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderRenderingEditToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
+  //   const links = {
+  //     back: backupUrl(url, 2)
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Edit Rendering'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 
-  private renderRenderingEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
-    const links = {
-      back: backupUrl(url, 2)
-    };
+  // private renderRenderingDeleteToolbar = (): any => {
+  //   const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
+  //   return (
+  //     <Header
+  //       title='Delete Rendering'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //     />
+  //   );
+  // };
 
-    return (
-      <Header
-        title='Edit Rendering'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderRenderingNewToolbar = (): any => {
+  //   const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
+  //   return (
+  //     <Header
+  //       title='New Rendering'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //     />
+  //   );
+  // };
 
-  private renderRenderingDeleteToolbar = (): any => {
-    const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
-    return (
-      <Header
-        title='Delete Rendering'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-        thumbnailUrl={thumbnailUrl}
-      />
-    );
-  };
-
-  private renderRenderingNewToolbar = (): any => {
-    const { thumbnailUrl, match: { params: { simulationId, executionId } } } = this.props;
-    return (
-      <Header
-        title='New Rendering'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-        thumbnailUrl={thumbnailUrl}
-      />
-    );
-  };
-
-  private renderRenderingListToolbar = (): any => {
-    const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
-    const links = {
-      back: backupUrl(url, 2),
-      newItem: `${url}/new`
-    };
-
-    return (
-      <Header
-        title='Renderings'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderRenderingListToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url, params: { simulationId, executionId } } } = this.props;
+  //   const links = {
+  //     back: backupUrl(url, 2),
+  //     newItem: `${url}/new`
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Renderings'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} executionId={executionId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 }
 
 export default withStyles(styles)(View);

@@ -14,10 +14,10 @@ const styles: any = ({ spacing }) => {
       fontSize: '16px',
     },
     listMenuItem: {
-      fontSize: '.8rem',
-      height:spacing(1.5),
-      paddingTop: spacing(.5),
-      paddingBottom: spacing(.5),
+      fontSize: '15px', // '.8rem',
+      height:spacing(2),
+      paddingTop: spacing(1.5),
+      paddingBottom: spacing(1.5),
     },
   };
 };

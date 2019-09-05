@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
@@ -12,7 +14,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import { withStyles } from '@material-ui/core/styles';
 
 import { ISimulation, IExecution, IRendering } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
@@ -28,7 +29,7 @@ import GuideListMenu from './guideListMenu';
 import _debug from 'debug';
 const debug = _debug('lens:editor:guideControl');
 
-const styles: any = theme => {
+const useStyles: any = makeStyles((theme: any) => {
   const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {
@@ -103,7 +104,7 @@ const styles: any = theme => {
     },
     list: {
       width: '100%',
-      maxHeight: theme.spacing(12),
+      maxHeight: theme.spacing(16),
       overflow: 'auto',
     },
     listItemContainer: {
@@ -140,16 +141,14 @@ const styles: any = theme => {
       width: '100%',
     },
   };
-};
+});
 
 interface IProps {
-  classes?: any;
   loading?: boolean;
   action?: string;
-  sourceId?: string;
-  simulationId?: number;
-  executionId?: number;
-  renderingId?: number;
+  simulationId: string;
+  executionId: string;
+  renderingId: string;
   title?: string;
   thumbnailUrl?: string;
   simulations: ReadonlyArray<ISimulation>;
@@ -163,16 +162,6 @@ interface IPanelSelections {
   simulation?: ISimulation;
   execution?: IExecution;
   rendering?: IRendering;
-}
-
-interface IState {
-  expandedPanel: string;
-  activePanel: string;
-  panelSelections: IPanelSelections;
-  locked: boolean;
-  action: string;
-  delayedAction: string;
-  delayedUnlock: boolean;
 }
 
 const KEY_SIMULATION = 'simulation';
@@ -287,15 +276,20 @@ const emptyPanelSelections: IPanelSelections = {
   rendering: undefined,
 };
 
-function determineSelections(props) {
-  const {
+function determineSelections(
+  simulations,
+  simulationId,
+  executionId,
+  renderingId,
+  action,
+) {
+  debug('determineSelections - input', {
     simulations,
-    simulationId = '',
-    executionId = '',
-    renderingId = '',
+    simulationId,
+    executionId,
+    renderingId,
     action,
-  } = props;
-
+  });
   let simulation;
   let execution;
   let rendering;
@@ -316,14 +310,15 @@ function determineSelections(props) {
     }
   }
 
+  // determine active panel based on Id's present in the URL
   const isNewAction = action === controlSegmentActions.new;
   let activePanel: string = '';
 
-  if (rendering || (execution && isNewAction)) {
+  if (renderingId || (executionId && isNewAction)) {
     activePanel = KEY_RENDERING;
-  } else if (execution || (simulation && isNewAction)) {
+  } else if (executionId || (simulationId && isNewAction)) {
     activePanel = KEY_EXECUTION;
-  } else if (simulation || isNewAction) {
+  } else if (simulationId || isNewAction) {
     activePanel = KEY_SIMULATION;
   }
 
@@ -338,6 +333,7 @@ function determineSelections(props) {
     action,
   });
 
+  // set selected item for each panel (if there is one)
   const panelSelections = simulation || execution || rendering
     ? { simulation, execution, rendering }
     : emptyPanelSelections;
@@ -350,217 +346,124 @@ function determineSelections(props) {
   };
 }
 
-export class GuideControl extends React.Component<IProps, IState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activePanel: '',
-      expandedPanel: '',
-      panelSelections: emptyPanelSelections,
-      action: '',
-      delayedAction: '',
-      locked: false,
-      delayedUnlock: false,
-    };
-  }
+interface ISelectedItemChanges {
+  locked?: boolean;
+  action?: string;
+  delayedAction?: string;
+}
 
-  public componentDidMount(): void {
-    debug('componentDidMount');
-    this.setState({ ...determineSelections(this.props) });
-  }
+const GuideControl = (props: IProps) => {
+  const classes = useStyles();
 
-  public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
-    const {
-      simulations,
-      simulationId,
-      executionId,
-      renderingId,
-    } = this.props;
-    debug('componentDidUpdate', {
-      propsAction: this.props.action,
-      simulationId,
-      executionId,
-      renderingId,
-    });
+  const {
+    simulations,
+    simulationId,
+    executionId,
+    renderingId,
+    action,
+    onControlParametersChanged,
+  } = props;
 
-    if (simulations !== prevProps.simulations ||
-      this.props.action !== prevProps.action) {
-      debug('componentDidUpdate - change in props detected', {
-        simulationsChanged: simulations !== prevProps.simulations,
-        actionChanged: this.props.action !== prevProps.action,
-      });
-      this.setState({ ...determineSelections(this.props) });
-      return;
-    }
+  const [activePanel, setActivePanel] = useState('');
+  const [expandedPanel, setExpandedPanel] = useState('');
+  const [panelSelections, setPanelSelections] = useState(emptyPanelSelections);
+  const [nextAction, setNextAction] = useState('');
+  const [delayedAction, setDelayedAction] = useState('');
+  const [locked, lock] = useState(false);
+  const [delayedUnlock, setDelayedUnlock] = useState(false);
 
-    const { panelSelections, activePanel, action, delayedAction, delayedUnlock } = this.state;
-    debug('componentDidUpdate', { stateAction: action, delayedAction });
-    if (
-      (prevState.panelSelections !== panelSelections ||
-        prevState.activePanel !== activePanel ||
-        prevState.action !== action)
-    ) {
-      debug('componentDidUpdate - state changes', {
-        panelSelections: prevState.panelSelections !== panelSelections,
-        activePanel: prevState.activePanel !== activePanel,
-        action: prevState.action !== action,
-      });
-      if (prevState.panelSelections !== panelSelections) {
-        debug('componentDidUpdate - panelSelections from changes', {
-          ...prevState.panelSelections,
-        });
-        debug('componentDidUpdate - panelSelections to changes', {
-          ...panelSelections,
-        });
-      }
-      const { simulation, execution, rendering } = panelSelections;
-      this.props.onControlParametersChanged(
-        {
-          simulationId: simulation ? simulation.id : null,
-          executionId: execution ? execution.id : null,
-          renderingId: rendering ? rendering.id : null,
-        },
-        activePanel,
-        action,
-      );
-    }
+  // useEffect(() => { setStateFromSelections(props); }, []);
 
-    if (delayedAction && !prevState.delayedAction) {
-      // delay the transition to an action for animation purposes
-      setTimeout(() => this.setState({ action: delayedAction, delayedAction: '' }), 250);
-    }
-
-    if (delayedUnlock && !prevState.delayedUnlock) {
-      // delay the transition out of an action for animation purposes
-      setTimeout(() => this.setState({ action: '', delayedUnlock: false }), 250);
-    }
-  }
-
-  public render() {
-    const { classes } = this.props;
-
-    return (
-      <div className={classes.root}>
-        <Card className={classes.card}>
-          {this.renderHeader()}
-          {this.renderMedia()}
-          {this.renderContents()}
-        </Card>
-      </div>
+  useEffect(() => {
+    debug('useEffect to determine selections');
+    const initialSelections = determineSelections(
+      simulations, simulationId, executionId, renderingId, action,
     );
-  }
+    setActivePanel(initialSelections.activePanel);
+    setPanelSelections(initialSelections.panelSelections);
+    lock(initialSelections.locked);
+    setNextAction(initialSelections.action);
+    }, [simulations, simulationId, executionId, renderingId, action]);
 
-  private handlePanelChange = key => (event, expanded) => {
-    debug('handlePanelChange', { key, locked: this.state.locked });
-    if (this.state.locked) {
-      return;
+  useEffect(() => {
+    debug('useEffect to report control parameter changes');
+    const { simulation, execution, rendering } = panelSelections;
+    onControlParametersChanged(
+      {
+        simulationId: simulation ? simulation.id : '',
+        executionId: execution ? execution.id : '',
+        renderingId: rendering ? rendering.id : '',
+      },
+      activePanel,
+      nextAction,
+    );
+  }, [panelSelections, activePanel, nextAction, onControlParametersChanged]);
+
+  useEffect(() => {
+    debug('useEffect to process delayed action');
+    if (delayedAction) {
+      setTimeout(() => {
+        setNextAction(delayedAction);
+        setDelayedAction('');
+      }, 250);
     }
+  }, [delayedAction]);
 
-    const newState: any = {
-      expandedPanel: expanded ? key : '',
-    };
-    if (!expanded) {
-      newState.activePanel = key;
+  useEffect(() => {
+    debug('useEffect to process delayed unlock');
+    if (delayedUnlock) {
+      setTimeout(() => {
+        setDelayedUnlock(false);
+        setNextAction('');
+      }, 250);
     }
-    this.setState(newState);
-  };
+  }, [delayedUnlock]);
 
-  private setSelectedItem = (key, item, changes = {}) => {
+  const setSelectedItem = (key, item, changes: ISelectedItemChanges = {}) => {
     debug('setSelectedItem', { key, item, changes });
-    this.setState(prevState => {
-      let panelSelections = {
-        ...prevState.panelSelections,
-        [key]: item,
-      };
-      if (!(panelSelections.simulation ||
-        panelSelections.execution ||
-        panelSelections.rendering)) {
-        panelSelections = emptyPanelSelections;
-      }
 
-      if (key === KEY_SIMULATION) {
-        panelSelections[KEY_EXECUTION] =
-          item ? getFirstExecution(item) : undefined;
-        panelSelections[KEY_RENDERING] =
-          item ? getFirstRendering(panelSelections.execution) : undefined;
-      } else if (key === KEY_EXECUTION) {
-        panelSelections[KEY_RENDERING] =
-          item ? getFirstRendering(item) : undefined;
-      }
+    let nextPanelSelections = {
+      ...panelSelections,
+      [key]: item,
+    };
 
-      return {
-        expandedPanel: '',
-        activePanel: key,
-        panelSelections,
-        ...changes,
-      };
-    });
-  };
-
-  private handlePanelListItemChange = (key, item) => () => {
-    debug('handlePanelListItemChange', { key, item, locked: this.state.locked });
-    if (this.state.locked) {
-      return;
-    }
-
-    const currentActiveItem = this.state.panelSelections[key];
-    if (item === currentActiveItem) {
-      debug('handlePanelListItemChange - same item', { currentActiveItem });
-      return;
-    }
-
-    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
-    this.setSelectedItem(key, item);
-  };
-
-  private handleGuideMenuSelection = menuItem => {
-    debug('handleGuideMenuSelection', { menuItem });
-    const { action } = menuItem;
-    if (action === controlSegmentActions.new) {
-      debug('create a new simulation item');
-      this.setSelectedItem(controlSegmentKeys.simulation, null, { locked: true, action });
-    }
-  };
-
-  private handleListMenuSelection = (key, itemIndex) => menuItem => {
-    if (this.state.locked) {
-      return;
-    }
-
-    const item = this.getItemsForKey(key)[itemIndex];
-    debug('handleListMenuSelection', { key, item, menuItem });
-
-    const { action } = menuItem;
-    if (action === controlSegmentActions.new) {
-      const lowerKey =
-        key === controlSegmentKeys.execution
-          ? controlSegmentKeys.rendering
-          : controlSegmentKeys.execution;
-      this.setSelectedItem(lowerKey, null, { locked: true, action });
-    } else {
-      const actionChanges =
-        action && lockingActions.includes(action) ? { locked: true, delayedAction: action } : {};
-      this.setSelectedItem(key, item, actionChanges);
-    }
-  };
-
-  private handleCancelLock = () => {
-    debug('handleCancelLock');
-    this.setState({ locked: false, delayedUnlock: true });
-    this.props.onControlActionCancel();
-  };
-
-  private handleCommitLock = () => {
-    debug('handleCommitLock');
-    this.setState({ locked: false, delayedUnlock: true });
-    this.props.onControlActionSubmit();
-  };
-
-  private getItemsForKey = key => {
+    // cascade selection
     if (key === KEY_SIMULATION) {
-      return this.props.simulations || [];
+      nextPanelSelections.execution =
+        item ? getFirstExecution(item) : undefined;
+      nextPanelSelections.rendering =
+        item ? getFirstRendering(nextPanelSelections.execution) : undefined;
+    } else if (key === KEY_EXECUTION) {
+      nextPanelSelections.rendering =
+        item ? getFirstRendering(item) : undefined;
     }
-    const { panelSelections } = this.state;
+
+    // preserve reference equality on empty selection
+    if (!(nextPanelSelections.simulation ||
+      nextPanelSelections.execution ||
+      nextPanelSelections.rendering)) {
+      nextPanelSelections = emptyPanelSelections;
+    }
+
+    setExpandedPanel('');
+    setActivePanel(key);
+    setPanelSelections(nextPanelSelections);
+
+    if (changes.hasOwnProperty('locked') && locked !== changes.locked) {
+      lock(changes.locked!);
+    }
+    if (changes.hasOwnProperty('action') && action !== changes.action) {
+      setNextAction(changes.action!);
+    }
+    if (changes.hasOwnProperty('delayedAction') && delayedAction !== changes.delayedAction) {
+      setDelayedAction(changes.delayedAction!);
+    }
+  };
+
+  const getItemsForKey = key => {
+    if (key === KEY_SIMULATION) {
+      return simulations || [];
+    }
     if (key === KEY_EXECUTION) {
       const simulation = panelSelections[KEY_SIMULATION];
       return simulation ? simulation.executions || [] : [];
@@ -569,14 +472,88 @@ export class GuideControl extends React.Component<IProps, IState> {
     return execution ? execution.renderings || [] : [];
   };
 
-  private renderHeader() {
+  // called when panel expansion is toggled
+
+  const handlePanelChange = key => (event, expanded) => {
+    debug('handlePanelChange', { key, locked, expanded });
+    if (locked) {
+      // guide is locked, ignore any attempts to change
+      return;
+    }
+
+    setExpandedPanel(expanded ? key : '');
+    if (!expanded) {
+      setActivePanel(key);
+    }
+  };
+
+  const handleGuideMenuSelection = menuItem => {
+    debug('handleGuideMenuSelection', { menuItem });
+    const { action } = menuItem;
+    if (action === controlSegmentActions.new) {
+      debug('create a new simulation item');
+      setSelectedItem(controlSegmentKeys.simulation, null, { locked: true, action });
+    }
+  };
+
+  const handlePanelListItemChange = (key, item) => () => {
+    debug('handlePanelListItemChange', { key, item, locked });
+    if (locked) {
+      return;
+    }
+
+    const currentActiveItem = panelSelections[key];
+    if (item === currentActiveItem) {
+      debug('handlePanelListItemChange - same item', { currentActiveItem });
+      return;
+    }
+
+    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
+    setSelectedItem(key, item);
+  };
+
+  const handleListMenuSelection = (key, itemIndex) => menuItem => {
+    if (locked) {
+      return;
+    }
+
+    const item = getItemsForKey(key)[itemIndex];
+    debug('handleListMenuSelection', { key, item, menuItem });
+
+    const { action } = menuItem;
+    if (action === controlSegmentActions.new) {
+      const lowerKey =
+        key === controlSegmentKeys.execution
+          ? controlSegmentKeys.rendering
+          : controlSegmentKeys.execution;
+      setSelectedItem(lowerKey, null, { locked: true, action });
+    } else {
+      const actionChanges =
+        action && lockingActions.includes(action) ? { locked: true, delayedAction: action } : {};
+      setSelectedItem(key, item, actionChanges);
+    }
+  };
+
+  const handleCancelLock = () => {
+    debug('handleCancelLock');
+    lock(false);
+    setDelayedUnlock(true);
+    props.onControlActionCancel();
+  };
+
+  const handleCommitLock = () => {
+    debug('handleCommitLock');
+    lock(false);
+    setDelayedUnlock(true);
+    props.onControlActionSubmit();
+  };
+
+  const renderHeader = () => {
     const {
-      classes,
       thumbnailUrl,
       title,
       loading,
-    } = this.props;
-    const { locked } = this.state;
+    } = props;
 
     const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
     const avatar = loading ? 'L' : 'P';
@@ -590,7 +567,7 @@ export class GuideControl extends React.Component<IProps, IState> {
         avatar={<Avatar className={classes.avatar}>{avatar}</Avatar>}
         action={
           <GuideMenu
-            onMenuSelection={this.handleGuideMenuSelection}
+            onMenuSelection={handleGuideMenuSelection}
             menuItems={[
               {
                 label: 'Add New Simulation',
@@ -606,86 +583,11 @@ export class GuideControl extends React.Component<IProps, IState> {
         {headerContent}
       </CardHeader>
     );
-  }
+  };
 
-  private renderMedia() {
-    const { classes, thumbnailUrl } = this.props;
-
-    if (!thumbnailUrl) {
-      return null;
-    }
-
-    const fullUrl =
-      thumbnailUrl.indexOf('http') > -1 ? thumbnailUrl : `${getConfig().dataHost}${thumbnailUrl}`;
-
-    return <CardMedia className={classes.media} image={fullUrl} />;
-  }
-
-  private renderContents() {
-    const { classes, simulations } = this.props;
-
-    if (!simulations) {
-      return null;
-    }
-
-    const { simulation, execution } = this.state.panelSelections;
-    const executions = simulation ? simulation.executions : [];
-    const renderings = execution ? execution.renderings : [];
-
-    return (
-      <CardContent classes={{ root: classes.cardContent }}>
-        {this.renderPanel(KEY_SIMULATION, simulations)}
-        {this.renderPanel(KEY_EXECUTION, executions)}
-        {this.renderPanel(KEY_RENDERING, renderings)}
-      </CardContent>
-    );
-  }
-
-  private renderListMenu(key, itemIndex) {
-    const { menuItems } = panelDetails[key];
-    return (
-      <GuideListMenu
-        id={`${key}-list-menu`}
-        onMenuSelection={this.handleListMenuSelection(key, itemIndex)}
-        menuItems={menuItems}
-      />
-    );
-  }
-
-  private renderListItems(key, items) {
-    const { classes } = this.props;
-    const listItemClasses = {
-      root: classes.listItemRoot,
-      container: classes.listItemContainer,
-      selected: classes.listItemSelected,
-    };
-    const { expandedPanel, panelSelections } = this.state;
-    const currentItem = panelSelections[key];
-    const currentItemId = currentItem ? currentItem.id : null;
-    const isPanelExpanded = expandedPanel === key;
-
-    return items.map((item, itemIndex) => (
-      <ListItem
-        classes={listItemClasses}
-        key={item.id}
-        onClick={this.handlePanelListItemChange(key, item)}
-        dense
-        button
-        selected={isPanelExpanded && item.id === currentItemId}
-      >
-        <ListItemText primary={item.name} secondary={`${key} details`} />
-        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          {this.renderListMenu(key, itemIndex)}
-        </ListItemSecondaryAction>
-      </ListItem>
-    ));
-  }
-
-  private renderLockedDetails(key) {
-    const { classes } = this.props;
-    const { action } = this.state;
+  const renderLockedDetails = key => {
     let message;
-    switch (action) {
+    switch (nextAction) {
       case controlSegmentActions.new:
         message = `Add a new ${key}.`;
         break;
@@ -715,9 +617,46 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderDetails(key, items) {
-    const { classes } = this.props;
-    const listItems = this.renderListItems(key, items);
+  const renderListMenu= (key, itemIndex) => {
+    const { menuItems } = panelDetails[key];
+    return (
+      <GuideListMenu
+        id={`${key}-list-menu`}
+        onMenuSelection={handleListMenuSelection(key, itemIndex)}
+        menuItems={menuItems}
+      />
+    );
+  };
+
+  const renderListItems = (key, items) => {
+    const listItemClasses = {
+      root: classes.listItemRoot,
+      container: classes.listItemContainer,
+      selected: classes.listItemSelected,
+    };
+    const currentItem = panelSelections[key];
+    const currentItemId = currentItem ? currentItem.id : null;
+    const isPanelExpanded = expandedPanel === key;
+
+    return items.map((item, itemIndex) => (
+      <ListItem
+        classes={listItemClasses}
+        key={item.id}
+        onClick={handlePanelListItemChange(key, item)}
+        dense
+        button
+        selected={isPanelExpanded && item.id === currentItemId}
+      >
+        <ListItemText primary={item.name} secondary={`${key} details`} />
+        <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
+          {renderListMenu(key, itemIndex)}
+        </ListItemSecondaryAction>
+      </ListItem>
+    ));
+  };
+
+  const renderDetails = (key, items) => {
+    const listItems = renderListItems(key, items);
     return (
       <ExpansionPanelDetails>
         <div className={classes.detailsContent}>
@@ -727,37 +666,51 @@ export class GuideControl extends React.Component<IProps, IState> {
         </div>
       </ExpansionPanelDetails>
     );
-  }
+  };
 
-  private renderActionsForNew() {
-    debug('renderActionsForNew', { submitEnabled: this.props.submitEnabled });
+  const renderMedia = () => {
+    const { thumbnailUrl } = props;
+
+    if (!thumbnailUrl) {
+      return null;
+    }
+
+    const fullUrl = thumbnailUrl!.indexOf('http') > -1
+      ? thumbnailUrl
+      : `${getConfig().dataHost}${thumbnailUrl}`;
+
+    return <CardMedia className={classes.media} image={fullUrl} />;
+  };
+
+  const renderActionsForNew = () => {
+    debug('renderActionsForNew', { submitEnabled: props.submitEnabled });
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={this.handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock}>
           Cancel
         </Button>
         <Button
           size='small'
-          disabled={!this.props.submitEnabled}
-          onClick={this.handleCommitLock}
+          disabled={!props.submitEnabled}
+          onClick={handleCommitLock}
           color='primary'
         >
           Add
         </Button>
       </ExpansionPanelActions>
     );
-  }
+  };
 
-  private renderActionsForEdit() {
+  const renderActionsForEdit = () => {
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={this.handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock}>
           Cancel
         </Button>
         <Button
           size='small'
-          disabled={!this.props.submitEnabled}
-          onClick={this.handleCommitLock}
+          disabled={!props.submitEnabled}
+          onClick={handleCommitLock}
           color='primary'
         >
           Save
@@ -766,16 +719,16 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderActionsForDelete() {
+  const renderActionsForDelete = () => {
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={this.handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock}>
           Cancel
         </Button>
         <Button
           size='small'
-          disabled={!this.props.submitEnabled}
-          onClick={this.handleCommitLock}
+          disabled={!props.submitEnabled}
+          onClick={handleCommitLock}
           color='primary'
         >
           OK
@@ -784,47 +737,42 @@ export class GuideControl extends React.Component<IProps, IState> {
     );
   }
 
-  private renderActions() {
-    const { action } = this.state;
-    switch (action) {
+  const renderActions = () => {
+    switch (nextAction) {
       case controlSegmentActions.new:
-        return this.renderActionsForNew();
+        return renderActionsForNew();
       case controlSegmentActions.edit:
-        return this.renderActionsForEdit();
+        return renderActionsForEdit();
       case controlSegmentActions.delete:
       case controlSegmentActions.run:
       case controlSegmentActions.render:
-        return this.renderActionsForDelete();
+        return renderActionsForDelete();
     }
-  }
+  };
 
-  private renderPanel(key, items) {
-    const { classes } = this.props;
-    const {
-      expandedPanel,
-      activePanel,
-      panelSelections,
-      locked,
-      delayedAction,
-      delayedUnlock,
-    } = this.state;
+  const renderPanel = (key, items) => {
     const currentItem = panelSelections[key];
     const { title } = panelDetails[key];
 
-    const isPanelLocked = locked && activePanel === key;
-    const expanded = !delayedAction && (expandedPanel === key || isPanelLocked);
-    debug('renderPanel', { key, isPanelLocked, activePanel, expanded });
+    const isPanelActive = activePanel === key;
+    const isPanelLocked = isPanelActive && locked;
+    const isPanelExpanded = !delayedAction && (expandedPanel === key || isPanelLocked);
+    debug('renderPanel', {
+      key,
+      isPanelActive,
+      isPanelLocked,
+      isPanelExpanded });
 
     return (
       <ExpansionPanel
         disabled={items.length === 0}
-        expanded={expanded}
-        onChange={this.handlePanelChange(key)}
+        expanded={isPanelExpanded}
+        onChange={handlePanelChange(key)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.expansionHeadingContainer}>
             <Badge badgeContent={items.length} classes={{ badge: classes.badgeContent }}>
-              <Typography classes={{ body2: classes.expansionHeading }}>{title}</Typography>
+              <Typography classes={{ body1: classes.expansionHeading }}>{title}</Typography>
             </Badge>
             {currentItem && (
               <Typography className={classes.expansionSecondaryHeading}>
@@ -833,15 +781,44 @@ export class GuideControl extends React.Component<IProps, IState> {
             )}
           </div>
         </ExpansionPanelSummary>
-        {(isPanelLocked || delayedUnlock) && !delayedAction
+        {isPanelActive && (locked || delayedUnlock) && !delayedAction
           // locked details are rendered when the panel includes dialog buttons
-          ? this.renderLockedDetails(key)
+          ? renderLockedDetails(key)
           // regular details are rendered when the panel includes information
-          : this.renderDetails(key, items)}
-        {(isPanelLocked || delayedUnlock) && this.renderActions()}
+          : renderDetails(key, items)}
+        {isPanelActive && (locked || delayedUnlock) && renderActions()}
       </ExpansionPanel>
     );
-  }
-}
+  };
 
-export default withStyles(styles)(GuideControl);
+  const renderContents = () => {
+    if (!simulations) {
+      return null;
+    }
+
+    const { simulation, execution } = panelSelections;
+    const executions = simulation ? simulation!.executions : [];
+    const renderings = execution ? execution!.renderings : [];
+
+    return (
+      <CardContent classes={{ root: classes.cardContent }}>
+        {renderPanel(KEY_SIMULATION, simulations)}
+        {renderPanel(KEY_EXECUTION, executions)}
+        {renderPanel(KEY_RENDERING, renderings)}
+      </CardContent>
+    );
+  }
+
+  debug('render');
+  return (
+    <div className={classes.root}>
+      <Card className={classes.card}>
+        {renderHeader()}
+        {renderMedia()}
+        {renderContents()}
+      </Card>
+    </div>
+  );
+};
+
+export default GuideControl;

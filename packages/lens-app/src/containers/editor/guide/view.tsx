@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { makeThumbnailImageDescriptor } from '@lens/image-descriptors';
@@ -36,9 +36,9 @@ const EditorGuideView = (props: IProps) => {
     match: {
       params: {
         sourceId,
-        simulationId,
-        executionId,
-        renderingId,
+        simulationId = '',
+        executionId = '',
+        renderingId = '',
         action,
       },
     },
@@ -56,28 +56,32 @@ const EditorGuideView = (props: IProps) => {
 
   useEffect(() => {
     if (sourceId) {
-      debug('useEffect', { sourceId });
+      debug('useEffect to fetch initial data', { sourceId });
       dispatch(ensureEditorTitle(sourceId));
       dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
       dispatch(requestSimulationsForSource(sourceId));
     }
   }, [dispatch, sourceId]);
 
-  const handleControlActionSubmit = () => {
+  const handleControlActionSubmit = useCallback(() => {
     debug('handleControlActionSubmit');
-  };
+  }, []);
 
-  const handleControlActionCancel = () => {
+  const handleControlActionCancel = useCallback(() => {
     debug('handleControlActionCancel');
-  };
+  }, []);
 
-  const handleControlParametersChanged = (params, nextActive, action) => {
-    const { simulationId, executionId, renderingId } = params;
+  const handleControlParametersChanged = useCallback((params, nextActive, action) => {
+    const {
+      simulationId: changedSimulationId,
+      executionId: changedExecutionId,
+      renderingId: changedRenderingId,
+    } = params;
     debug('handleControlParametersChanged', {
       nextActive,
-      simulationId,
-      executionId,
-      renderingId,
+      changedSimulationId,
+      changedExecutionId,
+      changedRenderingId,
     });
 
     const isNewAction = action === controlSegmentActions.new;
@@ -86,15 +90,15 @@ const EditorGuideView = (props: IProps) => {
 
     switch (nextActive) {
       case controlSegmentKeys.simulation:
-        id = simulationId;
+        id = changedSimulationId;
         break;
       case controlSegmentKeys.execution:
-        path = `${path}/${simulationId}/Execution`;
-        id = executionId;
+        path = `${path}/${changedSimulationId}/Execution`;
+        id = changedExecutionId;
         break;
       case controlSegmentKeys.rendering:
-        path = `${path}/${simulationId}/Execution/${executionId}/Rendering`;
-        id = renderingId;
+        path = `${path}/${changedSimulationId}/Execution/${changedExecutionId}/Rendering`;
+        id = changedRenderingId;
         break;
       default:
         return;
@@ -115,31 +119,34 @@ const EditorGuideView = (props: IProps) => {
       path = `${path}/${action}`;
     }
 
-    if (path !== history.location.pathname) {
+    const currentPath = history.location.pathname;
+    debug('handleControlParametersChange', { currentPath });
+    if (path !== currentPath) {
       debug('handleControlParametersChange - navigate', {
-        fromPath: history.location.pathname,
         toPath: path
       });
       history.push(path);
     }
-  };
+  }, [sourceId, active, history, dispatch]);
 
+  // render
+  debug('render', { simulationId, executionId, renderingId });
   let resolvedSimulationId = simulationId;
   let resolvedExecutionId = executionId;
   let resolvedRenderingId = renderingId;
   let resolvedAction = action;
   const re = /^[a-z]+$/;
-  debug('render', { simulationId, executionId, renderingId });
   if (renderingId && re.test(renderingId)) {
     resolvedAction = renderingId; // interpret id as rest action and clear id
-    resolvedRenderingId = undefined;
+    resolvedRenderingId = '';
   } else if (executionId && re.test(executionId)) {
     resolvedAction = executionId; // interpret id as rest action and clear id
-    resolvedExecutionId = undefined;
+    resolvedExecutionId = '';
   } else if (simulationId && re.test(simulationId)) {
     resolvedAction = simulationId; // interpret id as rest action and clear id
-    resolvedSimulationId = undefined;
+    resolvedSimulationId = '';
   }
+  debug('render', { resolvedSimulationId, resolvedExecutionId, resolvedRenderingId });
 
   return (
     <GuideControl
@@ -147,7 +154,6 @@ const EditorGuideView = (props: IProps) => {
       title={photo}
       thumbnailUrl={thumbnailUrl}
       simulations={simulations}
-      sourceId={sourceId}
       simulationId={resolvedSimulationId}
       executionId={resolvedExecutionId}
       renderingId={resolvedRenderingId}

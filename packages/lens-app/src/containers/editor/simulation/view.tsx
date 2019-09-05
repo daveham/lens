@@ -2,14 +2,14 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
-import { backupUrl } from 'src/helpers';
+// import { backupUrl } from 'src/helpers';
 
-import simulationEmptyStateRenderFunction from './simulationEmptyState';
+import SimulationEmptyState from './simulationEmptyState';
 // import simulationListRenderFunction from './simulationList';
-import simulationEditRenderFunction from './simulationEdit';
+// import simulationEditRenderFunction from './simulationEdit';
 import simulationNewRenderFunction from './simulationNew';
-import simulationShowRenderFunction from './simulationShow';
-import simulationDeleteRenderFunction from './simulationDelete';
+// import simulationShowRenderFunction from './simulationShow';
+// import simulationDeleteRenderFunction from './simulationDelete';
 import { withStyles } from '@material-ui/core/styles';
 
 // import _debug from 'debug';
@@ -54,16 +54,22 @@ class View extends React.Component<IProps, any> {
     }
   }
 
-  public render(): any {
-    const { classes, match: { path } } = this.props;
-    return (
-      <div className={classes.root}>
+  /*
         <Switch>
           <Route path={`${path}/new`} render={simulationNewRenderFunction} />
           <Route path={`${path}/:simulationId/delete`} render={simulationDeleteRenderFunction} />
           <Route path={`${path}/:simulationId/edit`} render={simulationEditRenderFunction} />
           <Route path={`${path}/:simulationId`} render={simulationShowRenderFunction} />
           <Route path={path} render={simulationEmptyStateRenderFunction} />
+        </Switch>
+   */
+  public render(): any {
+    const { classes, match: { path } } = this.props;
+    return (
+      <div className={classes.root}>
+        <Switch>
+          <Route path={`${path}/new`} render={simulationNewRenderFunction} />
+          <Route path={path} component={SimulationEmptyState} />
         </Switch>
       </div>
     );

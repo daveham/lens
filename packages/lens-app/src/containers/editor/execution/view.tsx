@@ -2,15 +2,16 @@ import React, { Fragment } from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import { IThumbnailDescriptor } from 'src/interfaces';
-import { backupUrl } from 'src/helpers';
+// import { backupUrl } from 'src/helpers';
 
-import Header from '../components/header';
-import BreadcrumbBar from '../components/breadcrumbs';
-import executionListRenderFunction from './executionList';
-import executionEditRenderFunction from './executionEdit';
-import executionNewRenderFunction from './executionNew';
-import executionShowRenderFunction from './executionShow';
-import executionDeleteRenderFunction from './executionDelete';
+// import Header from '../components/header';
+// import BreadcrumbBar from '../components/breadcrumbs';
+import ExecutionEmptyState from './executionEmptyState';
+// import executionListRenderFunction from './executionList';
+// import executionEditRenderFunction from './executionEdit';
+// import executionNewRenderFunction from './executionNew';
+// import executionShowRenderFunction from './executionShow';
+// import executionDeleteRenderFunction from './executionDelete';
 
 import { withStyles } from '@material-ui/core/styles';
 import { styles } from 'editor/styles/editorView';
@@ -44,10 +45,7 @@ class View extends React.Component<IProps, any> {
     }
   }
 
-  public render(): any {
-    const { classes, match: { path } } = this.props;
-    return (
-      <div className={classes.root}>
+  /*
         <Switch>
           <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
           <Route path={`${path}/:executionId/delete`} render={this.renderExecutionDeleteToolbar} />
@@ -64,79 +62,90 @@ class View extends React.Component<IProps, any> {
             <Route path={path} render={executionListRenderFunction} />
           </Switch>
         </Fragment>
+   */
+
+  public render(): any {
+    const { classes, match: { path } } = this.props;
+    return (
+      <div className={classes.root}>
+        <Fragment>
+          <Switch>
+            <Route path={path} component={ExecutionEmptyState} />
+          </Switch>
+        </Fragment>
       </div>
     );
   }
 
-  private renderExecutionShowToolbar = (): any => {
-    const { thumbnailUrl, match: { url } } = this.props;
-    const links = {
-      back: url
-    };
+  // private renderExecutionShowToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url } } = this.props;
+  //   const links = {
+  //     back: url
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Execution'
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 
-    return (
-      <Header
-        title='Execution'
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderExecutionEditToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
+  //   const links = {
+  //     back: backupUrl(url, 2)
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Edit Execution'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 
-  private renderExecutionEditToolbar = (): any => {
-    const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
-    const links = {
-      back: backupUrl(url, 2)
-    };
+  // private renderExecutionDeleteToolbar = (): any => {
+  //   const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
+  //   return (
+  //     <Header
+  //       title='Delete Execution'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //     />
+  //   );
+  // };
 
-    return (
-      <Header
-        title='Edit Execution'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderExecutionNewToolbar = (): any => {
+  //   const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
+  //   return (
+  //     <Header
+  //       title='New Execution'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //     />
+  //   );
+  // };
 
-  private renderExecutionDeleteToolbar = (): any => {
-    const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
-    return (
-      <Header
-        title='Delete Execution'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-        thumbnailUrl={thumbnailUrl}
-      />
-    );
-  };
-
-  private renderExecutionNewToolbar = (): any => {
-    const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
-    return (
-      <Header
-        title='New Execution'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-        thumbnailUrl={thumbnailUrl}
-      />
-    );
-  };
-
-  private renderExecutionListToolbar = (): any => {
-    const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
-    const links = {
-      back: backupUrl(url, 2),
-      newItem: `${url}/new`
-    };
-
-    return (
-      <Header
-        title='Executions'
-        breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-        thumbnailUrl={thumbnailUrl}
-        toolbarLinks={links}
-      />
-    );
-  };
+  // private renderExecutionListToolbar = (): any => {
+  //   const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
+  //   const links = {
+  //     back: backupUrl(url, 2),
+  //     newItem: `${url}/new`
+  //   };
+  //
+  //   return (
+  //     <Header
+  //       title='Executions'
+  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
+  //       thumbnailUrl={thumbnailUrl}
+  //       toolbarLinks={links}
+  //     />
+  //   );
+  // };
 }
 
 export default withStyles(styles)(View);

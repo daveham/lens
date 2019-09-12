@@ -1,5 +1,5 @@
 export interface IRendering {
-  id: number;
+  id: string;
   created: number;
   modified: number;
   executionId: number;
@@ -8,7 +8,7 @@ export interface IRendering {
 }
 
 export interface IExecution {
-  id: number;
+  id: string;
   created: number;
   modified: number;
   simulationId: number;
@@ -18,7 +18,7 @@ export interface IExecution {
 }
 
 export interface ISimulation {
-  id: number;
+  id: string;
   sourceId: string;
   created: number;
   modified: number;

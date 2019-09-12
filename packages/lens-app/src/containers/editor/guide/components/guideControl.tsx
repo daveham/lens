@@ -23,6 +23,16 @@ import ExpansionPanel from './ExpansionPanel';
 import ExpansionPanelSummary from './ExpansionPanelSummary';
 import ExpansionPanelDetails from './ExpansionPanelDetails';
 import ExpansionPanelActions from './ExpansionPanelActions';
+import {
+  KEY_SIMULATION,
+  KEY_EXECUTION,
+  KEY_RENDERING,
+  KEY_SIMULATION_ADD,
+  controlSegmentKeys,
+  controlSegmentActions,
+  panelDetails,
+  lockingActions,
+} from './guideConstants';
 import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
 
@@ -145,319 +155,124 @@ const useStyles: any = makeStyles((theme: any) => {
 
 interface IProps {
   loading?: boolean;
-  action?: string;
-  simulationId: string;
-  executionId: string;
-  renderingId: string;
   title?: string;
   thumbnailUrl?: string;
   simulations: ReadonlyArray<ISimulation>;
+  simulation?: ISimulation;
+  execution?: IExecution;
+  rendering?: IRendering;
+  action?: string;
+  activeItem?: string;
   submitEnabled?: boolean;
-  onControlParametersChanged: (params: object, active?: string, action?: string) => void;
+  onControlChanged: (path: string) => void;
   onControlActionSubmit: () => void;
   onControlActionCancel: () => void;
 }
 
-interface IPanelSelections {
+interface IControlParameters {
   simulation?: ISimulation;
   execution?: IExecution;
   rendering?: IRendering;
+  activeItem?: string;
+  action?: string;
 }
 
-const KEY_SIMULATION = 'simulation';
-const KEY_EXECUTION = 'execution';
-const KEY_RENDERING = 'rendering';
-
-export const controlSegmentKeys = {
-  simulation: KEY_SIMULATION,
-  execution: KEY_EXECUTION,
-  rendering: KEY_RENDERING,
+const emptyControlParameters: IControlParameters = {
+  activeItem: '',
+  action: '',
 };
 
-export const controlSegmentActions = {
-  new: 'new',
-  edit: 'edit',
-  delete: 'delete',
-  run: 'run',
-  render: 'render',
-};
+const animationDelay = 300;
 
-const KEY_SIMULATION_ADD = 1000;
-
-const KEY_SIMULATION_VIEW = 1001;
-const KEY_SIMULATION_EDIT = 1002;
-const KEY_SIMULATION_ADD_EXE = 1003;
-const KEY_SIMULATION_DELETE = 1004;
-
-const KEY_EXECUTION_VIEW = 2001;
-const KEY_EXECUTION_EDIT = 2002;
-const KEY_EXECUTION_RUN = 2003;
-const KEY_EXECUTION_ADD_REN = 2004;
-const KEY_EXECUTION_DELETE = 2005;
-
-const KEY_RENDERING_VIEW = 3001;
-const KEY_RENDERING_EDIT = 3002;
-const KEY_RENDERING_RENDER = 3003;
-const KEY_RENDERING_DELETE = 3004;
-
-const panelDetails = {
-  simulation: {
-    title: 'Simulations',
-    menuItems: [
-      { label: 'View', value: KEY_SIMULATION_VIEW },
-      { label: 'Edit', value: KEY_SIMULATION_EDIT, action: controlSegmentActions.edit },
-      '-',
-      {
-        label: 'Add New Execution',
-        value: KEY_SIMULATION_ADD_EXE,
-        action: controlSegmentActions.new,
-      },
-      '-',
-      { label: 'Delete', value: KEY_SIMULATION_DELETE, action: controlSegmentActions.delete },
-    ],
-  },
-  execution: {
-    title: 'Executions',
-    menuItems: [
-      { label: 'View', value: KEY_EXECUTION_VIEW },
-      { label: 'Edit', value: KEY_EXECUTION_EDIT, action: controlSegmentActions.edit },
-      { label: 'Run', value: KEY_EXECUTION_RUN, action: controlSegmentActions.run },
-      '-',
-      {
-        label: 'Add New Rendering',
-        value: KEY_EXECUTION_ADD_REN,
-        action: controlSegmentActions.new,
-      },
-      '-',
-      { label: 'Delete', value: KEY_EXECUTION_DELETE, action: controlSegmentActions.delete },
-    ],
-  },
-  rendering: {
-    title: 'Renderings',
-    menuItems: [
-      { label: 'View', value: KEY_RENDERING_VIEW },
-      { label: 'Edit', value: KEY_RENDERING_EDIT, action: controlSegmentActions.edit },
-      { label: 'Render', value: KEY_RENDERING_RENDER, action: controlSegmentActions.run },
-      '-',
-      { label: 'Delete', value: KEY_RENDERING_DELETE, action: controlSegmentActions.delete },
-    ],
-  },
-};
-
-const lockingActions = [
-  controlSegmentActions.new,
-  controlSegmentActions.edit,
-  controlSegmentActions.delete,
-];
-
-function getFirstExecution(simulation) {
-  if (simulation) {
-    const { executions } = simulation;
-    if (executions && executions.length) {
-      return executions[0];
-    }
-  }
-  return null;
-}
-
-function getFirstRendering(execution) {
-  if (execution) {
-    const { renderings } = execution;
-    if (renderings && renderings.length) {
-      return renderings[0];
-    }
-  }
-  return null;
-}
-
-const emptyPanelSelections: IPanelSelections = {
-  simulation: undefined,
-  execution: undefined,
-  rendering: undefined,
-};
-
-function determineSelections(
-  simulations,
-  simulationId,
-  executionId,
-  renderingId,
-  action,
-) {
-  debug('determineSelections - input', {
+const GuideControl = (props: IProps) => {
+  const {
     simulations,
-    simulationId,
-    executionId,
-    renderingId,
-    action,
-  });
-  let simulation;
-  let execution;
-  let rendering;
-
-  if (simulations) {
-    simulation = simulations.find(s => s.id === simulationId) || simulations[0];
-    if (simulation) {
-      const { executions } = simulation;
-      if (executions) {
-        execution = executions.find(e => e.id === executionId) || executions[0];
-        if (execution) {
-          const { renderings } = execution;
-          if (renderings) {
-            rendering = renderings.find(r => r.id === renderingId) || renderings[0];
-          }
-        }
-      }
-    }
-  }
-
-  // determine active panel based on Id's present in the URL
-  const isNewAction = action === controlSegmentActions.new;
-  let activePanel: string = '';
-
-  if (renderingId || (executionId && isNewAction)) {
-    activePanel = KEY_RENDERING;
-  } else if (executionId || (simulationId && isNewAction)) {
-    activePanel = KEY_EXECUTION;
-  } else if (simulationId || isNewAction) {
-    activePanel = KEY_SIMULATION;
-  }
-
-  const locked = lockingActions.includes(action);
-
-  debug('determineSelections', {
-    activePanel,
     simulation,
     execution,
     rendering,
-    locked,
+    activeItem,
     action,
-  });
-
-  // set selected item for each panel (if there is one)
-  const panelSelections = simulation || execution || rendering
-    ? { simulation, execution, rendering }
-    : emptyPanelSelections;
-
-  return {
-    activePanel,
-    panelSelections,
-    locked,
-    action,
-  };
-}
-
-interface ISelectedItemChanges {
-  locked?: boolean;
-  action?: string;
-  delayedAction?: string;
-}
-
-const GuideControl = (props: IProps) => {
-  const classes = useStyles();
-
-  const {
-    simulations,
-    simulationId,
-    executionId,
-    renderingId,
-    action,
-    onControlParametersChanged,
+    onControlChanged,
   } = props;
 
-  const [activePanel, setActivePanel] = useState('');
+  // hooks
+
+  // the parameters rendered in the component, could be delayed from props by delayedUpdate
+  const [renderedControlParameters, setRenderedControlParameters] =
+    useState(emptyControlParameters);
+  // expandedPanel is the one and only panel that is expanded - not necessarily the active panel
   const [expandedPanel, setExpandedPanel] = useState('');
-  const [panelSelections, setPanelSelections] = useState(emptyPanelSelections);
-  const [nextAction, setNextAction] = useState('');
-  const [delayedAction, setDelayedAction] = useState('');
+  // the active and expanded panel is locked to display dialog controls
   const [locked, lock] = useState(false);
-  const [delayedUnlock, setDelayedUnlock] = useState(false);
+  // about to be unlocked, waiting for animation to finish
+  const [delayedUpdate, setDelayedUpdate] = useState(true);
+  // const [renderedAction, setRenderedAction] = useState('');
 
-  // useEffect(() => { setStateFromSelections(props); }, []);
-
+  // update component state if external data or url items change
   useEffect(() => {
-    debug('useEffect to determine selections');
-    const initialSelections = determineSelections(
-      simulations, simulationId, executionId, renderingId, action,
-    );
-    setActivePanel(initialSelections.activePanel);
-    setPanelSelections(initialSelections.panelSelections);
-    lock(initialSelections.locked);
-    setNextAction(initialSelections.action);
-    }, [simulations, simulationId, executionId, renderingId, action]);
+    if (!delayedUpdate) {
+      setRenderedControlParameters(prev => {
+        const changed = (simulation !== prev.simulation ||
+          execution !== prev.execution ||
+          rendering !== prev.rendering ||
+          activeItem !== prev.activeItem ||
+          action !== prev.action);
+        return changed ? {
+          simulation,
+          execution,
+          rendering,
+          activeItem,
+          action,
+        } : prev;
+      });
+      lock(Boolean(action) && lockingActions.includes(action!));
+      setExpandedPanel(activeItem || '');
+    }
+  }, [simulation, execution, rendering, activeItem, action, delayedUpdate]);
 
+  // schedule a delayed update, delayed to allow time for animation
   useEffect(() => {
-    debug('useEffect to report control parameter changes');
-    const { simulation, execution, rendering } = panelSelections;
-    onControlParametersChanged(
-      {
-        simulationId: simulation ? simulation.id : '',
-        executionId: execution ? execution.id : '',
-        renderingId: rendering ? rendering.id : '',
-      },
-      activePanel,
-      nextAction,
-    );
-  }, [panelSelections, activePanel, nextAction, onControlParametersChanged]);
-
-  useEffect(() => {
-    debug('useEffect to process delayed action');
-    if (delayedAction) {
+    if (delayedUpdate) {
       setTimeout(() => {
-        setNextAction(delayedAction);
-        setDelayedAction('');
-      }, 250);
+        setDelayedUpdate(false);
+      }, animationDelay);
     }
-  }, [delayedAction]);
+  }, [delayedUpdate]);
 
-  useEffect(() => {
-    debug('useEffect to process delayed unlock');
-    if (delayedUnlock) {
-      setTimeout(() => {
-        setDelayedUnlock(false);
-        setNextAction('');
-      }, 250);
-    }
-  }, [delayedUnlock]);
+  const setPathForChange = (nextPanel, nextId = '', nextAction = '') => {
+    const isNewAction = nextAction === controlSegmentActions.new;
+    let path = 'Simulation';
+    let id = nextId;
 
-  const setSelectedItem = (key, item, changes: ISelectedItemChanges = {}) => {
-    debug('setSelectedItem', { key, item, changes });
-
-    let nextPanelSelections = {
-      ...panelSelections,
-      [key]: item,
-    };
-
-    // cascade selection
-    if (key === KEY_SIMULATION) {
-      nextPanelSelections.execution =
-        item ? getFirstExecution(item) : undefined;
-      nextPanelSelections.rendering =
-        item ? getFirstRendering(nextPanelSelections.execution) : undefined;
-    } else if (key === KEY_EXECUTION) {
-      nextPanelSelections.rendering =
-        item ? getFirstRendering(item) : undefined;
+    switch (nextPanel) {
+      case controlSegmentKeys.simulation:
+        id = id || renderedControlParameters.simulation!.id;
+        break;
+      case controlSegmentKeys.execution:
+        id = id || renderedControlParameters.execution!.id;
+        path = `${path}/${renderedControlParameters.simulation!.id}/Execution`;
+        break;
+      case controlSegmentKeys.rendering:
+        id = id || renderedControlParameters.rendering!.id;
+        path = `${path}/${renderedControlParameters.simulation!.id}/Execution/${renderedControlParameters.execution!.id}/Rendering`;
+        break;
+      default:
+        return;
     }
 
-    // preserve reference equality on empty selection
-    if (!(nextPanelSelections.simulation ||
-      nextPanelSelections.execution ||
-      nextPanelSelections.rendering)) {
-      nextPanelSelections = emptyPanelSelections;
+    if (isNewAction) {
+      path = `${path}/${nextAction}`;
+    } else if (id) {
+      path = `${path}/${id}`;
+      if (nextAction) {
+        path = `${path}/${nextAction}`;
+      }
     }
 
-    setExpandedPanel('');
-    setActivePanel(key);
-    setPanelSelections(nextPanelSelections);
-
-    if (changes.hasOwnProperty('locked') && locked !== changes.locked) {
-      lock(changes.locked!);
+    if (nextAction) {
+      setExpandedPanel('');
     }
-    if (changes.hasOwnProperty('action') && action !== changes.action) {
-      setNextAction(changes.action!);
-    }
-    if (changes.hasOwnProperty('delayedAction') && delayedAction !== changes.delayedAction) {
-      setDelayedAction(changes.delayedAction!);
-    }
+    onControlChanged(path);
   };
 
   const getItemsForKey = key => {
@@ -465,51 +280,49 @@ const GuideControl = (props: IProps) => {
       return simulations || [];
     }
     if (key === KEY_EXECUTION) {
-      const simulation = panelSelections[KEY_SIMULATION];
+      const simulation = renderedControlParameters[KEY_SIMULATION];
       return simulation ? simulation.executions || [] : [];
     }
-    const execution = panelSelections[KEY_EXECUTION];
+    const execution = renderedControlParameters[KEY_EXECUTION];
     return execution ? execution.renderings || [] : [];
   };
 
-  // called when panel expansion is toggled
+  // event handlers
 
+  // called when panel expansion is toggled
   const handlePanelChange = key => (event, expanded) => {
-    debug('handlePanelChange', { key, locked, expanded });
+    // debug('handlePanelChange', { key, expanded, locked, expandedPanel });
     if (locked) {
       // guide is locked, ignore any attempts to change
       return;
     }
 
     setExpandedPanel(expanded ? key : '');
-    if (!expanded) {
-      setActivePanel(key);
-    }
   };
 
   const handleGuideMenuSelection = menuItem => {
-    debug('handleGuideMenuSelection', { menuItem });
+    // debug('handleGuideMenuSelection', { menuItem });
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      debug('create a new simulation item');
-      setSelectedItem(controlSegmentKeys.simulation, null, { locked: true, action });
+      // debug('create a new simulation item');
+      setPathForChange(controlSegmentKeys.simulation, '', action!);
     }
   };
 
   const handlePanelListItemChange = (key, item) => () => {
-    debug('handlePanelListItemChange', { key, item, locked });
+    // debug('handlePanelListItemChange', { key, item, locked });
     if (locked) {
       return;
     }
 
-    const currentActiveItem = panelSelections[key];
+    const currentActiveItem = activeItem ? renderedControlParameters[activeItem] : null;
     if (item === currentActiveItem) {
-      debug('handlePanelListItemChange - same item', { currentActiveItem });
+      // debug('handlePanelListItemChange - same item', { currentActiveItem });
       return;
     }
 
-    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
-    setSelectedItem(key, item);
+    // debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
+    setPathForChange(key, item.id);
   };
 
   const handleListMenuSelection = (key, itemIndex) => menuItem => {
@@ -518,7 +331,7 @@ const GuideControl = (props: IProps) => {
     }
 
     const item = getItemsForKey(key)[itemIndex];
-    debug('handleListMenuSelection', { key, item, menuItem });
+    // debug('handleListMenuSelection', { key, item, menuItem });
 
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
@@ -526,27 +339,33 @@ const GuideControl = (props: IProps) => {
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
-      setSelectedItem(lowerKey, null, { locked: true, action });
+      // debug('handleListMenuSelection - new', { lowerKey, action });
+      setPathForChange(lowerKey, '', action);
     } else {
-      const actionChanges =
-        action && lockingActions.includes(action) ? { locked: true, delayedAction: action } : {};
-      setSelectedItem(key, item, actionChanges);
+      // debug('handleListMenuSelection - not new', { key, item, action });
+      setPathForChange(key, item.id, action);
     }
+    setDelayedUpdate(true);
   };
 
   const handleCancelLock = () => {
-    debug('handleCancelLock');
-    lock(false);
-    setDelayedUnlock(true);
+    // debug('handleCancelLock', { locked, delayedUpdate });
+    setDelayedUpdate(true);
+    setExpandedPanel('');
     props.onControlActionCancel();
+    setPathForChange(activeItem, '', '');
   };
 
   const handleCommitLock = () => {
-    debug('handleCommitLock');
-    lock(false);
-    setDelayedUnlock(true);
+    // debug('handleCommitLock', { locked, delayedUpdate });
+    setDelayedUpdate(true);
+    setExpandedPanel('');
     props.onControlActionSubmit();
+    setPathForChange(activeItem, '', '');
   };
+
+  // rendering
+  const classes = useStyles();
 
   const renderHeader = () => {
     const {
@@ -587,7 +406,7 @@ const GuideControl = (props: IProps) => {
 
   const renderLockedDetails = key => {
     let message;
-    switch (nextAction) {
+    switch (renderedControlParameters.action) {
       case controlSegmentActions.new:
         message = `Add a new ${key}.`;
         break;
@@ -615,7 +434,7 @@ const GuideControl = (props: IProps) => {
         </div>
       </ExpansionPanelDetails>
     );
-  }
+  };
 
   const renderListMenu= (key, itemIndex) => {
     const { menuItems } = panelDetails[key];
@@ -634,8 +453,8 @@ const GuideControl = (props: IProps) => {
       container: classes.listItemContainer,
       selected: classes.listItemSelected,
     };
-    const currentItem = panelSelections[key];
-    const currentItemId = currentItem ? currentItem.id : null;
+    const currentItem = renderedControlParameters[key];
+    const currentItemId = currentItem ? currentItem.id : '';
     const isPanelExpanded = expandedPanel === key;
 
     return items.map((item, itemIndex) => (
@@ -683,7 +502,6 @@ const GuideControl = (props: IProps) => {
   };
 
   const renderActionsForNew = () => {
-    debug('renderActionsForNew', { submitEnabled: props.submitEnabled });
     return (
       <ExpansionPanelActions>
         <Button size='small' onClick={handleCancelLock}>
@@ -717,7 +535,7 @@ const GuideControl = (props: IProps) => {
         </Button>
       </ExpansionPanelActions>
     );
-  }
+  };
 
   const renderActionsForDelete = () => {
     return (
@@ -735,10 +553,10 @@ const GuideControl = (props: IProps) => {
         </Button>
       </ExpansionPanelActions>
     );
-  }
+  };
 
   const renderActions = () => {
-    switch (nextAction) {
+    switch (renderedControlParameters.action) {
       case controlSegmentActions.new:
         return renderActionsForNew();
       case controlSegmentActions.edit:
@@ -751,17 +569,18 @@ const GuideControl = (props: IProps) => {
   };
 
   const renderPanel = (key, items) => {
-    const currentItem = panelSelections[key];
+    const currentItem = renderedControlParameters[key];
     const { title } = panelDetails[key];
 
-    const isPanelActive = activePanel === key;
+    const isPanelActive = renderedControlParameters.activeItem === key;
     const isPanelLocked = isPanelActive && locked;
-    const isPanelExpanded = !delayedAction && (expandedPanel === key || isPanelLocked);
-    debug('renderPanel', {
-      key,
-      isPanelActive,
-      isPanelLocked,
-      isPanelExpanded });
+    // const isPanelExpanded = !delayedUpdate && (expandedPanel === key || isPanelLocked);
+    const isPanelExpanded = expandedPanel === key;
+    // debug('renderPanel', {
+    //   key,
+    //   isPanelActive,
+    //   isPanelLocked,
+    //   isPanelExpanded });
 
     return (
       <ExpansionPanel
@@ -781,12 +600,12 @@ const GuideControl = (props: IProps) => {
             )}
           </div>
         </ExpansionPanelSummary>
-        {isPanelActive && (locked || delayedUnlock) && !delayedAction
+        {isPanelLocked
           // locked details are rendered when the panel includes dialog buttons
           ? renderLockedDetails(key)
           // regular details are rendered when the panel includes information
           : renderDetails(key, items)}
-        {isPanelActive && (locked || delayedUnlock) && renderActions()}
+        {isPanelLocked && renderActions()}
       </ExpansionPanel>
     );
   };
@@ -796,7 +615,7 @@ const GuideControl = (props: IProps) => {
       return null;
     }
 
-    const { simulation, execution } = panelSelections;
+    const { simulation, execution } = renderedControlParameters;
     const executions = simulation ? simulation!.executions : [];
     const renderings = execution ? execution!.renderings : [];
 
@@ -807,9 +626,14 @@ const GuideControl = (props: IProps) => {
         {renderPanel(KEY_RENDERING, renderings)}
       </CardContent>
     );
-  }
+  };
 
-  debug('render');
+  debug('render', {
+    expandedPanel,
+    locked,
+    activeItem: renderedControlParameters.activeItem,
+    action: renderedControlParameters.action,
+  });
   return (
     <div className={classes.root}>
       <Card className={classes.card}>

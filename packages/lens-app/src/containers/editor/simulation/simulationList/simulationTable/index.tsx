@@ -24,7 +24,7 @@ interface IProps {
 }
 
 interface IState {
-  activeId: number;
+  activeId: string;
 }
 
 class SimulationTable extends React.Component<IProps, IState> {
@@ -32,7 +32,7 @@ class SimulationTable extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      activeId: 0
+      activeId: ''
     };
   }
 
@@ -69,7 +69,7 @@ class SimulationTable extends React.Component<IProps, IState> {
   private handleMouseLeave = (id) => () => {
     // debug('handleMouseLeave', id);
     if (this.state.activeId === id) {
-      this.setState({ activeId: 0 });
+      this.setState({ activeId: '' });
     }
   };
 

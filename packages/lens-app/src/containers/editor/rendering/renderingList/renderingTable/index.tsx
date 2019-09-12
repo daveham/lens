@@ -24,7 +24,7 @@ interface IProps {
 }
 
 interface IState {
-  activeId: number;
+  activeId: string;
 }
 
 class RenderingTable extends React.Component<IProps, IState> {
@@ -32,7 +32,7 @@ class RenderingTable extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      activeId: 0
+      activeId: ''
     };
   }
 
@@ -57,7 +57,7 @@ class RenderingTable extends React.Component<IProps, IState> {
     );
   }
 
-  private handleMouseEnter = (id: number) => () => {
+  private handleMouseEnter = (id: string) => () => {
     if (this.state.activeId !== id) {
       this.setState({ activeId: id });
     }
@@ -65,7 +65,7 @@ class RenderingTable extends React.Component<IProps, IState> {
 
   private handleMouseLeave = () => {
     if (this.state.activeId) {
-      this.setState({ activeId: 0 });
+      this.setState({ activeId: '' });
     }
   };
 

@@ -10,17 +10,22 @@ import {
   simulationsLoadingSelector,
   actionEnabledSelector,
   // actionValidSelector,
-  activeSelector,
+  // activeSelector,
 } from 'editor/modules/selectors';
 
 import { ensureImage } from 'modules/images/actions';
 import {
   ensureEditorTitle,
   requestSimulationsForSource,
-  setActiveScope,
+  // setActiveScope,
 } from 'editor/modules/actions';
 
-import GuideControl, { controlSegmentKeys, controlSegmentActions } from './components/guideControl';
+import GuideControl from './components/guideControl';
+import {
+  controlSegmentKeys,
+  controlSegmentActions,
+  KEY_RENDERING, KEY_EXECUTION, KEY_SIMULATION,
+} from './components/guideConstants';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide:view');
@@ -39,7 +44,7 @@ const EditorGuideView = (props: IProps) => {
         simulationId = '',
         executionId = '',
         renderingId = '',
-        action,
+        action = '',
       },
     },
   } = props;
@@ -49,19 +54,25 @@ const EditorGuideView = (props: IProps) => {
   const simulations = useSelector(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
   // const actionValid = useSelector(actionValidSelector);
-  const active = useSelector(activeSelector);
+  // const active = useSelector(activeSelector);
   const actionEnabled = useSelector(actionEnabledSelector);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (sourceId) {
-      debug('useEffect to fetch initial data', { sourceId });
       dispatch(ensureEditorTitle(sourceId));
       dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
       dispatch(requestSimulationsForSource(sourceId));
     }
   }, [dispatch, sourceId]);
+
+  useEffect(() => {
+    const currentPath = history.location.pathname;
+    if (currentPath.toLowerCase().endsWith(controlSegmentKeys.simulation) && simulations.length) {
+      history.push(`/Catalog/${sourceId}/Simulation/${simulations[0].id}`);
+    }
+  }, [history, sourceId, simulations]);
 
   const handleControlActionSubmit = useCallback(() => {
     debug('handleControlActionSubmit');
@@ -71,82 +82,89 @@ const EditorGuideView = (props: IProps) => {
     debug('handleControlActionCancel');
   }, []);
 
-  const handleControlParametersChanged = useCallback((params, nextActive, action) => {
-    const {
-      simulationId: changedSimulationId,
-      executionId: changedExecutionId,
-      renderingId: changedRenderingId,
-    } = params;
-    debug('handleControlParametersChanged', {
-      nextActive,
-      changedSimulationId,
-      changedExecutionId,
-      changedRenderingId,
-    });
-
-    const isNewAction = action === controlSegmentActions.new;
-    let path = `/Catalog/${sourceId}/Simulation`;
-    let id;
-
-    switch (nextActive) {
-      case controlSegmentKeys.simulation:
-        id = changedSimulationId;
-        break;
-      case controlSegmentKeys.execution:
-        path = `${path}/${changedSimulationId}/Execution`;
-        id = changedExecutionId;
-        break;
-      case controlSegmentKeys.rendering:
-        path = `${path}/${changedSimulationId}/Execution/${changedExecutionId}/Rendering`;
-        id = changedRenderingId;
-        break;
-      default:
-        return;
-    }
-
-    if (isNewAction) {
-      path = `${path}/${controlSegmentActions.new}`;
-    } else if (id) {
-      path = `${path}/${id}`;
-    }
-
-    if (nextActive !== active) {
-      debug('handleControlParametersChange - set active scope', { nextActive });
-      dispatch(setActiveScope(nextActive));
-    }
-
-    if (action && !isNewAction) {
-      path = `${path}/${action}`;
-    }
-
+  const handleControlChanged = useCallback((path) => {
     const currentPath = history.location.pathname;
-    debug('handleControlParametersChange', { currentPath });
-    if (path !== currentPath) {
-      debug('handleControlParametersChange - navigate', {
-        toPath: path
-      });
-      history.push(path);
+    const nextPath = `/Catalog/${sourceId}/${path}`;
+    if (nextPath !== currentPath) {
+      // debug('handleControlChanged', { currentPath, nextPath });
+      history.push(nextPath);
     }
-  }, [sourceId, active, history, dispatch]);
+  }, [sourceId, history]);
+
+  const determineItems = () => {
+    let resolvedSimulationId = simulationId;
+    let resolvedExecutionId = executionId;
+    let resolvedRenderingId = renderingId;
+    let resolvedAction = action;
+    const re = /^[a-z]+$/;
+    if (renderingId && re.test(renderingId)) {
+      resolvedAction = renderingId; // interpret id as rest action and clear id
+      resolvedRenderingId = '';
+    } else if (executionId && re.test(executionId)) {
+      resolvedAction = executionId; // interpret id as rest action and clear id
+      resolvedExecutionId = '';
+    } else if (simulationId && re.test(simulationId)) {
+      resolvedAction = simulationId; // interpret id as rest action and clear id
+      resolvedSimulationId = '';
+    }
+
+    let simulation;
+    let execution;
+    let rendering;
+
+    const isNewAction = resolvedAction === controlSegmentActions.new;
+
+    if (simulations) {
+      if (!(isNewAction && !resolvedSimulationId)) {
+        simulation = simulations.find(s => s.id === resolvedSimulationId) || simulations[0];
+        if (simulation) {
+          if (!(isNewAction && !resolvedExecutionId)) {
+            const { executions } = simulation;
+            if (executions) {
+              execution = executions.find(e => e.id === resolvedExecutionId) || executions[0];
+              if (execution) {
+                if (!(isNewAction && !resolvedRenderingId)) {
+                  const { renderings } = execution;
+                  if (renderings) {
+                    rendering = renderings.find(r => r.id === resolvedRenderingId) || renderings[0];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // determine active item based on Id's present in the URL
+    let activeItem: string = '';
+    if (renderingId || (resolvedAction && executionId && isNewAction)) {
+      activeItem = KEY_RENDERING;
+    } else if (executionId || (resolvedAction && simulationId && isNewAction)) {
+      activeItem = KEY_EXECUTION;
+    } else if (simulationId || (resolvedAction && isNewAction)) {
+      activeItem = KEY_SIMULATION;
+    } else {
+      activeItem = KEY_SIMULATION;
+    }
+
+    return {
+      activeItem,
+      simulation,
+      execution,
+      rendering,
+      resolvedAction,
+    };
+  };
 
   // render
-  debug('render', { simulationId, executionId, renderingId });
-  let resolvedSimulationId = simulationId;
-  let resolvedExecutionId = executionId;
-  let resolvedRenderingId = renderingId;
-  let resolvedAction = action;
-  const re = /^[a-z]+$/;
-  if (renderingId && re.test(renderingId)) {
-    resolvedAction = renderingId; // interpret id as rest action and clear id
-    resolvedRenderingId = '';
-  } else if (executionId && re.test(executionId)) {
-    resolvedAction = executionId; // interpret id as rest action and clear id
-    resolvedExecutionId = '';
-  } else if (simulationId && re.test(simulationId)) {
-    resolvedAction = simulationId; // interpret id as rest action and clear id
-    resolvedSimulationId = '';
-  }
-  debug('render', { resolvedSimulationId, resolvedExecutionId, resolvedRenderingId });
+  const {
+    activeItem,
+    simulation,
+    execution,
+    rendering,
+    resolvedAction,
+  } = determineItems();
 
   return (
     <GuideControl
@@ -154,12 +172,15 @@ const EditorGuideView = (props: IProps) => {
       title={photo}
       thumbnailUrl={thumbnailUrl}
       simulations={simulations}
-      simulationId={resolvedSimulationId}
-      executionId={resolvedExecutionId}
-      renderingId={resolvedRenderingId}
+
+      activeItem={activeItem}
+      simulation={simulation}
+      execution={execution}
+      rendering={rendering}
       action={resolvedAction}
+
       submitEnabled={actionEnabled}
-      onControlParametersChanged={handleControlParametersChanged}
+      onControlChanged={handleControlChanged}
       onControlActionSubmit={handleControlActionSubmit}
       onControlActionCancel={handleControlActionCancel}
     />

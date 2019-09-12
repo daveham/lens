@@ -25,7 +25,7 @@ interface IProps {
 }
 
 interface IState {
-  activeId: number;
+  activeId: string;
 }
 
 class ExecutionTable extends React.Component<IProps, IState> {
@@ -33,7 +33,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      activeId: 0
+      activeId: ''
     };
   }
 
@@ -67,7 +67,7 @@ class ExecutionTable extends React.Component<IProps, IState> {
 
   private handleMouseLeave = () => {
     if (this.state.activeId) {
-      this.setState({ activeId: 0 });
+      this.setState({ activeId: '' });
     }
   };
 

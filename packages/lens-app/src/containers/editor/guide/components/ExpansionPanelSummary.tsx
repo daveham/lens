@@ -4,7 +4,7 @@ import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 
 const styles = theme => {
   const margin = theme.spacing(1, 0);
-  const minHeight = theme.spacing(6);
+  const minHeight = 57; // theme.spacing(6);
   const borderRadius = theme.shape.borderRadius * 2;
   return {
     root: {

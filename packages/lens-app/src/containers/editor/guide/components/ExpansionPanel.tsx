@@ -20,7 +20,10 @@ const styles = theme => {
         borderRadius,
         margin,
       },
-    },
+      '&.Mui-expanded': {
+        margin,
+      }
+      },
     expanded: {
       margin,
       minHeight: theme.spacing(6),

@@ -22,13 +22,14 @@ sudo curl --silent --location https://rpm.nodesource.com/setup_10.x | bash -
 #sudo yum -y update
 
 # install mongodb repo
-repodest='/etc/yum.repos.d/mongodb.repo'
+repodest='/etc/yum.repos.d/mongodb-org-4.0.repo'
 mongodbrepo='
-[mongodb]
+[MongoDB]
 name=MongoDB Repository
-baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
-gpgcheck=0
+baseurl=http://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+gpgcheck=1
 enabled=1
+gpgkey=http://www.mongodb.org/static/pgp/server-4.0.asc
 '
 
 printf "${mongodbrepo}" >> ${repodest}

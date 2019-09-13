@@ -32,8 +32,8 @@
     "node-resque": "^4.0.9",
     "mkdirp":"^0.5.1",
     "socket.io": "^2.0.3",
-    "restify": "^5.0.1",
-    "restify-cors-middleware": "^1.0.1"
+    "restify": "^8.4.0",
+    "restify-cors-middleware": "^1.1.1"
   },
   "scripts": {
     "start": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
@@ -41,5 +41,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {},
-  "browserslist": "> 0.25%, not dead"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

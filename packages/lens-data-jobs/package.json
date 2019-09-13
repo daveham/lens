@@ -26,5 +26,16 @@
     "testRegex": "(/__tests__/.*|(\\.|/)test)\\.jsx?$",
     "testPathIgnorePatterns": ["<rootDir>/lib/", "<rootDir>/node_modules/"]
   },
-  "browserslist": "> 0.25%, not dead"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

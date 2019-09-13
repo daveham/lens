@@ -13,7 +13,8 @@ const styles = theme => {
       margin,
       '&:first-child': {
         borderRadius,
-        margin,
+        marginTop: 0,
+        marginBottom: theme.spacing(1),
       },
       '&:last-child': {
         borderRadius,

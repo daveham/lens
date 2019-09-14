@@ -1,8 +1,11 @@
 import restify from 'restify';
+import path from 'path';
 import socketio from 'socket.io';
 import bunyan from 'bunyan';
+import mkdirp from 'mkdirp';
 
 import config from '../config';
+import { data } from '../config/paths';
 import service from '../service';
 import context from './context';
 
@@ -18,6 +21,9 @@ const log = bunyan.createLogger({
   }],
   serializers: bunyan.stdSerializers
 });
+
+mkdirp.sync(path.join(data, 'stats'));
+mkdirp.sync(path.join(data, 'thumbs'));
 
 const server = restify.createServer({ name, log });
 const io = socketio.listen(server.server);

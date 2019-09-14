@@ -136,11 +136,11 @@ const EditorGuideView = (props: IProps) => {
 
     // determine active item based on Id's present in the URL
     let activeItem: string = '';
-    if (renderingId || (resolvedAction && executionId && isNewAction)) {
+    if (resolvedRenderingId || (resolvedAction && resolvedExecutionId && isNewAction)) {
       activeItem = KEY_RENDERING;
-    } else if (executionId || (resolvedAction && simulationId && isNewAction)) {
+    } else if (resolvedExecutionId || (resolvedAction && resolvedSimulationId && isNewAction)) {
       activeItem = KEY_EXECUTION;
-    } else if (simulationId || (resolvedAction && isNewAction)) {
+    } else if (resolvedSimulationId || (resolvedAction && isNewAction)) {
       activeItem = KEY_SIMULATION;
     } else {
       activeItem = KEY_SIMULATION;

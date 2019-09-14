@@ -239,25 +239,40 @@ const GuideControl = (props: IProps) => {
     }
   }, [delayedUpdate]);
 
-  const setPathForChange = (nextPanel, nextId = '', nextAction = '') => {
-    const isNewAction = nextAction === controlSegmentActions.new;
-    let path = 'Simulation';
-    let id = nextId;
+  const getIdForSegmentKey = (key) => {
+    if (renderedControlParameters[key]) {
+      return renderedControlParameters[key].id;
+    }
+    if (simulations.length) {
+      if (key === controlSegmentKeys.simulation) {
+        return simulations[0].id;
+      } else if (key === controlSegmentKeys.execution) {
+        const s = renderedControlParameters.simulation;
+        if (s && s.executions && s.executions.length) {
+          return s.executions[0].id;
+        }
+      } else if (key === controlSegmentKeys.rendering) {
+        const e = renderedControlParameters.execution;
+        if (e && e.renderings && e.renderings.length) {
+          return e.renderings[0].id;
+        }
+      }
+    }
+    return '';
+  };
 
-    switch (nextPanel) {
-      case controlSegmentKeys.simulation:
-        id = id || renderedControlParameters.simulation!.id;
-        break;
-      case controlSegmentKeys.execution:
-        id = id || renderedControlParameters.execution!.id;
-        path = `${path}/${renderedControlParameters.simulation!.id}/Execution`;
-        break;
-      case controlSegmentKeys.rendering:
-        id = id || renderedControlParameters.rendering!.id;
-        path = `${path}/${renderedControlParameters.simulation!.id}/Execution/${renderedControlParameters.execution!.id}/Rendering`;
-        break;
-      default:
-        return;
+  const setPathForChange = (nextPanel, nextId = '', nextAction = '') => {
+    if (!nextPanel) {
+      return;
+    }
+    const isNewAction = nextAction === controlSegmentActions.new;
+    const id = nextId || getIdForSegmentKey(nextPanel);
+
+    let path = 'Simulation';
+    if (nextPanel === controlSegmentKeys.execution) {
+      path = `${path}/${renderedControlParameters.simulation!.id}/Execution`;
+    } else if (nextPanel === controlSegmentKeys.rendering) {
+      path = `${path}/${renderedControlParameters.simulation!.id}/Execution/${renderedControlParameters.execution!.id}/Rendering`;
     }
 
     if (isNewAction) {
@@ -349,7 +364,7 @@ const GuideControl = (props: IProps) => {
   };
 
   const handleCancelLock = () => {
-    // debug('handleCancelLock', { locked, delayedUpdate });
+    // debug('handleCancelLock', { locked, delayedUpdate, activeItem });
     setDelayedUpdate(true);
     setExpandedPanel('');
     props.onControlActionCancel();

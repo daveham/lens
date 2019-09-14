@@ -1,7 +1,7 @@
 import React from 'react';
 import View from './view';
 
-const renderProp = (props) => {
+export default (props) => {
   const {
     history,
     match: { params: { sourceId } }
@@ -12,5 +12,3 @@ const renderProp = (props) => {
     sourceId={sourceId}
   />;
 };
-
-export default renderProp;

@@ -10,7 +10,6 @@ import {
   simulationsLoadingSelector,
   actionEnabledSelector,
   // actionValidSelector,
-  // activeSelector,
 } from 'editor/modules/selectors';
 
 import { ensureImage } from 'modules/images/actions';
@@ -54,7 +53,6 @@ const EditorGuideView = (props: IProps) => {
   const simulations = useSelector(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
   // const actionValid = useSelector(actionValidSelector);
-  // const active = useSelector(activeSelector);
   const actionEnabled = useSelector(actionEnabledSelector);
 
   const dispatch = useDispatch();

@@ -2,7 +2,7 @@ import React from 'react';
 import { backupUrl } from 'src/helpers';
 import View from './view';
 
-const renderProp = (props) => {
+export default (props) => {
   const {
     history,
     match: { url, params: { sourceId } }
@@ -17,5 +17,3 @@ const renderProp = (props) => {
     sourceId={sourceId}
   />;
 };
-
-export default renderProp;

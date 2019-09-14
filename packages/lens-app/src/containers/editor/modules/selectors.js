@@ -9,6 +9,3 @@ export const actionEnabledSelector = (state) =>
 
 export const actionValidSelector = (state) =>
   state.editor.actionValid;
-
-export const activeSelector = (state) =>
-  state.editor.active;

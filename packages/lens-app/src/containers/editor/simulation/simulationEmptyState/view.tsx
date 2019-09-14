@@ -20,7 +20,6 @@ const useStyles: any = makeStyles((theme: any) => ({
 }));
 
 interface IProps {
-  classes: any;
   history: any;
   sourceId: string;
 }

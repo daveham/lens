@@ -13,7 +13,6 @@ import {
   simulationsLoadingSelector,
   actionEnabledSelector,
   actionValidSelector,
-  activeSelector,
 } from '../modules/selectors';
 
 // import _debug from 'debug';
@@ -34,7 +33,6 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
   const simulationsLoading = simulationsLoadingSelector(state);
   const actionEnabled = actionEnabledSelector(state);
   const actionValid = actionValidSelector(state);
-  const active = activeSelector(state);
 
   return {
     photo,

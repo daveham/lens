@@ -1,8 +1,14 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import {
+  useSelector as useSelectorGeneric,
+  useDispatch,
+  TypedUseSelectorHook,
+} from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles';
 import {
   ISimulation,
   IHike,
@@ -18,120 +24,164 @@ import Trails from '../common/trails';
 import Hiker from '../common/hiker';
 import Hikers from '../common/hikers';
 
+// import {
+//   reduceItemWithChanges,
+//   reduceListWithItem,
+//   reduceListItemWithChanges,
+//   initialHike,
+// } from 'editor/simulation/common/helpers';
+import { RootEditorState } from 'editor/modules';
 import {
-  reduceItemWithChanges,
-  reduceListWithItem,
-  reduceListItemWithChanges,
-  initialHike,
-} from 'editor/simulation/common/helpers';
+  simulationsSelector,
+  simulationsLoadingSelector,
+  hikesSelector,
+  hikesLoadingSelector,
+  formSelector,
+  detailFormSelector,
+} from 'editor/modules/selectors';
+import {
+  setForm,
+  updateForm,
+  setDetailForm,
+  updateDetailForm,
+  requestHikes,
+} from 'editor/modules/actions';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:simulationShow:view');
+import _debug from 'debug';
+const debug = _debug('lens:editor:simulation:simulationShow:view');
 
 interface IProps {
-  classes?: any;
   editMode?: boolean;
   sourceId: string;
-  simulationId: number;
-  simulation: ISimulation;
-  loading: boolean;
-  hike?: IHike;
+  simulationId: string;
 }
 
-interface IState {
-  activeTab: number;
-  simulation: ISimulation;
-  hike?: IHike;
-  trails: ReadonlyArray<ITrail>;
-  hikers: ReadonlyArray<IHiker>;
-  selectedTrailIndex: number;
-  selectedHikerIndex: number;
-}
+const TABS = {
+  HIKE: 0,
+  TRAIL: 1,
+  HIKER: 2,
+};
 
-const styles: any = (theme) => ({
+const useStyles: any = makeStyles((theme: any) => ({
   tabIndicator: {
     backgroundColor: theme.palette.secondary.main,
   },
-});
+}));
 
-class View extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
+const View = (props: IProps) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-    const { hike = initialHike } = props;
-    const { hike: { trails = [] } = initialHike } = props;
-    const { hike: { trails: [{ hikers }] } = initialHike } = props;
+  const [activeTab, setActiveTab] = useState(TABS.HIKE);
+  const [selectedTrailIndex, setSelectedTrailIndex] = useState(0);
+  const [selectedHikerIndex, setSelectedHikerIndex] = useState(0);
+  const [currentSimulation, setCurrentSimulation] = useState<ISimulation|undefined>(undefined);
+  const [currentHike, setCurrentHike] = useState<IHike | undefined>(undefined);
 
-    this.state = {
-      activeTab: 0,
-      simulation: { ...props.simulation },
-      hike,
-      selectedTrailIndex: 0,
-      trails,
-      selectedHikerIndex: 0,
-      hikers,
-    };
-  }
+  const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
+  const simulations = useSelector<ReadonlyArray<ISimulation>>(simulationsSelector);
+  const simulationsLoading = useSelector(simulationsLoadingSelector);
+  const hikes = useSelector<ReadonlyArray<IHike>>(hikesSelector);
+  const hikesLoading = useSelector(hikesLoadingSelector);
+  const form = useSelector<ISimulation>(formSelector);
+  const detailForm = useSelector<IHike|ITrail|IHiker>(detailFormSelector);
 
-  public componentDidUpdate(prevProps: IProps, prevState: IState): void {
-    const { hike, simulation } = this.props;
-    if (prevProps.hike !== hike) {
-      this.setState({
-        hike,
-        trails: hike ? hike.trails : [],
-        hikers: hike && hike.trails[0] ? hike.trails[0].hikers : [],
-      });
+  const { sourceId, simulationId, editMode } = props;
+
+  useEffect(() => {
+    if (!simulationId || !(simulations && simulations.length)) {
+      debug('useEffect:simulations - setCurrentSimulation=undefined');
+      setCurrentSimulation(undefined);
+    } else {
+      const simulation = simulations.find(s => s.id === simulationId);
+      debug('useEffect:simulations', { simulationId, simulation });
+      setCurrentSimulation(simulation);
+      dispatch(requestHikes({ sourceId, simulationId }));
     }
-    if (prevProps.simulation !== simulation) {
-      this.setState({
-        simulation: { ...simulation }
-      });
-    }
-  }
+  }, [simulations, simulationId, sourceId, dispatch]);
+  useEffect(() => {
+    debug('useEffect:currentSimulation', { currentSimulation });
+    dispatch(setForm(currentSimulation))
+  }, [currentSimulation, dispatch]);
 
-  public render(): any {
-    if (this.props.loading) {
-      return null;
-    }
+  useEffect(() => {
+    const hike = hikes && hikes.length ? hikes[0] : undefined;
+    debug('useEffect:hikes', { hike });
+    setCurrentHike(hike);
+    setSelectedTrailIndex(0);
+    setSelectedHikerIndex(0);
+  }, [hikes]);
+  useEffect(() => {
+    debug('useEffect:currentHike', { currentHike });
+    dispatch(setDetailForm(currentHike));
+  }, [currentHike, dispatch]);
 
-    return (
-      <Layout
-        title='Simulation'
-        contentLeft={this.renderSimulation()}
-        contentRight={this.renderContent()}
-        controls={this.renderTabs()}
-      />
-    );
-  }
+  const trails = currentHike ? (currentHike!.trails || []) : [];
+  const trail = trails.length ? trails[selectedTrailIndex] : undefined;
+  const hikers = trail ? trail.hikers : [];
+  const hiker = hikers.length ? hikers[selectedHikerIndex] : undefined;
 
-  private renderTabs(): any {
-    const { activeTab } = this.state;
-    return (
-      <Tabs
-        classes={{ indicator: this.props.classes.tabIndicator }}
-        value={activeTab}
-        indicatorColor='primary'
-        textColor='inherit'
-        onChange={this.handleTabChange}
-      >
-        <Tab label='Hike' />
-        <Tab label='Trail' />
-        <Tab label='Hiker' />
-      </Tabs>
-    );
-  }
+  const handleTabChange = (e, value) => setActiveTab(value);
 
-  private renderSimulation(): any {
-    const { editMode } = this.props;
-    const {
-      simulation: { name },
-      trails,
-      selectedTrailIndex,
-      hikers,
-      selectedHikerIndex,
-    } = this.state;
+  const handleSimulationFieldChange = ({ target: { name, value } }) =>
+    dispatch(updateForm({ [name]: value }));
 
-    if (!name) {
+  const handleHikeFieldChange = ({ target: { name, value } }) =>
+    dispatch(updateDetailForm({ [name]: value }));
+
+  const handleTrailFieldChange = ({ target: { name, value } }) =>
+    dispatch(updateDetailForm({ [name]: value }));
+
+  const handleHikerFieldChange = ({ target: { name, value } }) =>
+    dispatch(updateDetailForm({ [name]: value }));
+
+  const handleTrailsSelectionChanged = (index) => {
+    setSelectedTrailIndex(index);
+    setActiveTab(TABS.TRAIL);
+    setSelectedHikerIndex(0);
+  };
+
+  const handleHikersSelectionChanged = (index) => {
+    setSelectedHikerIndex(index);
+    setActiveTab(TABS.HIKER);
+  };
+
+  const handleTrailsListChanged = (items) => {
+    debug('handleTrailsListChanged', items);
+    // this.setState(({ hike }) => ({
+    //   hike: reduceItemWithChanges(hike, { trails: items }),
+    //   trails: items,
+    // }));
+  };
+
+  const handleHikersListChanged = (items) => {
+    debug('handleHikersListChanged', items);
+    // this.setState(({ hike, trails, selectedTrailIndex }) => {
+    //   const newTrails = reduceListItemWithChanges(trails, selectedTrailIndex, { hikers: items });
+    //   return {
+    //     hike: reduceItemWithChanges(hike, { trails: newTrails }),
+    //     trails: newTrails,
+    //     hikers: items
+    //   };
+    // });
+  };
+
+  const renderTabs = () => (
+    <Tabs
+      classes={{ indicator: classes.tabIndicator }}
+      value={activeTab}
+      indicatorColor='primary'
+      textColor='inherit'
+      onChange={handleTabChange}
+    >
+      <Tab label='Hike' />
+      <Tab label='Trail' />
+      <Tab label='Hiker' />
+    </Tabs>
+  );
+
+  const renderSimulation = () => {
+    if (!(form && form.name)) {
       return null;
     }
     return (
@@ -141,7 +191,7 @@ class View extends React.Component<IProps, IState> {
             label='Name'
             margin='dense'
             multiline
-            value={name}
+            value={form.name}
             fullWidth
             disabled
           />
@@ -151,12 +201,12 @@ class View extends React.Component<IProps, IState> {
             label='Name'
             margin='normal'
             multiline
-            onChange={this.handleSimulationFieldChange}
+            onChange={handleSimulationFieldChange}
             inputProps={{
               name: 'name',
               id: 'simulation-name'
             }}
-            value={name}
+            value={form.name}
             fullWidth
             required
           />
@@ -165,142 +215,62 @@ class View extends React.Component<IProps, IState> {
           disabled={!editMode}
           items={trails}
           selectedIndex={selectedTrailIndex}
-          onListChanged={this.handleTrailsListChanged}
-          onSelectionChanged={this.handleTrailsSelectionChanged}
+          onListChanged={handleTrailsListChanged}
+          onSelectionChanged={handleTrailsSelectionChanged}
         />
         <Hikers
           disabled={!editMode}
           items={hikers}
           selectedIndex={selectedHikerIndex}
-          onListChanged={this.handleHikersListChanged}
-          onSelectionChanged={this.handleHikersSelectionChanged}
+          onListChanged={handleHikersListChanged}
+          onSelectionChanged={handleHikersSelectionChanged}
         />
       </Fragment>
     );
-  }
+  };
 
-  private renderContent(): JSX.Element | undefined {
-    const { editMode } = this.props;
-    const {
-      activeTab,
-      hike,
-      trails,
-      selectedTrailIndex,
-      hikers,
-      selectedHikerIndex,
-    } = this.state;
-
-    if (activeTab === 0) {
-      return hike && (
+  const renderContent = () => {
+    if (activeTab === TABS.HIKE) {
+      return (
         <Hike
           disabled={!editMode}
-          hike={hike}
-          onChange={this.handleHikeFieldChange}
+          hike={detailForm as IHike}
+          onChange={handleHikeFieldChange}
         />
       );
     }
 
-    if (activeTab === 1) {
-      return (
+    if (activeTab === TABS.TRAIL) {
+      return trail && (
         <Trail
           disabled={!editMode}
-          trail={trails[selectedTrailIndex]}
-          onChange={this.handleTrailFieldChange}
+          trail={trail}
+          onChange={handleTrailFieldChange}
         />
       );
     }
 
-    return (
+    return hiker && (
       <Hiker
         disabled={!editMode}
-        hiker={hikers[selectedHikerIndex]}
-        onChange={this.handleHikerFieldChange}
+        hiker={hiker}
+        onChange={handleHikerFieldChange}
       />
     );
+  };
+
+  if (simulationsLoading) {
+    return null;
   }
 
-  private handleTabChange = (e, value) =>
-    this.setState({ activeTab: value });
+  return (
+    <Layout
+      title='Simulation'
+      contentLeft={renderSimulation()}
+      contentRight={renderContent()}
+      controls={renderTabs()}
+    />
+  );
+};
 
-  private handleSimulationFieldChange = ({ target: { name, value } }) => {
-    this.setState(({ simulation }) => ({
-      simulation: reduceItemWithChanges(simulation, { [name]: value })
-    }));
-  };
-
-  private handleHikeFieldChange = ({ target: { name, value } }) => {
-    this.setState(({ hike }) => ({
-      hike: reduceItemWithChanges(hike, { [name]: value })
-    }));
-  };
-
-  private handleTrailFieldChange = ({ target: { name, value } }) => {
-    this.setState(({
-      hike,
-      trails,
-      selectedTrailIndex,
-    }) => {
-      const newTrail = reduceItemWithChanges(trails[selectedTrailIndex], { [name]: value });
-      const newTrails = reduceListWithItem(trails, selectedTrailIndex, newTrail);
-      const newHike = reduceItemWithChanges(hike, { trails: newTrails });
-      return {
-        hike: newHike,
-        trails: newTrails,
-      };
-    });
-  };
-
-  private handleHikerFieldChange = ({ target: { name, value } }) => {
-    this.setState(({
-      hike,
-      trails,
-      selectedTrailIndex,
-      hikers,
-      selectedHikerIndex,
-    }) => {
-      const newHiker = reduceItemWithChanges(hikers[selectedHikerIndex], { [name]: value });
-      const newHikers = reduceListWithItem(hikers, selectedHikerIndex, newHiker);
-      const newTrails = reduceListItemWithChanges(trails, selectedTrailIndex, { hikers: newHikers });
-      const newHike = reduceItemWithChanges(hike, { trails: newTrails });
-      return {
-        hike: newHike,
-        trails: newTrails,
-        hikers: newHikers,
-      };
-    });
-  };
-
-  private handleTrailsSelectionChanged = (index) => {
-    this.setState(({ hike}) => ({
-      selectedTrailIndex: index,
-      selectedHikerIndex: 0,
-      hikers: hike && hike.trails[index] ? hike.trails[index].hikers : [],
-    }));
-  };
-
-  private handleHikersSelectionChanged = (index) => {
-    this.setState({
-      selectedHikerIndex: index,
-    });
-  };
-
-  private handleTrailsListChanged = (items) => {
-    this.setState(({ hike }) => ({
-      hike: reduceItemWithChanges(hike, { trails: items }),
-      trails: items,
-    }));
-  };
-
-  private handleHikersListChanged = (items) => {
-    this.setState(({ hike, trails, selectedTrailIndex }) => {
-      const newTrails = reduceListItemWithChanges(trails, selectedTrailIndex, { hikers: items });
-      return {
-        hike: reduceItemWithChanges(hike, { trails: newTrails }),
-        trails: newTrails,
-        hikers: items
-      };
-    });
-  };
-}
-
-export default withStyles(styles)(View);
+export default View;

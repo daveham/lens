@@ -3,7 +3,7 @@ import { ACTIONS } from './constants';
 import { InsertableReducerType } from 'modules/types';
 
 // reducers
-const loading = (state = false, { type }) => {
+const simulationsLoading = (state = false, { type }) => {
   switch (type) {
     case ACTIONS.REQUEST_SIMULATIONS_FOR_SOURCE:
       return true;
@@ -15,22 +15,57 @@ const loading = (state = false, { type }) => {
   }
 };
 
-const initialSimulationState = [];
-const simulations = (state = initialSimulationState, { type, payload }) => {
+const initialSimulationsState = [];
+const simulations = (state = initialSimulationsState, { type, payload }) => {
   if (type === ACTIONS.RECEIVE_SIMULATIONS_FOR_SOURCE) {
     return payload;
   }
   return state;
 };
 
-const form = (state = null, { type, payload }) => {
+const initialHikesState = [];
+const hikes = (state = initialHikesState, { type, payload }) => {
+  if (type === ACTIONS.RECEIVE_HIKES) {
+    return payload;
+  }
+  return state;
+};
+
+const hikesLoading = (state = false, { type }) => {
+  switch (type) {
+    case ACTIONS.REQUEST_HIKES:
+      return true;
+    case ACTIONS.RECEIVE_HIKES:
+    case ACTIONS.REQUEST_HIKES_FAILED:
+      return false;
+    default:
+      return state;
+  }
+};
+
+const initialFormState = {};
+const form = (state = initialFormState, { type, payload }) => {
   switch(type) {
     case ACTIONS.SET_FORM:
-      return payload;
+      return payload || initialFormState;
     case ACTIONS.UPDATE_FORM:
-      const safeState = state || {};
       return {
-        ...safeState,
+        ...state,
+        ...payload,
+      };
+    default:
+      return state;
+  }
+};
+
+const initialDetailFormState = {};
+const detailForm = (state = initialDetailFormState, { type, payload }) => {
+  switch(type) {
+    case ACTIONS.SET_DETAIL_FORM:
+      return payload || initialDetailFormState;
+    case ACTIONS.UPDATE_DETAIL_FORM:
+      return {
+        ...state,
         ...payload,
       };
     default:
@@ -68,9 +103,12 @@ const active = (state = '', { type, payload }) => {
 };
 
 const editorModuleReducer = combineReducers({
-  loading,
+  simulationsLoading,
   simulations,
+  hikesLoading,
+  hikes,
   form,
+  detailForm,
   actionEnabled,
   actionValid,
   active,
@@ -85,3 +123,7 @@ const insertableEditorModuleReducer: InsertableEditorModuleReducer = editorModul
 insertableEditorModuleReducer.reducer = 'editor';
 
 export default insertableEditorModuleReducer;
+
+export interface RootEditorState {
+  editor: EditorModuleState;
+}

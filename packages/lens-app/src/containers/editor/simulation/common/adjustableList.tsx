@@ -54,7 +54,7 @@ interface IProps {
   displayProp: string;
   items: ReadonlyArray<any>;
   selectedIndex: number;
-  onListChanged: (list: any[]) => void;
+  onListChanged: (list: any[], removed?: any[]) => void;
   onSelectionChanged: (index: number) => void;
 }
 
@@ -66,13 +66,6 @@ class AdjustableList extends React.Component<IProps, any> {
     super(props);
     this.activeItemRef = React.createRef();
     this.containerRef = React.createRef();
-  }
-
-  public componentDidMount(): void {
-    const { items, onSelectionChanged } = this.props;
-    if (items.length) {
-      onSelectionChanged(0);
-    }
   }
 
   public componentDidUpdate(prevProps, prevState): void {
@@ -227,11 +220,11 @@ class AdjustableList extends React.Component<IProps, any> {
     } = this.props;
     if (items.length > 0) {
       const adjustedItems = [...items];
-      adjustedItems.splice(selectedIndex, 1);
+      const removed = adjustedItems.splice(selectedIndex, 1);
       const adjustedIndex = selectedIndex > 0
         ? selectedIndex - 1
         : 0;
-      onListChanged(adjustedItems);
+      onListChanged(adjustedItems, removed);
       onSelectionChanged(adjustedIndex);
     }
   };

@@ -10,10 +10,15 @@ export const requestHikes = createAction(ACTIONS.REQUEST_HIKES);
 export const receiveHikes = createAction(ACTIONS.RECEIVE_HIKES);
 export const requestHikesFailed = createAction(ACTIONS.REQUEST_HIKES_FAILED);
 
-export const setForm = createAction(ACTIONS.SET_FORM);
-export const updateForm = createAction(ACTIONS.UPDATE_FORM);
-export const setDetailForm = createAction(ACTIONS.SET_DETAIL_FORM);
-export const updateDetailForm = createAction(ACTIONS.UPDATE_DETAIL_FORM);
+export const setSimulation = createAction(ACTIONS.SET_SIMULATION);
+export const updateSimulation = createAction(ACTIONS.UPDATE_SIMULATION);
+
+export const updateHike = createAction(ACTIONS.UPDATE_HIKE);
+export const updateHikes = createAction(ACTIONS.UPDATE_HIKES);
+export const updateTrail = createAction(ACTIONS.UPDATE_TRAIL);
+export const updateTrails = createAction(ACTIONS.UPDATE_TRAILS);
+export const updateHiker = createAction(ACTIONS.UPDATE_HIKER);
+export const updateHikers = createAction(ACTIONS.UPDATE_HIKERS);
 
 export const setActiveScope = createAction(ACTIONS.SET_ACTIVE_SCOPE);
 
@@ -26,9 +31,7 @@ export const actions = {
   requestHikes,
   receiveHikes,
   requestHikesFailed,
-  setForm,
-  updateForm,
-  setDetailForm,
-  updateDetailForm,
+  setSimulation,
+  updateSimulation,
   ensureEditorTitle,
 };

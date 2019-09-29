@@ -9,7 +9,7 @@ interface IProps {
   disabled?: boolean;
   items: ReadonlyArray<IHiker>;
   selectedIndex: number;
-  onListChanged: (items: ReadonlyArray<IHiker>) => void;
+  onListChanged: (items: ReadonlyArray<IHiker>, removed?: ReadonlyArray<IHiker>) => void;
   onSelectionChanged: (index: number) => void;
 }
 

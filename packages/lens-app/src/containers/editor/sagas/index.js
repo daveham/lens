@@ -87,8 +87,7 @@ function generateMockSimulationsData(sourceId) {
 }
 
 const hikeData = {
-  id: 1,
-  name: 'Simple',
+  name: 'Simple Hike',
   type: 'simple',
   size: 'full',
   logger: 'none',
@@ -96,35 +95,35 @@ const hikeData = {
 };
 
 const trailsData = [
-  { id: 1, name: 'Simple' },
-  { id: 2, name: 'One' },
-  { id: 3, name: 'Two' },
-  { id: 4, name: 'Three' },
+  { name: 'Simple Trail', type: 'simple' },
+  { name: 'One Trail', type: 'simple' },
+  { name: 'Two Trail', type: 'simple' },
+  { name: 'Three Trail', type: 'simple' },
 ];
 
 const hikersData = [
-  { id: 1, name: 'Simple' },
-  { id: 2, name: 'One' },
-  { id: 3, name: 'Two' },
-  { id: 4, name: 'Three' },
-  { id: 5, name: 'Four' },
-  { id: 6, name: 'Five' },
-  { id: 7, name: 'Six' },
-  { id: 8, name: 'Seven' },
-  { id: 9, name: 'Eight' },
+  { name: 'Simple Hiker', type: 'simple' },
+  { name: 'One Hiker', type: 'simple' },
+  { name: 'Two Hiker', type: 'simple' },
+  { name: 'Three Hiker', type: 'simple' },
+  { name: 'Four Hiker', type: 'simple' },
+  { name: 'Five Hiker', type: 'simple' },
+  { name: 'Six Hiker', type: 'simple' },
+  { name: 'Seven Hiker', type: 'simple' },
+  { name: 'Eight Hiker', type: 'simple' },
 ];
 
-function generateMockHike(id) {
-  const hike = { ...hikeData, id };
-  hike.trails = trailsData.map((t) => ({ ...t }));
+function generateMockHike() {
+  const hike = { ...hikeData, id: uuid(), order: 0 };
+  hike.trails = trailsData.map((t, index) => ({ ...t, id: uuid(), hikeId: hike.id, order: index }));
   hike.trails.forEach((t) => {
-    t.hikers = hikersData.map((k) => ({ ...k, id: k.id + t.id * 10, name: `${k.name}.${t.id}.${k.id}` }));
+    t.hikers = hikersData.map((k, index) => ({ ...k, id: uuid(), trailId: t.id, order: index }));
   });
   return hike;
 }
 
 function generateMockHikesData(simulationId) {
-  return [generateMockHike(1)];
+  return [generateMockHike(uuid())];
 }
 
 export function* readSimulationsForSourceSaga({ payload }) {

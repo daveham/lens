@@ -2,6 +2,9 @@ import { combineReducers } from 'redux';
 import { ACTIONS } from './constants';
 import { InsertableReducerType } from 'modules/types';
 
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:modules:reducers');
+
 // reducers
 const simulationsLoading = (state = false, { type }) => {
   switch (type) {
@@ -23,14 +26,6 @@ const simulations = (state = initialSimulationsState, { type, payload }) => {
   return state;
 };
 
-const initialHikesState = [];
-const hikes = (state = initialHikesState, { type, payload }) => {
-  if (type === ACTIONS.RECEIVE_HIKES) {
-    return payload;
-  }
-  return state;
-};
-
 const hikesLoading = (state = false, { type }) => {
   switch (type) {
     case ACTIONS.REQUEST_HIKES:
@@ -43,12 +38,20 @@ const hikesLoading = (state = false, { type }) => {
   }
 };
 
-const initialFormState = {};
-const form = (state = initialFormState, { type, payload }) => {
+const initialHikesState = [];
+const hikes = (state = initialHikesState, { type, payload }) => {
+  if (type === ACTIONS.RECEIVE_HIKES) {
+    return payload;
+  }
+  return state;
+};
+
+const initialSimulationState = {};
+const simulation = (state = initialSimulationState, { type, payload }) => {
   switch(type) {
-    case ACTIONS.SET_FORM:
-      return payload || initialFormState;
-    case ACTIONS.UPDATE_FORM:
+    case ACTIONS.SET_SIMULATION:
+      return payload || initialSimulationState;
+    case ACTIONS.UPDATE_SIMULATION:
       return {
         ...state,
         ...payload,
@@ -58,16 +61,78 @@ const form = (state = initialFormState, { type, payload }) => {
   }
 };
 
-const initialDetailFormState = {};
-const detailForm = (state = initialDetailFormState, { type, payload }) => {
+const updateItemWithChanges = (state, { id, changes }) => {
+  const changedItem = {
+    ...state[id],
+    ...changes,
+  };
+  return {
+    ...state,
+    [id]: changedItem,
+  };
+};
+
+const updateItemsWithChanges = (state, changeList) => {
+  const changedItems = changeList.map(({ id, changes }) => ({
+    ...state[id],
+    ...changes,
+  }));
+  const newState = { ...state };
+  changedItems.forEach(item => {
+    newState[item.id] = item;
+  });
+  return newState;
+};
+
+const initialEditorHikesState = {};
+const hikesById = (state = initialEditorHikesState, { type, payload}) => {
   switch(type) {
-    case ACTIONS.SET_DETAIL_FORM:
-      return payload || initialDetailFormState;
-    case ACTIONS.UPDATE_DETAIL_FORM:
-      return {
-        ...state,
-        ...payload,
-      };
+    case ACTIONS.RECEIVE_HIKES:
+      const allHikes = {};
+      payload.forEach(({ id, trails, ...props }) => {
+        allHikes[id] = { id, ...props };
+      });
+      return allHikes;
+    case ACTIONS.UPDATE_HIKE:
+      return updateItemWithChanges(state, payload);
+    case ACTIONS.UPDATE_HIKES:
+      return updateItemsWithChanges(state, payload);
+    default:
+      return state;
+  }
+};
+
+const initialEditorTrailsState = {};
+const trailsById = (state = initialEditorTrailsState, { type, payload}) => {
+  switch(type) {
+    case ACTIONS.RECEIVE_HIKES:
+      const allTrails = {};
+      payload.forEach((h => h.trails.forEach((({ id, hikers, ...props }) => {
+        allTrails[id] = { id, ...props };
+      }))));
+      return allTrails;
+    case ACTIONS.UPDATE_TRAIL:
+      return updateItemWithChanges(state, payload);
+    case ACTIONS.UPDATE_TRAILS:
+      return updateItemsWithChanges(state, payload);
+    default:
+      return state;
+  }
+};
+
+const initialEditorHikersState = {};
+const hikersById = (state = initialEditorHikersState, { type, payload}) => {
+  switch(type) {
+    case ACTIONS.RECEIVE_HIKES:
+      const allHikers = {};
+      payload.forEach((h => h.trails.forEach((t => t.hikers.forEach((k => {
+        allHikers[k.id] = k;
+      }))))));
+      return allHikers;
+    case ACTIONS.UPDATE_HIKER:
+      return updateItemWithChanges(state, payload);
+    case ACTIONS.UPDATE_HIKERS:
+      return updateItemsWithChanges(state, payload);
     default:
       return state;
   }
@@ -107,8 +172,10 @@ const editorModuleReducer = combineReducers({
   simulations,
   hikesLoading,
   hikes,
-  form,
-  detailForm,
+  hikesById,
+  trailsById,
+  hikersById,
+  simulation,
   actionEnabled,
   actionValid,
   active,

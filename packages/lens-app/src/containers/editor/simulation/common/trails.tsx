@@ -9,7 +9,7 @@ interface IProps {
   disabled?: boolean;
   items: ReadonlyArray<ITrail>;
   selectedIndex: number;
-  onListChanged: (items: ReadonlyArray<ITrail>) => void;
+  onListChanged: (items: ReadonlyArray<ITrail>, removed?: ReadonlyArray<ITrail>) => void;
   onSelectionChanged: (index: number) => void;
 }
 

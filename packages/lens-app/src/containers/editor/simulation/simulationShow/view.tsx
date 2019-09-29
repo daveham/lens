@@ -1,7 +1,8 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   useSelector as useSelectorGeneric,
   useDispatch,
+  shallowEqual,
   TypedUseSelectorHook,
 } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,9 +12,9 @@ import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
 import {
   ISimulation,
-  IHike,
-  ITrail,
-  IHiker,
+  // IHike,
+  // ITrail,
+  // IHiker,
 } from 'editor/interfaces';
 
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
@@ -24,26 +25,27 @@ import Trails from '../common/trails';
 import Hiker from '../common/hiker';
 import Hikers from '../common/hikers';
 
-// import {
-//   reduceItemWithChanges,
-//   reduceListWithItem,
-//   reduceListItemWithChanges,
-//   initialHike,
-// } from 'editor/simulation/common/helpers';
 import { RootEditorState } from 'editor/modules';
 import {
   simulationsSelector,
   simulationsLoadingSelector,
-  hikesSelector,
-  hikesLoadingSelector,
-  formSelector,
-  detailFormSelector,
+  simulationSelector,
+  hikeSelector,
+  trailSelector,
+  hikerSelector,
+  orderedHikesSelector,
+  orderedTrailsByHikeIdSelector,
+  orderedHikersByTrailIdSelector,
 } from 'editor/modules/selectors';
 import {
-  setForm,
-  updateForm,
-  setDetailForm,
-  updateDetailForm,
+  setSimulation,
+  updateSimulation,
+  updateHike,
+  // updateHikes,
+  updateTrail,
+  updateTrails,
+  updateHiker,
+  updateHikers,
   requestHikes,
 } from 'editor/modules/actions';
 
@@ -68,102 +70,144 @@ const useStyles: any = makeStyles((theme: any) => ({
   },
 }));
 
-const View = (props: IProps) => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
+const emptyArray = [];
+const emptyObject = {};
 
+const extractOrderChanges = (list, removed = emptyArray) => {
+  const changes = list.reduce((ac, item, index) => {
+    if (item.order !== index) {
+      ac.push({ id: item.id, changes: { order: index } });
+    }
+    return ac;
+  }, []);
+  if (removed.length) {
+    removed.forEach(r => {
+      // @ts-ignore
+      changes.push({ id: r.id, changes: { isDeleted: true } });
+    });
+  }
+  return changes;
+};
+
+const View = (props: IProps) => {
   const [activeTab, setActiveTab] = useState(TABS.HIKE);
+  const [selectedHikeIndex, setSelectedHikeIndex] = useState(0);
   const [selectedTrailIndex, setSelectedTrailIndex] = useState(0);
   const [selectedHikerIndex, setSelectedHikerIndex] = useState(0);
-  const [currentSimulation, setCurrentSimulation] = useState<ISimulation|undefined>(undefined);
-  const [currentHike, setCurrentHike] = useState<IHike | undefined>(undefined);
 
   const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
   const simulations = useSelector<ReadonlyArray<ISimulation>>(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
-  const hikes = useSelector<ReadonlyArray<IHike>>(hikesSelector);
-  const hikesLoading = useSelector(hikesLoadingSelector);
-  const form = useSelector<ISimulation>(formSelector);
-  const detailForm = useSelector<IHike|ITrail|IHiker>(detailFormSelector);
+
+  const orderedHikes = useSelector(orderedHikesSelector, shallowEqual);
+
+  const selectedHike = useSelector(state => {
+    if (orderedHikes.length > 0) {
+      return hikeSelector(state, orderedHikes[selectedHikeIndex].id);
+    }
+    return emptyObject;
+  });
+
+  const orderedTrails = useSelector(state => {
+    if (selectedHike.id) {
+      // @ts-ignore
+      return orderedTrailsByHikeIdSelector(state, selectedHike.id);
+    }
+    return emptyArray;
+  });
+
+  const selectedTrail = useSelector(state => {
+    if (orderedTrails.length > 0) {
+      return trailSelector(state, orderedTrails[selectedTrailIndex].id);
+    }
+    return emptyObject;
+  });
+
+  const orderedHikers = useSelector(state => {
+    if (selectedTrail.id) {
+      // @ts-ignore
+      return orderedHikersByTrailIdSelector(state, selectedTrail.id);
+    }
+    return emptyArray;
+  });
+
+  const selectedHiker = useSelector(state => {
+    if (orderedHikers.length > 0) {
+      return hikerSelector(state, orderedHikers[selectedHikerIndex].id);
+    }
+    return emptyObject;
+  });
+
+  const selectedSimulation = useSelector(simulationSelector);
 
   const { sourceId, simulationId, editMode } = props;
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
+  // new or changed simulations/simulationId
   useEffect(() => {
     if (!simulationId || !(simulations && simulations.length)) {
-      debug('useEffect:simulations - setCurrentSimulation=undefined');
-      setCurrentSimulation(undefined);
+      debug('useEffect:simulations - simulation=undefined');
+      dispatch(setSimulation());
     } else {
       const simulation = simulations.find(s => s.id === simulationId);
       debug('useEffect:simulations', { simulationId, simulation });
-      setCurrentSimulation(simulation);
+      dispatch(setSimulation(simulation));
       dispatch(requestHikes({ sourceId, simulationId }));
     }
   }, [simulations, simulationId, sourceId, dispatch]);
-  useEffect(() => {
-    debug('useEffect:currentSimulation', { currentSimulation });
-    dispatch(setForm(currentSimulation))
-  }, [currentSimulation, dispatch]);
-
-  useEffect(() => {
-    const hike = hikes && hikes.length ? hikes[0] : undefined;
-    debug('useEffect:hikes', { hike });
-    setCurrentHike(hike);
-    setSelectedTrailIndex(0);
-    setSelectedHikerIndex(0);
-  }, [hikes]);
-  useEffect(() => {
-    debug('useEffect:currentHike', { currentHike });
-    dispatch(setDetailForm(currentHike));
-  }, [currentHike, dispatch]);
-
-  const trails = currentHike ? (currentHike!.trails || []) : [];
-  const trail = trails.length ? trails[selectedTrailIndex] : undefined;
-  const hikers = trail ? trail.hikers : [];
-  const hiker = hikers.length ? hikers[selectedHikerIndex] : undefined;
 
   const handleTabChange = (e, value) => setActiveTab(value);
 
   const handleSimulationFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateForm({ [name]: value }));
+    dispatch(updateSimulation({ [name]: value }));
 
   const handleHikeFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateDetailForm({ [name]: value }));
+    dispatch(updateHike({ id: selectedHike.id, changes: { [name]: value } }));
 
   const handleTrailFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateDetailForm({ [name]: value }));
+    dispatch(updateTrail({ id: selectedTrail.id, changes: { [name]: value } }));
 
   const handleHikerFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateDetailForm({ [name]: value }));
+    dispatch(updateHiker({ id: selectedHiker.id, changes: { [name]: value } }));
 
-  const handleTrailsSelectionChanged = (index) => {
-    setSelectedTrailIndex(index);
-    setActiveTab(TABS.TRAIL);
-    setSelectedHikerIndex(0);
+  const handleTrailsSelectionChanged = index => {
+    debug('handleTrailsSelectionChanged', { index, selectedTrailIndex });
+    if (index !== selectedTrailIndex) {
+      setSelectedTrailIndex(index);
+    }
+    if (activeTab !== TABS.TRAIL) {
+      setActiveTab(TABS.TRAIL);
+      if (selectedHikerIndex > 0) {
+        setSelectedHikerIndex(0);
+      }
+    }
   };
 
-  const handleHikersSelectionChanged = (index) => {
-    setSelectedHikerIndex(index);
-    setActiveTab(TABS.HIKER);
+  const handleHikersSelectionChanged = index => {
+    debug('handleHikersSelectionChanged', { index, selectedHikerIndex });
+    if (index !== selectedHikerIndex) {
+      setSelectedHikerIndex(index);
+    }
+    if (activeTab !== TABS.HIKER) {
+      setActiveTab(TABS.HIKER);
+    }
   };
 
-  const handleTrailsListChanged = (items) => {
-    debug('handleTrailsListChanged', items);
-    // this.setState(({ hike }) => ({
-    //   hike: reduceItemWithChanges(hike, { trails: items }),
-    //   trails: items,
-    // }));
+  const handleTrailsListChanged = (items, removed) => {
+    const changeList = extractOrderChanges(items, removed);
+    debug('handleTrailsListChanged', { items, removed, changeList });
+    if (changeList.length) {
+      dispatch(updateTrails(changeList));
+    }
   };
 
-  const handleHikersListChanged = (items) => {
-    debug('handleHikersListChanged', items);
-    // this.setState(({ hike, trails, selectedTrailIndex }) => {
-    //   const newTrails = reduceListItemWithChanges(trails, selectedTrailIndex, { hikers: items });
-    //   return {
-    //     hike: reduceItemWithChanges(hike, { trails: newTrails }),
-    //     trails: newTrails,
-    //     hikers: items
-    //   };
-    // });
+  const handleHikersListChanged = (items, removed) => {
+    const changeList = extractOrderChanges(items, removed);
+    debug('handleHikersListChanged', { items, removed, changeList });
+    if (changeList.length) {
+      dispatch(updateHikers(changeList));
+    }
   };
 
   const renderTabs = () => (
@@ -181,17 +225,17 @@ const View = (props: IProps) => {
   );
 
   const renderSimulation = () => {
-    if (!(form && form.name)) {
+    if (!(selectedSimulation && selectedSimulation.name)) {
       return null;
     }
     return (
-      <Fragment>
+      <>
         {!editMode && (
           <ReadOnlyTextField
             label='Name'
             margin='dense'
             multiline
-            value={form.name}
+            value={selectedSimulation.name}
             fullWidth
             disabled
           />
@@ -206,62 +250,62 @@ const View = (props: IProps) => {
               name: 'name',
               id: 'simulation-name'
             }}
-            value={form.name}
+            value={selectedSimulation.name}
             fullWidth
             required
           />
         )}
         <Trails
           disabled={!editMode}
-          items={trails}
+          items={orderedTrails}
           selectedIndex={selectedTrailIndex}
           onListChanged={handleTrailsListChanged}
           onSelectionChanged={handleTrailsSelectionChanged}
         />
         <Hikers
           disabled={!editMode}
-          items={hikers}
+          items={orderedHikers}
           selectedIndex={selectedHikerIndex}
           onListChanged={handleHikersListChanged}
           onSelectionChanged={handleHikersSelectionChanged}
         />
-      </Fragment>
+      </>
     );
   };
 
   const renderContent = () => {
+    if (simulationsLoading) {
+      return null;
+    }
+
     if (activeTab === TABS.HIKE) {
-      return (
+      return selectedHike.id && (
         <Hike
           disabled={!editMode}
-          hike={detailForm as IHike}
+          hike={selectedHike}
           onChange={handleHikeFieldChange}
         />
       );
     }
 
     if (activeTab === TABS.TRAIL) {
-      return trail && (
+      return selectedTrail.id && (
         <Trail
           disabled={!editMode}
-          trail={trail}
+          trail={selectedTrail}
           onChange={handleTrailFieldChange}
         />
       );
     }
 
-    return hiker && (
+    return selectedHiker.id && (
       <Hiker
         disabled={!editMode}
-        hiker={hiker}
+        hiker={selectedHiker}
         onChange={handleHikerFieldChange}
       />
     );
   };
-
-  if (simulationsLoading) {
-    return null;
-  }
 
   return (
     <Layout

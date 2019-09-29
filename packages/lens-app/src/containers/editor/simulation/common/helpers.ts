@@ -1,5 +1,6 @@
 const hikeData = {
   id: 1,
+  order: 0,
   name: 'Simple',
   type: 'simple',
   size: 'full',
@@ -8,22 +9,22 @@ const hikeData = {
 };
 
 const trailsData = [
-  { id: 1, name: 'Simple' },
-  { id: 2, name: 'One' },
-  { id: 3, name: 'Two' },
-  { id: 4, name: 'Three' },
+  { id: 1, order: 0, name: 'Simple' },
+  { id: 2, order: 1, name: 'One' },
+  { id: 3, order: 2, name: 'Two' },
+  { id: 4, order: 3, name: 'Three' },
 ];
 
 const hikersData = [
-  { id: 1, name: 'Simple' },
-  { id: 2, name: 'One' },
-  { id: 3, name: 'Two' },
-  { id: 4, name: 'Three' },
-  { id: 5, name: 'Four' },
-  { id: 6, name: 'Five' },
-  { id: 7, name: 'Six' },
-  { id: 8, name: 'Seven' },
-  { id: 9, name: 'Eight' },
+  { id: 1, order: 0, name: 'Simple' },
+  { id: 2, order: 1, name: 'One' },
+  { id: 3, order: 2, name: 'Two' },
+  { id: 4, order: 3, name: 'Three' },
+  { id: 5, order: 4, name: 'Four' },
+  { id: 6, order: 5, name: 'Five' },
+  { id: 7, order: 6, name: 'Six' },
+  { id: 8, order: 7, name: 'Seven' },
+  { id: 9, order: 8, name: 'Eight' },
 ];
 
 export const initialHike: any = { ...hikeData };

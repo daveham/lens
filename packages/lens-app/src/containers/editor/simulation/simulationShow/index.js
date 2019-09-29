@@ -12,7 +12,7 @@ export default (props) => {
   } = props;
 
   return <View
-    editMode={false}
+    editMode={true}
     sourceId={sourceId}
     simulationId={simulationId}
   />;

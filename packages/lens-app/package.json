@@ -92,9 +92,9 @@
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.1",
-    "redux-actions":"^2.6.1",
-    "redux-saga":"^0.16.0",
-    "reselect": "^3.0.1",
+    "redux-actions": "^2.6.5",
+    "redux-saga": "^1.1.1",
+    "reselect": "^4.0.0",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
@@ -200,6 +200,9 @@
     "react-docgen-typescript": "^1.12.5",
     "react-styleguidist": "^9.1.11",
     "react-test-renderer": "^16.8.6",
+    "reactotron-react-js": "^3.3.4",
+    "reactotron-redux": "^3.1.2",
+    "reactotron-redux-saga": "^4.2.2",
     "redux-mock-store": "^1.5.3",
     "ts-transform-graphql-tag": "^0.2.1"
   }

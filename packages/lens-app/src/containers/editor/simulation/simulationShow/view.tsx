@@ -39,13 +39,7 @@ import {
 } from 'editor/modules/selectors';
 import {
   setSimulation,
-  updateSimulation,
-  updateHike,
-  // updateHikes,
-  updateTrail,
-  updateTrails,
-  updateHiker,
-  updateHikers,
+  editorChangeActions,
   requestHikes,
 } from 'editor/modules/actions';
 
@@ -72,22 +66,6 @@ const useStyles: any = makeStyles((theme: any) => ({
 
 const emptyArray = [];
 const emptyObject = {};
-
-const extractOrderChanges = (list, removed = emptyArray) => {
-  const changes = list.reduce((ac, item, index) => {
-    if (item.order !== index) {
-      ac.push({ id: item.id, changes: { order: index } });
-    }
-    return ac;
-  }, []);
-  if (removed.length) {
-    removed.forEach(r => {
-      // @ts-ignore
-      changes.push({ id: r.id, changes: { isDeleted: true } });
-    });
-  }
-  return changes;
-};
 
 const View = (props: IProps) => {
   const [activeTab, setActiveTab] = useState(TABS.HIKE);
@@ -160,16 +138,16 @@ const View = (props: IProps) => {
   const handleTabChange = (e, value) => setActiveTab(value);
 
   const handleSimulationFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateSimulation({ [name]: value }));
+    dispatch(editorChangeActions.changeSimulation({ changes: { [name]: value } }));
 
   const handleHikeFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateHike({ id: selectedHike.id, changes: { [name]: value } }));
+    dispatch(editorChangeActions.changeHike({ id: selectedHike.id, changes: { [name]: value } }));
 
   const handleTrailFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateTrail({ id: selectedTrail.id, changes: { [name]: value } }));
+    dispatch(editorChangeActions.changeTrail({ id: selectedTrail.id, changes: { [name]: value } }));
 
   const handleHikerFieldChange = ({ target: { name, value } }) =>
-    dispatch(updateHiker({ id: selectedHiker.id, changes: { [name]: value } }));
+    dispatch(editorChangeActions.changeHiker({ id: selectedHiker.id, changes: { [name]: value } }));
 
   const handleTrailsSelectionChanged = index => {
     debug('handleTrailsSelectionChanged', { index, selectedTrailIndex });
@@ -195,19 +173,11 @@ const View = (props: IProps) => {
   };
 
   const handleTrailsListChanged = (items, removed) => {
-    const changeList = extractOrderChanges(items, removed);
-    debug('handleTrailsListChanged', { items, removed, changeList });
-    if (changeList.length) {
-      dispatch(updateTrails(changeList));
-    }
+    dispatch(editorChangeActions.changeTrailList({ items, removed }));
   };
 
   const handleHikersListChanged = (items, removed) => {
-    const changeList = extractOrderChanges(items, removed);
-    debug('handleHikersListChanged', { items, removed, changeList });
-    if (changeList.length) {
-      dispatch(updateHikers(changeList));
-    }
+    dispatch(editorChangeActions.changeHikerList({ items, removed }));
   };
 
   const renderTabs = () => (

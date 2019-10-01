@@ -1,4 +1,4 @@
-import { createAction } from 'redux-actions';
+import { createAction, createActions } from 'redux-actions';
 import { ACTIONS } from './constants';
 
 // actions
@@ -12,6 +12,19 @@ export const requestHikesFailed = createAction(ACTIONS.REQUEST_HIKES_FAILED);
 
 export const setSimulation = createAction(ACTIONS.SET_SIMULATION);
 export const updateSimulation = createAction(ACTIONS.UPDATE_SIMULATION);
+
+export const editorChangeActions = createActions({},
+  'CHANGE_SIMULATION',
+  'CHANGE_HIKE',
+  'CHANGE_HIKE_LIST',
+  'CHANGE_TRAIL',
+  'CHANGE_TRAIL_LIST',
+  'CHANGE_HIKER',
+  'CHANGE_HIKER_LIST',
+  {
+    prefix: 'editor',
+  },
+);
 
 export const updateHike = createAction(ACTIONS.UPDATE_HIKE);
 export const updateHikes = createAction(ACTIONS.UPDATE_HIKES);

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:modules:selectors');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:modules:selectors');
 
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;
@@ -11,52 +11,33 @@ export const hikesSelector = state => state.editor.hikes;
 
 const emptyArray = [];
 const orderComparer = (a, b) => a.order - b.order;
+const orderedItemExtractor = ({ id, name, order }) => ({ id, name, order });
+const extractOrderedItems = (items, filter) => {
+  const values = Object.values(items);
+  if (values.length > 0) {
+    const filtered = values.filter(filter);
+    if (filtered.length > 0) {
+      return filtered.map(orderedItemExtractor).sort(orderComparer);
+    }
+  }
+  return emptyArray;
+};
+
 export const orderedHikesSelector = createSelector(
   state => state.editor.hikesById,
-  hikes => {
-    const values = Object.values(hikes);
-    if (values.length > 0) {
-      debug('orderedHikesSelector');
-      return values.map(h => ({ id: h.id, name: h.name, order: h.order }))
-        .sort(orderComparer);
-    }
-    return emptyArray;
-  }
-);
+  hikes => extractOrderedItems(hikes, h => !h.isDeleted));
 
 // expects to be called with (state, hikeId)
 export const orderedTrailsByHikeIdSelector = createSelector(
   state => state.editor.trailsById,
   (_, hikeId) => hikeId,
-  (trails, hikeId) => {
-    const values = Object.values(trails);
-    if (values.length > 0) {
-      debug('orderedTrailsByHikeIdSelector');
-      const filtered = values.filter(t => t.hikeId === hikeId && !t.isDeleted);
-      if (filtered.length > 0) {
-        return filtered.map(t => ({ id: t.id, name: t.name, order: t.order }))
-          .sort(orderComparer);
-      }
-    }
-    return emptyArray;
-  }
-);
+  (trails, hikeId) => extractOrderedItems(trails, t => t.hikeId === hikeId && !t.isDeleted));
 
 // expects to be called with (state, trailId)
 export const orderedHikersByTrailIdSelector = createSelector(
   state => state.editor.hikersById,
   (_, trailId) => trailId,
-  (hikers, trailId) => {
-    const values = Object.values(hikers);
-    if (values.length > 0) {
-      debug('orderedHikersByTrailIdSelector');
-      return values.filter(k => k.trailId === trailId)
-        .map(k => ({ id: k.id, name: k.name, order: k.order }))
-        .sort(orderComparer);
-    }
-    return emptyArray;
-  }
-);
+  (hikers, trailId) => extractOrderedItems(hikers, k => k.trailId === trailId && !k.isDeleted));
 
 export const hikeSelector = (state, id) => state.editor.hikesById[id];
 

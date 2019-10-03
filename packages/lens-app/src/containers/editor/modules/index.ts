@@ -1,46 +1,44 @@
+import { handleActions, combineActions } from 'redux-actions';
 import { combineReducers } from 'redux';
+import {
+  requestSimulationsForSource,
+  receiveSimulationsForSource,
+  requestSimulationsForSourceFailed,
+  requestHikes,
+  receiveHikes,
+  requestHikesFailed,
+} from './actions';
 import { ACTIONS } from './constants';
 import { InsertableReducerType } from 'modules/types';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:modules:reducers');
+import _debug from 'debug';
+const debug = _debug('lens:editor:modules:reducers');
+
+debug('keys for handleActions', {
+  one: `${requestSimulationsForSource}`,
+  two: `${receiveSimulationsForSource}`,
+  three: `${requestSimulationsForSourceFailed}`,
+});
 
 // reducers
-const simulationsLoading = (state = false, { type }) => {
-  switch (type) {
-    case ACTIONS.REQUEST_SIMULATIONS_FOR_SOURCE:
-      return true;
-    case ACTIONS.RECEIVE_SIMULATIONS_FOR_SOURCE:
-    case ACTIONS.REQUEST_SIMULATIONS_FOR_SOURCE_FAILED:
-      return false;
-    default:
-      return state;
-  }
-};
+const simulationsLoading = handleActions({
+  [requestSimulationsForSource]: (state, action) => true,
+  [combineActions(receiveSimulationsForSource, requestSimulationsForSourceFailed)]: (state, action) => false,
+}, false);
 
 const initialSimulationsState = [];
-const simulations = (state = initialSimulationsState, { type, payload }) => {
-  if (type === ACTIONS.RECEIVE_SIMULATIONS_FOR_SOURCE) {
-    return payload;
-  }
-  return state;
-};
+const simulations = handleActions({
+  [receiveSimulationsForSource]: (state, { payload }) => payload,
+}, initialSimulationsState);
 
-const hikesLoading = (state = false, { type }) => {
-  switch (type) {
-    case ACTIONS.REQUEST_HIKES:
-      return true;
-    case ACTIONS.RECEIVE_HIKES:
-    case ACTIONS.REQUEST_HIKES_FAILED:
-      return false;
-    default:
-      return state;
-  }
-};
+const hikesLoading = handleActions({
+  [requestHikes]: (state, action) => true,
+  [combineActions(receiveHikes, requestHikesFailed)]: (state, action) => false,
+}, false);
 
 const initialHikesState = [];
 const hikes = (state = initialHikesState, { type, payload }) => {
-  if (type === ACTIONS.RECEIVE_HIKES) {
+  if (type === `${receiveHikes}`) {
     return payload;
   }
   return state;
@@ -87,7 +85,7 @@ const updateItemsWithChanges = (state, changeList) => {
 const initialEditorHikesState = {};
 const hikesById = (state = initialEditorHikesState, { type, payload}) => {
   switch(type) {
-    case ACTIONS.RECEIVE_HIKES:
+    case `${receiveHikes}`:
       const allHikes = {};
       payload.forEach(({ id, trails, ...props }) => {
         allHikes[id] = { id, ...props };
@@ -105,7 +103,7 @@ const hikesById = (state = initialEditorHikesState, { type, payload}) => {
 const initialEditorTrailsState = {};
 const trailsById = (state = initialEditorTrailsState, { type, payload}) => {
   switch(type) {
-    case ACTIONS.RECEIVE_HIKES:
+    case `${receiveHikes}`:
       const allTrails = {};
       payload.forEach((h => h.trails.forEach((({ id, hikers, ...props }) => {
         allTrails[id] = { id, ...props };
@@ -123,7 +121,7 @@ const trailsById = (state = initialEditorTrailsState, { type, payload}) => {
 const initialEditorHikersState = {};
 const hikersById = (state = initialEditorHikersState, { type, payload}) => {
   switch(type) {
-    case ACTIONS.RECEIVE_HIKES:
+    case `${receiveHikes}`:
       const allHikers = {};
       payload.forEach((h => h.trails.forEach((t => t.hikers.forEach((k => {
         allHikers[k.id] = k;

@@ -1,7 +1,14 @@
 import { takeEvery, all, put } from 'redux-saga/effects';
 
 import {
-  editorChangeActions,
+  changeSimulation,
+  changeHike,
+  changeHikeList,
+  changeTrail,
+  changeTrailList,
+  changeHiker,
+  changeHikerList,
+
   updateSimulation,
   updateHike,
   updateHikes,
@@ -70,12 +77,12 @@ export function* changeHikerListSaga({ payload: { items, removed } }) {
 
 export default function* editSaga() {
   yield all([
-    takeEvery(editorChangeActions.changeSimulation, changeSimulationSaga),
-    takeEvery(editorChangeActions.changeHike, changeHikeSaga),
-    takeEvery(editorChangeActions.changeHikeList, changeHikeListSaga),
-    takeEvery(editorChangeActions.changeTrail, changeTrailSaga),
-    takeEvery(editorChangeActions.changeTrailList, changeTrailListSaga),
-    takeEvery(editorChangeActions.changeHiker, changeHikerSaga),
-    takeEvery(editorChangeActions.changeHikerList, changeHikerListSaga),
+    takeEvery(changeSimulation, changeSimulationSaga),
+    takeEvery(changeHike, changeHikeSaga),
+    takeEvery(changeHikeList, changeHikeListSaga),
+    takeEvery(changeTrail, changeTrailSaga),
+    takeEvery(changeTrailList, changeTrailListSaga),
+    takeEvery(changeHiker, changeHikerSaga),
+    takeEvery(changeHikerList, changeHikerListSaga),
   ]);
 }

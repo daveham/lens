@@ -1201,14 +1201,6 @@
     "@redux-saga/symbols" "^1.1.0"
     "@redux-saga/types" "^1.1.0"
 
-"@redux-saga/simple-saga-monitor@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@redux-saga/simple-saga-monitor/-/simple-saga-monitor-1.1.0.tgz#1eb709be0101f99f6e510888235a8c31d38ce2f4"
-  integrity sha512-gLhL+zI8YZoDHZaSSVL/ldLImiBPN2SGyYnLnUv3TTx3pVrrkPUEOO7qL4xXzts4x0gf/08csI+DZI1CiTbHow==
-  dependencies:
-    "@babel/runtime" "^7.6.0"
-    "@redux-saga/is" "^1.1.0"
-
 "@redux-saga/symbols@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@redux-saga/symbols/-/symbols-1.1.0.tgz#676b277cb5deb48ce723b2b394cbae97f82e8319"

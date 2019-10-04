@@ -1,7 +1,14 @@
-import { createAction, createActions } from 'redux-actions';
-import { ACTIONS } from './constants';
+import { createActions } from 'redux-actions';
 
 export const {
+  setSimulation,
+  updateSimulation,
+  updateHike,
+  updateHikes,
+  updateTrail,
+  updateTrails,
+  updateHiker,
+  updateHikers,
   requestSimulationsForSource,
   receiveSimulationsForSource,
   requestSimulationsForSourceFailed,
@@ -15,7 +22,21 @@ export const {
   changeTrailList,
   changeHiker,
   changeHikerList,
+  setActiveScope,
+  ensureEditorTitle,
+  editorActionEnabled,
+  editorActionDisabled,
+  editorActionValid,
+  editorActionInvalid,
 } = createActions(
+  'SET_SIMULATION',
+  'UPDATE_SIMULATION',
+  'UPDATE_HIKE',
+  'UPDATE_HIKES',
+  'UPDATE_TRAIL',
+  'UPDATE_TRAILS',
+  'UPDATE_HIKER',
+  'UPDATE_HIKERS',
   'REQUEST_SIMULATIONS_FOR_SOURCE',
   'RECEIVE_SIMULATIONS_FOR_SOURCE',
   'REQUEST_SIMULATIONS_FOR_SOURCE_FAILED',
@@ -29,27 +50,13 @@ export const {
   'CHANGE_TRAIL_LIST',
   'CHANGE_HIKER',
   'CHANGE_HIKER_LIST',
+  'SET_ACTIVE_SCOPE',
+  'ENSURE_EDITOR_TITLE',
+  'EDITOR_ACTION_ENABLED',
+  'EDITOR_ACTION_DISABLED',
+  'EDITOR_ACTION_VALID',
+  'EDITOR_ACTION_INVALID',
   {
     prefix: 'editor',
   },
 );
-
-export const setSimulation = createAction(ACTIONS.SET_SIMULATION);
-export const updateSimulation = createAction(ACTIONS.UPDATE_SIMULATION);
-
-export const updateHike = createAction(ACTIONS.UPDATE_HIKE);
-export const updateHikes = createAction(ACTIONS.UPDATE_HIKES);
-export const updateTrail = createAction(ACTIONS.UPDATE_TRAIL);
-export const updateTrails = createAction(ACTIONS.UPDATE_TRAILS);
-export const updateHiker = createAction(ACTIONS.UPDATE_HIKER);
-export const updateHikers = createAction(ACTIONS.UPDATE_HIKERS);
-
-export const setActiveScope = createAction(ACTIONS.SET_ACTIVE_SCOPE);
-
-export const ensureEditorTitle = createAction(ACTIONS.ENSURE_EDITOR_TITLE);
-
-export const actions = {
-  setSimulation,
-  updateSimulation,
-  ensureEditorTitle,
-};

@@ -1,4 +1,4 @@
-import { takeEvery, all, put, call } from 'redux-saga/effects';
+import { takeEvery, put, call } from 'redux-saga/effects';
 
 import {
   changeSimulation,
@@ -107,8 +107,5 @@ export function* changeSwitchSaga(action) {
 }
 
 export default function* editChangeSaga() {
-  yield all([
-    takeEvery(action => !!(action.type && action.type.startsWith('editor-sagas')), changeSwitchSaga),
-  ]);
+  yield takeEvery(action => !!(action.type && action.type.startsWith('editor-sagas')), changeSwitchSaga);
 }
-

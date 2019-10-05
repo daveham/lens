@@ -6,28 +6,54 @@ import reducers from '../modules';
 import commands from '../modules/commands';
 import sagas from '../sagas';
 
-// import ReactotronJs from 'reactotron-react-js';
-// import Reactotron from '../ReactotronConfig';
+import _debug from 'debug';
+const debug = _debug('lens:store');
 
 export const registry = new Registry({ reducers, commands });
 
-// const sagaMonitor = ReactotronJs.createSagaMonitor();
-// const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
-const sagaMiddleware = createSagaMiddleware();
+const composeEnhancers =
+  typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      name: 'Lens',
+      shouldCatchErrors: true,
+      trace: true,
+    })
+    : compose;
+
+const monitorSagaLevel = 0;
+
+const sagaMonitor = {
+  effectResolved: (effectId, result) => {
+    monitorSagaLevel > 0 && debug('Effect resolved', { effectId, result });
+  },
+  effectTriggered: desc => {
+    monitorSagaLevel > 1 && debug('Effect triggered', desc);
+  },
+  effectRejected: (effectId, error) => {
+    monitorSagaLevel > 1 &&debug('Effect rejected', { effectId, error });
+  },
+  effectCancelled: effectId => {
+    monitorSagaLevel > 1 && debug('Effect canceled', { effectId });
+  },
+  rootSagaStarted: desc => {
+    monitorSagaLevel > 2 && debug('Root saga started', {
+      effectId: desc.effectId,
+      name: desc.saga.name || 'anonymous',
+      args: desc.args,
+    });
+  },
+  actionDispatched: () => {},
+};
+
+const sagaMiddleware = createSagaMiddleware({ sagaMonitor });
 
 const middleware = [
   sagaMiddleware,
   registryMiddleware(registry)
 ];
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-// const composeEnhancers = compose;
-
-const store = createStore(
-  registry.initialReducers,
-  composeEnhancers(applyMiddleware(...middleware)),
-  // composeEnhancers(applyMiddleware(...middleware), Reactotron.createEnhancer()),
-);
+const enhancer = composeEnhancers(applyMiddleware(...middleware));
+const store = createStore(registry.initialReducers, enhancer);
 
 registry.store = store;
 registry.sagaMiddleware = sagaMiddleware;

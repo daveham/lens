@@ -12,8 +12,6 @@ import 'isomorphic-fetch';
 import registerServiceWorker from './registerServiceWorker';
 import theme from './theme';
 
-// import './ReactotronConfig';
-
 // import _debug from 'debug';
 // const debug = _debug('lens:index');
 

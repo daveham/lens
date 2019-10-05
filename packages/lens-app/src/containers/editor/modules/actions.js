@@ -1,6 +1,27 @@
 import { createActions } from 'redux-actions';
 
 export const {
+  changeSimulation,
+  changeHike,
+  changeHikeList,
+  changeTrail,
+  changeTrailList,
+  changeHiker,
+  changeHikerList,
+} = createActions(
+  'CHANGE_SIMULATION',
+  'CHANGE_HIKE',
+  'CHANGE_HIKE_LIST',
+  'CHANGE_TRAIL',
+  'CHANGE_TRAIL_LIST',
+  'CHANGE_HIKER',
+  'CHANGE_HIKER_LIST',
+  {
+    prefix: 'editor-sagas',
+  },
+);
+
+export const {
   setSimulation,
   updateSimulation,
   updateHike,
@@ -15,13 +36,6 @@ export const {
   requestHikes,
   receiveHikes,
   requestHikesFailed,
-  changeSimulation,
-  changeHike,
-  changeHikeList,
-  changeTrail,
-  changeTrailList,
-  changeHiker,
-  changeHikerList,
   setActiveScope,
   ensureEditorTitle,
   editorActionEnabled,
@@ -43,13 +57,6 @@ export const {
   'REQUEST_HIKES',
   'RECEIVE_HIKES',
   'REQUEST_HIKES_FAILED',
-  'CHANGE_SIMULATION',
-  'CHANGE_HIKE',
-  'CHANGE_HIKE_LIST',
-  'CHANGE_TRAIL',
-  'CHANGE_TRAIL_LIST',
-  'CHANGE_HIKER',
-  'CHANGE_HIKER_LIST',
   'SET_ACTIVE_SCOPE',
   'ENSURE_EDITOR_TITLE',
   'EDITOR_ACTION_ENABLED',

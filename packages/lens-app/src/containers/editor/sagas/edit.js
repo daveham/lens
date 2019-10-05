@@ -1,4 +1,4 @@
-import { takeEvery, all, put } from 'redux-saga/effects';
+import { takeEvery, all, put, call } from 'redux-saga/effects';
 
 import {
   changeSimulation,
@@ -75,14 +75,40 @@ export function* changeHikerListSaga({ payload: { items, removed } }) {
   }
 }
 
-export default function* editSaga() {
+// This way starts a saga for each action/handler.
+// export default function* editSaga() {
+//   yield all([
+//     takeEvery(changeSimulation, changeSimulationSaga),
+//     takeEvery(changeHike, changeHikeSaga),
+//     takeEvery(changeHikeList, changeHikeListSaga),
+//     takeEvery(changeTrail, changeTrailSaga),
+//     takeEvery(changeTrailList, changeTrailListSaga),
+//     takeEvery(changeHiker, changeHikerSaga),
+//     takeEvery(changeHikerList, changeHikerListSaga),
+//   ]);
+// }
+
+// This way starts fewer sagas - in case that becomes an issue.
+const changeMap = {
+  [changeSimulation]: changeSimulationSaga,
+  [changeHike]: changeHikeSaga,
+  [changeHikeList]: changeHikeListSaga,
+  [changeTrail]: changeTrailSaga,
+  [changeTrailList]: changeTrailListSaga,
+  [changeHiker]: changeHikerSaga,
+  [changeHikerList]: changeHikerListSaga,
+};
+
+export function* changeSwitchSaga(action) {
+  const handler = changeMap[action.type];
+  if (handler) {
+    yield call(handler, action);
+  }
+}
+
+export default function* editChangeSaga() {
   yield all([
-    takeEvery(changeSimulation, changeSimulationSaga),
-    takeEvery(changeHike, changeHikeSaga),
-    takeEvery(changeHikeList, changeHikeListSaga),
-    takeEvery(changeTrail, changeTrailSaga),
-    takeEvery(changeTrailList, changeTrailListSaga),
-    takeEvery(changeHiker, changeHikerSaga),
-    takeEvery(changeHikerList, changeHikerListSaga),
+    takeEvery(action => !!(action.type && action.type.startsWith('editor-sagas')), changeSwitchSaga),
   ]);
 }
+

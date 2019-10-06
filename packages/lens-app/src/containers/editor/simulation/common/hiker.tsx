@@ -23,9 +23,13 @@ const styles: any = (theme) => ({
   },
 });
 
+interface IHikerErrors {
+  nameError?: string;
+}
+
 interface IProps {
   classes?: any;
-  hiker: IHiker;
+  hiker: IHiker & IHikerErrors;
   disabled?: boolean;
   onChange?: (event: any) => void;
 }
@@ -99,6 +103,8 @@ class Hiker extends Component<IProps, any> {
             id: 'hiker-name'
           }}
           value={hiker.name}
+          helperText={hiker.nameError}
+          error={Boolean(hiker.nameError)}
           fullWidth
           required
         />

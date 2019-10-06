@@ -23,9 +23,13 @@ const styles: any = (theme) => ({
   },
 });
 
+interface ITrailErrors {
+  nameError?: string;
+}
+
 interface IProps {
   classes?: any;
-  trail: ITrail;
+  trail: ITrail & ITrailErrors;
   disabled?: boolean;
   onChange?: (event: any) => void;
 }
@@ -99,6 +103,8 @@ class Trail extends Component<IProps, any> {
             id: 'trail-name'
           }}
           value={trail.name}
+          helperText={trail.nameError}
+          error={Boolean(trail.nameError)}
           fullWidth
           required
         />

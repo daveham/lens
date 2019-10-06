@@ -52,6 +52,14 @@ const hikeRules = {
   name: nameRequiredRule,
 };
 
+const trailRules = {
+  name: nameRequiredRule,
+};
+
+const hikerRules = {
+  name: nameRequiredRule,
+};
+
 const getValidationRulesForChanges = (rulesByKey, changes) =>
   Object.keys(changes).reduce((ac, key) => {
     if (rulesByKey[key]) {
@@ -103,10 +111,26 @@ export function* changeHikeSaga({ payload: { id, changes } }) {
 
 export function* changeTrailSaga({ payload: { id, changes } }) {
   yield put(updateTrail({ id, changes }));
+
+  const current = yield select(state => state.editor.trailsById[id]);
+
+  const rules = getValidationRulesForChanges(trailRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateTrail({ id, changes: validationChanges }));
+  }
 }
 
 export function* changeHikerSaga({ payload: { id, changes } }) {
   yield put(updateHiker({ id, changes }));
+
+  const current = yield select(state => state.editor.hikersById[id]);
+
+  const rules = getValidationRulesForChanges(hikerRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateHiker({ id, changes: validationChanges }));
+  }
 }
 
 export function* changeHikeListSaga({ payload: { items, removed } }) {

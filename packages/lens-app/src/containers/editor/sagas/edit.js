@@ -1,4 +1,4 @@
-import { takeEvery, put, call } from 'redux-saga/effects';
+import { takeEvery, put, select, call } from 'redux-saga/effects';
 
 import {
   changeSimulation,
@@ -38,12 +38,67 @@ const extractOrderChanges = (items, removed = emptyArray) => {
   return changes;
 };
 
+const nameRequiredRule = {
+  key: 'name',
+  validate: target => target.name && target.name.length > 0,
+  message: 'A name is required',
+};
+
+const simulationRules = {
+  name: nameRequiredRule,
+};
+
+const hikeRules = {
+  name: nameRequiredRule,
+};
+
+const getValidationRulesForChanges = (rulesByKey, changes) =>
+  Object.keys(changes).reduce((ac, key) => {
+    if (rulesByKey[key]) {
+      ac.push(rulesByKey[key]);
+    }
+    return ac;
+  }, []);
+
+const evaluateValidationRules = (current, rules) => {
+  const changes = [];
+  rules.forEach(rule => {
+    const errorKey = `${rule.key}Error`;
+    if (rule.validate(current)) {
+      if (current[errorKey]) {
+        changes[errorKey] = undefined;
+      }
+    } else {
+      if (!current[errorKey]) {
+        changes[errorKey] = rule.message;
+      }
+    }
+  });
+  return changes;
+};
+
 export function* changeSimulationSaga({ payload: { changes } }) {
   yield put(updateSimulation(changes));
+
+  const current = yield select(state => state.editor.simulation);
+
+  const rules = getValidationRulesForChanges(simulationRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateSimulation(validationChanges));
+  }
 }
 
 export function* changeHikeSaga({ payload: { id, changes } }) {
   yield put(updateHike({ id, changes }));
+
+  const current = yield select(state => state.editor.hikesById[id]);
+
+  const rules = getValidationRulesForChanges(hikeRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateHike({ id, changes: validationChanges }));
+  }
 }
 
 export function* changeTrailSaga({ payload: { id, changes } }) {

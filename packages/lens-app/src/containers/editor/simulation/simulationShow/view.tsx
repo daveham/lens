@@ -202,7 +202,8 @@ const View = (props: IProps) => {
   );
 
   const renderSimulation = () => {
-    if (!(selectedSimulation && selectedSimulation.name)) {
+    if (!(selectedSimulation &&
+      (selectedSimulation.name || selectedSimulation.nameError))) {
       return null;
     }
     return (
@@ -228,6 +229,8 @@ const View = (props: IProps) => {
               id: 'simulation-name'
             }}
             value={selectedSimulation.name}
+            helperText={selectedSimulation.nameError}
+            error={Boolean(selectedSimulation.nameError)}
             fullWidth
             required
           />

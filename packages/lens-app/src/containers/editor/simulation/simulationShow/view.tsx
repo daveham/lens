@@ -39,14 +39,12 @@ import {
 } from 'editor/modules/selectors';
 import {
   setSimulation,
-
   changeSimulation,
   changeHike,
   changeTrail,
   changeTrailList,
   changeHiker,
   changeHikerList,
-
   requestHikes,
 } from 'editor/modules/actions';
 
@@ -202,8 +200,7 @@ const View = (props: IProps) => {
   );
 
   const renderSimulation = () => {
-    if (!(selectedSimulation &&
-      (selectedSimulation.name || selectedSimulation.nameError))) {
+    if (!(selectedSimulation && (selectedSimulation.name || selectedSimulation.nameError))) {
       return null;
     }
     return (
@@ -226,7 +223,7 @@ const View = (props: IProps) => {
             onChange={handleSimulationFieldChange}
             inputProps={{
               name: 'name',
-              id: 'simulation-name'
+              id: 'simulation-name',
             }}
             value={selectedSimulation.name}
             helperText={selectedSimulation.nameError}
@@ -259,31 +256,25 @@ const View = (props: IProps) => {
     }
 
     if (activeTab === TABS.HIKE) {
-      return selectedHike.id && (
-        <Hike
-          disabled={!editMode}
-          hike={selectedHike}
-          onChange={handleHikeFieldChange}
-        />
+      return (
+        selectedHike.id && (
+          <Hike disabled={!editMode} hike={selectedHike} onChange={handleHikeFieldChange} />
+        )
       );
     }
 
     if (activeTab === TABS.TRAIL) {
-      return selectedTrail.id && (
-        <Trail
-          disabled={!editMode}
-          trail={selectedTrail}
-          onChange={handleTrailFieldChange}
-        />
+      return (
+        selectedTrail.id && (
+          <Trail disabled={!editMode} trail={selectedTrail} onChange={handleTrailFieldChange} />
+        )
       );
     }
 
-    return selectedHiker.id && (
-      <Hiker
-        disabled={!editMode}
-        hiker={selectedHiker}
-        onChange={handleHikerFieldChange}
-      />
+    return (
+      selectedHiker.id && (
+        <Hiker disabled={!editMode} hiker={selectedHiker} onChange={handleHikerFieldChange} />
+      )
     );
   };
 

@@ -10,12 +10,12 @@ import Add from '@material-ui/icons/Add';
 import Remove from '@material-ui/icons/Remove';
 import ExpandMore from '@material-ui/icons/ExpandMoreRounded';
 import ExpandLess from '@material-ui/icons/ExpandLessRounded';
-import { withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:simulation:adjustableList');
 
-const styles: any = (theme) => {
+const styles: any = theme => {
   const borderStyle = `1px solid ${theme.palette.divider}`;
   const unit = theme.spacing(1);
   return {
@@ -32,6 +32,12 @@ const styles: any = (theme) => {
       border: borderStyle,
       height: unit * 19 + 2,
       overflow: 'hidden auto',
+    },
+    listItemError: {
+      backgroundColor: theme.palette.error.light,
+      '&.Mui-selected, &.Mui-selected:hover': {
+        backgroundColor: theme.palette.error.main,
+      },
     },
     iconButtonRoot: {
       padding: 1,
@@ -90,61 +96,45 @@ class AdjustableList extends React.Component<IProps, any> {
   }
 
   public render(): JSX.Element {
-    const {
-      classes,
-      disabled,
-      displayProp,
-      items,
-      selectedIndex,
-      label,
-    } = this.props;
+    const { classes, disabled, displayProp, items, selectedIndex, label } = this.props;
 
     const listElements = items.map((item, index) => {
       const selected = index === selectedIndex;
+      const itemClasses = item.hasError ? { root: classes.listItemError } : undefined;
       const li = (
         <ListItem
+          classes={itemClasses}
           key={index}
           button
           selected={selected}
           onClick={this.handleListItemClicked(index)}
         >
-          <ListItemText
-            primary={item[displayProp]}
-          />
+          <ListItemText primary={item[displayProp]} />
         </ListItem>
       );
-      return selected
-      ? (
+      return selected ? (
         <RootRef key={index} rootRef={this.activeItemRef}>
           {li}
         </RootRef>
-      )
-        : li;
+      ) : (
+        li
+      );
     });
 
     const iconButtonClasses = { root: classes.iconButtonRoot };
 
     return (
       <div className={classes.root}>
-        {label && (
-          <InputLabel shrink>{label}</InputLabel>
-        )}
+        {label && <InputLabel shrink>{label}</InputLabel>}
         <div className={classes.controlWrapper}>
           <RootRef rootRef={this.containerRef}>
-            <List
-              dense
-              disablePadding
-              className={classes.list}
-            >
+            <List dense disablePadding className={classes.list}>
               {listElements}
             </List>
           </RootRef>
           {!disabled && (
             <Toolbar classes={{ root: classes.toolbarRoot }}>
-              <IconButton
-                classes={iconButtonClasses}
-                onClick={this.handleAddClicked}
-              >
+              <IconButton classes={iconButtonClasses} onClick={this.handleAddClicked}>
                 <Add />
               </IconButton>
               <IconButton
@@ -175,17 +165,12 @@ class AdjustableList extends React.Component<IProps, any> {
     );
   }
 
-  private handleListItemClicked = (index) => () => {
+  private handleListItemClicked = index => () => {
     this.props.onSelectionChanged(index);
   };
 
   private handleMoveUpClicked = () => {
-    const {
-      items,
-      selectedIndex,
-      onListChanged,
-      onSelectionChanged,
-    } = this.props;
+    const { items, selectedIndex, onListChanged, onSelectionChanged } = this.props;
     if (selectedIndex > 0 && items.length > 1) {
       const adjustedItems = [...items];
       const removedItems = adjustedItems.splice(selectedIndex, 1);
@@ -196,12 +181,7 @@ class AdjustableList extends React.Component<IProps, any> {
   };
 
   private handleMoveDownClicked = () => {
-    const {
-      items,
-      selectedIndex,
-      onListChanged,
-      onSelectionChanged,
-    } = this.props;
+    const { items, selectedIndex, onListChanged, onSelectionChanged } = this.props;
     if (selectedIndex < items.length && items.length > 1) {
       const adjustedItems = [...items];
       const removedItems = adjustedItems.splice(selectedIndex, 1);
@@ -212,18 +192,11 @@ class AdjustableList extends React.Component<IProps, any> {
   };
 
   private handleRemoveClicked = () => {
-    const {
-      items,
-      selectedIndex,
-      onListChanged,
-      onSelectionChanged,
-    } = this.props;
+    const { items, selectedIndex, onListChanged, onSelectionChanged } = this.props;
     if (items.length > 0) {
       const adjustedItems = [...items];
       const removed = adjustedItems.splice(selectedIndex, 1);
-      const adjustedIndex = selectedIndex > 0
-        ? selectedIndex - 1
-        : 0;
+      const adjustedIndex = selectedIndex > 0 ? selectedIndex - 1 : 0;
       onListChanged(adjustedItems, removed);
       onSelectionChanged(adjustedIndex);
     }

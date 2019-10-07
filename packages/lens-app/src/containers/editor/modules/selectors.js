@@ -59,7 +59,6 @@ export const trailSelector = (state, id) => state.editor.trailsById[id];
 
 export const hikerSelector = (state, id) => state.editor.hikersById[id];
 
-export const formSelector = state => state.editor.form;
 export const simulationSelector = state => state.editor.simulation;
 
 export const actionEnabledSelector = state => state.editor.actionEnabled;

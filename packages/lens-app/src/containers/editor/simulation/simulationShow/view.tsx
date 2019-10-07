@@ -34,6 +34,7 @@ import {
   hikeSelector,
   trailSelector,
   hikerSelector,
+  hikesSelector,
   orderedHikesSelector,
   orderedTrailsByHikeIdSelector,
   orderedHikersByTrailIdSelector,
@@ -85,6 +86,7 @@ const View = (props: IProps) => {
   const simulationsLoading = useSelector(simulationsLoadingSelector);
 
   const orderedHikes = useSelector(orderedHikesSelector, shallowEqual);
+  const hikes = useSelector(hikesSelector);
 
   const selectedHike = useSelector(state => {
     if (orderedHikes.length > 0) {
@@ -141,6 +143,13 @@ const View = (props: IProps) => {
       dispatch(requestHikes({ sourceId, simulationId }));
     }
   }, [simulations, simulationId, sourceId, dispatch]);
+
+  useEffect(() => {
+    setSelectedHikeIndex(0);
+    setSelectedTrailIndex(0);
+    setSelectedHikerIndex(0);
+    setActiveTab(TABS.HIKE);
+  }, [hikes]);
 
   const handleTabChange = (e, value) => setActiveTab(value);
 

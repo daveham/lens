@@ -30,7 +30,7 @@ const styles: any = theme => {
     },
     list: {
       border: borderStyle,
-      height: unit * 19 + 2,
+      height: theme.spacing(14) + 2,
       overflow: 'hidden auto',
     },
     listItemError: {

@@ -20,6 +20,7 @@ import {
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 import Layout from '../common/layout';
 import Hike from '../common/hike';
+import Hikes from '../common/hikes';
 import Trail from '../common/trail';
 import Trails from '../common/trails';
 import Hiker from '../common/hiker';
@@ -41,6 +42,7 @@ import {
   setSimulation,
   changeSimulation,
   changeHike,
+  changeHikeList,
   changeTrail,
   changeTrailList,
   changeHiker,
@@ -154,6 +156,20 @@ const View = (props: IProps) => {
   const handleHikerFieldChange = ({ target: { name, value } }) =>
     dispatch(changeHiker({ id: selectedHiker.id, changes: { [name]: value } }));
 
+  const handleHikesSelectionChanged = index => {
+    debug('handleHikesSelectionChanged', { index, selectedHikeIndex });
+    if (index !== selectedHikeIndex) {
+      setSelectedHikeIndex(index);
+    }
+    if (activeTab !== TABS.HIKE) {
+      setActiveTab(TABS.HIKE);
+      if (selectedTrailIndex > 0) {
+        setSelectedTrailIndex(0);
+        setSelectedHikerIndex(0);
+      }
+    }
+  };
+
   const handleTrailsSelectionChanged = index => {
     debug('handleTrailsSelectionChanged', { index, selectedTrailIndex });
     if (index !== selectedTrailIndex) {
@@ -175,6 +191,10 @@ const View = (props: IProps) => {
     if (activeTab !== TABS.HIKER) {
       setActiveTab(TABS.HIKER);
     }
+  };
+
+  const handleHikesListChanged = (items, removed) => {
+    dispatch(changeHikeList({ items, removed }));
   };
 
   const handleTrailsListChanged = (items, removed) => {
@@ -232,6 +252,13 @@ const View = (props: IProps) => {
             required
           />
         )}
+        <Hikes
+          disabled={!editMode}
+          items={orderedHikes}
+          selectedIndex={selectedHikeIndex}
+          onListChanged={handleHikesListChanged}
+          onSelectionChanged={handleHikesSelectionChanged}
+        />
         <Trails
           disabled={!editMode}
           items={orderedTrails}

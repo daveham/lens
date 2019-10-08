@@ -1,7 +1,9 @@
+import uuid from 'uuid/v1';
+
 let globalId = 1001;
-export function uuid() {
+function nameId(root) {
   globalId += 1;
-  return `a-${globalId}`;
+  return `${root}-${globalId}`;
 }
 
 function generateMockRendering(simulationId, executionId) {
@@ -13,7 +15,7 @@ function generateMockRendering(simulationId, executionId) {
     modified: created,
     simulationId,
     executionId,
-    name: `sim${simulationId}-ex${executionId}-ren${id}`,
+    name: nameId('ren'),
   };
 }
 
@@ -26,7 +28,7 @@ function generateMockExecution(simulationId, renderingCount) {
     modified: created,
     simulationId,
     renderings: [],
-    name: `sim${simulationId}-ex${id}`,
+    name: nameId('exe'),
   };
 
   for (let i = 0; i < renderingCount; i++) {
@@ -44,7 +46,7 @@ function generateMockSimulation(sourceId, renderingCounts) {
     modified: created,
     sourceId,
     executions: renderingCounts.map(n => generateMockExecution(id, n)),
-    name: `sim${id}`,
+    name: nameId('sim'),
   };
 }
 
@@ -92,6 +94,6 @@ function generateMockHike() {
 }
 
 export function generateMockHikesData(simulationId) {
-  return [generateMockHike(uuid())];
+  return [generateMockHike(simulationId)];
 }
 

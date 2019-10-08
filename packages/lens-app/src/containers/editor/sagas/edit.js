@@ -1,5 +1,6 @@
 import { takeEvery, put, select, call } from 'redux-saga/effects';
 
+import { defaultNewHike, defaultNewTrail, defaultNewHiker } from 'editor/interfaces';
 import {
   changeSimulation,
   changeHike,
@@ -8,12 +9,14 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
-
   updateSimulation,
+  addHike,
   updateHike,
   updateHikes,
+  addTrail,
   updateTrail,
   updateTrails,
+  addHiker,
   updateHiker,
   updateHikers,
 } from 'editor/modules/actions';
@@ -133,24 +136,54 @@ export function* changeHikerSaga({ payload: { id, changes } }) {
   }
 }
 
-export function* changeHikeListSaga({ payload: { items, removed } }) {
+export function* changeHikeListSaga({ payload: { items, removed, addNew } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateHikes(changeList));
   }
+  if (addNew) {
+    yield put(addHike({
+      ...defaultNewHike(),
+      isNew: true,
+      order: items.length,
+    }));
+  }
 }
 
-export function* changeTrailListSaga({ payload: { items, removed } }) {
+export function* changeTrailListSaga({ payload: { hikeId, items, removed, addNew } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateTrails(changeList));
   }
+  if (addNew) {
+    yield put(addTrail({
+      hikeId,
+      trail: {
+        ...defaultNewTrail(),
+        hikeId,
+        isNew: true,
+        order: items.length,
+      },
+    }));
+  }
 }
 
-export function* changeHikerListSaga({ payload: { items, removed } }) {
+export function* changeHikerListSaga({ payload: { hikeId, trailId, items, removed, addNew } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateHikers(changeList));
+  }
+  if (addNew) {
+    yield put(addHiker({
+      hikeId,
+      trailId,
+      hiker: {
+        ...defaultNewHiker(),
+        trailId,
+        isNew: true,
+        order: items.length,
+      },
+    }));
   }
 }
 
@@ -186,5 +219,8 @@ export function* changeSwitchSaga(action) {
 }
 
 export default function* editChangeSaga() {
-  yield takeEvery(action => !!(action.type && action.type.startsWith('editor-sagas')), changeSwitchSaga);
+  yield takeEvery(
+    action => !!(action.type && action.type.startsWith('editor-sagas')),
+    changeSwitchSaga,
+  );
 }

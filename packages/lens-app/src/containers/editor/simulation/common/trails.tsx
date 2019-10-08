@@ -9,19 +9,17 @@ interface IProps {
   disabled?: boolean;
   items: ReadonlyArray<ITrail>;
   selectedIndex: number;
-  onListChanged: (items: ReadonlyArray<ITrail>, removed?: ReadonlyArray<ITrail>) => void;
+  onListChanged: (
+    items: ReadonlyArray<ITrail>,
+    removed?: ReadonlyArray<ITrail>,
+    addNew?: boolean,
+  ) => void;
   onSelectionChanged: (index: number) => void;
 }
 
 class Trails extends React.Component<IProps, any> {
   public render(): any {
-    const {
-      disabled,
-      items,
-      selectedIndex,
-      onListChanged,
-      onSelectionChanged,
-    } = this.props;
+    const { disabled, items, selectedIndex, onListChanged, onSelectionChanged } = this.props;
     return (
       <AdjustableList
         disabled={disabled}

@@ -9,10 +9,13 @@ import {
   requestHikesFailed,
   setSimulation,
   updateSimulation,
+  addHike,
   updateHike,
   updateHikes,
+  addTrail,
   updateTrail,
   updateTrails,
+  addHiker,
   updateHiker,
   updateHikers,
   setActiveScope,
@@ -45,6 +48,9 @@ const hikesLoading = handleActions({
 const initialHikesState = [];
 const hikes = handleActions({
   [receiveHikes]: (state, { payload }) => payload,
+  [addHike]: (state, { payload }) => [...state, payload],
+  [addTrail]: (state, { payload }) => state, // TODO find payload.hikeId and add trail
+  [addHiker]: (state, { payload }) => state, // TODO find payload.trailId and add hiker
 }, initialHikesState);
 
 const initialSimulationState = {};
@@ -81,6 +87,12 @@ const updateItemsWithChanges = (state, changeList) => {
 
 const initialEditorHikesState = {};
 const hikesById = handleActions({
+  [addHike]: (state, { payload }) => {
+    return {
+      ...state,
+      [payload.id]: payload,
+    };
+  },
   [receiveHikes]: (state, { payload }) => {
     const allHikes = {};
     payload.forEach(({ id, trails, ...props }) => {
@@ -94,6 +106,12 @@ const hikesById = handleActions({
 
 const initialEditorTrailsState = {};
 const trailsById = handleActions({
+  [addTrail]: (state, { payload: { trail } }) => {
+    return {
+      ...state,
+      [trail.id]: trail,
+    };
+  },
   [receiveHikes]: (state, { payload }) => {
     const allTrails = {};
     payload.forEach((h => h.trails.forEach((({ id, hikers, ...props }) => {
@@ -107,6 +125,12 @@ const trailsById = handleActions({
 
 const initialEditorHikersState = {};
 const hikersById = handleActions({
+  [addHiker]: (state, { payload: { hiker } }) => {
+    return {
+      ...state,
+      [hiker.id]: hiker,
+    };
+  },
   [receiveHikes]: (state, { payload }) => {
     const allHikers = {};
     payload.forEach((h => h.trails.forEach((t => t.hikers.forEach((k => {

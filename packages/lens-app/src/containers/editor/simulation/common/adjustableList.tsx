@@ -60,9 +60,11 @@ interface IProps {
   displayProp: string;
   items: ReadonlyArray<any>;
   selectedIndex: number;
-  onListChanged: (list: any[], removed?: any[]) => void;
+  onListChanged: (list: any[], removed?: any[], addNew?: boolean) => void;
   onSelectionChanged: (index: number) => void;
 }
+
+const emptyArray = [];
 
 class AdjustableList extends React.Component<IProps, any> {
   private readonly activeItemRef: any;
@@ -204,6 +206,9 @@ class AdjustableList extends React.Component<IProps, any> {
 
   private handleAddClicked = () => {
     debug('handleAddClicked');
+    const { items, onListChanged, onSelectionChanged } = this.props;
+    onListChanged(emptyArray, emptyArray, true);
+    onSelectionChanged(items.length);
   };
 }
 

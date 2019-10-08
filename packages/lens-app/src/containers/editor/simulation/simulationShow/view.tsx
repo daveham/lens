@@ -202,16 +202,18 @@ const View = (props: IProps) => {
     }
   };
 
-  const handleHikesListChanged = (items, removed) => {
-    dispatch(changeHikeList({ items, removed }));
+  const handleHikesListChanged = (items, removed, addNew) => {
+    dispatch(changeHikeList({ items, removed, addNew }));
   };
 
-  const handleTrailsListChanged = (items, removed) => {
-    dispatch(changeTrailList({ items, removed }));
+  const handleTrailsListChanged = (items, removed, addNew) => {
+    dispatch(changeTrailList({ hikeId: selectedHike.id, items, removed, addNew }));
   };
 
-  const handleHikersListChanged = (items, removed) => {
-    dispatch(changeHikerList({ items, removed }));
+  const handleHikersListChanged = (items, removed, addNew) => {
+    dispatch(
+      changeHikerList({ hikeId: selectedHike, trailId: selectedTrail.id, items, removed, addNew }),
+    );
   };
 
   const renderTabs = () => (

@@ -9,19 +9,17 @@ interface IProps {
   disabled?: boolean;
   items: ReadonlyArray<IHiker>;
   selectedIndex: number;
-  onListChanged: (items: ReadonlyArray<IHiker>, removed?: ReadonlyArray<IHiker>) => void;
+  onListChanged: (
+    items: ReadonlyArray<IHiker>,
+    removed?: ReadonlyArray<IHiker>,
+    addNew?: boolean,
+  ) => void;
   onSelectionChanged: (index: number) => void;
 }
 
 class Hikers extends React.Component<IProps, any> {
   public render(): any {
-    const {
-      disabled,
-      items,
-      selectedIndex,
-      onListChanged,
-      onSelectionChanged,
-    } = this.props;
+    const { disabled, items, selectedIndex, onListChanged, onSelectionChanged } = this.props;
     return (
       <AdjustableList
         disabled={disabled}

@@ -1,3 +1,5 @@
+import uuid from 'uuid/v1';
+
 export interface IRendering {
   id: string;
   created: number;
@@ -5,6 +7,10 @@ export interface IRendering {
   executionId: number;
   simulationId: number;
   name: string;
+}
+
+export interface IRenderingErrors {
+  nameError?: string;
 }
 
 export interface IExecution {
@@ -17,6 +23,10 @@ export interface IExecution {
   renderings?: ReadonlyArray<IRendering>;
 }
 
+export interface IExecutionErrors {
+  nameError?: string;
+}
+
 export interface ISimulation {
   id: string;
   sourceId: string;
@@ -27,25 +37,83 @@ export interface ISimulation {
   executions?: ReadonlyArray<IExecution>;
 }
 
-export interface IHiker {
-  id: number;
-  name?: string;
-  type?: string;
+export interface ISimulationErrors {
+  nameError?: string;
 }
 
-export interface ITrail {
-  id: number;
+export interface IHiker {
+  id: string;
+  order?: number;
   name?: string;
   type?: string;
+  isNew?: boolean;
+  isDeleted?: boolean;
+}
+
+export function defaultNewHiker(): IHiker {
+  return {
+    id: uuid(),
+    name: 'New Hiker',
+    type: 'simple',
+  };
+}
+
+export interface IHikerErrors {
+  nameError?: string;
+}
+
+export interface ITrailModel {
+  id: string;
+  order?: number;
+  name?: string;
+  type?: string;
+  isNew?: boolean;
+  isDeleted?: boolean;
+}
+
+export function defaultNewTrail(): ITrailModel {
+  return {
+    id: uuid(),
+    name: 'New Trail',
+    type: 'simple',
+  };
+}
+
+export interface ITrailErrors {
+  nameError?: string;
+}
+
+export interface ITrail extends ITrailModel {
   hikers: ReadonlyArray<IHiker>;
 }
 
-export interface IHike {
-  id: number;
+export interface IHikeModel {
+  id: string;
+  order?: number;
   name?: string;
   type?: string;
   size?: string;
   logger?: string;
   trackWriter?: string;
+  isNew?: boolean;
+  isDeleted?: boolean;
+}
+
+export function defaultNewHike(): IHikeModel {
+  return {
+    id: uuid(),
+    name: 'New Hike',
+    type: 'simple',
+    size: 'full',
+    logger: 'none',
+    trackWriter: 'none',
+  };
+}
+
+export interface IHikeErrors {
+  nameError?: string;
+}
+
+export interface IHike extends IHikeModel {
   trails: ReadonlyArray<ITrail>;
 }

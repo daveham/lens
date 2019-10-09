@@ -1,6 +1,5 @@
 import { takeEvery, put, select, call } from 'redux-saga/effects';
 
-import { defaultNewHike, defaultNewTrail, defaultNewHiker } from 'editor/interfaces';
 import {
   changeSimulation,
   changeHike,
@@ -136,54 +135,33 @@ export function* changeHikerSaga({ payload: { id, changes } }) {
   }
 }
 
-export function* changeHikeListSaga({ payload: { items, removed, addNew } }) {
+export function* changeHikeListSaga({ payload: { items, removed, newHike } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateHikes(changeList));
   }
-  if (addNew) {
-    yield put(addHike({
-      ...defaultNewHike(),
-      isNew: true,
-      order: items.length,
-    }));
+  if (newHike) {
+    yield put(addHike({ hike: newHike }));
   }
 }
 
-export function* changeTrailListSaga({ payload: { hikeId, items, removed, addNew } }) {
+export function* changeTrailListSaga({ payload: { hikeId, items, removed, newTrail } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateTrails(changeList));
   }
-  if (addNew) {
-    yield put(addTrail({
-      hikeId,
-      trail: {
-        ...defaultNewTrail(),
-        hikeId,
-        isNew: true,
-        order: items.length,
-      },
-    }));
+  if (newTrail) {
+    yield put(addTrail({ hikeId, trail: newTrail }));
   }
 }
 
-export function* changeHikerListSaga({ payload: { hikeId, trailId, items, removed, addNew } }) {
+export function* changeHikerListSaga({ payload: { hikeId, trailId, items, removed, newHiker } }) {
   const changeList = extractOrderChanges(items, removed);
   if (changeList.length) {
     yield put(updateHikers(changeList));
   }
-  if (addNew) {
-    yield put(addHiker({
-      hikeId,
-      trailId,
-      hiker: {
-        ...defaultNewHiker(),
-        trailId,
-        isNew: true,
-        order: items.length,
-      },
-    }));
+  if (newHiker) {
+    yield put(addHiker({ hikeId, trailId, hiker: newHiker }));
   }
 }
 

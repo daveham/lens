@@ -11,6 +11,9 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
 import {
+  defaultNewHike,
+  defaultNewTrail,
+  defaultNewHiker,
   ISimulation,
   // IHike,
   // ITrail,
@@ -203,16 +206,51 @@ const View = (props: IProps) => {
   };
 
   const handleHikesListChanged = (items, removed, addNew) => {
-    dispatch(changeHikeList({ items, removed, addNew }));
+    const newHike = addNew
+      ? {
+          ...defaultNewHike(),
+          order: orderedHikes ? orderedHikes.length : 0,
+          trails: [],
+          isNew: true,
+        }
+      : undefined;
+    dispatch(changeHikeList({ items, removed, newHike }));
   };
 
   const handleTrailsListChanged = (items, removed, addNew) => {
-    dispatch(changeTrailList({ hikeId: selectedHike.id, items, removed, addNew }));
+    const newTrail = addNew
+      ? {
+          ...defaultNewTrail(),
+          order: orderedTrails ? orderedTrails.length : 0,
+          hikers: [],
+          hikeId: selectedHike.id,
+          isNew: true,
+        }
+      : undefined;
+    dispatch(changeTrailList({ hikeId: selectedHike.id, items, removed, newTrail }));
   };
 
   const handleHikersListChanged = (items, removed, addNew) => {
+    const newHiker = addNew
+      ? {
+          order: orderedHikers ? orderedHikers.length : 0,
+          hikeId: selectedHike.id,
+          trailId: selectedTrail.id,
+          hiker: {
+            ...defaultNewHiker(),
+            trailId: selectedTrail.id,
+            isNew: true,
+          },
+        }
+      : undefined;
     dispatch(
-      changeHikerList({ hikeId: selectedHike, trailId: selectedTrail.id, items, removed, addNew }),
+      changeHikerList({
+        hikeId: selectedHike,
+        trailId: selectedTrail.id,
+        items,
+        removed,
+        newHiker,
+      }),
     );
   };
 

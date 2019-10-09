@@ -30,37 +30,75 @@ import { InsertableReducerType } from 'modules/types';
 // const debug = _debug('lens:editor:modules:reducers');
 
 // reducers
-const simulationsLoading = handleActions({
-  [requestSimulationsForSource]: () => true,
-  [combineActions(receiveSimulationsForSource, requestSimulationsForSourceFailed)]: () => false,
-}, false);
+const simulationsLoading = handleActions(
+  {
+    [requestSimulationsForSource]: () => true,
+    [combineActions(receiveSimulationsForSource, requestSimulationsForSourceFailed)]: () => false,
+  },
+  false,
+);
 
 const initialSimulationsState = [];
-const simulations = handleActions({
-  [receiveSimulationsForSource]: (state, { payload }) => payload,
-}, initialSimulationsState);
+const simulations = handleActions(
+  {
+    [receiveSimulationsForSource]: (state, { payload }) => payload,
+  },
+  initialSimulationsState,
+);
 
-const hikesLoading = handleActions({
-  [requestHikes]: () => true,
-  [combineActions(receiveHikes, requestHikesFailed)]: () => false,
-}, false);
+const hikesLoading = handleActions(
+  {
+    [requestHikes]: () => true,
+    [combineActions(receiveHikes, requestHikesFailed)]: () => false,
+  },
+  false,
+);
 
 const initialHikesState = [];
-const hikes = handleActions({
-  [receiveHikes]: (state, { payload }) => payload,
-  [addHike]: (state, { payload }) => [...state, payload],
-  [addTrail]: (state, { payload }) => state, // TODO find payload.hikeId and add trail
-  [addHiker]: (state, { payload }) => state, // TODO find payload.trailId and add hiker
-}, initialHikesState);
+const hikes = handleActions(
+  {
+    [receiveHikes]: (state, { payload }) => payload,
+    [addHike]: (state, { payload: { hike } }) => [...state, hike],
+    [addTrail]: (state, { payload: { hikeId, trail } }) =>
+      state.map(h =>
+        h.id === hikeId
+          ? {
+              ...h,
+              trails: [...h.trails, trail],
+            }
+          : h,
+      ),
+    [addHiker]: (state, { payload: { hikeId, trailId, hiker } }) =>
+      state.map(h =>
+        h.id === hikeId
+          ? {
+              ...h,
+              trails: h.trails.map(t =>
+                t.id === trailId
+                  ? {
+                      ...t,
+                      hikers: [...t.hikers, hiker],
+                    }
+                  : t,
+              ),
+            }
+          : h,
+      ),
+  },
+  initialHikesState,
+);
 
 const initialSimulationState = {};
-const simulation = handleActions({
-  [setSimulation]: (state, { payload }) => payload || initialSimulationState,
-  [updateSimulation]: (state, { payload }) => ({
-    ...state,
-    ...payload,
-  })
-}, initialSimulationState);
+const simulation = handleActions(
+  {
+    [setSimulation]: (state, { payload }) => payload || initialSimulationState,
+    [updateSimulation]: (state, { payload }) => ({
+      ...state,
+      ...payload,
+    }),
+  },
+  initialSimulationState,
+);
 
 const updateItemWithChanges = (state, { id, changes }) => {
   const changedItem = {
@@ -86,75 +124,99 @@ const updateItemsWithChanges = (state, changeList) => {
 };
 
 const initialEditorHikesState = {};
-const hikesById = handleActions({
-  [addHike]: (state, { payload }) => {
-    return {
-      ...state,
-      [payload.id]: payload,
-    };
+const hikesById = handleActions(
+  {
+    [addHike]: (state, { payload: { hike } }) => {
+      return {
+        ...state,
+        [hike.id]: hike,
+      };
+    },
+    [receiveHikes]: (state, { payload }) => {
+      const allHikes = {};
+      payload.forEach(({ id, trails, ...props }) => {
+        allHikes[id] = { id, ...props };
+      });
+      return allHikes;
+    },
+    [updateHike]: (state, { payload }) => updateItemWithChanges(state, payload),
+    [updateHikes]: (state, { payload }) => updateItemsWithChanges(state, payload),
   },
-  [receiveHikes]: (state, { payload }) => {
-    const allHikes = {};
-    payload.forEach(({ id, trails, ...props }) => {
-      allHikes[id] = { id, ...props };
-    });
-    return allHikes;
-  },
-  [updateHike]: (state, { payload }) => updateItemWithChanges(state, payload),
-  [updateHikes]: (state, { payload }) => updateItemsWithChanges(state, payload),
-}, initialEditorHikesState);
+  initialEditorHikesState,
+);
 
 const initialEditorTrailsState = {};
-const trailsById = handleActions({
-  [addTrail]: (state, { payload: { trail } }) => {
-    return {
-      ...state,
-      [trail.id]: trail,
-    };
+const trailsById = handleActions(
+  {
+    [addTrail]: (state, { payload: { trail } }) => {
+      return {
+        ...state,
+        [trail.id]: trail,
+      };
+    },
+    [receiveHikes]: (state, { payload }) => {
+      const allTrails = {};
+      payload.forEach(h =>
+        h.trails.forEach(({ id, hikers, ...props }) => {
+          allTrails[id] = { id, ...props };
+        }),
+      );
+      return allTrails;
+    },
+    [updateTrail]: (state, { payload }) => updateItemWithChanges(state, payload),
+    [updateTrails]: (state, { payload }) => updateItemsWithChanges(state, payload),
   },
-  [receiveHikes]: (state, { payload }) => {
-    const allTrails = {};
-    payload.forEach((h => h.trails.forEach((({ id, hikers, ...props }) => {
-      allTrails[id] = { id, ...props };
-    }))));
-    return allTrails;
-  },
-  [updateTrail]: (state, { payload }) => updateItemWithChanges(state, payload),
-  [updateTrails]: (state, { payload }) => updateItemsWithChanges(state, payload),
-}, initialEditorTrailsState);
+  initialEditorTrailsState,
+);
 
 const initialEditorHikersState = {};
-const hikersById = handleActions({
-  [addHiker]: (state, { payload: { hiker } }) => {
-    return {
-      ...state,
-      [hiker.id]: hiker,
-    };
+const hikersById = handleActions(
+  {
+    [addHiker]: (state, { payload: { hiker } }) => {
+      return {
+        ...state,
+        [hiker.id]: hiker,
+      };
+    },
+    [receiveHikes]: (state, { payload }) => {
+      const allHikers = {};
+      payload.forEach(h =>
+        h.trails.forEach(t =>
+          t.hikers.forEach(k => {
+            allHikers[k.id] = k;
+          }),
+        ),
+      );
+      return allHikers;
+    },
+    [updateHiker]: (state, { payload }) => updateItemWithChanges(state, payload),
+    [updateHikers]: (state, { payload }) => updateItemsWithChanges(state, payload),
   },
-  [receiveHikes]: (state, { payload }) => {
-    const allHikers = {};
-    payload.forEach((h => h.trails.forEach((t => t.hikers.forEach((k => {
-      allHikers[k.id] = k;
-    }))))));
-    return allHikers;
+  initialEditorHikersState,
+);
+
+const actionEnabled = handleActions(
+  {
+    [editorActionEnabled]: () => true,
+    [editorActionDisabled]: () => false,
   },
-  [updateHiker]: (state, { payload }) => updateItemWithChanges(state, payload),
-  [updateHikers]: (state, { payload }) => updateItemsWithChanges(state, payload),
-}, initialEditorHikersState);
+  false,
+);
 
-const actionEnabled = handleActions({
-  [editorActionEnabled]: () => true,
-  [editorActionDisabled]: () => false,
-}, false);
+const actionValid = handleActions(
+  {
+    [editorActionValid]: () => true,
+    [editorActionInvalid]: () => false,
+  },
+  false,
+);
 
-const actionValid = handleActions({
-  [editorActionValid]: () => true,
-  [editorActionInvalid]: () => false,
-}, false);
-
-const active = handleActions({
-  [setActiveScope]: (state, { payload }) => payload,
-}, '');
+const active = handleActions(
+  {
+    [setActiveScope]: (state, { payload }) => payload,
+  },
+  '',
+);
 
 const editorModuleReducer = combineReducers({
   simulationsLoading,
@@ -171,8 +233,7 @@ const editorModuleReducer = combineReducers({
 });
 
 export type EditorModuleState = ReturnType<typeof editorModuleReducer>;
-export type InsertableEditorModuleReducer = typeof editorModuleReducer
-  & InsertableReducerType;
+export type InsertableEditorModuleReducer = typeof editorModuleReducer & InsertableReducerType;
 
 const insertableEditorModuleReducer: InsertableEditorModuleReducer = editorModuleReducer;
 

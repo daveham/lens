@@ -4,9 +4,9 @@ import { Switch, Route } from 'react-router-dom';
 
 import SimulationEmptyState from './simulationEmptyState';
 // import simulationListRenderFunction from './simulationList';
-// import simulationEditRenderFunction from './simulationEdit';
 import SimulationNew from './simulationNew';
 import SimulationShow from './simulationShow';
+import SimulationEdit from './simulationEdit';
 // import simulationDeleteRenderFunction from './simulationDelete';
 
 // import _debug from 'debug';
@@ -47,6 +47,7 @@ const View = (props: IProps) => {
     <div className={classes.root}>
       <Switch>
         <Route path={`${path}/new`} component={SimulationNew} />
+        <Route path={`${path}/:simulationId/edit`} render={SimulationEdit} />
         <Route path={`${path}/:simulationId`} render={SimulationShow} />
         <Route path={path} component={SimulationEmptyState} />
       </Switch>

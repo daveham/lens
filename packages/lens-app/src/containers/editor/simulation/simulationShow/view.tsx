@@ -15,9 +15,6 @@ import {
   defaultNewTrail,
   defaultNewHiker,
   ISimulation,
-  // IHike,
-  // ITrail,
-  // IHiker,
 } from 'editor/interfaces';
 
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
@@ -34,10 +31,10 @@ import {
   simulationsSelector,
   simulationsLoadingSelector,
   simulationSelector,
+  hikesLoadingSelector,
   hikeSelector,
   trailSelector,
   hikerSelector,
-  hikesSelector,
   orderedHikesSelector,
   orderedTrailsByHikeIdSelector,
   orderedHikersByTrailIdSelector,
@@ -87,9 +84,9 @@ const View = (props: IProps) => {
   const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
   const simulations = useSelector<ReadonlyArray<ISimulation>>(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
+  const hikesLoading = useSelector(hikesLoadingSelector);
 
   const orderedHikes = useSelector(orderedHikesSelector, shallowEqual);
-  const hikes = useSelector(hikesSelector);
 
   const selectedHike = useSelector(state => {
     if (orderedHikes.length > 0) {
@@ -148,11 +145,13 @@ const View = (props: IProps) => {
   }, [simulations, simulationId, sourceId, dispatch]);
 
   useEffect(() => {
-    setSelectedHikeIndex(0);
-    setSelectedTrailIndex(0);
-    setSelectedHikerIndex(0);
-    setActiveTab(TABS.HIKE);
-  }, [hikes]);
+    if (!hikesLoading) {
+      setSelectedHikeIndex(0);
+      setSelectedTrailIndex(0);
+      setSelectedHikerIndex(0);
+      setActiveTab(TABS.HIKE);
+    }
+  }, [hikesLoading]);
 
   const handleTabChange = (e, value) => setActiveTab(value);
 
@@ -207,45 +206,38 @@ const View = (props: IProps) => {
 
   const handleHikesListChanged = (items, removed, addNew) => {
     const newHike = addNew
-      ? {
-          ...defaultNewHike(),
+      ? defaultNewHike({
           order: orderedHikes ? orderedHikes.length : 0,
           trails: [],
           isNew: true,
-        }
+        })
       : undefined;
     dispatch(changeHikeList({ items, removed, newHike }));
   };
 
   const handleTrailsListChanged = (items, removed, addNew) => {
     const newTrail = addNew
-      ? {
-          ...defaultNewTrail(),
+      ? defaultNewTrail({
           order: orderedTrails ? orderedTrails.length : 0,
           hikers: [],
           hikeId: selectedHike.id,
           isNew: true,
-        }
+        })
       : undefined;
     dispatch(changeTrailList({ hikeId: selectedHike.id, items, removed, newTrail }));
   };
 
   const handleHikersListChanged = (items, removed, addNew) => {
     const newHiker = addNew
-      ? {
+      ? defaultNewHiker({
           order: orderedHikers ? orderedHikers.length : 0,
-          hikeId: selectedHike.id,
           trailId: selectedTrail.id,
-          hiker: {
-            ...defaultNewHiker(),
-            trailId: selectedTrail.id,
-            isNew: true,
-          },
-        }
+          isNew: true,
+        })
       : undefined;
     dispatch(
       changeHikerList({
-        hikeId: selectedHike,
+        hikeId: selectedHike.id,
         trailId: selectedTrail.id,
         items,
         removed,

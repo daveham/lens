@@ -50,11 +50,12 @@ export interface IHiker {
   isDeleted?: boolean;
 }
 
-export function defaultNewHiker(): IHiker {
+export function defaultNewHiker(props): IHiker {
   return {
     id: uuid(),
     name: 'New Hiker',
     type: 'simple',
+    ...props,
   };
 }
 
@@ -71,11 +72,12 @@ export interface ITrailModel {
   isDeleted?: boolean;
 }
 
-export function defaultNewTrail(): ITrailModel {
+export function defaultNewTrail(props): ITrailModel {
   return {
     id: uuid(),
     name: 'New Trail',
     type: 'simple',
+    ...props,
   };
 }
 
@@ -99,7 +101,7 @@ export interface IHikeModel {
   isDeleted?: boolean;
 }
 
-export function defaultNewHike(): IHikeModel {
+export function defaultNewHike(props): IHikeModel {
   return {
     id: uuid(),
     name: 'New Hike',
@@ -107,6 +109,7 @@ export function defaultNewHike(): IHikeModel {
     size: 'full',
     logger: 'none',
     trackWriter: 'none',
+    ...props,
   };
 }
 

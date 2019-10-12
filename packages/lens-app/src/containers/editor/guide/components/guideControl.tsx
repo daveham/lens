@@ -198,8 +198,9 @@ const GuideControl = (props: IProps) => {
   // hooks
 
   // the parameters rendered in the component, could be delayed from props by delayedUpdate
-  const [renderedControlParameters, setRenderedControlParameters] =
-    useState(emptyControlParameters);
+  const [renderedControlParameters, setRenderedControlParameters] = useState(
+    emptyControlParameters,
+  );
   // expandedPanel is the one and only panel that is expanded - not necessarily the active panel
   const [expandedPanel, setExpandedPanel] = useState('');
   // the active and expanded panel is locked to display dialog controls
@@ -212,18 +213,21 @@ const GuideControl = (props: IProps) => {
   useEffect(() => {
     if (!delayedUpdate) {
       setRenderedControlParameters(prev => {
-        const changed = (simulation !== prev.simulation ||
+        const changed =
+          simulation !== prev.simulation ||
           execution !== prev.execution ||
           rendering !== prev.rendering ||
           activeItem !== prev.activeItem ||
-          action !== prev.action);
-        return changed ? {
-          simulation,
-          execution,
-          rendering,
-          activeItem,
-          action,
-        } : prev;
+          action !== prev.action;
+        return changed
+          ? {
+              simulation,
+              execution,
+              rendering,
+              activeItem,
+              action,
+            }
+          : prev;
       });
       lock(Boolean(action) && lockingActions.includes(action!));
       setExpandedPanel(activeItem || '');
@@ -239,7 +243,7 @@ const GuideControl = (props: IProps) => {
     }
   }, [delayedUpdate]);
 
-  const getIdForSegmentKey = (key) => {
+  const getIdForSegmentKey = key => {
     if (renderedControlParameters[key]) {
       return renderedControlParameters[key].id;
     }
@@ -272,7 +276,9 @@ const GuideControl = (props: IProps) => {
     if (nextPanel === controlSegmentKeys.execution) {
       path = `${path}/${renderedControlParameters.simulation!.id}/Execution`;
     } else if (nextPanel === controlSegmentKeys.rendering) {
-      path = `${path}/${renderedControlParameters.simulation!.id}/Execution/${renderedControlParameters.execution!.id}/Rendering`;
+      path = `${path}/${renderedControlParameters.simulation!.id}/Execution/${
+        renderedControlParameters.execution!.id
+      }/Rendering`;
     }
 
     if (isNewAction) {
@@ -383,11 +389,7 @@ const GuideControl = (props: IProps) => {
   const classes = useStyles();
 
   const renderHeader = () => {
-    const {
-      thumbnailUrl,
-      title,
-      loading,
-    } = props;
+    const { thumbnailUrl, title, loading } = props;
 
     const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
     const avatar = loading ? 'L' : 'P';
@@ -451,7 +453,7 @@ const GuideControl = (props: IProps) => {
     );
   };
 
-  const renderListMenu= (key, itemIndex) => {
+  const renderListMenu = (key, itemIndex) => {
     const { menuItems } = panelDetails[key];
     return (
       <GuideListMenu
@@ -509,9 +511,8 @@ const GuideControl = (props: IProps) => {
       return null;
     }
 
-    const fullUrl = thumbnailUrl!.indexOf('http') > -1
-      ? thumbnailUrl
-      : `${getConfig().dataHost}${thumbnailUrl}`;
+    const fullUrl =
+      thumbnailUrl!.indexOf('http') > -1 ? thumbnailUrl : `${getConfig().dataHost}${thumbnailUrl}`;
 
     return <CardMedia className={classes.media} image={fullUrl} />;
   };
@@ -519,7 +520,7 @@ const GuideControl = (props: IProps) => {
   const renderActionsForNew = () => {
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
           Cancel
         </Button>
         <Button
@@ -537,7 +538,7 @@ const GuideControl = (props: IProps) => {
   const renderActionsForEdit = () => {
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
           Cancel
         </Button>
         <Button
@@ -555,7 +556,7 @@ const GuideControl = (props: IProps) => {
   const renderActionsForDelete = () => {
     return (
       <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock}>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
           Cancel
         </Button>
         <Button
@@ -616,10 +617,10 @@ const GuideControl = (props: IProps) => {
           </div>
         </ExpansionPanelSummary>
         {isPanelLocked
-          // locked details are rendered when the panel includes dialog buttons
-          ? renderLockedDetails(key)
-          // regular details are rendered when the panel includes information
-          : renderDetails(key, items)}
+          ? // locked details are rendered when the panel includes dialog buttons
+            renderLockedDetails(key)
+          : // regular details are rendered when the panel includes information
+            renderDetails(key, items)}
         {isPanelLocked && renderActions()}
       </ExpansionPanel>
     );

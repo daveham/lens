@@ -17,7 +17,7 @@ describe('images reducers', () => {
   const listKey = tilesListKey(id, group);
 
   test('should return default state with empty keys', () => {
-    const state = reducer();
+    const state = reducer(undefined, { type: 'any' });
     expect(state).toHaveProperty('keys', {});
     expect(state).toHaveProperty('byKeys', {});
   });

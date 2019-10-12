@@ -7,7 +7,7 @@ import {
 
 describe('stats reducers', () => {
   test('should return default state with empty keys', () => {
-    const state = stats();
+    const state = stats(undefined, { type: 'any' });
     expect(state).toHaveProperty('keys', {});
     expect(state).toHaveProperty('byKeys', {});
   });

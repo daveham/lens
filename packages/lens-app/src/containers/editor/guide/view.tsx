@@ -8,8 +8,8 @@ import { thumbnailUrlFromIdSelector } from 'modules/images/selectors';
 import {
   simulationsSelector,
   simulationsLoadingSelector,
-  actionEnabledSelector,
-  // actionValidSelector,
+  // actionEnabledSelector,
+  actionValidSelector,
 } from 'editor/modules/selectors';
 
 import { ensureImage } from 'modules/images/actions';
@@ -52,8 +52,8 @@ const EditorGuideView = (props: IProps) => {
   const photo = useSelector(photoSelector);
   const simulations = useSelector(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
-  // const actionValid = useSelector(actionValidSelector);
-  const actionEnabled = useSelector(actionEnabledSelector);
+  const actionValid = useSelector(actionValidSelector);
+  // const actionEnabled = useSelector(actionEnabledSelector);
 
   const dispatch = useDispatch();
 
@@ -72,12 +72,12 @@ const EditorGuideView = (props: IProps) => {
     }
   }, [history, sourceId, simulations]);
 
-  const handleControlActionSubmit = useCallback(() => {
-    debug('handleControlActionSubmit');
+  const handleControlActionSubmit = useCallback((activeItem) => () => {
+    debug('handleControlActionSubmit', { activeItem });
   }, []);
 
-  const handleControlActionCancel = useCallback(() => {
-    debug('handleControlActionCancel');
+  const handleControlActionCancel = useCallback((activeItem) => () => {
+    debug('handleControlActionCancel', { activeItem });
   }, []);
 
   const handleControlChanged = useCallback((path) => {
@@ -177,10 +177,10 @@ const EditorGuideView = (props: IProps) => {
       rendering={rendering}
       action={resolvedAction}
 
-      submitEnabled={actionEnabled}
+      submitEnabled={actionValid}
       onControlChanged={handleControlChanged}
-      onControlActionSubmit={handleControlActionSubmit}
-      onControlActionCancel={handleControlActionCancel}
+      onControlActionSubmit={handleControlActionSubmit(activeItem)}
+      onControlActionCancel={handleControlActionCancel(activeItem)}
     />
   );
 };

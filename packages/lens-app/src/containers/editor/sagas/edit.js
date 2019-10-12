@@ -18,7 +18,12 @@ import {
   addHiker,
   updateHiker,
   updateHikers,
+  editorActionValid,
+  editorActionInvalid,
+  EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
 } from 'editor/modules/actions';
+
+import { simulationAndDataValid } from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:sagas:edit');
@@ -193,12 +198,15 @@ export function* changeSwitchSaga(action) {
   const handler = changeMap[action.type];
   if (handler) {
     yield call(handler, action);
+    const isValid = yield select(simulationAndDataValid);
+    const editorAction = isValid ? editorActionValid : editorActionInvalid;
+    yield put(editorAction());
   }
 }
 
 export default function* editChangeSaga() {
   yield takeEvery(
-    action => !!(action.type && action.type.startsWith('editor-sagas')),
+    action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
     changeSwitchSaga,
   );
 }

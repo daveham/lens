@@ -1,5 +1,6 @@
 import { createActions } from 'redux-actions';
 
+export const EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS = 'editor-simulation-sagas';
 export const {
   changeSimulation,
   changeHike,
@@ -17,10 +18,31 @@ export const {
   'CHANGE_HIKER',
   'CHANGE_HIKER_LIST',
   {
-    prefix: 'editor-sagas',
+    prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
   },
 );
 
+export const EDITOR_ACTIONS_PREFIX_SIMULATION_DATA = 'editor-simulation-data';
+export const {
+  requestSimulationsForSource,
+  receiveSimulationsForSource,
+  requestSimulationsForSourceFailed,
+  requestHikes,
+  receiveHikes,
+  requestHikesFailed,
+} = createActions(
+  'REQUEST_SIMULATIONS_FOR_SOURCE',
+  'RECEIVE_SIMULATIONS_FOR_SOURCE',
+  'REQUEST_SIMULATIONS_FOR_SOURCE_FAILED',
+  'REQUEST_HIKES',
+  'RECEIVE_HIKES',
+  'REQUEST_HIKES_FAILED',
+  {
+    prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_DATA,
+  },
+);
+
+export const EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT = 'editor-simulation-edit';
 export const {
   setSimulation,
   updateSimulation,
@@ -33,18 +55,6 @@ export const {
   addHiker,
   updateHiker,
   updateHikers,
-  requestSimulationsForSource,
-  receiveSimulationsForSource,
-  requestSimulationsForSourceFailed,
-  requestHikes,
-  receiveHikes,
-  requestHikesFailed,
-  setActiveScope,
-  ensureEditorTitle,
-  editorActionEnabled,
-  editorActionDisabled,
-  editorActionValid,
-  editorActionInvalid,
 } = createActions(
   'SET_SIMULATION',
   'UPDATE_SIMULATION',
@@ -57,12 +67,39 @@ export const {
   'ADD_HIKER',
   'UPDATE_HIKER',
   'UPDATE_HIKERS',
-  'REQUEST_SIMULATIONS_FOR_SOURCE',
-  'RECEIVE_SIMULATIONS_FOR_SOURCE',
-  'REQUEST_SIMULATIONS_FOR_SOURCE_FAILED',
-  'REQUEST_HIKES',
-  'RECEIVE_HIKES',
-  'REQUEST_HIKES_FAILED',
+  {
+    prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT,
+  },
+);
+
+export const EDITOR_ACTIONS_PREFIX_SIMULATION_OPERATIONS = 'editor-operations';
+export const {
+  startNewSimulation,
+  finishNewSimulation,
+  cancelNewSimulation,
+  startEditSimulation,
+  finishEditSimulation,
+  cancelEditSimulation,
+} = createActions(
+  'START_NEW_SIMULATION',
+  'FINISH_NEW_SIMULATION',
+  'CANCEL_NEW_SIMULATION',
+  'START_EDIT_SIMULATION',
+  'FINISH_EDIT_SIMULATION',
+  'CANCEL_EDIT_SIMULATION',
+  {
+    prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_OPERATIONS,
+  },
+);
+
+export const {
+  setActiveScope,
+  ensureEditorTitle,
+  editorActionEnabled,
+  editorActionDisabled,
+  editorActionValid,
+  editorActionInvalid,
+} = createActions(
   'SET_ACTIVE_SCOPE',
   'ENSURE_EDITOR_TITLE',
   'EDITOR_ACTION_ENABLED',

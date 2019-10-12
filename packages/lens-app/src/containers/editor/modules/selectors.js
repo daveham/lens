@@ -53,6 +53,32 @@ export const orderedHikersByTrailIdSelector = createSelector(
   (hikers, trailId) => extractOrderedItems(hikers, k => k.trailId === trailId && !k.isDeleted),
 );
 
+export const allHikesValid = createSelector(
+  state => state.editor.hikesById,
+  hikes => !Object.values(hikes).some(h => h.nameError),
+);
+
+export const allTrailsValid = createSelector(
+  state => state.editor.trailsById,
+  trails => !Object.values(trails).some(t => t.nameError),
+);
+
+export const allHikersValid = createSelector(
+  state => state.editor.hikersById,
+  hikers => !Object.values(hikers).some(k => k.nameError),
+);
+
+export const simulationValid = createSelector(
+  state => state.editor.simulation,
+  simulation => !simulation.nameError,
+);
+
+export const simulationAndDataValid = createSelector(
+  simulationValid, allHikesValid, allTrailsValid, allHikersValid,
+  (isSimulationValid, areHikesValid, areTrailsValid, areHikersValid) =>
+    isSimulationValid && areHikesValid && areTrailsValid && areHikersValid,
+);
+
 export const hikeSelector = (state, id) => state.editor.hikesById[id];
 
 export const trailSelector = (state, id) => state.editor.trailsById[id];

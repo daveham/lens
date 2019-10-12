@@ -2,10 +2,11 @@ import { takeEvery, select, all, call, put } from 'redux-saga/effects';
 import { invokeRestService } from './utils';
 import { clientIdSelector } from './socket';
 import {
-  ACTIONS,
+  ensureImage,
   imageLoading,
   imagesLoading,
   imageLoaded,
+  ensureImages,
   imagesLoaded,
   imageNotLoading,
   imagesNotLoading
@@ -70,7 +71,7 @@ export function* ensureImageSaga({ payload }) {
 
 export default function* imagesSaga() {
   yield all([
-    takeEvery(ACTIONS.IMAGE_ENSURE, ensureImageSaga),
-    takeEvery(ACTIONS.IMAGES_ENSURE, ensureImagesSaga)
+    takeEvery(ensureImage, ensureImageSaga),
+    takeEvery(ensureImages, ensureImagesSaga)
   ]);
 }

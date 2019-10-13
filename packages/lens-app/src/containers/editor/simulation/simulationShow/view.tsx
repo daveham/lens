@@ -10,12 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
-import {
-  defaultNewHike,
-  defaultNewTrail,
-  defaultNewHiker,
-  ISimulation,
-} from 'editor/interfaces';
+import { defaultNewHike, defaultNewTrail, defaultNewHiker, ISimulation } from 'editor/interfaces';
 
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 import Layout from '../common/layout';
@@ -49,6 +44,7 @@ import {
   changeHiker,
   changeHikerList,
   requestHikes,
+  startEditSimulation,
 } from 'editor/modules/actions';
 
 import _debug from 'debug';
@@ -150,8 +146,11 @@ const View = (props: IProps) => {
       setSelectedTrailIndex(0);
       setSelectedHikerIndex(0);
       setActiveTab(TABS.HIKE);
+      if (editMode) {
+        dispatch(startEditSimulation());
+      }
     }
-  }, [hikesLoading]);
+  }, [dispatch, editMode, hikesLoading]);
 
   const handleTabChange = (e, value) => setActiveTab(value);
 

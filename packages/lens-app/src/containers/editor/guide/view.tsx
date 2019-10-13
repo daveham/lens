@@ -8,7 +8,6 @@ import { thumbnailUrlFromIdSelector } from 'modules/images/selectors';
 import {
   simulationsSelector,
   simulationsLoadingSelector,
-  // actionEnabledSelector,
   actionValidSelector,
 } from 'editor/modules/selectors';
 
@@ -16,15 +15,14 @@ import { ensureImage } from 'modules/images/actions';
 import {
   ensureEditorTitle,
   requestSimulationsForSource,
-  // setActiveScope,
+  cancelNewSimulation,
+  finishNewSimulation,
+  cancelEditSimulation,
+  finishEditSimulation,
 } from 'editor/modules/actions';
 
 import GuideControl from './components/guideControl';
-import {
-  controlSegmentKeys,
-  controlSegmentActions,
-  KEY_RENDERING, KEY_EXECUTION, KEY_SIMULATION,
-} from './components/guideConstants';
+import { controlSegmentKeys, controlSegmentActions } from './components/guideConstants';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guide:view');
@@ -38,13 +36,7 @@ const EditorGuideView = (props: IProps) => {
   const {
     history,
     match: {
-      params: {
-        sourceId,
-        simulationId = '',
-        executionId = '',
-        renderingId = '',
-        action = '',
-      },
+      params: { sourceId, simulationId = '', executionId = '', renderingId = '', action = '' },
     },
   } = props;
 
@@ -53,41 +45,8 @@ const EditorGuideView = (props: IProps) => {
   const simulations = useSelector(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
   const actionValid = useSelector(actionValidSelector);
-  // const actionEnabled = useSelector(actionEnabledSelector);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (sourceId) {
-      dispatch(ensureEditorTitle(sourceId));
-      dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
-      dispatch(requestSimulationsForSource(sourceId));
-    }
-  }, [dispatch, sourceId]);
-
-  useEffect(() => {
-    const currentPath = history.location.pathname;
-    if (currentPath.toLowerCase().endsWith(controlSegmentKeys.simulation) && simulations.length) {
-      history.push(`/Catalog/${sourceId}/Simulation/${simulations[0].id}`);
-    }
-  }, [history, sourceId, simulations]);
-
-  const handleControlActionSubmit = useCallback((activeItem) => () => {
-    debug('handleControlActionSubmit', { activeItem });
-  }, []);
-
-  const handleControlActionCancel = useCallback((activeItem) => () => {
-    debug('handleControlActionCancel', { activeItem });
-  }, []);
-
-  const handleControlChanged = useCallback((path) => {
-    const currentPath = history.location.pathname;
-    const nextPath = `/Catalog/${sourceId}/${path}`;
-    if (nextPath !== currentPath) {
-      // debug('handleControlChanged', { currentPath, nextPath });
-      history.push(nextPath);
-    }
-  }, [sourceId, history]);
 
   const determineItems = () => {
     let resolvedSimulationId = simulationId;
@@ -137,13 +96,13 @@ const EditorGuideView = (props: IProps) => {
     // determine active item based on Id's present in the URL
     let activeItem: string = '';
     if (resolvedRenderingId || (resolvedAction && resolvedExecutionId && isNewAction)) {
-      activeItem = KEY_RENDERING;
+      activeItem = controlSegmentKeys.rendering;
     } else if (resolvedExecutionId || (resolvedAction && resolvedSimulationId && isNewAction)) {
-      activeItem = KEY_EXECUTION;
+      activeItem = controlSegmentKeys.execution;
     } else if (resolvedSimulationId || (resolvedAction && isNewAction)) {
-      activeItem = KEY_SIMULATION;
+      activeItem = controlSegmentKeys.simulation;
     } else {
-      activeItem = KEY_SIMULATION;
+      activeItem = controlSegmentKeys.simulation;
     }
 
     return {
@@ -155,32 +114,73 @@ const EditorGuideView = (props: IProps) => {
     };
   };
 
-  // render
-  const {
-    activeItem,
-    simulation,
-    execution,
-    rendering,
-    resolvedAction,
-  } = determineItems();
+  const { activeItem, simulation, execution, rendering, resolvedAction } = determineItems();
 
+  useEffect(() => {
+    if (sourceId) {
+      dispatch(ensureEditorTitle(sourceId));
+      dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
+      dispatch(requestSimulationsForSource(sourceId));
+    }
+  }, [dispatch, sourceId]);
+
+  useEffect(() => {
+    const currentPath = history.location.pathname;
+    if (currentPath.toLowerCase().endsWith(controlSegmentKeys.simulation) && simulations.length) {
+      history.push(`/Catalog/${sourceId}/Simulation/${simulations[0].id}`);
+    }
+  }, [history, sourceId, simulations]);
+
+  const handleControlActionSubmit = useCallback(() => {
+    debug('handleControlActionSubmit', { activeItem, resolvedAction });
+    if (activeItem === controlSegmentKeys.simulation) {
+      if (resolvedAction === controlSegmentActions.edit) {
+        dispatch(finishEditSimulation());
+      } else if (resolvedAction === controlSegmentActions.new) {
+        dispatch(finishNewSimulation());
+      }
+    }
+  }, [dispatch, activeItem, resolvedAction]);
+
+  const handleControlActionCancel = useCallback(() => {
+    debug('handleControlActionCancel', { activeItem, resolvedAction });
+    if (activeItem === controlSegmentKeys.simulation) {
+      if (resolvedAction === controlSegmentActions.edit) {
+        dispatch(cancelEditSimulation());
+      } else if (resolvedAction === controlSegmentActions.new) {
+        dispatch(cancelNewSimulation());
+      }
+    }
+  }, [dispatch, activeItem, resolvedAction]);
+
+  const handleControlChanged = useCallback(
+    path => {
+      const currentPath = history.location.pathname;
+      const nextPath = `/Catalog/${sourceId}/${path}`;
+      if (nextPath !== currentPath) {
+        // debug('handleControlChanged', { currentPath, nextPath });
+        history.push(nextPath);
+      }
+    },
+    [sourceId, history],
+  );
+
+  // render
   return (
     <GuideControl
       loading={simulationsLoading}
       title={photo}
       thumbnailUrl={thumbnailUrl}
       simulations={simulations}
-
       activeItem={activeItem}
       simulation={simulation}
       execution={execution}
       rendering={rendering}
       action={resolvedAction}
-
       submitEnabled={actionValid}
       onControlChanged={handleControlChanged}
-      onControlActionSubmit={handleControlActionSubmit(activeItem)}
-      onControlActionCancel={handleControlActionCancel(activeItem)}
+      onControlActionSubmit={handleControlActionSubmit}
+      onControlActionCancel={handleControlActionCancel}
     />
   );
 };

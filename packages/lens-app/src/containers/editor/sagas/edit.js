@@ -1,4 +1,4 @@
-import { takeEvery, put, select, call } from 'redux-saga/effects';
+import { all, takeEvery, put, select, call } from 'redux-saga/effects';
 
 import {
   changeSimulation,
@@ -19,7 +19,8 @@ import {
   updateHiker,
   updateHikers,
   editorActionValid,
-  editorActionInvalid,
+  startEditSimulation,
+  startNewSimulation,
   EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
 } from 'editor/modules/actions';
 
@@ -199,14 +200,21 @@ export function* changeSwitchSaga(action) {
   if (handler) {
     yield call(handler, action);
     const isValid = yield select(simulationAndDataValid);
-    const editorAction = isValid ? editorActionValid : editorActionInvalid;
-    yield put(editorAction());
+    yield put(editorActionValid(isValid));
   }
 }
 
+export function* startEditNewSimulationSaga() {
+  const isValid = yield select(simulationAndDataValid);
+  yield put(editorActionValid(isValid));
+}
+
 export default function* editChangeSaga() {
-  yield takeEvery(
-    action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
-    changeSwitchSaga,
-  );
+  yield all([
+    takeEvery(
+      action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
+      changeSwitchSaga,
+    ),
+    takeEvery([startEditSimulation, startNewSimulation], startEditNewSimulationSaga),
+  ]);
 }

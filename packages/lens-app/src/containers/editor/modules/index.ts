@@ -19,10 +19,7 @@ import {
   updateHiker,
   updateHikers,
   setActiveScope,
-  editorActionEnabled,
-  editorActionDisabled,
   editorActionValid,
-  editorActionInvalid,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
 
@@ -195,18 +192,12 @@ const hikersById = handleActions(
   initialEditorHikersState,
 );
 
-const actionEnabled = handleActions(
-  {
-    [editorActionEnabled]: () => true,
-    [editorActionDisabled]: () => false,
-  },
-  false,
-);
-
+// used to enable/disable the save/other button for edit/new operations
+//  operations related to starting edit/new, changing data during edit/new should dispatch
+//  into this reducer using 'editorActionValid'
 const actionValid = handleActions(
   {
-    [editorActionValid]: () => true,
-    [editorActionInvalid]: () => false,
+    [editorActionValid]: (state, { payload }) => payload,
   },
   false,
 );
@@ -227,7 +218,6 @@ const editorModuleReducer = combineReducers({
   trailsById,
   hikersById,
   simulation,
-  actionEnabled,
   actionValid,
   active,
 });

@@ -92,20 +92,10 @@ export const {
   },
 );
 
-export const {
-  setActiveScope,
-  ensureEditorTitle,
-  editorActionEnabled,
-  editorActionDisabled,
-  editorActionValid,
-  editorActionInvalid,
-} = createActions(
+export const { setActiveScope, ensureEditorTitle, editorActionValid } = createActions(
   'SET_ACTIVE_SCOPE',
   'ENSURE_EDITOR_TITLE',
-  'EDITOR_ACTION_ENABLED',
-  'EDITOR_ACTION_DISABLED',
   'EDITOR_ACTION_VALID',
-  'EDITOR_ACTION_INVALID',
   {
     prefix: 'editor',
   },

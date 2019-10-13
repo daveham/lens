@@ -7,7 +7,6 @@ export const simulationsLoadingSelector = state => state.editor.simulationsLoadi
 export const simulationsSelector = state => state.editor.simulations;
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
-export const hikesSelector = state => state.editor.hikes;
 
 const emptyArray = [];
 const orderComparer = (a, b) => a.order - b.order;
@@ -74,7 +73,10 @@ export const simulationValid = createSelector(
 );
 
 export const simulationAndDataValid = createSelector(
-  simulationValid, allHikesValid, allTrailsValid, allHikersValid,
+  simulationValid,
+  allHikesValid,
+  allTrailsValid,
+  allHikersValid,
   (isSimulationValid, areHikesValid, areTrailsValid, areHikersValid) =>
     isSimulationValid && areHikesValid && areTrailsValid && areHikersValid,
 );
@@ -87,5 +89,4 @@ export const hikerSelector = (state, id) => state.editor.hikersById[id];
 
 export const simulationSelector = state => state.editor.simulation;
 
-export const actionEnabledSelector = state => state.editor.actionEnabled;
 export const actionValidSelector = state => state.editor.actionValid;

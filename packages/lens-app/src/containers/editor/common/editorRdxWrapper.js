@@ -11,7 +11,6 @@ import {
 import {
   simulationsSelector,
   simulationsLoadingSelector,
-  actionEnabledSelector,
   actionValidSelector,
 } from '../modules/selectors';
 
@@ -31,7 +30,6 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
   const photo = photoSelector(state);
   const simulations = simulationsSelector(state);
   const simulationsLoading = simulationsLoadingSelector(state);
-  const actionEnabled = actionEnabledSelector(state);
   const actionValid = actionValidSelector(state);
 
   return {
@@ -40,7 +38,7 @@ const mapStateToProps = (state, { match: { params: { sourceId } } }) => {
     thumbnailUrl,
     simulations,
     simulationsLoading,
-    actionEnabled: actionEnabled && actionValid && !simulationsLoading,
+    actionEnabled: actionValid && !simulationsLoading,
     actionValid,
   };
 };

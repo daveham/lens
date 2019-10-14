@@ -9,6 +9,7 @@ export const controlSegmentKeys = {
 };
 
 export const controlSegmentActions = {
+  view: 'view',
   new: 'new',
   edit: 'edit',
   delete: 'delete',

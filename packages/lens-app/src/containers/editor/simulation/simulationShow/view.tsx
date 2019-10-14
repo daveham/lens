@@ -44,7 +44,6 @@ import {
   changeHiker,
   changeHikerList,
   requestHikes,
-  startEditSimulation,
 } from 'editor/modules/actions';
 
 import _debug from 'debug';
@@ -52,8 +51,9 @@ const debug = _debug('lens:editor:simulation:simulationShow:view');
 
 interface IProps {
   editMode?: boolean;
+  newMode?: boolean;
   sourceId: string;
-  simulationId: string;
+  simulationId?: string;
 }
 
 const TABS = {
@@ -146,11 +146,8 @@ const View = (props: IProps) => {
       setSelectedTrailIndex(0);
       setSelectedHikerIndex(0);
       setActiveTab(TABS.HIKE);
-      if (editMode) {
-        dispatch(startEditSimulation());
-      }
     }
-  }, [dispatch, editMode, hikesLoading]);
+  }, [dispatch, hikesLoading]);
 
   const handleTabChange = (e, value) => setActiveTab(value);
 

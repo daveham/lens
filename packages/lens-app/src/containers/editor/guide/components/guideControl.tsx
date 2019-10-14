@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -24,9 +25,6 @@ import ExpansionPanelSummary from './ExpansionPanelSummary';
 import ExpansionPanelDetails from './ExpansionPanelDetails';
 import ExpansionPanelActions from './ExpansionPanelActions';
 import {
-  KEY_SIMULATION,
-  KEY_EXECUTION,
-  KEY_RENDERING,
   KEY_SIMULATION_ADD,
   controlSegmentKeys,
   controlSegmentActions,
@@ -35,6 +33,7 @@ import {
 } from './guideConstants';
 import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
+import { reduxActionForStartOperation } from '../utils';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guideControl');
@@ -196,6 +195,7 @@ const GuideControl = (props: IProps) => {
   } = props;
 
   // hooks
+  const dispatch = useDispatch();
 
   // the parameters rendered in the component, could be delayed from props by delayedUpdate
   const [renderedControlParameters, setRenderedControlParameters] = useState(
@@ -297,14 +297,14 @@ const GuideControl = (props: IProps) => {
   };
 
   const getItemsForKey = key => {
-    if (key === KEY_SIMULATION) {
+    if (key === controlSegmentKeys.simulation) {
       return simulations || [];
     }
-    if (key === KEY_EXECUTION) {
-      const simulation = renderedControlParameters[KEY_SIMULATION];
+    if (key === controlSegmentKeys.execution) {
+      const simulation = renderedControlParameters[controlSegmentKeys.simulation];
       return simulation ? simulation.executions || [] : [];
     }
-    const execution = renderedControlParameters[KEY_EXECUTION];
+    const execution = renderedControlParameters[controlSegmentKeys.execution];
     return execution ? execution.renderings || [] : [];
   };
 
@@ -326,6 +326,7 @@ const GuideControl = (props: IProps) => {
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
       // debug('create a new simulation item');
+      dispatch(reduxActionForStartOperation(action, controlSegmentKeys.simulation));
       setPathForChange(controlSegmentKeys.simulation, '', action!);
     }
   };
@@ -356,6 +357,7 @@ const GuideControl = (props: IProps) => {
 
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
+      dispatch(reduxActionForStartOperation(key, action));
       const lowerKey =
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
@@ -364,6 +366,7 @@ const GuideControl = (props: IProps) => {
       setPathForChange(lowerKey, '', action);
     } else {
       // debug('handleListMenuSelection - not new', { key, item, action });
+      dispatch(reduxActionForStartOperation(key, action, item.id));
       setPathForChange(key, item.id, action);
     }
     setDelayedUpdate(true);
@@ -637,9 +640,9 @@ const GuideControl = (props: IProps) => {
 
     return (
       <CardContent classes={{ root: classes.cardContent }}>
-        {renderPanel(KEY_SIMULATION, simulations)}
-        {renderPanel(KEY_EXECUTION, executions)}
-        {renderPanel(KEY_RENDERING, renderings)}
+        {renderPanel(controlSegmentKeys.simulation, simulations)}
+        {renderPanel(controlSegmentKeys.execution, executions)}
+        {renderPanel(controlSegmentKeys.rendering, renderings)}
       </CardContent>
     );
   };

@@ -15,11 +15,8 @@ import { ensureImage } from 'modules/images/actions';
 import {
   ensureEditorTitle,
   requestSimulationsForSource,
-  cancelNewSimulation,
-  finishNewSimulation,
-  cancelEditSimulation,
-  finishEditSimulation,
 } from 'editor/modules/actions';
+import { reduxActionForFinishOperation, reduxActionForCancelOperation } from './utils';
 
 import GuideControl from './components/guideControl';
 import { controlSegmentKeys, controlSegmentActions } from './components/guideConstants';
@@ -133,24 +130,12 @@ const EditorGuideView = (props: IProps) => {
 
   const handleControlActionSubmit = useCallback(() => {
     debug('handleControlActionSubmit', { activeItem, resolvedAction });
-    if (activeItem === controlSegmentKeys.simulation) {
-      if (resolvedAction === controlSegmentActions.edit) {
-        dispatch(finishEditSimulation());
-      } else if (resolvedAction === controlSegmentActions.new) {
-        dispatch(finishNewSimulation());
-      }
-    }
+    dispatch(reduxActionForFinishOperation(activeItem, resolvedAction));
   }, [dispatch, activeItem, resolvedAction]);
 
   const handleControlActionCancel = useCallback(() => {
     debug('handleControlActionCancel', { activeItem, resolvedAction });
-    if (activeItem === controlSegmentKeys.simulation) {
-      if (resolvedAction === controlSegmentActions.edit) {
-        dispatch(cancelEditSimulation());
-      } else if (resolvedAction === controlSegmentActions.new) {
-        dispatch(cancelNewSimulation());
-      }
-    }
+    dispatch(reduxActionForCancelOperation(activeItem, resolvedAction));
   }, [dispatch, activeItem, resolvedAction]);
 
   const handleControlChanged = useCallback(

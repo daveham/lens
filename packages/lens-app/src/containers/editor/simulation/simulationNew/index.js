@@ -1,19 +1,37 @@
 import React from 'react';
-import { backupUrl } from 'src/helpers';
-import View from './view';
+import View from '../simulationShow/view';
 
 export default (props) => {
   const {
-    history,
-    match: { url, params: { sourceId } }
+    match: {
+      params: {
+        sourceId,
+      },
+    }
   } = props;
 
-  const returnToList = () => {
-    history.replace(backupUrl(url));
-  };
-
   return <View
-    onClose={returnToList}
+    newMode={true}
     sourceId={sourceId}
   />;
 };
+
+// import React from 'react';
+// import { backupUrl } from 'src/helpers';
+// import View from './view';
+//
+// export default (props) => {
+//   const {
+//     history,
+//     match: { url, params: { sourceId } }
+//   } = props;
+//
+//   const returnToList = () => {
+//     history.replace(backupUrl(url));
+//   };
+//
+//   return <View
+//     onClose={returnToList}
+//     sourceId={sourceId}
+//   />;
+// };

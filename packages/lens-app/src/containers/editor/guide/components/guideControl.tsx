@@ -33,7 +33,11 @@ import {
 } from './guideConstants';
 import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
-import { reduxActionForStartOperation } from '../utils';
+import {
+  reduxActionForCancelOperation,
+  reduxActionForFinishOperation,
+  reduxActionForStartOperation,
+} from '../utils';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:guideControl');
@@ -164,8 +168,6 @@ interface IProps {
   activeItem?: string;
   submitEnabled?: boolean;
   onControlChanged: (path: string) => void;
-  onControlActionSubmit: () => void;
-  onControlActionCancel: () => void;
 }
 
 interface IControlParameters {
@@ -325,7 +327,7 @@ const GuideControl = (props: IProps) => {
     // debug('handleGuideMenuSelection', { menuItem });
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      // debug('create a new simulation item');
+      debug('create a new simulation item');
       dispatch(reduxActionForStartOperation(action, controlSegmentKeys.simulation));
       setPathForChange(controlSegmentKeys.simulation, '', action!);
     }
@@ -343,7 +345,8 @@ const GuideControl = (props: IProps) => {
       return;
     }
 
-    // debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
+    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
+    dispatch(reduxActionForStartOperation(key, controlSegmentActions.view, item.id));
     setPathForChange(key, item.id);
   };
 
@@ -357,15 +360,15 @@ const GuideControl = (props: IProps) => {
 
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      dispatch(reduxActionForStartOperation(key, action));
       const lowerKey =
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
-      // debug('handleListMenuSelection - new', { lowerKey, action });
+      debug('handleListMenuSelection - new', { lowerKey, action });
+      dispatch(reduxActionForStartOperation(key, action));
       setPathForChange(lowerKey, '', action);
     } else {
-      // debug('handleListMenuSelection - not new', { key, item, action });
+      debug('handleListMenuSelection - not new', { key, item, action });
       dispatch(reduxActionForStartOperation(key, action, item.id));
       setPathForChange(key, item.id, action);
     }
@@ -373,18 +376,18 @@ const GuideControl = (props: IProps) => {
   };
 
   const handleCancelLock = () => {
-    // debug('handleCancelLock', { locked, delayedUpdate, activeItem });
+    debug('handleCancelLock', { locked, delayedUpdate, activeItem });
     setDelayedUpdate(true);
     setExpandedPanel('');
-    props.onControlActionCancel();
+    dispatch(reduxActionForCancelOperation(activeItem, action));
     setPathForChange(activeItem, '', '');
   };
 
   const handleCommitLock = () => {
-    // debug('handleCommitLock', { locked, delayedUpdate });
+    debug('handleCommitLock', { locked, delayedUpdate });
     setDelayedUpdate(true);
     setExpandedPanel('');
-    props.onControlActionSubmit();
+    dispatch(reduxActionForFinishOperation(activeItem, action));
     setPathForChange(activeItem, '', '');
   };
 

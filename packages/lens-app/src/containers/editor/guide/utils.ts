@@ -42,18 +42,21 @@ export function reduxActionForViewOperation(segmentKey, ...actionArgs) {
   return viewMap[segmentKey](...actionArgs);
 }
 
-const newMap = {
+const startMap = {
   [controlSegmentKeys.simulation]: {
+    [controlSegmentActions.view]: startViewSimulation,
     [controlSegmentActions.new]: startNewSimulation,
     [controlSegmentActions.edit]: startEditSimulation,
     [controlSegmentActions.delete]: startDeleteSimulation,
   },
   [controlSegmentKeys.execution]: {
+    [controlSegmentActions.view]: startViewExecution,
     [controlSegmentActions.new]: startNewExecution,
     [controlSegmentActions.edit]: startEditExecution,
     [controlSegmentActions.delete]: startDeleteExecution,
   },
   [controlSegmentKeys.rendering]: {
+    [controlSegmentActions.view]: startViewRendering,
     [controlSegmentActions.new]: startNewRendering,
     [controlSegmentActions.edit]: startEditRendering,
     [controlSegmentActions.delete]: startDeleteRendering,
@@ -61,10 +64,10 @@ const newMap = {
 };
 
 export function reduxActionForStartOperation(segmentKey, segmentAction, ...actionArgs) {
-  return newMap[segmentKey][segmentAction](...actionArgs);
+  return startMap[segmentKey][segmentAction](...actionArgs);
 }
 
-const submitMap = {
+const finishMap = {
   [controlSegmentKeys.simulation]: {
     [controlSegmentActions.new]: finishNewSimulation,
     [controlSegmentActions.edit]: finishEditSimulation,
@@ -83,7 +86,7 @@ const submitMap = {
 };
 
 export function reduxActionForFinishOperation(segmentKey, segmentAction, ...actionArgs) {
-  return submitMap[segmentKey][segmentAction](...actionArgs);
+  return finishMap[segmentKey][segmentAction](...actionArgs);
 }
 
 const cancelMap = {

@@ -36,7 +36,6 @@ import GuideListMenu from './guideListMenu';
 import {
   reduxActionForCancelOperation,
   reduxActionForFinishOperation,
-  reduxActionForStartOperation,
 } from '../utils';
 
 import _debug from 'debug';
@@ -328,7 +327,6 @@ const GuideControl = (props: IProps) => {
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
       debug('create a new simulation item');
-      dispatch(reduxActionForStartOperation(action, controlSegmentKeys.simulation));
       setPathForChange(controlSegmentKeys.simulation, '', action!);
     }
   };
@@ -346,7 +344,6 @@ const GuideControl = (props: IProps) => {
     }
 
     debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
-    dispatch(reduxActionForStartOperation(key, controlSegmentActions.view, item.id));
     setPathForChange(key, item.id);
   };
 
@@ -365,11 +362,9 @@ const GuideControl = (props: IProps) => {
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
       debug('handleListMenuSelection - new', { lowerKey, action });
-      dispatch(reduxActionForStartOperation(key, action));
       setPathForChange(lowerKey, '', action);
     } else {
       debug('handleListMenuSelection - not new', { key, item, action });
-      dispatch(reduxActionForStartOperation(key, action, item.id));
       setPathForChange(key, item.id, action);
     }
     setDelayedUpdate(true);

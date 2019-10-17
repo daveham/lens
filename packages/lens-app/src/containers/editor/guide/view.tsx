@@ -53,24 +53,20 @@ const resolveIdsAndAction = (simulationId, executionId, renderingId, action) => 
 const determineActiveItemKey = (simulationId, executionId, renderingId, action) => {
   // determine active item based on Id's present in the URL
   const isNewAction = action === controlSegmentActions.new;
-  if (renderingId || (action && executionId && isNewAction)) {
+  if (renderingId || (executionId && isNewAction)) {
     return controlSegmentKeys.rendering;
-  } else if (executionId || (action && simulationId && isNewAction)) {
+  } else if (executionId || (simulationId && isNewAction)) {
     return controlSegmentKeys.execution;
-  } else if (simulationId || (action && isNewAction)) {
-    return controlSegmentKeys.simulation;
-  } else {
-    return controlSegmentKeys.simulation;
   }
+  return controlSegmentKeys.simulation;
 };
 
 const determineActiveItems = (simulations, simulationId, executionId, renderingId, action) => {
-  const isNewAction = action === controlSegmentActions.new;
-
   let simulation;
   let execution;
   let rendering;
   if (simulations) {
+    const isNewAction = action === controlSegmentActions.new;
     if (!(isNewAction && !simulationId)) {
       simulation = simulations.find(s => s.id === simulationId) || simulations[0];
       if (simulation) {
@@ -109,6 +105,9 @@ const determineItems = (simulations, simulationId, executionId, renderingId, act
       resolvedRenderingId,
       resolvedAction,
     ),
+    resolvedSimulationId,
+    resolvedExecutionId,
+    resolvedRenderingId,
     ...determineActiveItems(
       simulations,
       resolvedSimulationId,
@@ -122,29 +121,34 @@ const determineItems = (simulations, simulationId, executionId, renderingId, act
 
 const checkOperationStart = (
   dispatch,
+  sourceId,
   activeItem,
-  simulation,
-  execution,
-  rendering,
+  simulationId,
+  executionId,
+  renderingId,
   resolvedAction,
 ) => {
-  if (activeItem && simulation) {
+  if (activeItem && simulationId) {
     const action = resolvedAction || controlSegmentActions.view;
-    if (activeItem === controlSegmentKeys.simulation) {
-      dispatch(reduxActionForStartOperation(activeItem, action));
-    } else {
-      const id = activeItem === controlSegmentKeys.execution ? execution.id : rendering.id;
-      dispatch(reduxActionForStartOperation(activeItem, action, id));
+    switch (activeItem) {
+      case controlSegmentKeys.execution:
+        dispatch(reduxActionForStartOperation(activeItem, action, executionId));
+        break;
+      case controlSegmentKeys.rendering:
+        dispatch(reduxActionForStartOperation(activeItem, action, renderingId));
+        break;
+      default:
+        dispatch(reduxActionForStartOperation(activeItem, action, { sourceId, simulationId }));
     }
   }
 };
 
-const EditorGuideView = (props: IProps) => {
-  const { history, match } = props;
-  const {
+const EditorGuideView = ({
+  history,
+  match: {
     params: { sourceId, simulationId = '', executionId = '', renderingId = '', action = '' },
-  } = match;
-
+  },
+}: IProps) => {
   const [pathname, setPathname] = useState('');
 
   const thumbnailUrl = useSelector(state => thumbnailUrlFromIdSelector(state, sourceId));
@@ -155,36 +159,52 @@ const EditorGuideView = (props: IProps) => {
 
   const dispatch = useDispatch();
 
-  const { activeItem, simulation, execution, rendering, resolvedAction } = determineItems(
-    simulations,
-    simulationId,
-    executionId,
-    renderingId,
-    action,
-  );
+  const {
+    activeItem,
+    resolvedSimulationId,
+    resolvedExecutionId,
+    resolvedRenderingId,
+    simulation,
+    execution,
+    rendering,
+    resolvedAction,
+  } = determineItems(simulations, simulationId, executionId, renderingId, action);
 
   useEffect(() => {
     setPathname(prev => {
       const nextPathname = history.location.pathname.toLowerCase();
       if (prev !== nextPathname) {
-        checkOperationStart(dispatch, activeItem, simulation, execution, rendering, resolvedAction);
+        checkOperationStart(
+          dispatch,
+          sourceId,
+          activeItem,
+          resolvedSimulationId,
+          resolvedExecutionId,
+          resolvedRenderingId,
+          resolvedAction,
+        );
       }
       return nextPathname;
     });
   }, [
-    dispatch,
     history.location.pathname,
+    dispatch,
+    sourceId,
     activeItem,
-    simulation,
-    execution,
-    rendering,
+    resolvedSimulationId,
+    resolvedExecutionId,
+    resolvedRenderingId,
     resolvedAction,
   ]);
 
   useEffect(() => {
     if (sourceId) {
       dispatch(ensureEditorTitle(sourceId));
-      dispatch(ensureImage({ imageDescriptor: makeThumbnailImageDescriptor(sourceId) }));
+      dispatch(
+        ensureImage({
+          imageDescriptor: makeThumbnailImageDescriptor(sourceId),
+        }),
+      );
       dispatch(requestSimulationsForSource(sourceId));
     }
   }, [dispatch, sourceId]);
@@ -200,7 +220,10 @@ const EditorGuideView = (props: IProps) => {
     path => {
       const currentPath = history.location.pathname;
       const nextPath = `/Catalog/${sourceId}/${path}`;
-      debug('handleControlChanged', { currentPath, nextPath });
+      debug('handleControlChanged', {
+        currentPath,
+        nextPath,
+      });
       if (nextPath !== currentPath) {
         // debug('handleControlChanged', { currentPath, nextPath });
         history.push(nextPath);

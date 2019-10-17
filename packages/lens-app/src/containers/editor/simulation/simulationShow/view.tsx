@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import TextField from '@material-ui/core/TextField';
-import { defaultNewHike, defaultNewTrail, defaultNewHiker, ISimulation } from 'editor/interfaces';
+import { defaultNewHike, defaultNewTrail, defaultNewHiker } from 'editor/interfaces';
 
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 import Layout from '../common/layout';
@@ -23,7 +23,6 @@ import Hikers from '../common/hikers';
 
 import { RootEditorState } from 'editor/modules';
 import {
-  simulationsSelector,
   simulationsLoadingSelector,
   simulationSelector,
   hikesLoadingSelector,
@@ -35,7 +34,6 @@ import {
   orderedHikersByTrailIdSelector,
 } from 'editor/modules/selectors';
 import {
-  setSimulation,
   changeSimulation,
   changeHike,
   changeHikeList,
@@ -43,7 +41,6 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
-  requestHikes,
 } from 'editor/modules/actions';
 
 import _debug from 'debug';
@@ -78,7 +75,6 @@ const View = (props: IProps) => {
   const [selectedHikerIndex, setSelectedHikerIndex] = useState(0);
 
   const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
-  const simulations = useSelector<ReadonlyArray<ISimulation>>(simulationsSelector);
   const simulationsLoading = useSelector(simulationsLoadingSelector);
   const hikesLoading = useSelector(hikesLoadingSelector);
 
@@ -123,22 +119,9 @@ const View = (props: IProps) => {
 
   const selectedSimulation = useSelector(simulationSelector);
 
-  const { sourceId, simulationId, editMode } = props;
+  const { editMode } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
-
-  // new or changed simulations/simulationId
-  useEffect(() => {
-    if (!simulationId || !(simulations && simulations.length)) {
-      debug('useEffect:simulations - simulation=undefined');
-      dispatch(setSimulation());
-    } else {
-      const simulation = simulations.find(s => s.id === simulationId);
-      debug('useEffect:simulations', { simulationId, simulation });
-      dispatch(setSimulation(simulation));
-      dispatch(requestHikes({ sourceId, simulationId }));
-    }
-  }, [simulations, simulationId, sourceId, dispatch]);
 
   useEffect(() => {
     if (!hikesLoading) {

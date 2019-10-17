@@ -8,6 +8,7 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
+
   updateSimulation,
   addHike,
   updateHike,
@@ -18,13 +19,18 @@ import {
   addHiker,
   updateHiker,
   updateHikers,
-  editorActionValid,
+
+  startViewSimulation,
   startEditSimulation,
   startNewSimulation,
-  EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
+  newSimulationStarted,
+
+  editorActionValid,
+
+  EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS, setSimulation, requestHikes,
 } from 'editor/modules/actions';
 
-import { simulationAndDataValid } from 'editor/modules/selectors';
+import { simulationsSelector, simulationAndDataValid } from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:sagas:edit');
@@ -204,6 +210,14 @@ export function* changeSwitchSaga(action) {
   }
 }
 
+export function* startViewSimulationSaga({ payload: { sourceId, simulationId } }) {
+  const simulations = yield select(simulationsSelector);
+  const simulation = simulations.find(simulation => simulation.id === simulationId);
+  yield put(setSimulation(simulation));
+  yield put(requestHikes({ sourceId, simulationId }));
+  yield put(newSimulationStarted({ simulationId }));
+}
+
 export function* startEditNewSimulationSaga() {
   const isValid = yield select(simulationAndDataValid);
   yield put(editorActionValid(isValid));
@@ -215,6 +229,7 @@ export default function* editChangeSaga() {
       action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
       changeSwitchSaga,
     ),
+    takeEvery(startViewSimulation, startViewSimulationSaga),
     takeEvery([startEditSimulation, startNewSimulation], startEditNewSimulationSaga),
   ]);
 }

@@ -128,14 +128,14 @@ const checkOperationStart = (
   renderingId,
   resolvedAction,
 ) => {
-  if (activeItem && simulationId) {
-    const action = resolvedAction || controlSegmentActions.view;
+  const action = resolvedAction || controlSegmentActions.view;
+  if (activeItem && (simulationId || action === controlSegmentActions.new )) {
     switch (activeItem) {
       case controlSegmentKeys.execution:
-        dispatch(reduxActionForStartOperation(activeItem, action, executionId));
+        dispatch(reduxActionForStartOperation(activeItem, action, { executionId }));
         break;
       case controlSegmentKeys.rendering:
-        dispatch(reduxActionForStartOperation(activeItem, action, renderingId));
+        dispatch(reduxActionForStartOperation(activeItem, action, { renderingId }));
         break;
       default:
         dispatch(reduxActionForStartOperation(activeItem, action, { sourceId, simulationId }));
@@ -225,7 +225,6 @@ const EditorGuideView = ({
         nextPath,
       });
       if (nextPath !== currentPath) {
-        // debug('handleControlChanged', { currentPath, nextPath });
         history.push(nextPath);
       }
     },

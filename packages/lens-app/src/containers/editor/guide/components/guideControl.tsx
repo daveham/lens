@@ -33,13 +33,10 @@ import {
 } from './guideConstants';
 import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
-import {
-  reduxActionForCancelOperation,
-  reduxActionForFinishOperation,
-} from '../utils';
+import { reduxActionForCancelOperation, reduxActionForFinishOperation } from '../utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:guideControl');
+// import _debug from 'debug';
+// const debug = _debug('lens:editor:guideControl');
 
 const useStyles: any = makeStyles((theme: any) => {
   const borderRadius = theme.shape.borderRadius * 2;
@@ -309,13 +306,8 @@ const GuideControl = (props: IProps) => {
     return execution ? execution.renderings || [] : [];
   };
 
-  // event handlers
-
-  // called when panel expansion is toggled
   const handlePanelChange = key => (event, expanded) => {
-    // debug('handlePanelChange', { key, expanded, locked, expandedPanel });
     if (locked) {
-      // guide is locked, ignore any attempts to change
       return;
     }
 
@@ -323,27 +315,22 @@ const GuideControl = (props: IProps) => {
   };
 
   const handleGuideMenuSelection = menuItem => {
-    // debug('handleGuideMenuSelection', { menuItem });
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      debug('create a new simulation item');
       setPathForChange(controlSegmentKeys.simulation, '', action!);
     }
   };
 
   const handlePanelListItemChange = (key, item) => () => {
-    // debug('handlePanelListItemChange', { key, item, locked });
     if (locked) {
       return;
     }
 
     const currentActiveItem = activeItem ? renderedControlParameters[activeItem] : null;
     if (item === currentActiveItem) {
-      // debug('handlePanelListItemChange - same item', { currentActiveItem });
       return;
     }
 
-    debug('handlePanelListItemChange', { from: currentActiveItem, to: item });
     setPathForChange(key, item.id);
   };
 
@@ -352,26 +339,21 @@ const GuideControl = (props: IProps) => {
       return;
     }
 
-    const item = getItemsForKey(key)[itemIndex];
-    // debug('handleListMenuSelection', { key, item, menuItem });
-
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      const lowerKey =
+      const nextLevelKey =
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
-      debug('handleListMenuSelection - new', { lowerKey, action });
-      setPathForChange(lowerKey, '', action);
+      setPathForChange(nextLevelKey, '', action);
     } else {
-      debug('handleListMenuSelection - not new', { key, item, action });
+      const item = getItemsForKey(key)[itemIndex];
       setPathForChange(key, item.id, action);
     }
     setDelayedUpdate(true);
   };
 
   const handleCancelLock = () => {
-    debug('handleCancelLock', { locked, delayedUpdate, activeItem });
     setDelayedUpdate(true);
     setExpandedPanel('');
     dispatch(reduxActionForCancelOperation(activeItem, action));
@@ -379,7 +361,6 @@ const GuideControl = (props: IProps) => {
   };
 
   const handleCommitLock = () => {
-    debug('handleCommitLock', { locked, delayedUpdate });
     setDelayedUpdate(true);
     setExpandedPanel('');
     dispatch(reduxActionForFinishOperation(activeItem, action));
@@ -645,12 +626,6 @@ const GuideControl = (props: IProps) => {
     );
   };
 
-  debug('render', {
-    expandedPanel,
-    locked,
-    activeItem: renderedControlParameters.activeItem,
-    action: renderedControlParameters.action,
-  });
   return (
     <div className={classes.root}>
       <Card className={classes.card}>

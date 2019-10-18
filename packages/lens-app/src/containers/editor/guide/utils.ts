@@ -32,16 +32,6 @@ import {
   cancelDeleteRendering,
 } from 'editor/modules/actions';
 
-const viewMap = {
-  [controlSegmentKeys.simulation]: startViewSimulation,
-  [controlSegmentKeys.execution]: startViewExecution,
-  [controlSegmentKeys.rendering]: startViewRendering,
-};
-
-export function reduxActionForViewOperation(segmentKey, ...actionArgs) {
-  return viewMap[segmentKey](...actionArgs);
-}
-
 const startMap = {
   [controlSegmentKeys.simulation]: {
     [controlSegmentActions.view]: startViewSimulation,

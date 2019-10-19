@@ -119,7 +119,8 @@ const View = (props: IProps) => {
 
   const selectedSimulation = useSelector(simulationSelector);
 
-  const { editMode } = props;
+  const { editMode, newMode } = props;
+  const editable = editMode || newMode;
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -245,7 +246,7 @@ const View = (props: IProps) => {
     }
     return (
       <>
-        {!editMode && (
+        {!editable && (
           <ReadOnlyTextField
             label='Name'
             margin='dense'
@@ -255,7 +256,7 @@ const View = (props: IProps) => {
             disabled
           />
         )}
-        {editMode && (
+        {editable && (
           <TextField
             label='Name'
             margin='normal'
@@ -273,21 +274,21 @@ const View = (props: IProps) => {
           />
         )}
         <Hikes
-          disabled={!editMode}
+          disabled={!editable}
           items={orderedHikes}
           selectedIndex={selectedHikeIndex}
           onListChanged={handleHikesListChanged}
           onSelectionChanged={handleHikesSelectionChanged}
         />
         <Trails
-          disabled={!editMode}
+          disabled={!editable}
           items={orderedTrails}
           selectedIndex={selectedTrailIndex}
           onListChanged={handleTrailsListChanged}
           onSelectionChanged={handleTrailsSelectionChanged}
         />
         <Hikers
-          disabled={!editMode}
+          disabled={!editable}
           items={orderedHikers}
           selectedIndex={selectedHikerIndex}
           onListChanged={handleHikersListChanged}
@@ -305,7 +306,7 @@ const View = (props: IProps) => {
     if (activeTab === TABS.HIKE) {
       return (
         selectedHike.id && (
-          <Hike disabled={!editMode} hike={selectedHike} onChange={handleHikeFieldChange} />
+          <Hike disabled={!editable} hike={selectedHike} onChange={handleHikeFieldChange} />
         )
       );
     }
@@ -313,14 +314,14 @@ const View = (props: IProps) => {
     if (activeTab === TABS.TRAIL) {
       return (
         selectedTrail.id && (
-          <Trail disabled={!editMode} trail={selectedTrail} onChange={handleTrailFieldChange} />
+          <Trail disabled={!editable} trail={selectedTrail} onChange={handleTrailFieldChange} />
         )
       );
     }
 
     return (
       selectedHiker.id && (
-        <Hiker disabled={!editMode} hiker={selectedHiker} onChange={handleHikerFieldChange} />
+        <Hiker disabled={!editable} hiker={selectedHiker} onChange={handleHikerFieldChange} />
       )
     );
   };

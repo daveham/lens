@@ -1,6 +1,6 @@
 import uuid from 'uuid/v1';
 
-export interface IRendering {
+export interface IRenderingModel {
   id: string;
   created: number;
   modified: number;
@@ -9,17 +9,42 @@ export interface IRendering {
   name: string;
 }
 
+export function defaultNewRendering(simulationId, executionId, props) {
+  return {
+    id: uuid(),
+    simulationId,
+    executionId,
+    name: 'New Rendering',
+    ...props,
+  };
+}
+
+export interface IRendering extends IRenderingModel {}
+
 export interface IRenderingErrors {
   nameError?: string;
 }
 
-export interface IExecution {
+export interface IExecutionModel {
   id: string;
   created: number;
   modified: number;
   simulationId: number;
   name: string;
   renderingsCount: number;
+}
+
+export function defaultNewExecution(simulationId, props): IExecutionModel {
+  return {
+    id: uuid(),
+    simulationId,
+    name: 'New Execution',
+    renderingsCount: 0,
+    ...props,
+  };
+}
+
+export interface IExecution extends IExecutionModel {
   renderings?: ReadonlyArray<IRendering>;
 }
 
@@ -27,21 +52,39 @@ export interface IExecutionErrors {
   nameError?: string;
 }
 
-export interface ISimulation {
+export interface ISimulationModel {
   id: string;
   sourceId: string;
   created: number;
   modified: number;
   name: string;
   executionsCount: number;
-  executions?: ReadonlyArray<IExecution>;
+  isNew?: boolean;
+  isDeleted?: boolean;
+}
+
+export function defaultNewSimulation(sourceId, props = {}): ISimulationModel {
+  const created = Date.now();
+  return {
+    id: uuid(),
+    created,
+    modified: created,
+    sourceId,
+    name: 'New Simulation',
+    executionsCount: 0,
+    ...props,
+  };
+}
+
+export interface ISimulation extends ISimulationModel {
+  executions: ReadonlyArray<IExecution>;
 }
 
 export interface ISimulationErrors {
   nameError?: string;
 }
 
-export interface IHiker {
+export interface IHikerModel {
   id: string;
   order?: number;
   name?: string;
@@ -50,7 +93,7 @@ export interface IHiker {
   isDeleted?: boolean;
 }
 
-export function defaultNewHiker(props): IHiker {
+export function defaultNewHiker(props): IHikerModel {
   return {
     id: uuid(),
     name: 'New Hiker',
@@ -58,6 +101,8 @@ export function defaultNewHiker(props): IHiker {
     ...props,
   };
 }
+
+export interface IHiker extends IHikerModel {}
 
 export interface IHikerErrors {
   nameError?: string;

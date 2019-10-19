@@ -38,9 +38,9 @@
     "levelup": "^4.1.0",
     "node-cache":"^4.1.1",
     "node-resque": "^4.0.9",
-    "restify": "^5.0.1",
-    "restify-cors-middleware": "^1.0.1",
-    "restify-errors": "^5.0.0",
+    "restify": "^8.4.0",
+    "restify-cors-middleware": "^1.1.1",
+    "restify-errors": "^8.0.1",
     "rimraf": "^2.6.3",
     "subleveldown": "^4.1.0",
     "uuid": "^3.3.2"

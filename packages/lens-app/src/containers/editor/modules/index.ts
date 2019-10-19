@@ -22,6 +22,7 @@ import {
   editorActionValid,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
+import { IHike, ISimulation } from 'editor/interfaces';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:modules:reducers');
@@ -35,7 +36,7 @@ const simulationsLoading = handleActions(
   false,
 );
 
-const initialSimulationsState = [];
+const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [receiveSimulationsForSource]: (state, { payload }) => payload,
@@ -51,10 +52,10 @@ const hikesLoading = handleActions(
   false,
 );
 
-const initialHikesState = [];
+const initialHikesState: ReadonlyArray<IHike> = [];
 const hikes = handleActions(
   {
-    [receiveHikes]: (state, { payload }) => payload,
+    [receiveHikes]: (state, { payload }) => payload || initialHikesState,
     [addHike]: (state, { payload: { hike } }) => [...state, hike],
     [addTrail]: (state, { payload: { hikeId, trail } }) =>
       state.map(h =>
@@ -129,7 +130,7 @@ const hikesById = handleActions(
         [hike.id]: hike,
       };
     },
-    [receiveHikes]: (state, { payload }) => {
+    [receiveHikes]: (state, { payload = initialHikesState }) => {
       const allHikes = {};
       payload.forEach(({ id, trails, ...props }) => {
         allHikes[id] = { id, ...props };
@@ -151,7 +152,7 @@ const trailsById = handleActions(
         [trail.id]: trail,
       };
     },
-    [receiveHikes]: (state, { payload }) => {
+    [receiveHikes]: (state, { payload = initialHikesState }) => {
       const allTrails = {};
       payload.forEach(h =>
         h.trails.forEach(({ id, hikers, ...props }) => {
@@ -175,7 +176,7 @@ const hikersById = handleActions(
         [hiker.id]: hiker,
       };
     },
-    [receiveHikes]: (state, { payload }) => {
+    [receiveHikes]: (state, { payload = initialHikesState }) => {
       const allHikers = {};
       payload.forEach(h =>
         h.trails.forEach(t =>

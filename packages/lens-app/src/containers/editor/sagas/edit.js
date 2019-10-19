@@ -1,3 +1,4 @@
+import { defaultNewSimulation } from 'editor/interfaces';
 import { all, take, takeEvery, takeLatest, put, select, call } from 'redux-saga/effects';
 
 import {
@@ -247,7 +248,10 @@ export function* startViewEditSimulationSaga({ type, payload: { sourceId, simula
   }
 }
 
-export function* startNewSimulationSaga() {
+export function* startNewSimulationSaga({ payload: { sourceId }}) {
+  const simulation = defaultNewSimulation(sourceId);
+  yield put(setSimulation(simulation));
+  yield put(receiveHikes());
   yield* validateSimulationSaga();
   yield put(newSimulationStarted());
 }

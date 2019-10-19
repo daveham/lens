@@ -42,13 +42,8 @@ server.on('uncaughtException', (req, res, route, err) => {
 
 createDataManager().then((mgr) => {
   // static content
-  server.get( /\/thumbs\//, restify.plugins.serveStatic({
-    directory: '/data'
-  }));
-
-  server.get( /\/tiles\//, restify.plugins.serveStatic({
-    directory: '/data'
-  }));
+  server.get('/thumbs/*', restify.plugins.serveStatic({ directory: '/data' }));
+  server.get( '/tiles/*', restify.plugins.serveStatic({ directory: '/data' }));
 
   // REST API
   routes(server, mgr);

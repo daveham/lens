@@ -24,7 +24,7 @@ import Hikers from '../common/hikers';
 import { RootEditorState } from 'editor/modules';
 import {
   simulationsLoadingSelector,
-  simulationSelector,
+  selectedSimulationSelector,
   hikesLoadingSelector,
   hikeSelector,
   trailSelector,
@@ -117,7 +117,7 @@ const View = (props: IProps) => {
     return emptyObject;
   });
 
-  const selectedSimulation = useSelector(simulationSelector);
+  const selectedSimulation = useSelector(selectedSimulationSelector);
 
   const { editMode, newMode } = props;
   const editable = editMode || newMode;

@@ -306,6 +306,17 @@ const GuideControl = (props: IProps) => {
     return execution ? execution.renderings || [] : [];
   };
 
+  const getIdsForReduxAction = () => {
+    let reduxActionPayload: any = { simulationId: renderedControlParameters.simulation!.id };
+    if (activeItem !== controlSegmentKeys.simulation) {
+      reduxActionPayload.executionId = renderedControlParameters.execution!.id;
+    }
+    if (activeItem === controlSegmentKeys.rendering) {
+      reduxActionPayload.renderingId = renderedControlParameters.rendering!.id;
+    }
+    return reduxActionPayload;
+  };
+
   const handlePanelChange = key => (event, expanded) => {
     if (locked) {
       return;
@@ -354,16 +365,18 @@ const GuideControl = (props: IProps) => {
   };
 
   const handleCancelLock = () => {
+    const reduxAction = reduxActionForCancelOperation(activeItem, action, getIdsForReduxAction());
     setDelayedUpdate(true);
     setExpandedPanel('');
-    dispatch(reduxActionForCancelOperation(activeItem, action));
+    dispatch(reduxAction);
     setPathForChange(activeItem, '', '');
   };
 
   const handleCommitLock = () => {
+    const reduxAction = reduxActionForFinishOperation(activeItem, action, getIdsForReduxAction());
     setDelayedUpdate(true);
     setExpandedPanel('');
-    dispatch(reduxActionForFinishOperation(activeItem, action));
+    dispatch(reduxAction);
     setPathForChange(activeItem, '', '');
   };
 

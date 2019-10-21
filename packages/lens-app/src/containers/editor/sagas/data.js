@@ -1,0 +1,72 @@
+import { all, put, takeEvery } from '@redux-saga/core/effects';
+import {
+  requestHikes,
+  receiveHikes,
+  requestSimulationsForSource,
+  receiveSimulationsForSource,
+  saveSimulation,
+  saveSimulationSucceeded,
+  // saveSimulationFailed,
+} from 'editor/modules/actions';
+import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
+
+import _debug from 'debug';
+const debug = _debug('lens:editor:dataSagas');
+
+const mockSimulationsData = {};
+
+export function* readSimulationsForSourceSaga({ payload: sourceId }) {
+  debug('readSimulationsForSourceSaga', { sourceId });
+
+  let mockSimulations = mockSimulationsData[sourceId];
+  if (!mockSimulations) {
+    mockSimulations = generateMockSimulationsData(sourceId);
+    mockSimulationsData[sourceId] = mockSimulations;
+  }
+  yield put(receiveSimulationsForSource(mockSimulations));
+
+  // yield* apiSaga(invokeRestService,
+  //   [ `/simulations/${payload}` ],
+  //   receiveSimulationsForSource,
+  //   requestSimulationsForSourceFailed);
+}
+
+const mockHikesData = {};
+
+export function* readHikesSaga({ payload: simulationId }) {
+  debug('readHikesSaga', { simulationId });
+
+  let mockHikes = mockHikesData[simulationId];
+  if (!mockHikes) {
+    mockHikes = generateMockHikesData(simulationId);
+    mockHikesData[simulationId] = mockHikes;
+  }
+  yield put(receiveHikes(mockHikes));
+}
+
+export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes } }) {
+  debug('saveSimulationSaga', { simulationId, sourceId, changes });
+
+  const modified = Date.now();
+  const simulations = mockSimulationsData[sourceId];
+  const simulation = simulations.find(s => s.id === simulationId);
+
+  const changedSimulation = {
+    ...simulation,
+    ...changes,
+    modified,
+  };
+  mockSimulationsData[sourceId] = simulations.map(s =>
+    s.id === simulationId ? changedSimulation : s,
+  );
+
+  yield put(saveSimulationSucceeded(changedSimulation));
+}
+
+export default function* dataRootSaga() {
+  yield all([
+    takeEvery(requestSimulationsForSource, readSimulationsForSourceSaga),
+    takeEvery(requestHikes, readHikesSaga),
+    takeEvery(saveSimulation, saveSimulationSaga),
+  ]);
+}

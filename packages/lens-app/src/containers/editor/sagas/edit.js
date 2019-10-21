@@ -1,5 +1,4 @@
-import { defaultNewSimulation } from 'editor/interfaces';
-import { all, take, takeEvery, takeLatest, put, select, call } from 'redux-saga/effects';
+import { all, takeEvery, put, select, call } from 'redux-saga/effects';
 
 import {
   changeSimulation,
@@ -9,8 +8,7 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
-
-  updateSimulation,
+  updateSelectedSimulation,
   addHike,
   updateHike,
   updateHikes,
@@ -20,35 +18,11 @@ import {
   addHiker,
   updateHiker,
   updateHikers,
-
-  requestHikes,
-  requestHikesFailed,
-  receiveHikes,
-
-  startViewSimulation,
-  viewSimulationStarted,
-
-  startEditSimulation,
-  editSimulationStarted,
-  finishEditSimulation,
-  editSimulationFinished,
-  cancelEditSimulation,
-  editSimulationCanceled,
-
-  startNewSimulation,
-  newSimulationStarted,
-  finishNewSimulation,
-  newSimulationFinished,
-  cancelNewSimulation,
-  newSimulationCanceled,
-
   editorActionValid,
-
   EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
-  setSimulation,
 } from 'editor/modules/actions';
 
-import { simulationsSelector, simulationAndDataValid } from 'editor/modules/selectors';
+import { simulationAndDataValid } from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:sagas:edit');
@@ -118,14 +92,14 @@ const evaluateValidationRules = (current, rules) => {
 };
 
 export function* changeSimulationSaga({ payload: { changes } }) {
-  yield put(updateSimulation(changes));
+  yield put(updateSelectedSimulation(changes));
 
   const current = yield select(state => state.editor.simulation);
 
   const rules = getValidationRulesForChanges(simulationRules, changes);
   const validationChanges = evaluateValidationRules(current, rules);
   if (Object.keys(validationChanges).length > 0) {
-    yield put(updateSimulation(validationChanges));
+    yield put(updateSelectedSimulation(validationChanges));
   }
 }
 
@@ -219,57 +193,13 @@ const changeMap = {
   [changeHikerList]: changeHikerListSaga,
 };
 
-export function* validateSimulationSaga() {
-  const isValid = yield select(simulationAndDataValid);
-  yield put(editorActionValid(isValid));
-}
-
 export function* changeSwitchSaga(action) {
   const handler = changeMap[action.type];
   if (handler) {
     yield call(handler, action);
-    yield* validateSimulationSaga();
+    const isValid = yield select(simulationAndDataValid);
+    yield put(editorActionValid(isValid));
   }
-}
-
-export function* startViewEditSimulationSaga({ type, payload: { sourceId, simulationId } }) {
-  const simulations = yield select(simulationsSelector);
-  const simulation = simulations.find(simulation => simulation.id === simulationId);
-  yield put(setSimulation(simulation));
-  yield put(requestHikes({ sourceId, simulationId }));
-  const result = yield take([receiveHikes, requestHikesFailed]);
-  if (result.type === `${receiveHikes}`) {
-    yield* validateSimulationSaga();
-  } // else error - what to do?
-  if (type === `${startViewSimulation}`) {
-    yield put(viewSimulationStarted({ simulationId }));
-  } else {
-    yield put(editSimulationStarted({ simulationId }));
-  }
-}
-
-export function* startNewSimulationSaga({ payload: { sourceId }}) {
-  const simulation = defaultNewSimulation(sourceId);
-  yield put(setSimulation(simulation));
-  yield put(receiveHikes());
-  yield* validateSimulationSaga();
-  yield put(newSimulationStarted());
-}
-
-export function* finishNewSimulationSaga() {
-  yield put(newSimulationFinished());
-}
-
-export function* cancelNewSimulationSaga() {
-  yield put(newSimulationCanceled());
-}
-
-export function* finishEditSimulationSaga() {
-  yield put(editSimulationFinished());
-}
-
-export function* cancelEditSimulationSaga() {
-  yield put(editSimulationCanceled());
 }
 
 export default function* editRootSaga() {
@@ -278,11 +208,5 @@ export default function* editRootSaga() {
       action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
       changeSwitchSaga,
     ),
-    takeLatest([startViewSimulation, startEditSimulation], startViewEditSimulationSaga),
-    takeLatest(startNewSimulation, startNewSimulationSaga),
-    takeEvery(finishNewSimulation, finishNewSimulationSaga),
-    takeEvery(cancelNewSimulation, cancelNewSimulationSaga),
-    takeEvery(finishEditSimulation, finishEditSimulationSaga),
-    takeEvery(cancelEditSimulation, cancelEditSimulationSaga),
   ]);
 }

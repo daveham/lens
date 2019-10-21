@@ -5,6 +5,8 @@ import { createSelector } from 'reselect';
 
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;
+export const selectedSimulationSelector = state => state.editor.simulation;
+export const simulationByIdSelector = (state, id) => state.editor.simulations.find(s => s.id === id);
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
 
@@ -68,7 +70,7 @@ export const allHikersValid = createSelector(
 );
 
 export const simulationValid = createSelector(
-  state => state.editor.simulation,
+  selectedSimulationSelector,
   simulation => !simulation.nameError,
 );
 
@@ -86,7 +88,5 @@ export const hikeSelector = (state, id) => state.editor.hikesById[id];
 export const trailSelector = (state, id) => state.editor.trailsById[id];
 
 export const hikerSelector = (state, id) => state.editor.hikersById[id];
-
-export const simulationSelector = state => state.editor.simulation;
 
 export const actionValidSelector = state => state.editor.actionValid;

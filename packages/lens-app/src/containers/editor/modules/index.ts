@@ -7,8 +7,8 @@ import {
   requestHikes,
   receiveHikes,
   requestHikesFailed,
-  setSimulation,
-  updateSimulation,
+  setSelectedSimulation,
+  updateSelectedSimulation,
   addHike,
   updateHike,
   updateHikes,
@@ -20,6 +20,7 @@ import {
   updateHikers,
   setActiveScope,
   editorActionValid,
+  saveSimulationSucceeded,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
 import { IHike, ISimulation } from 'editor/interfaces';
@@ -40,6 +41,8 @@ const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [receiveSimulationsForSource]: (state, { payload }) => payload,
+    [saveSimulationSucceeded]: (state, { payload }) =>
+      state.map(s => (s.id === payload.id ? payload : s)),
   },
   initialSimulationsState,
 );
@@ -89,8 +92,8 @@ const hikes = handleActions(
 const initialSimulationState = {};
 const simulation = handleActions(
   {
-    [setSimulation]: (state, { payload }) => payload || initialSimulationState,
-    [updateSimulation]: (state, { payload }) => ({
+    [setSelectedSimulation]: (state, { payload }) => ({ ...(payload || initialSimulationState) }),
+    [updateSelectedSimulation]: (state, { payload }) => ({
       ...state,
       ...payload,
     }),

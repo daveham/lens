@@ -30,6 +30,9 @@ export const {
   requestHikes,
   receiveHikes,
   requestHikesFailed,
+  saveSimulation,
+  saveSimulationSucceeded,
+  saveSimulationFailed,
 } = createActions(
   'REQUEST_SIMULATIONS_FOR_SOURCE',
   'RECEIVE_SIMULATIONS_FOR_SOURCE',
@@ -37,6 +40,9 @@ export const {
   'REQUEST_HIKES',
   'RECEIVE_HIKES',
   'REQUEST_HIKES_FAILED',
+  'SAVE_SIMULATION',
+  'SAVE_SIMULATION_SUCCEEDED',
+  'SAVE_SIMULATION_FAILED',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_DATA,
   },
@@ -44,8 +50,8 @@ export const {
 
 export const EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT = 'editor-simulation-edit';
 export const {
-  setSimulation,
-  updateSimulation,
+  setSelectedSimulation,
+  updateSelectedSimulation,
   addHike,
   updateHike,
   updateHikes,
@@ -56,8 +62,8 @@ export const {
   updateHiker,
   updateHikers,
 } = createActions(
-  'SET_SIMULATION',
-  'UPDATE_SIMULATION',
+  'SET_SELECTED_SIMULATION',
+  'UPDATE_SELECTED_SIMULATION',
   'ADD_HIKE',
   'UPDATE_HIKE',
   'UPDATE_HIKES',

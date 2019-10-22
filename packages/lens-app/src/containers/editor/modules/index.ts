@@ -21,6 +21,7 @@ import {
   setActiveScope,
   editorActionValid,
   saveSimulationSucceeded,
+  saveNewSimulationSucceeded,
   saveHikesSucceeded,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
@@ -44,6 +45,8 @@ const simulations = handleActions(
     [receiveSimulationsForSource]: (state, { payload }) => payload,
     [saveSimulationSucceeded]: (state, { payload }) =>
       state.map(s => (s.id === payload.id ? payload : s)),
+    [saveNewSimulationSucceeded]: (state, { payload }) =>
+      [...state, payload]
   },
   initialSimulationsState,
 );

@@ -307,12 +307,16 @@ const GuideControl = (props: IProps) => {
   };
 
   const getIdsForReduxAction = () => {
-    let reduxActionPayload: any = { simulationId: renderedControlParameters.simulation!.id };
-    if (activeItem !== controlSegmentKeys.simulation) {
-      reduxActionPayload.executionId = renderedControlParameters.execution!.id;
+    const reduxActionPayload: any = {};
+    const { simulation, execution, rendering } = renderedControlParameters;
+    if (simulation) {
+      reduxActionPayload.simulationId = simulation.id;
     }
-    if (activeItem === controlSegmentKeys.rendering) {
-      reduxActionPayload.renderingId = renderedControlParameters.rendering!.id;
+    if (activeItem !== controlSegmentKeys.simulation && execution) {
+      reduxActionPayload.executionId = execution.id;
+    }
+    if (activeItem === controlSegmentKeys.rendering && rendering) {
+      reduxActionPayload.renderingId = rendering.id;
     }
     return reduxActionPayload;
   };

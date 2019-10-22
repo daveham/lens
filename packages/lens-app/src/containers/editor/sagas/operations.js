@@ -23,6 +23,9 @@ import {
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
+  saveNewSimulation,
+  saveNewSimulationSucceeded,
+  saveNewSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
   saveHikesFailed,
@@ -87,7 +90,8 @@ export function* cancelEditSimulationSaga() {
 }
 
 export function* startNewSimulationSaga({ payload: { sourceId } }) {
-  const simulation = defaultNewSimulation(sourceId);
+  debug('startNewSimulationSaga', { sourceId });
+  const simulation = defaultNewSimulation(sourceId, { isNew: true });
   yield put(setSelectedSimulation(simulation));
   yield put(receiveHikes());
   yield* validateSimulationSaga();
@@ -95,6 +99,14 @@ export function* startNewSimulationSaga({ payload: { sourceId } }) {
 }
 
 export function* finishNewSimulationSaga() {
+  const simulation = yield select(selectedSimulationSelector);
+  yield put(saveNewSimulation({ simulation }));
+  const result = yield take([saveNewSimulationSucceeded, saveNewSimulationFailed]);
+  if (result.type === `${saveNewSimulationSucceeded}`) {
+    const hikes = yield select(hikesSelector);
+    yield put(saveHikes({ simulationId: result.payload.id, hikes }));
+    yield take([saveHikesSucceeded, saveHikesFailed]);
+  }
   yield put(newSimulationFinished());
 }
 

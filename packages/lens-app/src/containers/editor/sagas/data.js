@@ -7,6 +7,9 @@ import {
   saveSimulation,
   saveSimulationSucceeded,
   // saveSimulationFailed,
+  saveNewSimulation,
+  saveNewSimulationSucceeded,
+  // saveNewSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
@@ -66,6 +69,27 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
   yield put(saveSimulationSucceeded(changedSimulation));
 }
 
+export function* saveNewSimulationSaga({ payload: { simulation }}) {
+  debug('saveNewSimulationSaga', { simulation });
+
+  const created = Date.now();
+  const { isNew, trails, sourceId, ...props } = simulation;
+  const newSimulation = {
+    ...props,
+    sourceId,
+    created,
+    modified: created,
+    executions: [],
+  };
+  const simulations = mockSimulationsData[sourceId] || [];
+  mockSimulationsData[sourceId] = [
+    ...simulations,
+    newSimulation,
+  ];
+
+  yield put(saveNewSimulationSucceeded(newSimulation));
+}
+
 export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
   debug('saveHikesSaga', { simulationId, hikes });
 
@@ -80,6 +104,7 @@ export default function* dataRootSaga() {
     takeEvery(requestSimulationsForSource, readSimulationsForSourceSaga),
     takeEvery(requestHikes, readHikesSaga),
     takeEvery(saveSimulation, saveSimulationSaga),
+    takeEvery(saveNewSimulation, saveNewSimulationSaga),
     takeEvery(saveHikes, saveHikesSaga),
   ]);
 }

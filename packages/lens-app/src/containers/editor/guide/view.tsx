@@ -121,7 +121,6 @@ const determineItems = (simulations, simulationId, executionId, renderingId, act
 
 const checkOperationStart = (
   dispatch,
-  sourceId,
   activeItem,
   simulationId,
   executionId,
@@ -138,7 +137,7 @@ const checkOperationStart = (
         dispatch(reduxActionForStartOperation(activeItem, action, { renderingId }));
         break;
       default:
-        dispatch(reduxActionForStartOperation(activeItem, action, { sourceId, simulationId }));
+        dispatch(reduxActionForStartOperation(activeItem, action, { simulationId }));
     }
   }
 };
@@ -176,7 +175,6 @@ const EditorGuideView = ({
       if (prev !== nextPathname) {
         checkOperationStart(
           dispatch,
-          sourceId,
           activeItem,
           resolvedSimulationId,
           resolvedExecutionId,
@@ -189,7 +187,6 @@ const EditorGuideView = ({
   }, [
     history.location.pathname,
     dispatch,
-    sourceId,
     activeItem,
     resolvedSimulationId,
     resolvedExecutionId,
@@ -205,7 +202,7 @@ const EditorGuideView = ({
           imageDescriptor: makeThumbnailImageDescriptor(sourceId),
         }),
       );
-      dispatch(requestSimulationsForSource(sourceId));
+      dispatch(requestSimulationsForSource({ sourceId }));
     }
   }, [dispatch, sourceId]);
 

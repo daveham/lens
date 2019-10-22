@@ -23,12 +23,16 @@ import {
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
+  saveHikes,
+  saveHikesSucceeded,
+  saveHikesFailed,
 } from 'editor/modules/actions';
 import {
   selectedSimulationSelector,
   simulationAndDataValid,
   simulationByIdSelector,
   simulationsSelector,
+  hikesSelector,
 } from 'editor/modules/selectors';
 
 import _debug from 'debug';
@@ -39,11 +43,11 @@ function* validateSimulationSaga() {
   yield put(editorActionValid(isValid));
 }
 
-export function* startViewEditSimulationSaga({ type, payload: { sourceId, simulationId } }) {
+export function* startViewEditSimulationSaga({ type, payload: { simulationId } }) {
   const simulations = yield select(simulationsSelector);
   const simulation = simulations.find(simulation => simulation.id === simulationId);
   yield put(setSelectedSimulation(simulation));
-  yield put(requestHikes({ sourceId, simulationId }));
+  yield put(requestHikes({ simulationId }));
   const result = yield take([receiveHikes, requestHikesFailed]);
   if (result.type === `${receiveHikes}`) {
     yield* validateSimulationSaga();
@@ -55,17 +59,10 @@ export function* startViewEditSimulationSaga({ type, payload: { sourceId, simula
   }
 }
 
-export function* finishEditSimulationSaga(data) {
-  debug('finishEditSimulationSaga', { data });
-  const {
-    payload: { simulationId },
-  } = data;
+export function* finishEditSimulationSaga({ payload: { simulationId } }) {
+  debug('finishEditSimulationSaga', { simulationId });
   const changedSimulation = yield select(selectedSimulationSelector);
   const originalSimulation = yield select(simulationByIdSelector, simulationId);
-  debug('finishEditSimulationSaga', {
-    originalSimulation,
-    changedSimulation,
-  });
   if (!originalSimulation || originalSimulation.id !== changedSimulation.id) {
     debug('finishEditSimulationSaga - changed simulation id not the expected id');
   } else {
@@ -78,6 +75,9 @@ export function* finishEditSimulationSaga(data) {
       yield put(saveSimulation({ simulationId, sourceId, changes }));
       yield take([saveSimulationSucceeded, saveSimulationFailed]);
     }
+    const hikes = yield select(hikesSelector);
+    yield put(saveHikes({ simulationId, hikes }));
+    yield take([saveHikesSucceeded, saveHikesFailed]);
   }
   yield put(editSimulationFinished());
 }

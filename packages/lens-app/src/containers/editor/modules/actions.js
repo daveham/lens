@@ -33,6 +33,9 @@ export const {
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
+  saveHikes,
+  saveHikesSucceeded,
+  saveHikesFailed,
 } = createActions(
   'REQUEST_SIMULATIONS_FOR_SOURCE',
   'RECEIVE_SIMULATIONS_FOR_SOURCE',
@@ -43,6 +46,9 @@ export const {
   'SAVE_SIMULATION',
   'SAVE_SIMULATION_SUCCEEDED',
   'SAVE_SIMULATION_FAILED',
+  'SAVE_HIKES',
+  'SAVE_HIKES_SUCCEEDED',
+  'SAVE_HIKES_FAILED',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_DATA,
   },

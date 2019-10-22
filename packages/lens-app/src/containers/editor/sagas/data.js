@@ -7,6 +7,9 @@ import {
   saveSimulation,
   saveSimulationSucceeded,
   // saveSimulationFailed,
+  saveHikes,
+  saveHikesSucceeded,
+  // saveHikesFailed,
 } from 'editor/modules/actions';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
@@ -15,7 +18,7 @@ const debug = _debug('lens:editor:dataSagas');
 
 const mockSimulationsData = {};
 
-export function* readSimulationsForSourceSaga({ payload: sourceId }) {
+export function* readSimulationsForSourceSaga({ payload: { sourceId } }) {
   debug('readSimulationsForSourceSaga', { sourceId });
 
   let mockSimulations = mockSimulationsData[sourceId];
@@ -33,7 +36,7 @@ export function* readSimulationsForSourceSaga({ payload: sourceId }) {
 
 const mockHikesData = {};
 
-export function* readHikesSaga({ payload: simulationId }) {
+export function* readHikesSaga({ payload: { simulationId } }) {
   debug('readHikesSaga', { simulationId });
 
   let mockHikes = mockHikesData[simulationId];
@@ -63,10 +66,20 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
   yield put(saveSimulationSucceeded(changedSimulation));
 }
 
+export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
+  debug('saveHikesSaga', { simulationId, hikes });
+
+  const updatedHikes = [...hikes];
+  mockHikesData[simulationId] = updatedHikes;
+
+  yield put(saveHikesSucceeded(updatedHikes));
+}
+
 export default function* dataRootSaga() {
   yield all([
     takeEvery(requestSimulationsForSource, readSimulationsForSourceSaga),
     takeEvery(requestHikes, readHikesSaga),
     takeEvery(saveSimulation, saveSimulationSaga),
+    takeEvery(saveHikes, saveHikesSaga),
   ]);
 }

@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import groupby from 'lodash.groupby';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:modules:selectors');
@@ -34,6 +35,30 @@ const extractOrderedItems = (items, filter) => {
   }
   return emptyArray;
 };
+
+export const hikesSelector = createSelector(
+  state => state.editor.hikesById,
+  state => state.editor.trailsById,
+  state => state.editor.hikersById,
+  (hikes, trails, hikers) => {
+    const trailsGrouped = groupby(trails, 'hikeId');
+    const hikersGrouped = groupby(hikers, 'trailId');
+    return Object.keys(hikes).map(id => {
+      const hike = hikes[id];
+      const trails = trailsGrouped[hike.id];
+      if (trails) {
+        hike.trails = trailsGrouped[hike.id];
+        hike.trails.forEach(t => {
+          const hikers = hikersGrouped[t.id];
+          if (hikers) {
+            t.hikers = hikers;
+          }
+        })
+      }
+      return hike;
+    });
+  }
+);
 
 export const orderedHikesSelector = createSelector(
   state => state.editor.hikesById,

@@ -21,6 +21,7 @@ import {
   setActiveScope,
   editorActionValid,
   saveSimulationSucceeded,
+  saveHikesSucceeded,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
 import { IHike, ISimulation } from 'editor/interfaces';
@@ -58,7 +59,8 @@ const hikesLoading = handleActions(
 const initialHikesState: ReadonlyArray<IHike> = [];
 const hikes = handleActions(
   {
-    [receiveHikes]: (state, { payload }) => payload || initialHikesState,
+    [combineActions(receiveHikes, saveHikesSucceeded)]: (state, { payload }) =>
+      payload || initialHikesState,
     [addHike]: (state, { payload: { hike } }) => [...state, hike],
     [addTrail]: (state, { payload: { hikeId, trail } }) =>
       state.map(h =>

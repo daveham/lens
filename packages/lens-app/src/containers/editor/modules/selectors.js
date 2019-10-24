@@ -7,7 +7,8 @@ import groupby from 'lodash.groupby';
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;
 export const selectedSimulationSelector = state => state.editor.simulation;
-export const simulationByIdSelector = (state, id) => state.editor.simulations.find(s => s.id === id);
+export const simulationByIdSelector = (state, id) =>
+  state.editor.simulations.find(s => s.id === id);
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
 
@@ -43,21 +44,34 @@ export const hikesSelector = createSelector(
   (hikes, trails, hikers) => {
     const trailsGrouped = groupby(trails, 'hikeId');
     const hikersGrouped = groupby(hikers, 'trailId');
-    return Object.keys(hikes).map(id => {
-      const hike = hikes[id];
-      const trails = trailsGrouped[hike.id];
-      if (trails) {
-        hike.trails = trailsGrouped[hike.id];
-        hike.trails.forEach(t => {
-          const hikers = hikersGrouped[t.id];
-          if (hikers) {
-            t.hikers = hikers;
+
+    const hikesFiltered = Object.keys(hikes)
+      .map(key => hikes[key])
+      .filter(h => !h.isDeleted)
+      .map(h => ({ ...h }));
+
+    return hikesFiltered.map(hike => {
+      const ownedTrails = trailsGrouped[hike.id];
+      const ownedTrailsFiltered = ownedTrails
+        ? ownedTrails.filter(t => !t.isDeleted).map(t => ({ ...t }))
+        : undefined;
+
+      if (ownedTrailsFiltered.length) {
+        hike.trails = ownedTrailsFiltered;
+        ownedTrailsFiltered.forEach(t => {
+          const ownedHikers = hikersGrouped[t.id];
+          const ownedHikersFiltered = ownedHikers
+            ? ownedHikers.filter(k => !k.isDeleted).map(k => ({ ...k }))
+            : undefined;
+
+          if (ownedHikersFiltered.length) {
+            t.hikers = ownedHikersFiltered;
           }
-        })
+        });
       }
       return hike;
     });
-  }
+  },
 );
 
 export const orderedHikesSelector = createSelector(

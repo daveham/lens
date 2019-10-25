@@ -13,7 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import { defaultNewHike, defaultNewTrail, defaultNewHiker } from 'editor/interfaces';
 
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
-import Layout from '../common/layout';
+import SplitLayout from '../common/splitLayout';
 import Hike from '../common/hike';
 import Hikes from '../common/hikes';
 import Trail from '../common/trail';
@@ -327,7 +327,7 @@ const View = (props: IProps) => {
   };
 
   return (
-    <Layout
+    <SplitLayout
       title='Simulation'
       contentLeft={renderSimulation()}
       contentRight={renderContent()}

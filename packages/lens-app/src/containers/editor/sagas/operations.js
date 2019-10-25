@@ -20,6 +20,12 @@ import {
   editSimulationFinished,
   cancelEditSimulation,
   editSimulationCanceled,
+  startDeleteSimulation,
+  deleteSimulationStarted,
+  finishDeleteSimulation,
+  deleteSimulationFinished,
+  cancelDeleteSimulation,
+  deleteSimulationCanceled,
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
@@ -46,7 +52,7 @@ function* validateSimulationSaga() {
   yield put(editorActionValid(isValid));
 }
 
-export function* startViewEditSimulationSaga({ type, payload: { simulationId } }) {
+export function* startSimulationOperationSaga({ type, payload: { simulationId } }) {
   const simulations = yield select(simulationsSelector);
   const simulation = simulations.find(simulation => simulation.id === simulationId);
   yield put(setSelectedSimulation(simulation));
@@ -57,8 +63,10 @@ export function* startViewEditSimulationSaga({ type, payload: { simulationId } }
   } // else error - what to do?
   if (type === `${startViewSimulation}`) {
     yield put(viewSimulationStarted({ simulationId }));
-  } else {
+  } else if (type === `${startEditSimulation}`) {
     yield put(editSimulationStarted({ simulationId }));
+  } else {
+    yield put(deleteSimulationStarted({ simulationId }));
   }
 }
 
@@ -110,17 +118,30 @@ export function* finishNewSimulationSaga() {
   yield put(newSimulationFinished());
 }
 
+export function* finishDeleteSimulationSaga() {
+  yield put(deleteSimulationFinished());
+}
+
+export function* cancelDeleteSimulationSaga() {
+  yield put(deleteSimulationCanceled());
+}
+
 export function* cancelNewSimulationSaga() {
   yield put(newSimulationCanceled());
 }
 
 export default function* operationsRootSaga() {
   yield all([
-    takeLatest([startViewSimulation, startEditSimulation], startViewEditSimulationSaga),
+    takeLatest(
+      [startViewSimulation, startEditSimulation, startDeleteSimulation],
+      startSimulationOperationSaga,
+    ),
     takeLatest(startNewSimulation, startNewSimulationSaga),
     takeEvery(finishNewSimulation, finishNewSimulationSaga),
     takeEvery(cancelNewSimulation, cancelNewSimulationSaga),
     takeEvery(finishEditSimulation, finishEditSimulationSaga),
     takeEvery(cancelEditSimulation, cancelEditSimulationSaga),
+    takeEvery(finishDeleteSimulation, finishDeleteSimulationSaga),
+    takeEvery(cancelDeleteSimulation, cancelDeleteSimulationSaga),
   ]);
 }

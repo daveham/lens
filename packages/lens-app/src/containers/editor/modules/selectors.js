@@ -74,6 +74,25 @@ export const hikesSelector = createSelector(
   },
 );
 
+export const simulationDeleteListSelector = createSelector(
+  state => state.editor.simulations,
+  (_, simulationId) => simulationId,
+  (simulations, simulationId) => {
+    const items = [];
+    const simulation = simulations.find(s => s.id === simulationId);
+    if (simulation) {
+      items.push({ key: simulation.id, label: 'simulation', name: simulation.name });
+      simulation.executions.forEach(e => {
+        items.push({ key: e.id, label: 'execution', name: e.name });
+        e.renderings.forEach(r => {
+          items.push({ key: r.id, label: 'rendering', name: r.name });
+        });
+      });
+    }
+    return items;
+  },
+);
+
 export const orderedHikesSelector = createSelector(
   state => state.editor.hikesById,
   hikes => extractOrderedItems(hikes, h => !h.isDeleted),

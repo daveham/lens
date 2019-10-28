@@ -50,9 +50,9 @@ const View = ({ simulationId }: IProps) => {
               </ListSubheader>
             }
           >
-            {simulationDeleteList.map(({ key, label, name }) => (
+            {simulationDeleteList.map(({ key, type, name }) => (
               <ListItem key={key}>
-                <ListItemText primary={name} secondary={`${label} ${key}`} />
+                <ListItemText primary={name} secondary={`${type} ${key}`} />
               </ListItem>
             ))}
           </List>

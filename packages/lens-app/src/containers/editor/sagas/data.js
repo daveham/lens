@@ -10,6 +10,9 @@ import {
   saveNewSimulation,
   saveNewSimulationSucceeded,
   // saveNewSimulationFailed,
+  deleteSimulation,
+  deleteSimulationSucceeded,
+  // deleteSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
@@ -29,7 +32,7 @@ export function* readSimulationsForSourceSaga({ payload: { sourceId } }) {
     mockSimulations = generateMockSimulationsData(sourceId);
     mockSimulationsData[sourceId] = mockSimulations;
   }
-  yield put(receiveSimulationsForSource(mockSimulations));
+  yield put(receiveSimulationsForSource(mockSimulations.filter(s => !s.isDeleted)));
 
   // yield* apiSaga(invokeRestService,
   //   [ `/simulations/${payload}` ],
@@ -69,7 +72,7 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
   yield put(saveSimulationSucceeded(changedSimulation));
 }
 
-export function* saveNewSimulationSaga({ payload: { simulation }}) {
+export function* saveNewSimulationSaga({ payload: { simulation } }) {
   debug('saveNewSimulationSaga', { simulation });
 
   const created = Date.now();
@@ -82,12 +85,20 @@ export function* saveNewSimulationSaga({ payload: { simulation }}) {
     executions: [],
   };
   const simulations = mockSimulationsData[sourceId] || [];
-  mockSimulationsData[sourceId] = [
-    ...simulations,
-    newSimulation,
-  ];
+  mockSimulationsData[sourceId] = [...simulations, newSimulation];
 
   yield put(saveNewSimulationSucceeded(newSimulation));
+}
+
+export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
+  debug('deleteSimulationSaga', { sourceId, simulationId });
+
+  const simulations = mockSimulationsData[sourceId] || [];
+  mockSimulationsData[sourceId] = simulations.map(s =>
+    s.id === simulationId ? { ...s, isDeleted: true } : s,
+  );
+
+  yield put(deleteSimulationSucceeded({ simulationId }));
 }
 
 export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
@@ -105,6 +116,7 @@ export default function* dataRootSaga() {
     takeEvery(requestHikes, readHikesSaga),
     takeEvery(saveSimulation, saveSimulationSaga),
     takeEvery(saveNewSimulation, saveNewSimulationSaga),
+    takeEvery(deleteSimulation, deleteSimulationSaga),
     takeEvery(saveHikes, saveHikesSaga),
   ]);
 }

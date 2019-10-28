@@ -81,11 +81,11 @@ export const simulationDeleteListSelector = createSelector(
     const items = [];
     const simulation = simulations.find(s => s.id === simulationId);
     if (simulation) {
-      items.push({ key: simulation.id, label: 'simulation', name: simulation.name });
+      items.push({ key: simulation.id, type: 'simulation', name: simulation.name });
       simulation.executions.forEach(e => {
-        items.push({ key: e.id, label: 'execution', name: e.name });
+        items.push({ key: e.id, type: 'execution', name: e.name });
         e.renderings.forEach(r => {
-          items.push({ key: r.id, label: 'rendering', name: r.name });
+          items.push({ key: r.id, type: 'rendering', name: r.name });
         });
       });
     }

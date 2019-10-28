@@ -32,6 +32,9 @@ import {
   saveNewSimulation,
   saveNewSimulationSucceeded,
   saveNewSimulationFailed,
+  deleteSimulation,
+  deleteSimulationSucceeded,
+  deleteSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
   saveHikesFailed,
@@ -52,6 +55,7 @@ function* validateSimulationSaga() {
   yield put(editorActionValid(isValid));
 }
 
+// same saga for starting new, edit, delete operations
 export function* startSimulationOperationSaga({ type, payload: { simulationId } }) {
   const simulations = yield select(simulationsSelector);
   const simulation = simulations.find(simulation => simulation.id === simulationId);
@@ -93,8 +97,16 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
   yield put(editSimulationFinished());
 }
 
-export function* cancelEditSimulationSaga() {
-  yield put(editSimulationCanceled());
+export function* finishDeleteSimulationSaga({ payload: { simulationId }}) {
+  debug('finishDeleteSimulationSaga', { simulationId });
+
+  const simulation = yield select(simulationByIdSelector, simulationId);
+  const { sourceId } = simulation;
+
+  yield put(deleteSimulation({ sourceId, simulationId }));
+  yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
+
+  yield put(deleteSimulationFinished());
 }
 
 export function* startNewSimulationSaga({ payload: { sourceId } }) {
@@ -118,8 +130,8 @@ export function* finishNewSimulationSaga() {
   yield put(newSimulationFinished());
 }
 
-export function* finishDeleteSimulationSaga() {
-  yield put(deleteSimulationFinished());
+export function* cancelEditSimulationSaga() {
+  yield put(editSimulationCanceled());
 }
 
 export function* cancelDeleteSimulationSaga() {

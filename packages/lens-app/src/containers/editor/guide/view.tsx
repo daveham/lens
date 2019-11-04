@@ -228,6 +228,8 @@ const EditorGuideView = ({
     [sourceId, history],
   );
 
+  debug('render', { simulations: [...simulations] });
+
   return (
     <GuideControl
       loading={simulationsLoading}

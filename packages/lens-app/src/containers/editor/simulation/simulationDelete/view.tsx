@@ -42,21 +42,23 @@ const View = ({ simulationId }: IProps) => {
   return (
     <Layout title='Simulation'>
       <Paper className={classes.root}>
-        <div className={classes.listWrapper}>
-          <List
-            subheader={
-              <ListSubheader disableSticky color='primary'>
-                These items will be deleted:
-              </ListSubheader>
-            }
-          >
-            {simulationDeleteList.map(({ key, type, name }) => (
-              <ListItem key={key}>
-                <ListItemText primary={name} secondary={`${type} ${key}`} />
-              </ListItem>
-            ))}
-          </List>
-        </div>
+        {simulationDeleteList.length > 0 && (
+          <div className={classes.listWrapper}>
+            <List
+              subheader={
+                <ListSubheader disableSticky color='primary'>
+                  These items will be deleted:
+                </ListSubheader>
+              }
+            >
+              {simulationDeleteList.map(({ key, type, name }) => (
+                <ListItem key={key}>
+                  <ListItemText primary={name} secondary={`${type} ${key}`} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        )}
       </Paper>
     </Layout>
   );

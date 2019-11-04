@@ -1,6 +1,9 @@
-import { all, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
+import { all, delay, put, select, take, takeEvery, takeLatest } from 'redux-saga/effects';
 import { defaultNewSimulation } from 'editor/interfaces';
 import {
+  // requestSimulationsForSource,
+  // receiveSimulationsForSource,
+  // requestSimulationsForSourceFailed,
   setSelectedSimulation,
   editorActionValid,
   requestHikes,
@@ -94,6 +97,7 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
     yield put(saveHikes({ simulationId, hikes }));
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
+  yield delay(0);
   yield put(editSimulationFinished());
 }
 
@@ -106,6 +110,7 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId }}) {
   yield put(deleteSimulation({ sourceId, simulationId }));
   yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
 
+  yield delay(0);
   yield put(deleteSimulationFinished());
 }
 
@@ -127,18 +132,22 @@ export function* finishNewSimulationSaga() {
     yield put(saveHikes({ simulationId: result.payload.id, hikes }));
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
+  yield delay(0);
   yield put(newSimulationFinished());
 }
 
 export function* cancelEditSimulationSaga() {
+  yield delay(0);
   yield put(editSimulationCanceled());
 }
 
 export function* cancelDeleteSimulationSaga() {
+  yield delay(0);
   yield put(deleteSimulationCanceled());
 }
 
 export function* cancelNewSimulationSaga() {
+  yield delay(0);
   yield put(newSimulationCanceled());
 }
 

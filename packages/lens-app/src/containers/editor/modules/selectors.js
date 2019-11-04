@@ -10,6 +10,9 @@ export const selectedSimulationSelector = state => state.editor.simulation;
 export const simulationByIdSelector = (state, id) =>
   state.editor.simulations.find(s => s.id === id);
 
+export const operationPendingSelector = state => state.editor.operationPending;
+export const operationEndedSelector = state => state.editor.operationEnded;
+
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
 
 const emptyArray = [];

@@ -23,6 +23,21 @@ import {
   saveSimulationSucceeded,
   saveNewSimulationSucceeded,
   saveHikesSucceeded,
+  startDeleteSimulation,
+  deleteSimulationStarted,
+  finishDeleteSimulation,
+  finishDeleteExecution,
+  finishDeleteRendering,
+  deleteSimulationFinished,
+  deleteExecutionFinished,
+  deleteRenderingFinished,
+  cancelDeleteSimulation,
+  cancelDeleteExecution,
+  cancelDeleteRendering,
+  deleteSimulationCanceled,
+  deleteExecutionCanceled,
+  deleteRenderingCanceled,
+  deleteSimulationSucceeded,
 } from './actions';
 import { InsertableReducerType } from 'modules/types';
 import { IHike, ISimulation } from 'editor/interfaces';
@@ -45,10 +60,27 @@ const simulations = handleActions(
     [receiveSimulationsForSource]: (state, { payload }) => payload,
     [saveSimulationSucceeded]: (state, { payload }) =>
       state.map(s => (s.id === payload.id ? payload : s)),
-    [saveNewSimulationSucceeded]: (state, { payload }) =>
-      [...state, payload]
+    [saveNewSimulationSucceeded]: (state, { payload }) => [...state, payload],
+    [deleteSimulationSucceeded]: (state, { payload: { simulationId } }) =>
+      state.filter(s => s.id !== simulationId),
   },
   initialSimulationsState,
+);
+
+const operationEnded = handleActions(
+  {
+    [deleteSimulationStarted]: () => false,
+    [combineActions(deleteSimulationFinished, deleteSimulationCanceled)]: () => true,
+  },
+  false,
+);
+
+const operationPending = handleActions(
+  {
+    [combineActions(finishDeleteSimulation, cancelDeleteSimulation)]: () => true,
+    [combineActions(deleteSimulationFinished, deleteSimulationCanceled)]: () => false,
+  },
+  false,
 );
 
 const hikesLoading = handleActions(
@@ -229,6 +261,8 @@ const editorModuleReducer = combineReducers({
   simulation,
   actionValid,
   active,
+  operationPending,
+  operationEnded,
 });
 
 export type EditorModuleState = ReturnType<typeof editorModuleReducer>;

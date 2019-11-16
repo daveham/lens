@@ -9,6 +9,9 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Collapse from '@material-ui/core/Collapse';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import List from '@material-ui/core/List';
@@ -69,8 +72,18 @@ const useStyles: any = makeStyles((theme: any) => {
       height: 0,
       paddingTop: '66.66%',
     },
+    avatarWrapper: {
+      position: 'relative',
+    },
     avatar: {
       backgroundColor: theme.palette.secondary.main,
+    },
+    avatarProgress: {
+      color: theme.palette.primary.light,
+      position: 'absolute',
+      zIndex: 1,
+      top: -4,
+      left: -4,
     },
     cardContent: {
       backgroundColor: 'inherit',
@@ -79,6 +92,9 @@ const useStyles: any = makeStyles((theme: any) => {
       '&:last-child': {
         padding: theme.spacing(1),
       },
+    },
+    actionPaper: {
+      margin: theme.spacing(1),
     },
     badgeContent: {
       transform: 'scale(1) translate(-130%, 80%)',
@@ -154,6 +170,8 @@ const useStyles: any = makeStyles((theme: any) => {
   };
 });
 
+const animationDelay = 350;
+
 interface IProps {
   loading?: boolean;
   title?: string;
@@ -175,9 +193,10 @@ interface IGuideParameters {
   rendering?: IRendering;
   activeItem?: string;
   action?: string;
+  renderLockedAction?: string;
+  renderLockedItem?: string;
   expandedPanel?: string;
   locked: boolean;
-  delayedUpdate: boolean;
   nextPath?: string;
 }
 
@@ -185,22 +204,11 @@ const initialGuideParameters: IGuideParameters = {
   simulations: [],
   activeItem: '',
   action: '',
+  renderLockedAction: '',
+  renderLockedItem: '',
   expandedPanel: '',
   locked: false,
-  delayedUpdate: false,
   nextPath: '',
-};
-
-const guideActions = {
-  update: 'UPDATE',
-  beginDelay: 'BEGIN_DELAY',
-  endDelay: 'END_DELAY',
-  lockPanel: 'LOCK_PANEL',
-  unlockPanel: 'UNLOCK_PANEL',
-  setExpandedPanel: 'SET_EXPANDED_PANEL',
-  clearExpandedPanel: 'CLEAR_EXPANDED_PANEL',
-  clearAndDelayExpandedPanel: 'CLEAR_AND_DELAY_EXPANDED_PANEL',
-  calculateNextPath: 'CALCULATE_NEXT_PATH',
 };
 
 // Helper to get id of selected element type indicated by key,
@@ -232,64 +240,53 @@ const getIdForSegmentKey = (controlParameters, key) => {
   return '';
 };
 
+const guideActions = {
+  expandForContent: 'EXPAND_FOR_CONTENT',
+  setExpandedPanel: 'SET_EXPANDED_PANEL',
+  clearExpandedPanel: 'CLEAR_EXPANDED_PANEL',
+  calculateNextPath: 'CALCULATE_NEXT_PATH',
+  update: 'UPDATE',
+};
+
 const guideParametersReducer = (state, { type, payload }) => {
-  debug('guideParametersReducer', { type, delayedUpdate: state.delayedUpdate });
+  debug('guideParametersReducer', { type });
   switch (type) {
+    case guideActions.expandForContent: {
+      return {
+        ...state,
+        expandedPanel: state.activeItem,
+        locked: false,
+      };
+    }
     case guideActions.update:
-      if (!state.delayedUpdate) {
-        return {
-          ...state,
-          ...payload,
-        };
-      }
-      break;
-    case guideActions.beginDelay:
-      return {
+      const nextState = {
         ...state,
-        delayedUpdate: true,
+        ...payload,
       };
-    case guideActions.endDelay:
-      return {
-        ...state,
-        delayedUpdate: false,
-      };
-    case guideActions.lockPanel:
-      if (!state.delayedUpdate) {
-        return {
-          ...state,
-          locked: true,
-        };
+      let locked = false;
+      if (payload.hasOwnProperty('action')) {
+        locked = payload.action && lockingActions.includes(payload.action);
+        nextState.locked = locked;
+        if (locked) {
+          nextState.renderLockedAction = payload.action;
+        }
       }
-      break;
-    case guideActions.unlockPanel:
-      if (!state.delayedUpdate) {
-        return {
-          ...state,
-          locked: false,
-        };
+      if (payload.hasOwnProperty('activeItem')) {
+        nextState.expandedPanel = payload.activeItem;
+        if (locked) {
+          nextState.renderLockedItem = payload.activeItem;
+        }
       }
-      break;
+      return nextState;
     case guideActions.setExpandedPanel:
-      if (!state.delayedUpdate) {
-        return {
-          ...state,
-          expandedPanel: payload,
-        };
-      }
-      break;
+      return {
+        ...state,
+        expandedPanel: payload,
+      };
     case guideActions.clearExpandedPanel:
-      if (!state.delayedUpdate) {
-        return {
-          ...state,
-          expandedPanel: '',
-        };
-      }
-      break;
-    case guideActions.clearAndDelayExpandedPanel:
       return {
         ...state,
         expandedPanel: '',
-        delayedUpdate: true,
       };
     case guideActions.calculateNextPath: {
       const { nextPanel, nextId = '', nextAction = '' } = payload;
@@ -321,10 +318,7 @@ const guideParametersReducer = (state, { type, payload }) => {
     default:
       throw new Error();
   }
-  return state;
 };
-
-const animationDelay = 400;
 
 const GuideControl = (props: IProps) => {
   const {
@@ -343,21 +337,20 @@ const GuideControl = (props: IProps) => {
   const operationPending = useSelector(operationPendingSelector);
   const operationEnded = useSelector(operationEndedSelector);
 
-  // the parameters rendered in the component, could be delayed from props by delayedUpdate
   const [guideParameters, dispatchGuideParameters] = useReducer(
     guideParametersReducer,
     initialGuideParameters,
   );
 
   useEffect(() => {
-    debug('useEffect(initial) - begin delay');
+    debug('useEffect(initial) -> expandForContent');
     // @ts-ignore
-    dispatchGuideParameters({ type: guideActions.beginDelay });
+    dispatchGuideParameters({ type: guideActions.expandForContent });
   }, []);
 
   // update rendered control parameters
   useEffect(() => {
-    debug('useEffect(props)', {
+    debug('useEffect(props) -> update', {
       simulations,
       simulation,
       execution,
@@ -376,70 +369,24 @@ const GuideControl = (props: IProps) => {
         action, // one of controlSegmentActions: view | edit | new | delete
       },
     });
-  }, [
-    simulations,
-    simulation,
-    execution,
-    rendering,
-    activeItem,
-    action,
-    guideParameters.delayedUpdate,
-  ]);
-
-  // update locked state of active panel
-  useEffect(() => {
-    debug('useEffect(gp.action)', { action: guideParameters.action });
-    if (guideParameters.action && lockingActions.includes(guideParameters.action)) {
-      // @ts-ignore
-      dispatchGuideParameters({ type: guideActions.lockPanel });
-    } else {
-      // @ts-ignore
-      dispatchGuideParameters({ type: guideActions.unlockPanel });
-    }
-  }, [guideParameters.action]);
-
-  // update which panel is expanded
-  useEffect(() => {
-    debug('useEffect(gp.activeItem)', { activeItem: guideParameters.activeItem });
-    if (guideParameters.activeItem) {
-      dispatchGuideParameters({
-        type: guideActions.setExpandedPanel,
-        payload: guideParameters.activeItem,
-      });
-    } else {
-      // @ts-ignore
-      dispatchGuideParameters({ type: guideActions.clearExpandedPanel });
-    }
-  }, [guideParameters.activeItem]);
-
-  // when delayedUpdate is set, schedule its reset based on animation delay
-  useEffect(() => {
-    debug('useEffect(gp.delayedUpdate)', { delayedUpdate: guideParameters.delayedUpdate });
-    if (guideParameters.delayedUpdate) {
-      setTimeout(() => {
-        debug('useEffect(gp.delayedUpdate) - timeout');
-        // @ts-ignore
-        dispatchGuideParameters({ type: guideActions.endDelay });
-      }, animationDelay);
-    }
-  }, [guideParameters.delayedUpdate]);
+  }, [simulations, simulation, execution, rendering, activeItem, action]);
 
   useEffect(() => {
-    debug('useEffect(gp.nextPath)', { nextPath: guideParameters.nextPath });
+    debug('useEffect(gp.nextPath) -> onControlChanged', { nextPath: guideParameters.nextPath });
     if (guideParameters.nextPath) {
       onControlChanged(guideParameters.nextPath);
     }
   }, [guideParameters.nextPath, onControlChanged]);
 
   useEffect(() => {
-    debug('useEffect(operationEnded)', { operationEnded, activeItem });
+    debug('useEffect(operationEnded, activeItem) -> calculateNextPath', {
+      operationEnded,
+      activeItem,
+    });
     if (operationEnded) {
-      debug('useEffect(operationEnded)', { activeItem });
-      // setPathForChange(activeItem, '', '');
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
-          // nextPanel, nextId, nextAction
           nextPanel: activeItem,
         },
       });
@@ -478,7 +425,6 @@ const GuideControl = (props: IProps) => {
       return;
     }
 
-    debug('handlePanelChange', { setExPnl: expanded ? key : 'empty' });
     if (expanded) {
       dispatchGuideParameters({ type: guideActions.setExpandedPanel, payload: key });
     } else {
@@ -490,11 +436,9 @@ const GuideControl = (props: IProps) => {
   const handleGuideMenuSelection = menuItem => {
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
-      // setPathForChange(controlSegmentKeys.simulation, '', action!);
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
-          // nextPanel, nextId, nextAction
           nextPanel: controlSegmentKeys.simulation,
           nextAction: action,
         },
@@ -512,11 +456,9 @@ const GuideControl = (props: IProps) => {
       return;
     }
 
-    // setPathForChange(key, item.id);
     dispatchGuideParameters({
       type: guideActions.calculateNextPath,
       payload: {
-        // nextPanel, nextId, nextAction
         nextPanel: key,
         nextId: item.id,
       },
@@ -528,31 +470,24 @@ const GuideControl = (props: IProps) => {
       return;
     }
 
-    // @ts-ignore
-    dispatchGuideParameters({ type: guideActions.clearAndDelayExpandedPanel });
-
     const { action } = menuItem;
     if (action === controlSegmentActions.new) {
       const nextLevelKey =
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
-      // setPathForChange(nextLevelKey, '', action);
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
-          // nextPanel, nextId, nextAction
           nextPanel: nextLevelKey,
           nextAction: action,
         },
       });
     } else {
       const item = getItemsForKey(key)[itemIndex];
-      // setPathForChange(key, item.id, action);
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
-          // nextPanel, nextId, nextAction
           nextPanel: key,
           nextId: item.id,
           nextAction: action,
@@ -561,17 +496,11 @@ const GuideControl = (props: IProps) => {
     }
   };
 
-  const handleCancelLock = () => {
-    // @ts-ignore
-    dispatchGuideParameters({ type: guideActions.clearAndDelayExpandedPanel });
+  const handleCancelLock = () =>
     dispatch(reduxActionForCancelOperation(activeItem, action, getIdsForReduxAction()));
-  };
 
-  const handleCommitLock = () => {
-    // @ts-ignore
-    dispatchGuideParameters({ type: guideActions.clearAndDelayExpandedPanel });
+  const handleCommitLock = () =>
     dispatch(reduxActionForFinishOperation(activeItem, action, getIdsForReduxAction()));
-  };
 
   // rendering
   const classes = useStyles();
@@ -580,7 +509,14 @@ const GuideControl = (props: IProps) => {
     const { thumbnailUrl, title, loading } = props;
 
     const headerContent = thumbnailUrl ? null : <Loading pulse={true} />;
-    const avatar = loading ? 'L' : 'P';
+    const avatar = (
+      <div className={classes.avatarWrapper}>
+        <Avatar className={classes.avatar}>P</Avatar>
+        {(loading || operationPending) && (
+          <CircularProgress size={48} className={classes.avatarProgress} />
+        )}
+      </div>
+    );
 
     return (
       <CardHeader
@@ -588,7 +524,7 @@ const GuideControl = (props: IProps) => {
           root: classes.cardHeader,
           title: classes.cardHeaderTitle,
         }}
-        avatar={<Avatar className={classes.avatar}>{avatar}</Avatar>}
+        avatar={avatar}
         action={
           <GuideMenu
             onMenuSelection={handleGuideMenuSelection}
@@ -599,45 +535,13 @@ const GuideControl = (props: IProps) => {
                 action: controlSegmentActions.new,
               },
             ]}
-            disabled={guideParameters.locked}
+            disabled={Boolean(guideParameters.locked)}
           />
         }
         title={title}
       >
         {headerContent}
       </CardHeader>
-    );
-  };
-
-  const renderLockedDetails = key => {
-    let message;
-    switch (guideParameters.action) {
-      case controlSegmentActions.new:
-        message = `Add a new ${key}.`;
-        break;
-      case controlSegmentActions.edit:
-        message = `Edit the current ${key}.`;
-        break;
-      case controlSegmentActions.delete:
-        message = `Delete this ${key}?`;
-        break;
-      case controlSegmentActions.run:
-        message = `Run this ${key}?`;
-        break;
-      case controlSegmentActions.render:
-        message = `Render this ${key}?`;
-        break;
-      default:
-        return null;
-    }
-    return (
-      <ExpansionPanelDetails>
-        <div className={classes.detailsContent}>
-          <Typography classes={{ root: classes.lockedPanelMessage }} component='div' align='center'>
-            {message}
-          </Typography>
-        </div>
-      </ExpansionPanelDetails>
     );
   };
 
@@ -673,7 +577,7 @@ const GuideControl = (props: IProps) => {
       >
         <ListItemText primary={item.name} secondary={`${key} details`} />
         <ListItemSecondaryAction className={classes.listItemSecondaryAction}>
-          {renderListMenu(key, itemIndex)}
+          {!guideParameters.locked && renderListMenu(key, itemIndex)}
         </ListItemSecondaryAction>
       </ListItem>
     ));
@@ -705,79 +609,9 @@ const GuideControl = (props: IProps) => {
     return <CardMedia className={classes.media} image={fullUrl} />;
   };
 
-  const renderActionsForNew = () => {
-    return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
-        </Button>
-        <Button
-          size='small'
-          disabled={!props.submitEnabled || operationPending}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          Add
-        </Button>
-      </ExpansionPanelActions>
-    );
-  };
-
-  const renderActionsForEdit = () => {
-    return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
-        </Button>
-        <Button
-          size='small'
-          disabled={!props.submitEnabled || operationPending}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          Save
-        </Button>
-      </ExpansionPanelActions>
-    );
-  };
-
-  const renderActionsForDelete = () => {
-    return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
-        </Button>
-        <Button
-          size='small'
-          disabled={!props.submitEnabled || operationPending}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          OK
-        </Button>
-      </ExpansionPanelActions>
-    );
-  };
-
-  const renderActions = () => {
-    switch (guideParameters.action) {
-      case controlSegmentActions.new:
-        return renderActionsForNew();
-      case controlSegmentActions.edit:
-        return renderActionsForEdit();
-      case controlSegmentActions.delete:
-      case controlSegmentActions.run:
-      case controlSegmentActions.render:
-        return renderActionsForDelete();
-    }
-  };
-
   const renderPanel = (key, items) => {
     const currentItem = guideParameters[key];
     const { title } = panelDetails[key];
-
-    const isPanelActive = guideParameters.activeItem === key;
-    const isPanelLocked = isPanelActive && guideParameters.locked;
     const isPanelExpanded = guideParameters.expandedPanel === key;
 
     return (
@@ -798,15 +632,121 @@ const GuideControl = (props: IProps) => {
             )}
           </div>
         </ExpansionPanelSummary>
-        {isPanelLocked
-          ? // locked details are rendered when the panel includes dialog buttons
-            renderLockedDetails(key)
-          : // regular details are rendered when the panel includes information
-            renderDetails(key, items)}
-        {isPanelLocked && renderActions()}
+        {renderDetails(key, items)}
       </ExpansionPanel>
     );
   };
+
+  const renderActionsForNew = () => {
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
+          Cancel
+        </Button>
+        <Button
+          size='small'
+          disabled={!props.submitEnabled || !operationEnded}
+          onClick={handleCommitLock}
+          color='primary'
+        >
+          Add
+        </Button>
+      </ExpansionPanelActions>
+    );
+  };
+
+  const renderActionsForEdit = () => {
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
+          Cancel
+        </Button>
+        <Button
+          size='small'
+          disabled={!props.submitEnabled || !operationEnded}
+          onClick={handleCommitLock}
+          color='primary'
+        >
+          Save
+        </Button>
+      </ExpansionPanelActions>
+    );
+  };
+
+  const renderActionsForDelete = () => {
+    return (
+      <ExpansionPanelActions>
+        <Button size='small' onClick={handleCancelLock} color='primary'>
+          Cancel
+        </Button>
+        <Button
+          size='small'
+          disabled={!(props.submitEnabled && !operationPending)}
+          onClick={handleCommitLock}
+          color='primary'
+        >
+          OK
+        </Button>
+      </ExpansionPanelActions>
+    );
+  };
+
+  const renderActions = () => {
+    switch (guideParameters.renderLockedAction) {
+      case controlSegmentActions.new:
+        return renderActionsForNew();
+      case controlSegmentActions.edit:
+        return renderActionsForEdit();
+      case controlSegmentActions.delete:
+      case controlSegmentActions.run:
+      case controlSegmentActions.render:
+        return renderActionsForDelete();
+      default:
+        return renderActionsForNew();
+    }
+  };
+
+  const renderLockedDetails = () => {
+    const item = guideParameters.renderLockedItem;
+    let message;
+    switch (guideParameters.renderLockedAction) {
+      case controlSegmentActions.new:
+        message = `Add a new ${item}.`;
+        break;
+      case controlSegmentActions.edit:
+        message = `Edit the current ${item}.`;
+        break;
+      case controlSegmentActions.delete:
+        message = `Delete this ${item}?`;
+        break;
+      case controlSegmentActions.run:
+        message = `Run this ${item}?`;
+        break;
+      case controlSegmentActions.render:
+        message = `Render this ${item}?`;
+        break;
+      default:
+        return null;
+    }
+
+    return (
+      <Typography classes={{ root: classes.lockedPanelMessage }} component='div' align='center'>
+        {message}
+      </Typography>
+    );
+  };
+
+  const renderLockedContent = () => (
+    <Collapse
+      in={Boolean(guideParameters.locked)}
+      timeout={{ enter: animationDelay, exit: animationDelay }}
+    >
+      <Paper elevation={4} className={classes.actionPaper}>
+        {renderLockedDetails()}
+        {renderActions()}
+      </Paper>
+    </Collapse>
+  );
 
   const renderContents = () => {
     if (!guideParameters.simulations) {
@@ -819,6 +759,7 @@ const GuideControl = (props: IProps) => {
 
     return (
       <CardContent classes={{ root: classes.cardContent }}>
+        {renderLockedContent()}
         {renderPanel(controlSegmentKeys.simulation, guideParameters.simulations)}
         {renderPanel(controlSegmentKeys.execution, executions)}
         {renderPanel(controlSegmentKeys.rendering, renderings)}
@@ -826,7 +767,6 @@ const GuideControl = (props: IProps) => {
     );
   };
 
-  debug('--render--');
   return (
     <div className={classes.root}>
       <Card className={classes.card}>

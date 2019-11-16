@@ -110,7 +110,7 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId }}) {
   yield put(deleteSimulation({ sourceId, simulationId }));
   yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
 
-  yield delay(0);
+  yield delay(animationDelay);
   yield put(deleteSimulationFinished());
 }
 
@@ -123,6 +123,8 @@ export function* startNewSimulationSaga({ payload: { sourceId } }) {
   yield put(newSimulationStarted());
 }
 
+const animationDelay = 450;
+
 export function* finishNewSimulationSaga() {
   const simulation = yield select(selectedSimulationSelector);
   yield put(saveNewSimulation({ simulation }));
@@ -132,22 +134,22 @@ export function* finishNewSimulationSaga() {
     yield put(saveHikes({ simulationId: result.payload.id, hikes }));
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
-  yield delay(0);
+  yield delay(animationDelay);
   yield put(newSimulationFinished());
 }
 
 export function* cancelEditSimulationSaga() {
-  yield delay(0);
+  yield delay(animationDelay);
   yield put(editSimulationCanceled());
 }
 
 export function* cancelDeleteSimulationSaga() {
-  yield delay(0);
+  yield delay(animationDelay);
   yield put(deleteSimulationCanceled());
 }
 
 export function* cancelNewSimulationSaga() {
-  yield delay(0);
+  yield delay(animationDelay);
   yield put(newSimulationCanceled());
 }
 

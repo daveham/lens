@@ -22,8 +22,8 @@ const styles = theme => {
       },
       '&.Mui-expanded': {
         margin,
-      }
       },
+    },
     expanded: {
       margin,
       minHeight: theme.spacing(6),

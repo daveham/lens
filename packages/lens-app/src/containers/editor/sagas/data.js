@@ -1,4 +1,4 @@
-import { all, put, takeEvery } from '@redux-saga/core/effects';
+import { all, delay, put, takeEvery } from '@redux-saga/core/effects';
 import {
   requestHikes,
   receiveHikes,
@@ -98,6 +98,7 @@ export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
     s.id === simulationId ? { ...s, isDeleted: true } : s,
   );
 
+  yield delay(0);
   yield put(deleteSimulationSucceeded({ simulationId }));
 }
 

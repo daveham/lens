@@ -1,5 +1,5 @@
 import { takeEvery, select, all, put } from 'redux-saga/effects';
-import { ensureEditorTitle } from '../modules/actions';
+import { ensureEditorTitle } from '../modules/actions/ui';
 import {
   catalogName as catalogNameSelector,
   catalogSources as catalogSourcesSelector,

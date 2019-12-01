@@ -41,7 +41,7 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
-} from 'editor/modules/actions';
+} from 'editor/modules/actions/sagas';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor:simulation:simulationShow:view');

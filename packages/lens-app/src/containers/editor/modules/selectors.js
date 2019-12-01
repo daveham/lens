@@ -59,7 +59,7 @@ export const hikesSelector = createSelector(
         ? ownedTrails.filter(t => !t.isDeleted).map(t => ({ ...t }))
         : undefined;
 
-      if (ownedTrailsFiltered.length) {
+      if (ownedTrailsFiltered && ownedTrailsFiltered.length) {
         hike.trails = ownedTrailsFiltered;
         ownedTrailsFiltered.forEach(t => {
           const ownedHikers = hikersGrouped[t.id];
@@ -67,7 +67,7 @@ export const hikesSelector = createSelector(
             ? ownedHikers.filter(k => !k.isDeleted).map(k => ({ ...k }))
             : undefined;
 
-          if (ownedHikersFiltered.length) {
+          if (ownedHikersFiltered && ownedHikersFiltered.length) {
             t.hikers = ownedHikersFiltered;
           }
         });

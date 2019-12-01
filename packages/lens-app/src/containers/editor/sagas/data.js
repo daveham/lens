@@ -16,7 +16,7 @@ import {
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
-} from 'editor/modules/actions';
+} from 'editor/modules/actions/data';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
 import _debug from 'debug';

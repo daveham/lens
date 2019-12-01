@@ -1,12 +1,46 @@
 import { handleActions, combineActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 import {
+  startNewSimulation,
+  newSimulationStarted,
+  finishNewSimulation,
+  newSimulationFinished,
+  cancelNewSimulation,
+  newSimulationCanceled,
+  startEditSimulation,
+  editSimulationStarted,
+  finishEditSimulation,
+  editSimulationFinished,
+  cancelEditSimulation,
+  editSimulationCanceled,
+  startDeleteSimulation,
+  deleteSimulationStarted,
+  finishDeleteSimulation,
+  deleteSimulationFinished,
+  cancelDeleteSimulation,
+  deleteSimulationCanceled,
+  finishDeleteExecution,
+  deleteExecutionFinished,
+  cancelDeleteExecution,
+  deleteExecutionCanceled,
+  finishDeleteRendering,
+  deleteRenderingFinished,
+  cancelDeleteRendering,
+  deleteRenderingCanceled,
+} from './actions/operations';
+import {
   requestSimulationsForSource,
   receiveSimulationsForSource,
   requestSimulationsForSourceFailed,
   requestHikes,
   receiveHikes,
   requestHikesFailed,
+  saveSimulationSucceeded,
+  saveNewSimulationSucceeded,
+  saveHikesSucceeded,
+  deleteSimulationSucceeded,
+} from './actions/data';
+import {
   setSelectedSimulation,
   updateSelectedSimulation,
   addHike,
@@ -20,25 +54,7 @@ import {
   updateHikers,
   setActiveScope,
   editorActionValid,
-  saveSimulationSucceeded,
-  saveNewSimulationSucceeded,
-  saveHikesSucceeded,
-  startDeleteSimulation,
-  deleteSimulationStarted,
-  finishDeleteSimulation,
-  finishDeleteExecution,
-  finishDeleteRendering,
-  deleteSimulationFinished,
-  deleteExecutionFinished,
-  deleteRenderingFinished,
-  cancelDeleteSimulation,
-  cancelDeleteExecution,
-  cancelDeleteRendering,
-  deleteSimulationCanceled,
-  deleteExecutionCanceled,
-  deleteRenderingCanceled,
-  deleteSimulationSucceeded,
-} from './actions';
+} from './actions/ui';
 import { InsertableReducerType } from 'modules/types';
 import { IHike, ISimulation } from 'editor/interfaces';
 
@@ -69,16 +85,38 @@ const simulations = handleActions(
 
 const operationEnded = handleActions(
   {
-    [deleteSimulationStarted]: () => false,
-    [combineActions(deleteSimulationFinished, deleteSimulationCanceled)]: () => true,
+    [combineActions(deleteSimulationStarted, editSimulationStarted, newSimulationStarted)]: () =>
+      false,
+    [combineActions(
+      deleteSimulationFinished,
+      deleteSimulationCanceled,
+      editSimulationFinished,
+      editSimulationCanceled,
+      newSimulationFinished,
+      newSimulationCanceled,
+    )]: () => true,
   },
   false,
 );
 
 const operationPending = handleActions(
   {
-    [combineActions(finishDeleteSimulation, cancelDeleteSimulation)]: () => true,
-    [combineActions(deleteSimulationFinished, deleteSimulationCanceled)]: () => false,
+    [combineActions(
+      finishDeleteSimulation,
+      cancelDeleteSimulation,
+      finishEditSimulation,
+      cancelEditSimulation,
+      finishNewSimulation,
+      cancelNewSimulation,
+    )]: () => true,
+    [combineActions(
+      deleteSimulationFinished,
+      deleteSimulationCanceled,
+      editSimulationFinished,
+      editSimulationCanceled,
+      newSimulationFinished,
+      newSimulationCanceled,
+    )]: () => false,
   },
   false,
 );

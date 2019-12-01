@@ -12,7 +12,8 @@ import {
 } from 'editor/modules/selectors';
 
 import { ensureImage } from 'modules/images/actions';
-import { ensureEditorTitle, requestSimulationsForSource } from 'editor/modules/actions';
+import { ensureEditorTitle } from 'editor/modules/actions/ui';
+import { requestSimulationsForSource } from 'editor/modules/actions/data';
 import { reduxActionForStartOperation } from 'editor/guide/utils';
 
 import GuideControl from './components/guideControl';

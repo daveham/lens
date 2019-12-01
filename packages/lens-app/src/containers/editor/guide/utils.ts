@@ -30,7 +30,7 @@ import {
   cancelNewRendering,
   cancelEditRendering,
   cancelDeleteRendering,
-} from 'editor/modules/actions';
+} from 'editor/modules/actions/operations';
 
 const startMap = {
   [controlSegmentKeys.simulation]: {

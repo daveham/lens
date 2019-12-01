@@ -8,6 +8,10 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
+  EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
+} from 'editor/modules/actions/sagas';
+
+import {
   updateSelectedSimulation,
   addHike,
   updateHike,
@@ -19,8 +23,7 @@ import {
   updateHiker,
   updateHikers,
   editorActionValid,
-  EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
-} from 'editor/modules/actions';
+} from 'editor/modules/actions/ui';
 
 import { simulationAndDataValid } from 'editor/modules/selectors';
 

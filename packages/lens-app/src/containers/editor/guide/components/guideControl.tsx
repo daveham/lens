@@ -6,6 +6,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -28,7 +29,6 @@ import { operationPendingSelector, operationEndedSelector } from 'editor/modules
 import ExpansionPanel from './ExpansionPanel';
 import ExpansionPanelSummary from './ExpansionPanelSummary';
 import ExpansionPanelDetails from './ExpansionPanelDetails';
-import ExpansionPanelActions from './ExpansionPanelActions';
 import {
   KEY_SIMULATION_ADD,
   controlSegmentKeys,
@@ -637,77 +637,37 @@ const GuideControl = (props: IProps) => {
     );
   };
 
-  const renderActionsForNew = () => {
+  const renderActionControls = (
+    commitLabel = 'OK',
+    cancelLabel = 'Cancel',
+    commitDisabled = !props.submitEnabled || operationPending,
+    cancelDisabled = false,
+  ) => {
     return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
+      <CardActions>
+        <Button size='small' disabled={cancelDisabled} onClick={handleCancelLock} color='primary'>
+          {cancelLabel}
         </Button>
-        <Button
-          size='small'
-          disabled={!props.submitEnabled || !operationEnded}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          Add
+        <Button size='small' disabled={commitDisabled} onClick={handleCommitLock} color='primary'>
+          {commitLabel}
         </Button>
-      </ExpansionPanelActions>
-    );
-  };
-
-  const renderActionsForEdit = () => {
-    return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
-        </Button>
-        <Button
-          size='small'
-          disabled={!props.submitEnabled || !operationEnded}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          Save
-        </Button>
-      </ExpansionPanelActions>
-    );
-  };
-
-  const renderActionsForDelete = () => {
-    return (
-      <ExpansionPanelActions>
-        <Button size='small' onClick={handleCancelLock} color='primary'>
-          Cancel
-        </Button>
-        <Button
-          size='small'
-          disabled={!(props.submitEnabled && !operationPending)}
-          onClick={handleCommitLock}
-          color='primary'
-        >
-          OK
-        </Button>
-      </ExpansionPanelActions>
+      </CardActions>
     );
   };
 
   const renderActions = () => {
     switch (guideParameters.renderLockedAction) {
-      case controlSegmentActions.new:
-        return renderActionsForNew();
       case controlSegmentActions.edit:
-        return renderActionsForEdit();
-      case controlSegmentActions.delete:
-      case controlSegmentActions.run:
-      case controlSegmentActions.render:
-        return renderActionsForDelete();
+        return renderActionControls('Save');
+      case controlSegmentActions.new:
+        return renderActionControls('Add');
       default:
-        return renderActionsForNew();
+        return renderActionControls();
     }
   };
 
-  const renderLockedDetails = () => {
-    const item = guideParameters.renderLockedItem;
+  const renderLockedDetails = (item) => {
+    debug('renderLockedDetails', { item });
     let message;
     switch (guideParameters.renderLockedAction) {
       case controlSegmentActions.new:
@@ -736,17 +696,20 @@ const GuideControl = (props: IProps) => {
     );
   };
 
-  const renderLockedContent = () => (
-    <Collapse
-      in={Boolean(guideParameters.locked)}
-      timeout={{ enter: animationDelay, exit: animationDelay }}
-    >
-      <Paper elevation={4} className={classes.actionPaper}>
-        {renderLockedDetails()}
-        {renderActions()}
-      </Paper>
-    </Collapse>
-  );
+  const renderLockedContent = () => {
+    const { renderLockedItem, locked } = guideParameters;
+    return (
+      <Collapse
+        in={Boolean(locked && renderLockedItem)}
+        timeout={{ enter: animationDelay, exit: animationDelay }}
+      >
+        <Paper elevation={4} className={classes.actionPaper}>
+          {renderLockedDetails(renderLockedItem)}
+          {renderActions()}
+        </Paper>
+      </Collapse>
+    );
+  };
 
   const renderContents = () => {
     if (!guideParameters.simulations) {

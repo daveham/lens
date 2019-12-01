@@ -4,44 +4,58 @@ import {
   // requestSimulationsForSource,
   // receiveSimulationsForSource,
   // requestSimulationsForSourceFailed,
-  setSelectedSimulation,
-  editorActionValid,
-  requestHikes,
-  receiveHikes,
-  requestHikesFailed,
+  // simulation operations actions
+  // - view
   startViewSimulation,
   viewSimulationStarted,
+  // - new
   startNewSimulation,
   newSimulationStarted,
   finishNewSimulation,
   newSimulationFinished,
   cancelNewSimulation,
   newSimulationCanceled,
+  // - edit
   startEditSimulation,
   editSimulationStarted,
   finishEditSimulation,
   editSimulationFinished,
   cancelEditSimulation,
   editSimulationCanceled,
+  // - delete
   startDeleteSimulation,
   deleteSimulationStarted,
   finishDeleteSimulation,
   deleteSimulationFinished,
   cancelDeleteSimulation,
   deleteSimulationCanceled,
+} from 'editor/modules/actions/operations';
+import {
+  setSelectedSimulation,
+  editorActionValid,
+} from 'editor/modules/actions/ui';
+import {
+  requestHikes,
+  receiveHikes,
+  requestHikesFailed,
+  // simulation data actions
+  // - save (update)
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
+  // - save new (insert)
   saveNewSimulation,
   saveNewSimulationSucceeded,
   saveNewSimulationFailed,
+  // - delete
   deleteSimulation,
   deleteSimulationSucceeded,
   deleteSimulationFailed,
+  // - save hikes
   saveHikes,
   saveHikesSucceeded,
   saveHikesFailed,
-} from 'editor/modules/actions';
+} from 'editor/modules/actions/data';
 import {
   selectedSimulationSelector,
   simulationAndDataValid,
@@ -53,6 +67,8 @@ import {
 import _debug from 'debug';
 const debug = _debug('lens:editor:sagas:operations');
 
+const animationDelay = 350;
+
 function* validateSimulationSaga() {
   const isValid = yield select(simulationAndDataValid);
   yield put(editorActionValid(isValid));
@@ -60,6 +76,7 @@ function* validateSimulationSaga() {
 
 // same saga for starting new, edit, delete operations
 export function* startSimulationOperationSaga({ type, payload: { simulationId } }) {
+  yield delay(animationDelay);
   const simulations = yield select(simulationsSelector);
   const simulation = simulations.find(simulation => simulation.id === simulationId);
   yield put(setSelectedSimulation(simulation));
@@ -122,8 +139,6 @@ export function* startNewSimulationSaga({ payload: { sourceId } }) {
   yield* validateSimulationSaga();
   yield put(newSimulationStarted());
 }
-
-const animationDelay = 450;
 
 export function* finishNewSimulationSaga() {
   const simulation = yield select(selectedSimulationSelector);

@@ -129,13 +129,19 @@ const checkOperationStart = (
   resolvedAction,
 ) => {
   const action = resolvedAction || controlSegmentActions.view;
-  if (activeItem && (simulationId || action === controlSegmentActions.new )) {
+  if (activeItem && (simulationId || action === controlSegmentActions.new)) {
     switch (activeItem) {
       case controlSegmentKeys.execution:
-        dispatch(reduxActionForStartOperation(activeItem, action, { executionId }));
+        dispatch(reduxActionForStartOperation(activeItem, action, { simulationId, executionId }));
         break;
       case controlSegmentKeys.rendering:
-        dispatch(reduxActionForStartOperation(activeItem, action, { renderingId }));
+        dispatch(
+          reduxActionForStartOperation(activeItem, action, {
+            simulationId,
+            executionId,
+            renderingId,
+          }),
+        );
         break;
       default:
         dispatch(reduxActionForStartOperation(activeItem, action, { simulationId }));

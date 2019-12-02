@@ -8,8 +8,8 @@ import SimulationShow from './simulationShow';
 import SimulationEdit from './simulationEdit';
 import SimulationDelete from './simulationDelete';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:view');
+import _debug from 'debug';
+const debug = _debug('lens:editor:simulation:view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   root: {
@@ -28,6 +28,7 @@ interface IProps {
 const View = (props: IProps) => {
   const { match: { path } } = props;
   const classes = useStyles();
+  debug('View', { path });
 
   return (
     <div className={classes.root}>

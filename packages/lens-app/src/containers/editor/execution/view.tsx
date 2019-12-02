@@ -1,151 +1,46 @@
-import React, { Fragment } from 'react';
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Switch, Route } from 'react-router-dom';
 
-import { IThumbnailDescriptor } from 'src/interfaces';
-// import { backupUrl } from 'src/helpers';
-
-// import Header from '../components/header';
-// import BreadcrumbBar from '../components/breadcrumbs';
 import ExecutionEmptyState from './executionEmptyState';
-// import executionListRenderFunction from './executionList';
-// import executionEditRenderFunction from './executionEdit';
-// import executionNewRenderFunction from './executionNew';
-// import executionShowRenderFunction from './executionShow';
-// import executionDeleteRenderFunction from './executionDelete';
+import ExecutionNew from './executionNew';
+import ExecutionShow from './executionShow';
+import ExecutionEdit from './executionEdit';
+import ExecutionDelete from './executionDelete';
 
-import { withStyles } from '@material-ui/core/styles';
-import { styles } from 'editor/styles/editorView';
+import _debug from 'debug';
+const debug = _debug('lens:editor:execution:view');
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:execution:view');
+const useStyles: any = makeStyles((theme: any) => ({
+  root: {
+    padding: theme.spacing(2),
+    width: '100%',
+    flex: '1 0 auto',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+}));
 
 interface IProps {
-  classes?: any;
   match: any;
-  thumbnailUrl?: string;
-  thumbnailImageDescriptor: IThumbnailDescriptor;
-  ensureImage: (payload: {[imageDescriptor: string]: IThumbnailDescriptor}) => void;
-  ensureEditorTitle: (sourceId?: string) => void;
 }
 
-class View extends React.Component<IProps, any> {
-  public componentDidMount(): any {
-    const {
-      thumbnailUrl,
-      thumbnailImageDescriptor,
-      ensureImage,
-      ensureEditorTitle,
-      match: { params: { sourceId } },
-    } = this.props;
+const View = (props: IProps) => {
+  const { match: { path } } = props;
+  const classes = useStyles();
+  debug('View', { path });
 
-    ensureEditorTitle(sourceId);
+  return (
+    <div className={classes.root}>
+      <Switch>
+        <Route path={`${path}/new`} component={ExecutionNew} />
+        <Route path={`${path}/:executionId/delete`} render={ExecutionDelete} />
+        <Route path={`${path}/:executionId/edit`} render={ExecutionEdit} />
+        <Route path={`${path}/:executionId`} render={ExecutionShow} />
+        <Route path={path} component={ExecutionEmptyState} />
+      </Switch>
+    </div>
+  );
+};
 
-    if (!thumbnailUrl) {
-      ensureImage({ imageDescriptor: thumbnailImageDescriptor });
-    }
-  }
-
-  /*
-        <Switch>
-          <Route path={`${path}/new`} render={this.renderExecutionNewToolbar} />
-          <Route path={`${path}/:executionId/delete`} render={this.renderExecutionDeleteToolbar} />
-          <Route path={`${path}/:executionId/edit`} render={this.renderExecutionEditToolbar} />
-          <Route path={`${path}/:executionId`} render={this.renderExecutionShowToolbar} />
-          <Route path={path} render={this.renderExecutionListToolbar} />
-        </Switch>
-        <Fragment>
-          <Switch>
-            <Route path={`${path}/new`} render={executionNewRenderFunction} />
-            <Route path={`${path}/:executionId/delete`} render={executionDeleteRenderFunction} />
-            <Route path={`${path}/:executionId/edit`} render={executionEditRenderFunction} />
-            <Route path={`${path}/:executionId`} render={executionShowRenderFunction} />
-            <Route path={path} render={executionListRenderFunction} />
-          </Switch>
-        </Fragment>
-   */
-
-  public render(): any {
-    const { classes, match: { path } } = this.props;
-    return (
-      <div className={classes.root}>
-        <Fragment>
-          <Switch>
-            <Route path={path} component={ExecutionEmptyState} />
-          </Switch>
-        </Fragment>
-      </div>
-    );
-  }
-
-  // private renderExecutionShowToolbar = (): any => {
-  //   const { thumbnailUrl, match: { url } } = this.props;
-  //   const links = {
-  //     back: url
-  //   };
-  //
-  //   return (
-  //     <Header
-  //       title='Execution'
-  //       thumbnailUrl={thumbnailUrl}
-  //       toolbarLinks={links}
-  //     />
-  //   );
-  // };
-
-  // private renderExecutionEditToolbar = (): any => {
-  //   const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
-  //   const links = {
-  //     back: backupUrl(url, 2)
-  //   };
-  //
-  //   return (
-  //     <Header
-  //       title='Edit Execution'
-  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-  //       thumbnailUrl={thumbnailUrl}
-  //       toolbarLinks={links}
-  //     />
-  //   );
-  // };
-
-  // private renderExecutionDeleteToolbar = (): any => {
-  //   const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
-  //   return (
-  //     <Header
-  //       title='Delete Execution'
-  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-  //       thumbnailUrl={thumbnailUrl}
-  //     />
-  //   );
-  // };
-
-  // private renderExecutionNewToolbar = (): any => {
-  //   const { thumbnailUrl, match: { params: { simulationId } } } = this.props;
-  //   return (
-  //     <Header
-  //       title='New Execution'
-  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-  //       thumbnailUrl={thumbnailUrl}
-  //     />
-  //   );
-  // };
-
-  // private renderExecutionListToolbar = (): any => {
-  //   const { thumbnailUrl, match: { url, params: { simulationId } } } = this.props;
-  //   const links = {
-  //     back: backupUrl(url, 2),
-  //     newItem: `${url}/new`
-  //   };
-  //
-  //   return (
-  //     <Header
-  //       title='Executions'
-  //       breadcrumb={<BreadcrumbBar simulationId={simulationId} />}
-  //       thumbnailUrl={thumbnailUrl}
-  //       toolbarLinks={links}
-  //     />
-  //   );
-  // };
-}
-
-export default withStyles(styles)(View);
+export default View;

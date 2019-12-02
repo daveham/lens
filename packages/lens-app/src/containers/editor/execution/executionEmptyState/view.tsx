@@ -20,9 +20,9 @@ const useStyles: any = makeStyles((theme: any) => ({
 }));
 
 interface IProps {
-  classes: any;
   history: any;
   sourceId: string;
+  simulationId: string;
 }
 
 const ExecutionEmptyStateView = (props: IProps) => {
@@ -32,9 +32,10 @@ const ExecutionEmptyStateView = (props: IProps) => {
     const {
       history,
       sourceId,
+      simulationId,
     } = props;
 
-    const path = `/Catalog/${sourceId}/Simulation/new`;
+    const path = `/Catalog/${sourceId}/Simulation/${simulationId}/Execution/new`;
     history.push(path);
   };
 

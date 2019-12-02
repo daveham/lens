@@ -1,16 +1,15 @@
 import React from 'react';
 import View from './view';
 
-const renderProp = (props) => {
+export default (props) => {
   const {
     history,
-    match: { params: { sourceId } }
+    match: { params: { sourceId, simulationId } }
   } = props;
 
   return <View
     history={history}
     sourceId={sourceId}
+    simulationId={simulationId}
   />;
 };
-
-export default renderProp;

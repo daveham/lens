@@ -29,9 +29,35 @@ import {
   deleteSimulationFinished,
   cancelDeleteSimulation,
   deleteSimulationCanceled,
+  // execution operations actions
+  // - view
+  startViewExecution,
+  viewExecutionStarted,
+  // - new
+  startNewExecution,
+  newExecutionStarted,
+  finishNewExecution,
+  newExecutionFinished,
+  cancelNewExecution,
+  newExecutionCanceled,
+  // - edit
+  startEditExecution,
+  editExecutionStarted,
+  finishEditExecution,
+  editExecutionFinished,
+  cancelEditExecution,
+  editExecutionCanceled,
+  // - delete
+  startDeleteExecution,
+  deleteExecutionStarted,
+  finishDeleteExecution,
+  deleteExecutionFinished,
+  cancelDeleteExecution,
+  deleteExecutionCanceled,
 } from 'editor/modules/actions/operations';
 import {
   setSelectedSimulation,
+  setSelectedExecution,
   editorActionValid,
 } from 'editor/modules/actions/ui';
 import {
@@ -61,6 +87,8 @@ import {
   simulationAndDataValid,
   simulationByIdSelector,
   simulationsSelector,
+  executionValid,
+  executionByIdSelector,
   hikesSelector,
 } from 'editor/modules/selectors';
 
@@ -74,7 +102,12 @@ function* validateSimulationSaga() {
   yield put(editorActionValid(isValid));
 }
 
-// same saga for starting new, edit, delete operations
+function* validateExecutionSaga() {
+  const isValid = yield select(executionValid);
+  yield put(editorActionValid(isValid));
+}
+
+// same saga for starting new, edit, delete simulation operations
 export function* startSimulationOperationSaga({ type, payload: { simulationId } }) {
   yield delay(animationDelay);
   const simulations = yield select(simulationsSelector);
@@ -118,7 +151,7 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
   yield put(editSimulationFinished());
 }
 
-export function* finishDeleteSimulationSaga({ payload: { simulationId }}) {
+export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   debug('finishDeleteSimulationSaga', { simulationId });
 
   const simulation = yield select(simulationByIdSelector, simulationId);
@@ -168,11 +201,30 @@ export function* cancelNewSimulationSaga() {
   yield put(newSimulationCanceled());
 }
 
+// same saga for starting new, edit, delete execution operations
+export function* startExecutionOperationSaga({ type, payload: { simulationId, executionId } }) {
+  yield delay(animationDelay);
+  const execution = yield select(executionByIdSelector, simulationId, executionId);
+  yield put(setSelectedExecution(execution));
+  yield* validateExecutionSaga();
+  if (type === `${startViewExecution}`) {
+    yield put(viewExecutionStarted({ simulationId, executionId }));
+  } else if (type === `${startEditExecution}`) {
+    yield put(editExecutionStarted({ simulationId, executionId }));
+  } else {
+    yield put(deleteExecutionStarted({ simulationId, executionId }));
+  }
+}
+
 export default function* operationsRootSaga() {
   yield all([
     takeLatest(
       [startViewSimulation, startEditSimulation, startDeleteSimulation],
       startSimulationOperationSaga,
+    ),
+    takeLatest(
+      [startViewExecution, startEditExecution, startDeleteExecution],
+      startExecutionOperationSaga,
     ),
     takeLatest(startNewSimulation, startNewSimulationSaga),
     takeEvery(finishNewSimulation, finishNewSimulationSaga),

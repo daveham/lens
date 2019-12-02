@@ -1,68 +1,68 @@
 import React from 'react';
-import { IExecution } from 'editor/interfaces';
-import { Mutation } from 'react-apollo';
-import {
-  DELETE_EXECUTION,
-  getExecutionsRefetchQueries
-} from 'editor/queries';
+import { useSelector as useSelectorGeneric, TypedUseSelectorHook } from 'react-redux';
 
-import Form from '../common/form';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import { makeStyles } from '@material-ui/core/styles';
+
+import { RootEditorState } from 'editor/modules';
+import { executionDeleteListSelector } from 'editor/modules/selectors';
+
+import Layout from '../../simulation/common/layout';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:execution:executionDelete:view');
 
+const useStyles: any = makeStyles((theme: any) => ({
+  root: {
+    margin: theme.spacing(2),
+  },
+  listWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+}));
+
 interface IProps {
-  sourceId: string;
-  simulationId: number;
-  executionId: number;
-  execution: IExecution;
-  loading: boolean;
-  onClose: () => void;
+  simulationId?: string;
+  executionId?: string;
 }
 
-class View extends React.Component<IProps, any> {
-  public render(): any {
-    if (this.props.loading) {
-      return null;
-    }
+const View = ({ simulationId, executionId }: IProps) => {
+  const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
 
-    const {
-      onClose,
-      sourceId,
-      simulationId,
-      executionId,
-      execution: {
-        name,
-        created,
-        modified
-      }
-    } = this.props;
+  const executionDeleteList =
+    // @ts-ignore
+    useSelector(state => executionDeleteListSelector(state, simulationId, executionId));
 
-    return (
-      <Mutation mutation={DELETE_EXECUTION} key={executionId}>
-        {(deleteExecution) => (
-          <Form
-            isDelete
-            name={name}
-            created={created}
-            modified={modified}
-            tag={`${sourceId}:${simulationId}:${executionId}`}
-            onConfirm={this.handleConfirmClick(deleteExecution)}
-            onCancel={onClose}
-          />
+  const classes = useStyles();
+
+  return (
+    <Layout title='Execution'>
+      <Paper className={classes.root}>
+        {executionDeleteList.length > 0 && (
+          <div className={classes.listWrapper}>
+            <List
+              subheader={
+                <ListSubheader disableSticky color='primary'>
+                  These items will be deleted:
+                </ListSubheader>
+              }
+            >
+              {executionDeleteList.map(({ key, type, name }) => (
+                <ListItem key={key}>
+                  <ListItemText primary={name} secondary={`${type} ${key}`} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
         )}
-      </Mutation>
-    );
-  }
-
-  private handleConfirmClick = (mutateFunc) => () => {
-    const { sourceId, simulationId, executionId, onClose } = this.props;
-    mutateFunc({
-      variables: { id: executionId },
-      refetchQueries: getExecutionsRefetchQueries(sourceId, simulationId)
-    });
-    onClose();
-  };
-}
+      </Paper>
+    </Layout>
+  );
+};
 
 export default View;

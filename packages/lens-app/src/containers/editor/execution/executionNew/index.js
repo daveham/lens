@@ -1,24 +1,19 @@
 import React from 'react';
-import { backupUrl } from 'src/helpers';
-import View from './view';
+import View from '../executionShow/view';
 
-const renderProp = (props) => {
+export default (props) => {
   const {
-    history,
     match: {
-      url,
-      params: { sourceId, simulationId }
+      params: {
+        sourceId,
+        simulationId,
+      },
     }
   } = props;
 
-  const returnToList = () => {
-    history.replace(backupUrl(url));
-  };
   return <View
-    onClose={returnToList}
+    newMode={true}
     sourceId={sourceId}
     simulationId={simulationId}
   />;
 };
-
-export default renderProp;

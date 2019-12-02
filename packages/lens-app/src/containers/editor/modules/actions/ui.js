@@ -13,6 +13,10 @@ export const {
   addHiker,
   updateHiker,
   updateHikers,
+  setSelectedExecution,
+  updateSelectedExecution,
+  setSelectedRendering,
+  updateSelectedRendering,
 } = createActions(
   'SET_SELECTED_SIMULATION',
   'UPDATE_SELECTED_SIMULATION',
@@ -25,6 +29,10 @@ export const {
   'ADD_HIKER',
   'UPDATE_HIKER',
   'UPDATE_HIKERS',
+  'SET_SELECTED_EXECUTION',
+  'UPDATE_SELECTED_EXECUTION',
+  'SET_SELECTED_RENDERING',
+  'UPDATE_SELECTED_RENDERING',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT,
   },

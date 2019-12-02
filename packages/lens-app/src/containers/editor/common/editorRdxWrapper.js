@@ -5,9 +5,11 @@ import { ensureImage } from 'modules/images/actions';
 import { photoSelector } from 'src/modules/ui';
 import {
   ensureEditorTitle,
-  requestSimulationsForSource,
   setActiveScope,
-} from '../modules/actions';
+} from '../modules/actions/ui';
+import {
+  requestSimulationsForSource,
+} from '../modules/actions/data';
 import {
   simulationsSelector,
   simulationsLoadingSelector,

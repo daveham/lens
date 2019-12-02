@@ -52,6 +52,10 @@ import {
   addHiker,
   updateHiker,
   updateHikers,
+  setSelectedExecution,
+  updateSelectedExecution,
+  setSelectedRendering,
+  updateSelectedRendering,
   setActiveScope,
   editorActionValid,
 } from './actions/ui';
@@ -176,6 +180,30 @@ const simulation = handleActions(
   initialSimulationState,
 );
 
+const initialExecutionState = {};
+const execution = handleActions(
+  {
+    [setSelectedExecution]: (state, { payload }) => ({ ...(payload || initialExecutionState) }),
+    [updateSelectedExecution]: (state, { payload }) => ({
+      ...state,
+      ...payload,
+    }),
+  },
+  initialExecutionState,
+);
+
+const initialRenderingState = {};
+const rendering = handleActions(
+  {
+    [setSelectedRendering]: (state, { payload }) => ({ ...(payload || initialRenderingState) }),
+    [updateSelectedRendering]: (state, { payload }) => ({
+      ...state,
+      ...payload,
+    }),
+  },
+  initialRenderingState,
+);
+
 const updateItemWithChanges = (state, { id, changes }) => {
   const changedItem = {
     ...state[id],
@@ -297,6 +325,8 @@ const editorModuleReducer = combineReducers({
   trailsById,
   hikersById,
   simulation,
+  execution,
+  rendering,
   actionValid,
   active,
   operationPending,

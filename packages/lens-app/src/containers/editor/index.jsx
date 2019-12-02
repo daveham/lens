@@ -7,8 +7,8 @@ import Simulation from './simulation';
 import Execution from './execution';
 import Rendering from './rendering';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:containers:editor:index');
+import _debug from 'debug';
+const debug = _debug('lens:containers:editor:index');
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SimulationRouteSwitch = ({ match: { path } }) => {
+  debug('SimulationRouteSwitch', { path });
   const classes = useStyles();
   return (
     <div className={classes.root}>

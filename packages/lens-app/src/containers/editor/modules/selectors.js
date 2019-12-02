@@ -7,8 +7,18 @@ import groupby from 'lodash.groupby';
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;
 export const selectedSimulationSelector = state => state.editor.simulation;
+export const selectedExecutionSelector = state => state.editor.execution;
+export const selectedRenderingSelector = state => state.editor.rendering;
 export const simulationByIdSelector = (state, id) =>
   state.editor.simulations.find(s => s.id === id);
+export const executionByIdSelector = (state, simulationId, id) => {
+  const simulation = simulationByIdSelector(state, simulationId);
+  return simulation ? simulation.executions.find(e => e.id === id) : simulation;
+};
+export const renderingByIdSelector = (state, simulationId, executionId, id) => {
+  const execution = executionByIdSelector(state, simulationId, executionId);
+  return execution ? execution.renderings.find(r => r.id === id) : execution;
+};
 
 export const operationPendingSelector = state => state.editor.operationPending;
 export const operationEndedSelector = state => state.editor.operationEnded;
@@ -96,6 +106,20 @@ export const simulationDeleteListSelector = createSelector(
   },
 );
 
+export const executionDeleteListSelector = createSelector(
+  executionByIdSelector,
+  (execution) => {
+    const items = [];
+    if (execution) {
+      items.push({ key: execution.id, type: 'execution', name: execution.name });
+      execution.renderings.forEach(r => {
+        items.push({ key: r.id, type: 'rendering', name: r.name });
+      });
+    }
+    return items;
+  },
+);
+
 export const orderedHikesSelector = createSelector(
   state => state.editor.hikesById,
   hikes => extractOrderedItems(hikes, h => !h.isDeleted),
@@ -142,6 +166,11 @@ export const simulationAndDataValid = createSelector(
   allHikersValid,
   (isSimulationValid, areHikesValid, areTrailsValid, areHikersValid) =>
     isSimulationValid && areHikesValid && areTrailsValid && areHikersValid,
+);
+
+export const executionValid = createSelector(
+  selectedExecutionSelector,
+  execution => !execution.nameError,
 );
 
 export const hikeSelector = (state, id) => state.editor.hikesById[id];

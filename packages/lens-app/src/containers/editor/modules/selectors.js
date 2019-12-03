@@ -88,11 +88,9 @@ export const hikesSelector = createSelector(
 );
 
 export const simulationDeleteListSelector = createSelector(
-  state => state.editor.simulations,
-  (_, simulationId) => simulationId,
-  (simulations, simulationId) => {
+  simulationByIdSelector,
+  simulation => {
     const items = [];
-    const simulation = simulations.find(s => s.id === simulationId);
     if (simulation) {
       items.push({ key: simulation.id, type: 'simulation', name: simulation.name });
       simulation.executions.forEach(e => {
@@ -108,13 +106,24 @@ export const simulationDeleteListSelector = createSelector(
 
 export const executionDeleteListSelector = createSelector(
   executionByIdSelector,
-  (execution) => {
+  execution => {
     const items = [];
     if (execution) {
       items.push({ key: execution.id, type: 'execution', name: execution.name });
       execution.renderings.forEach(r => {
         items.push({ key: r.id, type: 'rendering', name: r.name });
       });
+    }
+    return items;
+  },
+);
+
+export const renderingDeleteListSelector = createSelector(
+  renderingByIdSelector,
+  rendering => {
+    const items = [];
+    if (rendering) {
+      items.push({ key: rendering.id, type: 'rendering', name: rendering.name });
     }
     return items;
   },

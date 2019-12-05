@@ -1,47 +1,107 @@
 import React from 'react';
-import { IRendering } from 'editor/interfaces';
+import { useSelector as useSelectorGeneric, useDispatch, TypedUseSelectorHook } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
 
-import Form from '../common/form';
+import TextField from '@material-ui/core/TextField';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:rendering:renderingShow:view');
+import ReadOnlyTextField from 'editor/components/readOnlyTextField';
+import Layout from '../../simulation/common/layout';
+
+import { RootEditorState } from 'editor/modules';
+import { simulationsLoadingSelector, selectedRenderingSelector } from 'editor/modules/selectors';
+
+import { changeRendering } from 'editor/modules/actions/sagas';
+
+import _debug from 'debug';
+const debug = _debug('lens:editor:rendering:renderingShow:view');
+
+const useStyles: any = makeStyles((theme: any) => {
+  const paddingHalf = theme.spacing(1);
+  const padding = paddingHalf * 2;
+  return {
+    root: {
+      flex: '1 0 auto',
+      display: 'flex',
+    },
+    contents: {
+      // width: theme.spacing(formTitleWidthSpacingMultiplier),
+      // borderRight: `solid 1px ${theme.palette.divider}`,
+      padding: `${paddingHalf}px ${padding}px ${padding}px`,
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  };
+});
 
 interface IProps {
+  editMode?: boolean;
+  newMode?: boolean;
   sourceId: string;
-  simulationId: number;
-  executionId: number;
-  renderingId: number;
-  rendering: IRendering;
-  loading: boolean;
+  simulationId?: string;
+  executionId?: string;
+  renderingId?: string;
 }
 
-class View extends React.Component<IProps, any> {
-  public render(): any {
-    if (this.props.loading) {
+const View = (props: IProps) => {
+  const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
+  const simulationsLoading = useSelector(simulationsLoadingSelector);
+
+  const selectedRendering = useSelector(selectedRenderingSelector);
+  debug('View', { simulationsLoading, selectedRendering });
+
+  const { editMode, newMode } = props;
+  const editable = editMode || newMode;
+  const dispatch = useDispatch();
+  const classes = useStyles();
+
+  const handleRenderingFieldChange = ({ target: { name, value } }) =>
+    dispatch(changeRendering({ changes: { [name]: value } }));
+
+  const renderContent = () => {
+    if (simulationsLoading) {
       return null;
     }
 
-    const {
-      sourceId,
-      simulationId,
-      executionId,
-      renderingId,
-      rendering: {
-        created,
-        modified,
-        name
-      }
-    } = this.props;
+    if (!(selectedRendering && (selectedRendering.name || selectedRendering.nameError))) {
+      return null;
+    }
 
     return (
-      <Form
-        name={name}
-        created={created}
-        modified={modified}
-        tag={`${sourceId}:${simulationId}:${executionId}:${renderingId}`}
-      />
+      <div className={classes.root}>
+        <div className={classes.contents}>
+          {!editable && (
+            <ReadOnlyTextField
+              label='Name'
+              margin='dense'
+              multiline
+              value={selectedRendering.name}
+              fullWidth
+              disabled
+            />
+          )}
+          {editable && (
+            <TextField
+              label='Name'
+              margin='normal'
+              multiline
+              onChange={handleRenderingFieldChange}
+              inputProps={{
+                name: 'name',
+                id: 'rendering-name',
+              }}
+              value={selectedRendering.name}
+              helperText={selectedRendering.nameError}
+              error={Boolean(selectedRendering.nameError)}
+              fullWidth
+              required
+            />
+          )}
+        </div>
+      </div>
     );
-  }
-}
+  };
+
+  return <Layout title='Rendering'>{renderContent()}</Layout>;
+};
 
 export default View;

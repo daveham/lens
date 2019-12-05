@@ -86,7 +86,7 @@ const View = (props: IProps) => {
               onChange={handleExecutionFieldChange}
               inputProps={{
                 name: 'name',
-                id: 'simulation-name',
+                id: 'execution-name',
               }}
               value={selectedExecution.name}
               helperText={selectedExecution.nameError}
@@ -100,7 +100,7 @@ const View = (props: IProps) => {
     );
   };
 
-  return <Layout title='Simulation'>{renderContent()}</Layout>;
+  return <Layout title='Execution'>{renderContent()}</Layout>;
 };
 
 export default View;

@@ -98,7 +98,7 @@ export function* finishEditExecutionSaga({ payload: { simulationId, executionId 
 }
 
 export function* finishDeleteExecutionSaga({ payload: { simulationId, executionId } }) {
-  debug('finishDeleteExecutionSaga', { simulationId });
+  debug('finishDeleteExecutionSaga', { simulationId, executionId });
 
   const simulation = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;

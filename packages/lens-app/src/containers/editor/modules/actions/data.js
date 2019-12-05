@@ -8,6 +8,7 @@ export const {
   requestHikes,
   receiveHikes,
   requestHikesFailed,
+  // simulations
   saveSimulation,
   saveSimulationSucceeded,
   saveSimulationFailed,
@@ -17,9 +18,11 @@ export const {
   deleteSimulation,
   deleteSimulationSucceeded,
   deleteSimulationFailed,
+  // simulation hikes
   saveHikes,
   saveHikesSucceeded,
   saveHikesFailed,
+  // executions
   saveExecution,
   saveExecutionSucceeded,
   saveExecutionFailed,
@@ -29,6 +32,16 @@ export const {
   deleteExecution,
   deleteExecutionSucceeded,
   deleteExecutionFailed,
+  // rendering
+  saveRendering,
+  saveRenderingSucceeded,
+  saveRenderingFailed,
+  saveNewRendering,
+  saveNewRenderingSucceeded,
+  saveNewRenderingFailed,
+  deleteRendering,
+  deleteRenderingSucceeded,
+  deleteRenderingFailed,
 } = createActions(
   'REQUEST_SIMULATIONS_FOR_SOURCE',
   'RECEIVE_SIMULATIONS_FOR_SOURCE',
@@ -36,6 +49,7 @@ export const {
   'REQUEST_HIKES',
   'RECEIVE_HIKES',
   'REQUEST_HIKES_FAILED',
+  // simulations
   'SAVE_SIMULATION',
   'SAVE_SIMULATION_SUCCEEDED',
   'SAVE_SIMULATION_FAILED',
@@ -45,9 +59,11 @@ export const {
   'DELETE_SIMULATION',
   'DELETE_SIMULATION_SUCCEEDED',
   'DELETE_SIMULATION_FAILED',
+  // simulation hikes
   'SAVE_HIKES',
   'SAVE_HIKES_SUCCEEDED',
   'SAVE_HIKES_FAILED',
+  // executions
   'SAVE_EXECUTION',
   'SAVE_EXECUTION_SUCCEEDED',
   'SAVE_EXECUTION_FAILED',
@@ -57,6 +73,16 @@ export const {
   'DELETE_EXECUTION',
   'DELETE_EXECUTION_SUCCEEDED',
   'DELETE_EXECUTION_FAILED',
+  // renderings
+  'SAVE_RENDERING',
+  'SAVE_RENDERING_SUCCEEDED',
+  'SAVE_RENDERING_FAILED',
+  'SAVE_NEW_RENDERING',
+  'SAVE_NEW_RENDERING_SUCCEEDED',
+  'SAVE_NEW_RENDERING_FAILED',
+  'DELETE_RENDERING',
+  'DELETE_RENDERING_SUCCEEDED',
+  'DELETE_RENDERING_FAILED',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_DATA,
   },

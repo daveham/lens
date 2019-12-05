@@ -23,73 +23,76 @@ const operationEntities = ['SIMULATION', 'EXECUTION', 'RENDERING'];
 
 export const EDITOR_ACTIONS_PREFIX_SIMULATION_OPERATIONS = 'editor-operations';
 export const {
+  // new simulation
   startNewSimulation,
   newSimulationStarted,
   finishNewSimulation,
   newSimulationFinished,
   cancelNewSimulation,
   newSimulationCanceled,
-
+  // edit simulation
   startEditSimulation,
   editSimulationStarted,
   finishEditSimulation,
   editSimulationFinished,
   cancelEditSimulation,
   editSimulationCanceled,
-
+  // delete simulation
   startDeleteSimulation,
   deleteSimulationStarted,
   finishDeleteSimulation,
   deleteSimulationFinished,
   cancelDeleteSimulation,
   deleteSimulationCanceled,
-
+  // new execution
   startNewExecution,
   newExecutionStarted,
   finishNewExecution,
   newExecutionFinished,
   cancelNewExecution,
   newExecutionCanceled,
-
+  // edit execution
   startEditExecution,
   editExecutionStarted,
   finishEditExecution,
   editExecutionFinished,
   cancelEditExecution,
   editExecutionCanceled,
-
+  // delete execution
   startDeleteExecution,
   deleteExecutionStarted,
   finishDeleteExecution,
   deleteExecutionFinished,
   cancelDeleteExecution,
   deleteExecutionCanceled,
-
+  // new rendering
   startNewRendering,
   newRenderingStarted,
   finishNewRendering,
   newRenderingFinished,
   cancelNewRendering,
   newRenderingCanceled,
-
+  // edit rendering
   startEditRendering,
   editRenderingStarted,
   finishEditRendering,
   editRenderingFinished,
   cancelEditRendering,
   editRenderingCanceled,
-
+  // delete rendering
   startDeleteRendering,
   deleteRenderingStarted,
   finishDeleteRendering,
   deleteRenderingFinished,
   cancelDeleteRendering,
   deleteRenderingCanceled,
-
+  // view simulation
   startViewSimulation,
   viewSimulationStarted,
+  // view execution
   startViewExecution,
   viewExecutionStarted,
+  // view rendering
   startViewRendering,
   viewRenderingStarted,
 } = createActions(

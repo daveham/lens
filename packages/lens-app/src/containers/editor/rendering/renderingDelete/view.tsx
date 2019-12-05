@@ -1,70 +1,71 @@
 import React from 'react';
-import { IRendering } from 'editor/interfaces';
-import { Mutation } from 'react-apollo';
-import {
-  DELETE_RENDERING,
-  getRenderingsRefetchQueries
-} from 'editor/queries';
+import { useSelector as useSelectorGeneric, TypedUseSelectorHook } from 'react-redux';
 
-import Form from '../common/form';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import { makeStyles } from '@material-ui/core/styles';
+
+import { RootEditorState } from 'editor/modules';
+import { renderingDeleteListSelector } from 'editor/modules/selectors';
+
+import Layout from '../../simulation/common/layout';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:rendering:renderingDelete:view');
 
+const useStyles: any = makeStyles((theme: any) => ({
+  root: {
+    margin: theme.spacing(2),
+  },
+  listWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+}));
+
 interface IProps {
-  sourceId: string;
-  simulationId: number;
-  executionId: number;
-  renderingId: number;
-  rendering: IRendering;
-  loading: boolean;
-  onClose: () => void;
+  simulationId?: string;
+  executionId?: string;
+  renderingId?: string;
 }
 
-class View extends React.Component<IProps, any> {
-  public render(): any {
-    if (this.props.loading) {
-      return null;
-    }
+const View = ({ simulationId, executionId, renderingId }: IProps) => {
+  const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
 
-    const {
-      onClose,
-      sourceId,
-      simulationId,
-      executionId,
-      renderingId,
-      rendering: {
-        name,
-        created,
-        modified
-      }
-    } = this.props;
-
-    return (
-      <Mutation mutation={DELETE_RENDERING} key={renderingId}>
-        {(deleteRendering) => (
-          <Form
-            isDelete
-            name={name}
-            created={created}
-            modified={modified}
-            tag={`${sourceId}:${simulationId}:${executionId}:${renderingId}`}
-            onConfirm={this.handleConfirmClick(deleteRendering)}
-            onCancel={onClose}
-          />
-        )}
-      </Mutation>
+  const renderingDeleteList =
+    useSelector(state =>
+      // @ts-ignore
+      renderingDeleteListSelector(state, simulationId, executionId, renderingId),
     );
-  }
 
-  private handleConfirmClick = (mutateFunc) => () => {
-    const { executionId, renderingId, onClose } = this.props;
-    mutateFunc({
-      variables: { id: renderingId },
-      refetchQueries: getRenderingsRefetchQueries(executionId)
-    });
-    onClose();
-  };
-}
+  const classes = useStyles();
+
+  return (
+    <Layout title='Rendering'>
+      <Paper className={classes.root}>
+        {renderingDeleteList.length > 0 && (
+          <div className={classes.listWrapper}>
+            <List
+              subheader={
+                <ListSubheader disableSticky color='primary'>
+                  These items will be deleted:
+                </ListSubheader>
+              }
+            >
+              {renderingDeleteList.map(({ key, type, name }) => (
+                <ListItem key={key}>
+                  <ListItemText primary={name} secondary={`${type} ${key}`} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        )}
+      </Paper>
+    </Layout>
+  );
+};
 
 export default View;

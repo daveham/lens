@@ -182,6 +182,11 @@ export const executionValid = createSelector(
   execution => !execution.nameError,
 );
 
+export const renderingValid = createSelector(
+  selectedRenderingSelector,
+  rendering => !rendering.nameError,
+);
+
 export const hikeSelector = (state, id) => state.editor.hikesById[id];
 
 export const trailSelector = (state, id) => state.editor.trailsById[id];

@@ -16,6 +16,10 @@ import {
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
+  saveNewExecution,
+  saveNewExecutionSucceeded,
+  saveNewRendering,
+  saveNewRenderingSucceeded,
 } from 'editor/modules/actions/data';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
@@ -90,6 +94,39 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
   yield put(saveNewSimulationSucceeded(newSimulation));
 }
 
+export function* saveNewExecutionSaga({ payload: { execution } }) {
+  debug('saveNewExecutionSaga', { execution });
+
+  const created = Date.now();
+  const { isNew, ...props } = execution;
+  const newExecution = {
+    ...props,
+    created,
+    modified: created,
+    renderings: [],
+  };
+  // const simulations = mockSimulationsData[sourceId] || [];
+  // mockSimulationsData[sourceId] = [...simulations, newSimulation];
+
+  yield put(saveNewExecutionSucceeded(newExecution));
+}
+
+export function* saveNewRenderingSaga({ payload: { rendering } }) {
+  debug('saveNewRenderingSaga', { rendering });
+
+  const created = Date.now();
+  const { isNew, ...props } = rendering;
+  const newRendering = {
+    ...props,
+    created,
+    modified: created,
+  };
+  // const simulations = mockSimulationsData[sourceId] || [];
+  // mockSimulationsData[sourceId] = [...simulations, newSimulation];
+
+  yield put(saveNewRenderingSucceeded(newRendering));
+}
+
 export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
   debug('deleteSimulationSaga', { sourceId, simulationId });
 
@@ -119,5 +156,7 @@ export default function* dataRootSaga() {
     takeEvery(saveNewSimulation, saveNewSimulationSaga),
     takeEvery(deleteSimulation, deleteSimulationSaga),
     takeEvery(saveHikes, saveHikesSaga),
+    takeEvery(saveNewExecution, saveNewExecutionSaga),
+    takeEvery(saveNewRendering, saveNewRenderingSaga),
   ]);
 }

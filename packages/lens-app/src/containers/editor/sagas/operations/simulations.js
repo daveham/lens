@@ -130,6 +130,7 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
 
 export function* startNewSimulationSaga({ payload: { sourceId } }) {
   debug('startNewSimulationSaga', { sourceId });
+  yield delay(animationDelay);
   const simulation = defaultNewSimulation(sourceId, { isNew: true });
   yield put(setSelectedSimulation(simulation));
   yield put(receiveHikes());

@@ -113,6 +113,7 @@ export function* finishDeleteExecutionSaga({ payload: { simulationId, executionI
 
 export function* startNewExecutionSaga({ payload: { simulationId } }) {
   debug('startNewExecutionSaga', { simulationId });
+  yield delay(animationDelay);
   const execution = defaultNewExecution(simulationId, { isNew: true });
   yield put(setSelectedExecution(execution));
   yield* validateExecutionSaga();

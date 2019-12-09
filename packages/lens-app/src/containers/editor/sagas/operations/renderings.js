@@ -122,6 +122,7 @@ export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
 
 export function* startNewRenderingSaga({ payload: { simulationId, executionId } }) {
   debug('startNewRenderingSaga', { simulationId, executionId });
+  yield delay(animationDelay);
   const rendering = defaultNewRendering(simulationId, executionId, { isNew: true });
   yield put(setSelectedRendering(rendering));
   yield* validateRenderingSaga();

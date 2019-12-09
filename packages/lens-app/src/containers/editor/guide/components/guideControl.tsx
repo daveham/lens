@@ -24,8 +24,9 @@ import { ISimulation, IExecution, IRendering } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
 import { Loading } from 'components/loading';
 
-import { operationPendingSelector, operationEndedSelector } from 'editor/modules/selectors';
+import { operationPendingSelector } from 'editor/modules/selectors';
 
+import { usePrevious } from 'helpers/usePrevious';
 import ExpansionPanel from './ExpansionPanel';
 import ExpansionPanelSummary from './ExpansionPanelSummary';
 import ExpansionPanelDetails from './ExpansionPanelDetails';
@@ -290,6 +291,7 @@ const guideParametersReducer = (state, { type, payload }) => {
       };
     case guideActions.calculateNextPath: {
       const { nextPanel, nextId = '', nextAction = '' } = payload;
+      debug('guideParametersReducer(calculateNextPath)', { nextPanel, nextId, nextAction });
       if (!nextPanel) {
         return state;
       }
@@ -303,6 +305,7 @@ const guideParametersReducer = (state, { type, payload }) => {
       }
 
       if (nextAction === controlSegmentActions.new) {
+        debug('guideParametersReducer(calculateNextPath) - new', { nextPath, nextAction, id });
         nextPath = `${nextPath}/${nextAction}`;
       } else if (id) {
         nextPath = `${nextPath}/${id}`;
@@ -310,6 +313,7 @@ const guideParametersReducer = (state, { type, payload }) => {
           nextPath = `${nextPath}/${nextAction}`;
         }
       }
+      debug('guideParametersReducer(calculateNextPath)', { nextPath });
       return {
         ...state,
         nextPath,
@@ -335,7 +339,7 @@ const GuideControl = (props: IProps) => {
   const dispatch = useDispatch();
 
   const operationPending = useSelector(operationPendingSelector);
-  const operationEnded = useSelector(operationEndedSelector);
+  const previousOperationPending = usePrevious(operationPending);
 
   const [guideParameters, dispatchGuideParameters] = useReducer(
     guideParametersReducer,
@@ -379,11 +383,12 @@ const GuideControl = (props: IProps) => {
   }, [guideParameters.nextPath, onControlChanged]);
 
   useEffect(() => {
-    debug('useEffect(operationEnded, activeItem) -> calculateNextPath', {
-      operationEnded,
+    debug('useEffect(operationPending, activeItem) -> calculateNextPath', {
+      previousOperationPending,
+      operationPending,
       activeItem,
     });
-    if (operationEnded) {
+    if (previousOperationPending && !operationPending) {
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
@@ -391,7 +396,7 @@ const GuideControl = (props: IProps) => {
         },
       });
     }
-  }, [operationEnded, activeItem]);
+  }, [operationPending, previousOperationPending, activeItem]);
 
   const getItemsForKey = key => {
     if (key === controlSegmentKeys.simulation) {
@@ -471,29 +476,24 @@ const GuideControl = (props: IProps) => {
     }
 
     const { action } = menuItem;
+    const item = getItemsForKey(key)[itemIndex];
+    let nextPanel;
     if (action === controlSegmentActions.new) {
-      const nextLevelKey =
+      nextPanel =
         key === controlSegmentKeys.execution
           ? controlSegmentKeys.rendering
           : controlSegmentKeys.execution;
-      dispatchGuideParameters({
-        type: guideActions.calculateNextPath,
-        payload: {
-          nextPanel: nextLevelKey,
-          nextAction: action,
-        },
-      });
     } else {
-      const item = getItemsForKey(key)[itemIndex];
-      dispatchGuideParameters({
-        type: guideActions.calculateNextPath,
-        payload: {
-          nextPanel: key,
-          nextId: item.id,
-          nextAction: action,
-        },
-      });
+      nextPanel = key;
     }
+    dispatchGuideParameters({
+      type: guideActions.calculateNextPath,
+      payload: {
+        nextPanel,
+        nextId: item.id,
+        nextAction: action,
+      },
+    });
   };
 
   const handleCancelLock = () =>
@@ -666,7 +666,7 @@ const GuideControl = (props: IProps) => {
     }
   };
 
-  const renderLockedDetails = (item) => {
+  const renderLockedDetails = item => {
     debug('renderLockedDetails', { item });
     let message;
     switch (guideParameters.renderLockedAction) {

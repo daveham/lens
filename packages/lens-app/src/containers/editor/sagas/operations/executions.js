@@ -3,6 +3,7 @@ import { defaultNewExecution } from 'editor/interfaces';
 import {
   simulationByIdSelector,
   executionByIdSelector,
+  selectedSimulationSelector,
   selectedExecutionSelector,
   executionValid,
 } from 'editor/modules/selectors';
@@ -119,8 +120,9 @@ export function* startNewExecutionSaga({ payload: { simulationId } }) {
 }
 
 export function* finishNewExecutionSaga() {
+  const simulation = yield select(selectedSimulationSelector);
   const execution = yield select(selectedExecutionSelector);
-  yield put(saveNewExecution({ execution }));
+  yield put(saveNewExecution({ sourceId: simulation.sourceId, execution }));
   yield take([saveNewExecutionSucceeded, saveNewExecutionFailed]);
   yield delay(animationDelay);
   yield put(newExecutionFinished());

@@ -16,8 +16,12 @@ import {
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
+  saveExecution,
+  saveExecutionSucceeded,
   saveNewExecution,
   saveNewExecutionSucceeded,
+  saveRendering,
+  saveRenderingSucceeded,
   saveNewRendering,
   saveNewRenderingSucceeded,
 } from 'editor/modules/actions/data';
@@ -94,8 +98,26 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
   yield put(saveNewSimulationSucceeded(newSimulation));
 }
 
-export function* saveNewExecutionSaga({ payload: { execution } }) {
-  debug('saveNewExecutionSaga', { execution });
+export function* saveExecutionSaga({ payload: { executionId, simulationId, sourceId, changes } }) {
+  debug('saveExecutionSaga', { executionId, simulationId, sourceId, changes });
+
+  const modified = Date.now();
+  const simulations = mockSimulationsData[sourceId];
+  const simulation = simulations.find(s => s.id === simulationId);
+  let execution = simulation.executions.find(e => e.id === executionId);
+
+  // just mock data, don't have to be immutable
+  execution = {
+    ...execution,
+    ...changes,
+    modified,
+  };
+
+  yield put(saveExecutionSucceeded(execution));
+}
+
+export function* saveNewExecutionSaga({ payload: { sourceId, execution } }) {
+  debug('saveNewExecutionSaga', { sourceId, execution });
 
   const created = Date.now();
   const { isNew, ...props } = execution;
@@ -105,14 +127,36 @@ export function* saveNewExecutionSaga({ payload: { execution } }) {
     modified: created,
     renderings: [],
   };
-  // const simulations = mockSimulationsData[sourceId] || [];
-  // mockSimulationsData[sourceId] = [...simulations, newSimulation];
+  const simulations = mockSimulationsData[sourceId];
+  const simulation = simulations.find(s => s.id === execution.simulationId);
+  simulation.executions = [...simulation.executions, newExecution];
 
   yield put(saveNewExecutionSucceeded(newExecution));
 }
 
-export function* saveNewRenderingSaga({ payload: { rendering } }) {
-  debug('saveNewRenderingSaga', { rendering });
+export function* saveRenderingSaga({
+  payload: { renderingId, executionId, simulationId, sourceId, changes },
+}) {
+  debug('saveRenderingSaga', { renderingId, executionId, simulationId, sourceId, changes });
+
+  const modified = Date.now();
+  const simulations = mockSimulationsData[sourceId];
+  const simulation = simulations.find(s => s.id === simulationId);
+  const execution = simulation.executions.find(e => e.id === executionId);
+  let rendering = execution.renderings.find(r => r.id === renderingId);
+
+  // just mock data, don't have to be immutable
+  rendering = {
+    ...rendering,
+    ...changes,
+    modified,
+  };
+
+  yield put(saveRenderingSucceeded(rendering));
+}
+
+export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {
+  debug('saveNewRenderingSaga', { sourceId, rendering });
 
   const created = Date.now();
   const { isNew, ...props } = rendering;
@@ -121,8 +165,10 @@ export function* saveNewRenderingSaga({ payload: { rendering } }) {
     created,
     modified: created,
   };
-  // const simulations = mockSimulationsData[sourceId] || [];
-  // mockSimulationsData[sourceId] = [...simulations, newSimulation];
+  const simulations = mockSimulationsData[sourceId];
+  const simulation = simulations.find(s => s.id === rendering.simulationId);
+  const execution = simulation.executions.find(e => e.id === rendering.executionId);
+  execution.renderings = [...execution.renderings, newRendering];
 
   yield put(saveNewRenderingSucceeded(newRendering));
 }
@@ -156,7 +202,9 @@ export default function* dataRootSaga() {
     takeEvery(saveNewSimulation, saveNewSimulationSaga),
     takeEvery(deleteSimulation, deleteSimulationSaga),
     takeEvery(saveHikes, saveHikesSaga),
+    takeEvery(saveExecution, saveExecutionSaga),
     takeEvery(saveNewExecution, saveNewExecutionSaga),
+    takeEvery(saveRendering, saveRenderingSaga),
     takeEvery(saveNewRendering, saveNewRenderingSaga),
   ]);
 }

@@ -120,6 +120,7 @@ const View = (props: IProps) => {
   const selectedSimulation = useSelector(selectedSimulationSelector);
 
   const { editMode, newMode } = props;
+  debug('View', { editMode, newMode, simulationsLoading, selectedSimulation });
   const editable = editMode || newMode;
   const classes = useStyles();
   const dispatch = useDispatch();

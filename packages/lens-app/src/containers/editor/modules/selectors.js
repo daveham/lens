@@ -21,7 +21,6 @@ export const renderingByIdSelector = (state, simulationId, executionId, id) => {
 };
 
 export const operationPendingSelector = state => state.editor.operationPending;
-export const operationEndedSelector = state => state.editor.operationEnded;
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
 

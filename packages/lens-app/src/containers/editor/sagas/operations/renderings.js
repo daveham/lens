@@ -62,7 +62,10 @@ function* validateRenderingSaga() {
 }
 
 // same saga for starting new, edit, delete rendering operations
-export function* startRenderingOperationSaga({ type, payload: { simulationId, executionId, renderingId } }) {
+export function* startRenderingOperationSaga({
+  type,
+  payload: { simulationId, executionId, renderingId },
+}) {
   yield delay(animationDelay);
   const rendering = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
   yield put(setSelectedRendering(rendering));
@@ -79,7 +82,12 @@ export function* startRenderingOperationSaga({ type, payload: { simulationId, ex
 export function* finishEditRenderingSaga({ payload: { simulationId, executionId, renderingId } }) {
   debug('finishEditRenderingSaga', { simulationId, executionId });
   const changedRendering = yield select(selectedRenderingSelector);
-  const originalRendering = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
+  const originalRendering = yield select(
+    renderingByIdSelector,
+    simulationId,
+    executionId,
+    renderingId,
+  );
   if (!originalRendering || originalRendering.id !== changedRendering.id) {
     debug('finishEditRenderingSaga - changed rendering id not the expected id');
   } else {
@@ -97,9 +105,11 @@ export function* finishEditRenderingSaga({ payload: { simulationId, executionId,
   yield put(editRenderingFinished());
 }
 
-export function* finishDeleteRenderingSaga({ payload: { simulationId, executionId, renderingId } }) {
-  debug('finishDeleteRenderingSaga', { simulationId, executionId, renderingId });
+export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
+  debug('finishDeleteRenderingSaga', { renderingId });
 
+  const rendering = yield select(selectedRenderingSelector);
+  const { simulationId, executionId } = rendering;
   const simulation = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
@@ -120,7 +130,14 @@ export function* startNewRenderingSaga({ payload: { simulationId, executionId } 
 
 export function* finishNewRenderingSaga() {
   const rendering = yield select(selectedRenderingSelector);
-  yield put(saveNewRendering({ rendering }));
+  const simulation = yield select(simulationByIdSelector, rendering.simulationId);
+  debug('finishNewRenderingSaga', { simulation, rendering });
+  yield put(
+    saveNewRendering({
+      sourceId: simulation.sourceId,
+      rendering,
+    }),
+  );
   yield take([saveNewRenderingSucceeded, saveNewRenderingFailed]);
   yield delay(animationDelay);
   yield put(newRenderingFinished());

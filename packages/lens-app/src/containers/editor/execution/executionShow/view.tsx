@@ -46,9 +46,9 @@ const View = (props: IProps) => {
   const simulationsLoading = useSelector(simulationsLoadingSelector);
 
   const selectedExecution = useSelector(selectedExecutionSelector);
-  debug('View', { simulationsLoading, selectedExecution });
 
   const { editMode, newMode } = props;
+  debug('View', { editMode, newMode, simulationsLoading, selectedExecution });
   const editable = editMode || newMode;
   const dispatch = useDispatch();
   const classes = useStyles();

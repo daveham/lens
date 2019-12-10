@@ -53,7 +53,11 @@ import {
   saveHikesSucceeded,
   deleteSimulationSucceeded,
   saveExecutionSucceeded,
+  saveNewExecutionSucceeded,
+  deleteExecutionSucceeded,
   saveRenderingSucceeded,
+  saveNewRenderingSucceeded,
+  deleteRenderingSucceeded,
 } from './actions/data';
 import {
   setSelectedSimulation,
@@ -119,8 +123,48 @@ const simulations = handleActions(
       );
     },
     [saveNewSimulationSucceeded]: (state, { payload }) => [...state, payload],
+    [saveNewExecutionSucceeded]: (state, { payload }) => {
+      const simulation = state.find(s => s.id === payload.simulationId);
+      const changedExecutions = [...simulation.executions, payload];
+      return state.map(s =>
+        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
+    [saveNewRenderingSucceeded]: (state, { payload }) => {
+      const simulation = state.find(s => s.id === payload.simulationId);
+      const execution = simulation.executions.find(e => e.id === payload.executionId);
+      const changedRenderings = [...execution.renderings, payload];
+      const changedExecutions = simulation.executions.map(e =>
+        e.id === payload.executionId ? { ...execution, renderings: changedRenderings } : e,
+      );
+      return state.map(s =>
+        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
     [deleteSimulationSucceeded]: (state, { payload: { simulationId } }) =>
       state.filter(s => s.id !== simulationId),
+    [deleteExecutionSucceeded]: (state, { payload: { executionId, simulationId } }) => {
+      const simulation = state.find(s => s.id === simulationId);
+      const changedExecutions = simulation.executions.filter(e => e.id !== executionId);
+      return state.map(s =>
+        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
+    [deleteRenderingSucceeded]: (
+      state,
+      { payload: { renderingId, executionId, simulationId } },
+    ) => {
+      const simulation = state.find(s => s.id === simulationId);
+      const execution = simulation.executions.find(e => e.id === executionId);
+      const changedRenderings = execution.renderings.filter(r => r.id !== renderingId);
+      const changedExecution = { ...execution, renderings: changedRenderings };
+      const changedExecutions = simulation.executions.map(e =>
+        e.id === executionId ? changedExecution : e,
+      );
+      return state.map(s =>
+        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
   },
   initialSimulationsState,
 );

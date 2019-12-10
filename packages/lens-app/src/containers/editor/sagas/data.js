@@ -12,7 +12,7 @@ import {
   // saveNewSimulationFailed,
   deleteSimulation,
   deleteSimulationSucceeded,
-  // deleteSimulationFailed,
+  deleteSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
   // saveHikesFailed,
@@ -20,10 +20,16 @@ import {
   saveExecutionSucceeded,
   saveNewExecution,
   saveNewExecutionSucceeded,
+  deleteExecution,
+  deleteExecutionSucceeded,
+  deleteExecutionFailed,
   saveRendering,
   saveRenderingSucceeded,
   saveNewRendering,
   saveNewRenderingSucceeded,
+  deleteRendering,
+  deleteRenderingSucceeded,
+  deleteRenderingFailed,
 } from 'editor/modules/actions/data';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
@@ -181,12 +187,17 @@ export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
   debug('deleteSimulationSaga', { sourceId, simulationId });
 
   const simulations = mockSimulationsData[sourceId] || [];
-  mockSimulationsData[sourceId] = simulations.map(s =>
-    s.id === simulationId ? { ...s, isDeleted: true } : s,
-  );
-
+  const simulation = simulations.find(s => s.id === simulationId);
   yield delay(0);
-  yield put(deleteSimulationSucceeded({ simulationId }));
+  if (simulation) {
+    simulation.isDeleted = true;
+    // mockSimulationsData[sourceId] = simulations.map(s =>
+    //   s.id === simulationId ? { ...s, isDeleted: true } : s,
+    // );
+    yield put(deleteSimulationSucceeded({ simulationId }));
+    return;
+  }
+  yield put(deleteSimulationFailed({ simulationId }));
 }
 
 export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
@@ -196,6 +207,43 @@ export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
   mockHikesData[simulationId] = updatedHikes;
 
   yield put(saveHikesSucceeded(updatedHikes));
+}
+
+export function* deleteExecutionSaga({ payload: { executionId, simulationId, sourceId } }) {
+  debug('deleteExecutionSaga', { sourceId, simulationId, executionId });
+
+  const simulations = mockSimulationsData[sourceId] || [];
+  const simulation = simulations.find(s => s.id === simulationId);
+  yield delay(0);
+  if (simulation) {
+    const execution = simulation.executions.find(e => e.id === executionId);
+    if (execution) {
+      execution.isDeleted = true;
+      yield put(deleteExecutionSucceeded({ executionId, simulationId }));
+      return;
+    }
+  }
+  yield put(deleteExecutionFailed({ executionId, simulationId }));
+}
+
+export function* deleteRenderingSaga({ payload: { renderingId, executionId, simulationId, sourceId } }) {
+  debug('deleteRenderingSaga', { sourceId, simulationId, executionId, renderingId });
+
+  const simulations = mockSimulationsData[sourceId] || [];
+  const simulation = simulations.find(s => s.id === simulationId);
+  yield delay(0);
+  if (simulation) {
+    const execution = simulation.executions.find(e => e.id === executionId);
+    if (execution) {
+      const rendering = execution.renderings.find(r => r.id === renderingId);
+      if (rendering) {
+        rendering.isDeleted = true;
+        yield put(deleteRenderingSucceeded({ renderingId, executionId, simulationId }));
+        return;
+      }
+    }
+  }
+  yield put(deleteRenderingFailed({ renderingId, executionId, simulationId }));
 }
 
 export default function* dataRootSaga() {
@@ -208,7 +256,9 @@ export default function* dataRootSaga() {
     takeEvery(saveHikes, saveHikesSaga),
     takeEvery(saveExecution, saveExecutionSaga),
     takeEvery(saveNewExecution, saveNewExecutionSaga),
+    takeEvery(deleteExecution, deleteExecutionSaga),
     takeEvery(saveRendering, saveRenderingSaga),
     takeEvery(saveNewRendering, saveNewRenderingSaga),
+    takeEvery(deleteRendering, deleteRenderingSaga),
   ]);
 }

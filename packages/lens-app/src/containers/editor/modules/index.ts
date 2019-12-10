@@ -52,6 +52,8 @@ import {
   saveNewSimulationSucceeded,
   saveHikesSucceeded,
   deleteSimulationSucceeded,
+  saveExecutionSucceeded,
+  saveRenderingSucceeded,
 } from './actions/data';
 import {
   setSelectedSimulation,
@@ -91,8 +93,31 @@ const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [receiveSimulationsForSource]: (state, { payload }) => payload,
-    [saveSimulationSucceeded]: (state, { payload }) =>
-      state.map(s => (s.id === payload.id ? payload : s)),
+    [saveSimulationSucceeded]: (state, { payload: { simulation } }) =>
+      state.map(s => (s.id === simulation.id ? simulation : s)),
+    [saveExecutionSucceeded]: (state, { payload: { simulationId, execution } }) => {
+      const simulation = state.find(s => s.id === simulationId);
+      const changedExecutions = simulation.executions.map(e =>
+        e.id === execution.id ? execution : e,
+      );
+      return state.map(s =>
+        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
+    [saveRenderingSucceeded]: (state, { payload: { simulationId, executionId, rendering } }) => {
+      const simulation = state.find(s => s.id === simulationId);
+      const execution = simulation.executions.find(e => e.id === executionId);
+      const changedRenderings = execution.renderings.map(r =>
+        r.id === rendering.id ? rendering : r,
+      );
+      const changedExecution = { ...execution, renderings: changedRenderings };
+      const changedExecutions = simulation.executions.map(e =>
+        e.id === executionId ? changedExecution : e,
+      );
+      return state.map(s =>
+        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+      );
+    },
     [saveNewSimulationSucceeded]: (state, { payload }) => [...state, payload],
     [deleteSimulationSucceeded]: (state, { payload: { simulationId } }) =>
       state.filter(s => s.id !== simulationId),

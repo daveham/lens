@@ -85,7 +85,8 @@ export function* finishEditExecutionSaga({ payload: { simulationId, executionId 
     debug('finishEditExecutionSaga - changed execution id not the expected id');
   } else {
     const changes = {};
-    const { sourceId } = originalExecution;
+    const simulation = yield select(simulationByIdSelector, simulationId);
+    const { sourceId } = simulation;
     if (changedExecution.name !== originalExecution.name) {
       changes.name = changedExecution.name;
     }

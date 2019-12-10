@@ -77,7 +77,7 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
     s.id === simulationId ? changedSimulation : s,
   );
 
-  yield put(saveSimulationSucceeded(changedSimulation));
+  yield put(saveSimulationSucceeded({ simulation: changedSimulation }));
 }
 
 export function* saveNewSimulationSaga({ payload: { simulation } }) {
@@ -113,7 +113,9 @@ export function* saveExecutionSaga({ payload: { executionId, simulationId, sourc
     modified,
   };
 
-  yield put(saveExecutionSucceeded(execution));
+  simulation.executions = simulation.executions.map(e => (e.id === executionId ? execution : e));
+
+  yield put(saveExecutionSucceeded({ simulationId, execution }));
 }
 
 export function* saveNewExecutionSaga({ payload: { sourceId, execution } }) {
@@ -152,7 +154,9 @@ export function* saveRenderingSaga({
     modified,
   };
 
-  yield put(saveRenderingSucceeded(rendering));
+  execution.renderings = execution.renderings.map(r => (r.id === renderingId ? rendering : r));
+
+  yield put(saveRenderingSucceeded({ simulationId, executionId, rendering }));
 }
 
 export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {

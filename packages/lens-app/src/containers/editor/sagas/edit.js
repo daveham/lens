@@ -8,6 +8,8 @@ import {
   changeTrailList,
   changeHiker,
   changeHikerList,
+  changeExecution,
+  changeRendering,
   EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
 } from 'editor/modules/actions/sagas';
 
@@ -22,10 +24,13 @@ import {
   addHiker,
   updateHiker,
   updateHikers,
+  updateSelectedExecution,
+  updateSelectedRendering,
   editorActionValid,
 } from 'editor/modules/actions/ui';
 
-import { simulationAndDataValid } from 'editor/modules/selectors';
+import { simulationAndDataValid, executionValid, renderingValid, selectedSimulationSelector,
+selectedExecutionSelector, selectedRenderingSelector } from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:sagas:edit');
@@ -69,6 +74,14 @@ const hikerRules = {
   name: nameRequiredRule,
 };
 
+const executionRules = {
+  name: nameRequiredRule,
+};
+
+const renderingRules = {
+  name: nameRequiredRule,
+};
+
 const getValidationRulesForChanges = (rulesByKey, changes) =>
   Object.keys(changes).reduce((ac, key) => {
     if (rulesByKey[key]) {
@@ -97,7 +110,7 @@ const evaluateValidationRules = (current, rules) => {
 export function* changeSimulationSaga({ payload: { changes } }) {
   yield put(updateSelectedSimulation(changes));
 
-  const current = yield select(state => state.editor.simulation);
+  const current = yield select(selectedSimulationSelector);
 
   const rules = getValidationRulesForChanges(simulationRules, changes);
   const validationChanges = evaluateValidationRules(current, rules);
@@ -172,6 +185,30 @@ export function* changeHikerListSaga({ payload: { hikeId, trailId, items, remove
   }
 }
 
+export function* changeExecutionSaga({ payload: { changes } }) {
+  yield put(updateSelectedExecution(changes));
+
+  const current = yield select(selectedExecutionSelector);
+
+  const rules = getValidationRulesForChanges(executionRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateSelectedExecution(validationChanges));
+  }
+}
+
+export function* changeRenderingSaga({ payload: { changes } }) {
+  yield put(updateSelectedRendering(changes));
+
+  const current = yield select(selectedRenderingSelector);
+
+  const rules = getValidationRulesForChanges(renderingRules, changes);
+  const validationChanges = evaluateValidationRules(current, rules);
+  if (Object.keys(validationChanges).length > 0) {
+    yield put(updateSelectedRendering(validationChanges));
+  }
+}
+
 // This way starts a saga for each action/handler.
 // export default function* editSaga() {
 //   yield all([
@@ -196,7 +233,7 @@ const changeMap = {
   [changeHikerList]: changeHikerListSaga,
 };
 
-export function* changeSwitchSaga(action) {
+export function* changeAndValidateSimulationDataSwitchSaga(action) {
   const handler = changeMap[action.type];
   if (handler) {
     yield call(handler, action);
@@ -205,11 +242,25 @@ export function* changeSwitchSaga(action) {
   }
 }
 
+export function* changeAndValidateExecutionSaga(action) {
+  yield call(changeExecutionSaga, action);
+  const isValid = yield select(executionValid);
+  yield put(editorActionValid(isValid));
+}
+
+export function* changeAndValidateRenderingSaga(action) {
+  yield call(changeRenderingSaga, action);
+  const isValid = yield select(renderingValid);
+  yield put(editorActionValid(isValid));
+}
+
 export default function* editRootSaga() {
   yield all([
     takeEvery(
       action => !!(action.type && action.type.startsWith(EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS)),
-      changeSwitchSaga,
+      changeAndValidateSimulationDataSwitchSaga,
     ),
+    takeEvery(changeExecution, changeAndValidateExecutionSaga),
+    takeEvery(changeRendering, changeAndValidateRenderingSaga),
   ]);
 }

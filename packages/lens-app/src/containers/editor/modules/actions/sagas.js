@@ -9,8 +9,6 @@ export const {
   changeTrailList,
   changeHiker,
   changeHikerList,
-  changeExecution,
-  changeRendering,
 } = createActions(
   'CHANGE_SIMULATION',
   'CHANGE_HIKE',
@@ -19,9 +17,17 @@ export const {
   'CHANGE_TRAIL_LIST',
   'CHANGE_HIKER',
   'CHANGE_HIKER_LIST',
-  'CHANGE_EXECUTION',
-  'CHANGE_RENDERING',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_SAGAS,
   },
 );
+
+export const EDITOR_ACTIONS_PREFIX_EXECUTION_SAGAS = 'editor-execution-sagas';
+export const { changeExecution } = createActions('CHANGE_EXECUTION', {
+  prefix: EDITOR_ACTIONS_PREFIX_EXECUTION_SAGAS,
+});
+
+export const EDITOR_ACTIONS_PREFIX_RENDERING_SAGAS = 'editor-rendering-sagas';
+export const { changeRendering } = createActions('CHANGE_RENDERING', {
+  prefix: EDITOR_ACTIONS_PREFIX_RENDERING_SAGAS,
+});

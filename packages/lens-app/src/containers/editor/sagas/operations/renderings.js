@@ -92,7 +92,8 @@ export function* finishEditRenderingSaga({ payload: { simulationId, executionId,
     debug('finishEditRenderingSaga - changed rendering id not the expected id');
   } else {
     const changes = {};
-    const { sourceId } = originalRendering;
+    const simulation = yield select(simulationByIdSelector, simulationId);
+    const { sourceId } = simulation;
     if (changedRendering.name !== originalRendering.name) {
       changes.name = changedRendering.name;
     }

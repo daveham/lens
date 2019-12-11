@@ -1,3 +1,5 @@
+import clonedeep from 'lodash.clonedeep';
+
 import { all, delay, put, takeEvery } from '@redux-saga/core/effects';
 import {
   requestHikes,
@@ -46,7 +48,7 @@ export function* readSimulationsForSourceSaga({ payload: { sourceId } }) {
     mockSimulations = generateMockSimulationsData(sourceId);
     mockSimulationsData[sourceId] = mockSimulations;
   }
-  yield put(receiveSimulationsForSource(mockSimulations.filter(s => !s.isDeleted)));
+  yield put(receiveSimulationsForSource(clonedeep(mockSimulations.filter(s => !s.isDeleted))));
 
   // yield* apiSaga(invokeRestService,
   //   [ `/simulations/${payload}` ],
@@ -64,7 +66,7 @@ export function* readHikesSaga({ payload: { simulationId } }) {
     mockHikes = generateMockHikesData(simulationId);
     mockHikesData[simulationId] = mockHikes;
   }
-  yield put(receiveHikes(mockHikes));
+  yield put(receiveHikes(clonedeep(mockHikes)));
 }
 
 export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes } }) {
@@ -83,7 +85,7 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
     s.id === simulationId ? changedSimulation : s,
   );
 
-  yield put(saveSimulationSucceeded({ simulation: changedSimulation }));
+  yield put(saveSimulationSucceeded({ simulation: clonedeep(changedSimulation) }));
 }
 
 export function* saveNewSimulationSaga({ payload: { simulation } }) {
@@ -101,7 +103,7 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
   const simulations = mockSimulationsData[sourceId] || [];
   mockSimulationsData[sourceId] = [...simulations, newSimulation];
 
-  yield put(saveNewSimulationSucceeded(newSimulation));
+  yield put(saveNewSimulationSucceeded(clonedeep(newSimulation)));
 }
 
 export function* saveExecutionSaga({ payload: { executionId, simulationId, sourceId, changes } }) {
@@ -121,7 +123,7 @@ export function* saveExecutionSaga({ payload: { executionId, simulationId, sourc
 
   simulation.executions = simulation.executions.map(e => (e.id === executionId ? execution : e));
 
-  yield put(saveExecutionSucceeded({ simulationId, execution }));
+  yield put(saveExecutionSucceeded({ simulationId, execution: clonedeep(execution) }));
 }
 
 export function* saveNewExecutionSaga({ payload: { sourceId, execution } }) {
@@ -139,7 +141,7 @@ export function* saveNewExecutionSaga({ payload: { sourceId, execution } }) {
   const simulation = simulations.find(s => s.id === execution.simulationId);
   simulation.executions = [...simulation.executions, newExecution];
 
-  yield put(saveNewExecutionSucceeded(newExecution));
+  yield put(saveNewExecutionSucceeded(clonedeep(newExecution)));
 }
 
 export function* saveRenderingSaga({
@@ -162,7 +164,7 @@ export function* saveRenderingSaga({
 
   execution.renderings = execution.renderings.map(r => (r.id === renderingId ? rendering : r));
 
-  yield put(saveRenderingSucceeded({ simulationId, executionId, rendering }));
+  yield put(saveRenderingSucceeded({ simulationId, executionId, rendering: clonedeep(rendering) }));
 }
 
 export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {
@@ -180,7 +182,7 @@ export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {
   const execution = simulation.executions.find(e => e.id === rendering.executionId);
   execution.renderings = [...execution.renderings, newRendering];
 
-  yield put(saveNewRenderingSucceeded(newRendering));
+  yield put(saveNewRenderingSucceeded(clonedeep(newRendering)));
 }
 
 export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
@@ -206,7 +208,7 @@ export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
   const updatedHikes = [...hikes];
   mockHikesData[simulationId] = updatedHikes;
 
-  yield put(saveHikesSucceeded(updatedHikes));
+  yield put(saveHikesSucceeded(clonedeep(updatedHikes)));
 }
 
 export function* deleteExecutionSaga({ payload: { executionId, simulationId, sourceId } }) {

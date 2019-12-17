@@ -2,6 +2,8 @@ import { createActions } from 'redux-actions';
 
 export const EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT = 'editor-simulation-edit';
 export const {
+  setErrorMessage,
+  clearErrorMessage,
   setSelectedSimulation,
   updateSelectedSimulation,
   addHike,
@@ -18,6 +20,8 @@ export const {
   setSelectedRendering,
   updateSelectedRendering,
 } = createActions(
+  'SET_ERROR_MESSAGE',
+  'CLEAR_ERROR_MESSAGE',
   'SET_SELECTED_SIMULATION',
   'UPDATE_SELECTED_SIMULATION',
   'ADD_HIKE',

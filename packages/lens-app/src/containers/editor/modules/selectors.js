@@ -20,6 +20,8 @@ export const renderingByIdSelector = (state, simulationId, executionId, id) => {
   return execution ? execution.renderings.find(r => r.id === id) : execution;
 };
 
+export const errorMessageSelector = state => state.editor.errorMessage;
+
 export const operationPendingSelector = state => state.editor.operationPending;
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;

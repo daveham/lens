@@ -123,6 +123,7 @@ const determineItems = (simulations, simulationId, executionId, renderingId, act
 const checkOperationStart = (
   dispatch,
   activeItem,
+  sourceId,
   simulationId,
   executionId,
   renderingId,
@@ -144,7 +145,7 @@ const checkOperationStart = (
         );
         break;
       default:
-        dispatch(reduxActionForStartOperation(activeItem, action, { simulationId }));
+        dispatch(reduxActionForStartOperation(activeItem, action, { sourceId, simulationId }));
     }
   }
 };
@@ -183,6 +184,7 @@ const EditorGuideView = ({
         checkOperationStart(
           dispatch,
           activeItem,
+          sourceId,
           resolvedSimulationId,
           resolvedExecutionId,
           resolvedRenderingId,
@@ -194,6 +196,7 @@ const EditorGuideView = ({
   }, [
     history.location.pathname,
     dispatch,
+    sourceId,
     activeItem,
     resolvedSimulationId,
     resolvedExecutionId,

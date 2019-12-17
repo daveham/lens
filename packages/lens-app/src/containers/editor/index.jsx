@@ -1,6 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import Snackbar from '@material-ui/core/Snackbar';
+import { errorMessageSelector } from 'editor/modules/selectors';
 import { makeStyles } from '@material-ui/core/styles';
+import { clearErrorMessage } from 'editor/modules/actions/ui';
 
 import Guide from './guide';
 import Simulation from './simulation';
@@ -30,6 +34,14 @@ const useStyles = makeStyles((theme) => ({
 
 const SimulationRouteSwitch = ({ match: { path } }) => {
   debug('SimulationRouteSwitch', { path });
+
+  const errorMessage = useSelector(errorMessageSelector);
+  const dispatch = useDispatch();
+
+  const handleCloseSnackbar = () => {
+    dispatch(clearErrorMessage());
+  };
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -56,6 +68,16 @@ const SimulationRouteSwitch = ({ match: { path } }) => {
           <Route path={`${path}/:simulationId?/:action?`} component={Simulation} />
         </Switch>
       </div>
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={Boolean(errorMessage)}
+        autoHideDuration={4000}
+        message={errorMessage}
+        onClose={handleCloseSnackbar}
+      />
     </div>
   );
 };

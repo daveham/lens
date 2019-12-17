@@ -50,6 +50,7 @@ import {
   requestHikesFailed,
   saveSimulationSucceeded,
   saveNewSimulationSucceeded,
+  saveNewSimulationFailed,
   saveHikesSucceeded,
   deleteSimulationSucceeded,
   saveExecutionSucceeded,
@@ -60,6 +61,8 @@ import {
   deleteRenderingSucceeded,
 } from './actions/data';
 import {
+  setErrorMessage,
+  clearErrorMessage,
   setSelectedSimulation,
   updateSelectedSimulation,
   addHike,
@@ -85,6 +88,21 @@ import { IHike, ISimulation } from 'editor/interfaces';
 // const debug = _debug('lens:editor:modules:reducers');
 
 // reducers
+const emptyErrorMessage = '';
+const errorMessage = handleActions(
+  {
+    [clearErrorMessage]: () => emptyErrorMessage,
+    [combineActions(setErrorMessage, saveNewSimulationFailed)]: (state, { payload }) => {
+      const { message } = payload;
+      if (message) {
+        return message;
+      }
+      return payload.toString();
+    },
+  },
+  emptyErrorMessage,
+);
+
 const simulationsLoading = handleActions(
   {
     [requestSimulationsForSource]: () => true,
@@ -407,6 +425,7 @@ const active = handleActions(
 );
 
 const editorModuleReducer = combineReducers({
+  errorMessage,
   simulationsLoading,
   simulations,
   hikesLoading,

@@ -1,6 +1,6 @@
 import clonedeep from 'lodash.clonedeep';
 
-import { all, delay, put, takeEvery } from '@redux-saga/core/effects';
+import { all, delay, put, select, takeEvery } from '@redux-saga/core/effects';
 import { restApiSaga } from 'sagas/utils';
 import {
   requestHikes,
@@ -35,6 +35,7 @@ import {
   deleteRenderingSucceeded,
   deleteRenderingFailed,
 } from 'editor/modules/actions/data';
+import { simulationByIdSelector } from 'editor/modules/selectors';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
 import _debug from 'debug';
@@ -79,20 +80,30 @@ export function* readHikesSaga({ payload: { simulationId } }) {
 export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes } }) {
   debug('saveSimulationSaga', { simulationId, sourceId, changes });
 
-  const modified = Date.now();
-  const simulations = mockSimulationsData[sourceId];
-  const simulation = simulations.find(s => s.id === simulationId);
+  if (useMockData) {
+    const modified = Date.now();
+    const simulations = mockSimulationsData[sourceId];
+    const simulation = simulations.find(s => s.id === simulationId);
 
-  const changedSimulation = {
-    ...simulation,
-    ...changes,
-    modified,
-  };
-  mockSimulationsData[sourceId] = simulations.map(s =>
-    s.id === simulationId ? changedSimulation : s,
-  );
+    const changedSimulation = {
+      ...simulation,
+      ...changes,
+      modified,
+    };
+    mockSimulationsData[sourceId] = simulations.map(s =>
+      s.id === simulationId ? changedSimulation : s,
+    );
 
-  yield put(saveSimulationSucceeded({ simulation: clonedeep(changedSimulation) }));
+    yield put(saveSimulationSucceeded(clonedeep(changedSimulation)));
+  } else {
+    const originalSimulation = yield select(simulationByIdSelector, simulationId);
+    const body = { changes };
+    yield* restApiSaga(
+      [`/simulations/${simulationId}`, { method: 'PUT', body }],
+      payload => saveSimulationSucceeded({ ...payload, executions: originalSimulation.executions }),
+      saveNewSimulationFailed,
+    );
+  }
 }
 
 export function* saveNewSimulationSaga({ payload: { simulation } }) {
@@ -113,7 +124,8 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
 
     yield put(saveNewSimulationSucceeded(clonedeep(newSimulation)));
   } else {
-    const body = { simulation };
+    const { executions: ignored, storedValues } = simulation;
+    const body = { simulation: { ...storedValues } };
     yield* restApiSaga(
       ['/simulations', { method: 'POST', body }],
       payload => saveNewSimulationSucceeded({ ...payload, executions: [] }),

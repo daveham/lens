@@ -32,7 +32,7 @@ export function addRoutes(server, dataManager) {
 
   const putSimulation = (req, res, next) => {
     const { simulationId } = req.params;
-    const changes = req.body;
+    const { changes } = req.body;
     debug('put simulations', { simulationId, changes });
     dataManager.updateSimulation(simulationId, changes)
       .then(data => {

@@ -29,8 +29,14 @@ import {
   editorActionValid,
 } from 'editor/modules/actions/ui';
 
-import { simulationAndDataValid, executionValid, renderingValid, selectedSimulationSelector,
-selectedExecutionSelector, selectedRenderingSelector } from 'editor/modules/selectors';
+import {
+  simulationAndDataValid,
+  executionValid,
+  renderingValid,
+  selectedSimulationSelector,
+  selectedExecutionSelector,
+  selectedRenderingSelector,
+} from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor:sagas:edit');

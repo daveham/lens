@@ -122,7 +122,10 @@
     "styleguide:build": "styleguidist build"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^[iI]gnored" }]
+    }
   },
   "browserslist": {
     "production": [

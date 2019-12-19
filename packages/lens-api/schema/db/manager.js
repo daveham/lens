@@ -21,33 +21,33 @@ class Manager {
       created: createdOn,
       modified: createdOn,
     };
-    return this.db.simulations.put(key, simulation)
+    return this.db.simulations
+      .put(key, simulation)
       .then(() => this.db.simulationsSourceIdx.put([sourceId, key], key))
       .then(() => simulation);
   }
 
   getSimulation(id, deep = true) {
-    return this.db.simulations.get(id)
-      .then(simulation => {
-        return deep
-          ? this.getExecutions(simulation.id)
-            .then(executions => ({
+    return this.db.simulations
+      .get(id)
+      .then(simulation =>
+        deep
+          ? this.getExecutions(simulation.id).then(executions => ({
               ...simulation,
               executions,
               executionsCount: executions.length,
             }))
-          : simulation;
-      })
+          : simulation,
+      )
       .catch(err => {
         debug('getSimulation', err.toString());
       });
   }
 
   getSimulationIndex(sourceId, simulationId) {
-    return this.db.simulationsSourceIdx.get([sourceId, simulationId])
-      .catch(err => {
-        debug('getSimulationIndex', err.toString());
-      });
+    return this.db.simulationsSourceIdx.get([sourceId, simulationId]).catch(err => {
+      debug('getSimulationIndex', err.toString());
+    });
   }
 
   addExecutionsToSimulationStreamItem(err, simulation, push, next) {
@@ -94,28 +94,30 @@ class Manager {
     debug('getSimulations', { cb });
     return cb
       ? this.getSimulationsStream().toArray(cb)
-      : this.getSimulationsStream().collect().toPromise(Promise);
+      : this.getSimulationsStream()
+          .collect()
+          .toPromise(Promise);
   }
 
   getSimulationsForSource(sourceId, cb) {
     debug('getSimulationsForSource', { sourceId, cb });
     return cb
       ? this.getSimulationsForSourceStream(sourceId).toArray(cb)
-      : this.getSimulationsForSourceStream(sourceId).collect().toPromise(Promise);
+      : this.getSimulationsForSourceStream(sourceId)
+          .collect()
+          .toPromise(Promise);
   }
 
   updateSimulation(id, changes) {
     const modified = Date.now();
-    return this.getSimulation(id)
-      .then(simulation => {
-        const newSimulation = {
-          ...simulation,
-          ...changes,
-          modified,
-        };
-        return this.db.simulations.put(id, newSimulation)
-          .then(() => newSimulation);
-      });
+    return this.getSimulation(id, false).then(simulation => {
+      const newSimulation = {
+        ...simulation,
+        ...changes,
+        modified,
+      };
+      return this.db.simulations.put(id, newSimulation).then(() => newSimulation);
+    });
   }
 
   addExecution({ id, simulationId, created, ...other }) {
@@ -128,17 +130,18 @@ class Manager {
       created: createdOn,
       modified: createdOn,
     };
-    return this.db.executions.put(key, execution)
+    return this.db.executions
+      .put(key, execution)
       .then(() => this.db.executionsSimulationIdx.put([simulationId, key], key))
       .then(() => execution);
   }
 
   getExecution(id, deep = true) {
-    return this.db.executions.get(id)
+    return this.db.executions
+      .get(id)
       .then(execution => {
         return deep
-          ? this.getRenderings(execution.id)
-            .then(renderings => ({
+          ? this.getRenderings(execution.id).then(renderings => ({
               ...execution,
               renderings,
               renderingsCount: renderings.length,
@@ -151,10 +154,9 @@ class Manager {
   }
 
   getExecutionIndex(simulationId, executionId) {
-    return this.db.executionsSimulationIdx.get([simulationId, executionId])
-      .catch(err => {
-        debug('getExecutionIndex', err.toString());
-      });
+    return this.db.executionsSimulationIdx.get([simulationId, executionId]).catch(err => {
+      debug('getExecutionIndex', err.toString());
+    });
   }
 
   addRenderingsToExecutionStreamItem(err, execution, push, next) {
@@ -194,26 +196,36 @@ class Manager {
     debug('getExecutions', { simulationId, cb });
     return cb
       ? this.getExecutionsStream(simulationId).toArray(cb)
-      : this.getExecutionsStream(simulationId).collect().toPromise(Promise);
+      : this.getExecutionsStream(simulationId)
+          .collect()
+          .toPromise(Promise);
   }
 
   deleteExecution(id) {
     return this.getRenderings(id)
-      .then(rows => Promise.all([
-        this.db.renderingsExecutionIdx.batch(rows.map((rendering) => ({
-          type: 'del',
-          key: [id, rendering.id],
-        }))),
-        this.db.renderings.batch(rows.map((rendering) => ({
-          type: 'del',
-          key: rendering.id,
-        }))),
-      ]))
+      .then(rows =>
+        Promise.all([
+          this.db.renderingsExecutionIdx.batch(
+            rows.map(rendering => ({
+              type: 'del',
+              key: [id, rendering.id],
+            })),
+          ),
+          this.db.renderings.batch(
+            rows.map(rendering => ({
+              type: 'del',
+              key: rendering.id,
+            })),
+          ),
+        ]),
+      )
       .then(() => this.db.executions.get(id))
-      .then(exe => Promise.all([
-        this.db.executionsSimulationIdx.del([exe.simulationId, exe.id]),
-        this.db.executions.del(exe.id),
-      ]))
+      .then(exe =>
+        Promise.all([
+          this.db.executionsSimulationIdx.del([exe.simulationId, exe.id]),
+          this.db.executions.del(exe.id),
+        ]),
+      )
       .catch(err => {
         debug('deleteExecution', err.toString());
         throw err;
@@ -222,16 +234,14 @@ class Manager {
 
   updateExecution(id, changes) {
     const modified = Date.now();
-    return this.getExecution(id)
-      .then(execution => {
-        const newExecution = {
-          ...execution,
-          ...changes,
-          modified,
-        };
-        return this.db.executions.put(id, newExecution)
-          .then(() => newExecution);
-      });
+    return this.getExecution(id, false).then(execution => {
+      const newExecution = {
+        ...execution,
+        ...changes,
+        modified,
+      };
+      return this.db.executions.put(id, newExecution).then(() => newExecution);
+    });
   }
 
   addRendering({ id, executionId, created, ...other }) {
@@ -244,23 +254,22 @@ class Manager {
       created: createdOn,
       modified: createdOn,
     };
-    return this.db.renderings.put(key, rendering)
+    return this.db.renderings
+      .put(key, rendering)
       .then(() => this.db.renderingsExecutionIdx.put([executionId, key], key))
       .then(() => rendering);
   }
 
   getRendering(id) {
-    return this.db.renderings.get(id)
-      .catch(err => {
-        debug('getRendering', err.toString());
-      });
+    return this.db.renderings.get(id).catch(err => {
+      debug('getRendering', err.toString());
+    });
   }
 
   getRenderingIndex(executionId, renderingId) {
-    return this.db.renderingsExecutionIdx.get([executionId, renderingId])
-      .catch(err => {
-        debug('getRenderingIndex', err.toString());
-      });
+    return this.db.renderingsExecutionIdx.get([executionId, renderingId]).catch(err => {
+      debug('getRenderingIndex', err.toString());
+    });
   }
 
   getRenderingsStream(executionId) {
@@ -278,29 +287,32 @@ class Manager {
     debug('getRenderings', { executionId, cb });
     return cb
       ? this.getRenderingsStream(executionId).toArray(cb)
-      : this.getRenderingsStream(executionId).collect().toPromise(Promise);
+      : this.getRenderingsStream(executionId)
+          .collect()
+          .toPromise(Promise);
   }
 
   updateRendering(id, changes) {
     const modified = Date.now();
-    return this.getRendering(id)
-      .then(rendering => {
-        const newRendering = {
-          ...rendering,
-          ...changes,
-          modified,
-        };
-        return this.db.renderings.put(id, newRendering)
-          .then(() => newRendering);
-      });
+    return this.getRendering(id, false).then(rendering => {
+      const newRendering = {
+        ...rendering,
+        ...changes,
+        modified,
+      };
+      return this.db.renderings.put(id, newRendering).then(() => newRendering);
+    });
   }
 
   deleteRendering(id) {
-    return this.db.renderings.get(id)
-      .then(ren => Promise.all([
-        this.db.renderingsExecutionIdx.del([ren.executionId, id]),
-        this.db.renderings.del(id),
-      ]))
+    return this.db.renderings
+      .get(id)
+      .then(ren =>
+        Promise.all([
+          this.db.renderingsExecutionIdx.del([ren.executionId, id]),
+          this.db.renderings.del(id),
+        ]),
+      )
       .catch(err => {
         debug('deleteRendering', err.toString());
         throw err;
@@ -308,13 +320,19 @@ class Manager {
   }
 
   deleteSimulation(id) {
-    return this.getExecutionsStream(id, false).collect().toPromise(Promise)
-      .then(executions => Promise.all(executions.map(execution => this.deleteExecution(execution.id))))
+    return this.getExecutionsStream(id, false)
+      .collect()
+      .toPromise(Promise)
+      .then(executions =>
+        Promise.all(executions.map(execution => this.deleteExecution(execution.id))),
+      )
       .then(() => this.db.simulations.get(id))
-      .then(simulation => Promise.all([
-        this.db.simulationsSourceIdx.del([simulation.sourceId, simulation.id]),
-        this.db.simulations.del(id),
-      ]))
+      .then(simulation =>
+        Promise.all([
+          this.db.simulationsSourceIdx.del([simulation.sourceId, simulation.id]),
+          this.db.simulations.del(id),
+        ]),
+      )
       .catch(err => {
         debug('deleteSimulation', err.toString());
         throw err;

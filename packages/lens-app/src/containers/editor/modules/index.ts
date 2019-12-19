@@ -115,29 +115,29 @@ const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [receiveSimulationsForSource]: (state, { payload }) => payload,
-    [saveSimulationSucceeded]: (state, { payload: { simulation } }) =>
-      state.map(s => (s.id === simulation.id ? simulation : s)),
-    [saveExecutionSucceeded]: (state, { payload: { simulationId, execution } }) => {
-      const simulation = state.find(s => s.id === simulationId);
+    [saveSimulationSucceeded]: (state, { payload }) =>
+      state.map(s => (s.id === payload.id ? payload : s)),
+    [saveExecutionSucceeded]: (state, { payload }) => {
+      const simulation = state.find(s => s.id === payload.simulationId);
       const changedExecutions = simulation.executions.map(e =>
-        e.id === execution.id ? execution : e,
+        e.id === payload.id ? payload : e,
       );
       return state.map(s =>
-        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
       );
     },
-    [saveRenderingSucceeded]: (state, { payload: { simulationId, executionId, rendering } }) => {
-      const simulation = state.find(s => s.id === simulationId);
-      const execution = simulation.executions.find(e => e.id === executionId);
+    [saveRenderingSucceeded]: (state, { payload }) => {
+      const simulation = state.find(s => s.id === payload.simulationId);
+      const execution = simulation.executions.find(e => e.id === payload.executionId);
       const changedRenderings = execution.renderings.map(r =>
-        r.id === rendering.id ? rendering : r,
+        r.id === payload.id ? payload : r,
       );
       const changedExecution = { ...execution, renderings: changedRenderings };
       const changedExecutions = simulation.executions.map(e =>
-        e.id === executionId ? changedExecution : e,
+        e.id === payload.executionId ? changedExecution : e,
       );
       return state.map(s =>
-        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
+        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
       );
     },
     [saveNewSimulationSucceeded]: (state, { payload }) => [...state, payload],
@@ -284,6 +284,7 @@ const simulation = handleActions(
       ...state,
       ...payload,
     }),
+    [saveSimulationSucceeded]: (state, { payload }) => (state.id === payload.id ? payload : state),
   },
   initialSimulationState,
 );
@@ -296,6 +297,7 @@ const execution = handleActions(
       ...state,
       ...payload,
     }),
+    [saveExecutionSucceeded]: (state, { payload }) => (state.id === payload.id ? payload : state),
   },
   initialExecutionState,
 );
@@ -308,6 +310,7 @@ const rendering = handleActions(
       ...state,
       ...payload,
     }),
+    [saveRenderingSucceeded]: (state, { payload }) => (state.id === payload.id ? payload : state),
   },
   initialRenderingState,
 );

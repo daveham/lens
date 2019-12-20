@@ -65,10 +65,12 @@ export function* restApiSaga(args, successAction, errorAction) {
       const data = yield response.json();
       yield put(successAction(data));
     } else {
+      debug('restApiSaga - failed status', { status: response.status });
       throw response;
     }
   }
   catch (error) {
+    debug('restApiSaga', { error });
     yield put(errorAction(error));
   }
 }

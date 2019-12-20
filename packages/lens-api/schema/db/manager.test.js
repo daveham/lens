@@ -117,14 +117,12 @@ describe('db manager', () => {
         expect(rows).toHaveLength(2);
         expect(rows[0].id).toEqual(e1.id);
         expect(rows[0].simulationId).toEqual(s1.id);
-        expect(rows[0].renderingsCount).toEqual(2);
         expect(rows[0].renderings[0].executionId).toEqual(e1.id);
         expect(rows[0].renderings[0].id).toEqual(r1.id);
         expect(rows[0].renderings[1].executionId).toEqual(e1.id);
         expect(rows[0].renderings[1].id).toEqual(r2.id);
         expect(rows[1].id).toEqual(e2.id);
         expect(rows[1].simulationId).toEqual(s1.id);
-        expect(rows[1].renderingsCount).toEqual(2);
         expect(rows[1].renderings[0].executionId).toEqual(e2.id);
         expect(rows[1].renderings[0].id).toEqual(r3.id);
         expect(rows[1].renderings[1].executionId).toEqual(e2.id);

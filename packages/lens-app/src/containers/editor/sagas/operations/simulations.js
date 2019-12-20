@@ -122,7 +122,10 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   const { sourceId } = simulation;
 
   yield put(deleteSimulation({ sourceId, simulationId }));
-  yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
+  const result = yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
+  if (result.type === `${deleteSimulationSucceeded}`) {
+    yield put(setSelectedSimulation());
+  }
 
   yield delay(animationDelay);
   yield put(deleteSimulationFinished());

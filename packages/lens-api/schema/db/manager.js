@@ -35,7 +35,6 @@ class Manager {
           ? this.getExecutions(simulation.id).then(executions => ({
               ...simulation,
               executions,
-              executionsCount: executions.length,
             }))
           : simulation,
       )
@@ -61,7 +60,6 @@ class Manager {
       this.getExecutions(simulation.id, rows => {
         debug(' - adding simulation rows', { rows });
         simulation.executions = rows;
-        simulation.executionsCount = rows.length;
         push(null, simulation);
         next();
       });
@@ -144,7 +142,6 @@ class Manager {
           ? this.getRenderings(execution.id).then(renderings => ({
               ...execution,
               renderings,
-              renderingsCount: renderings.length,
             }))
           : execution;
       })
@@ -170,7 +167,6 @@ class Manager {
       this.getRenderings(execution.id, rows => {
         debug(' - adding rendering rows', { rows });
         execution.renderings = rows;
-        execution.renderingsCount = rows.length;
         push(null, execution);
         next();
       });

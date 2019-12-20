@@ -10,7 +10,7 @@ import {
   requestSimulationsForSourceFailed,
   saveSimulation,
   saveSimulationSucceeded,
-  // saveSimulationFailed,
+  saveSimulationFailed,
   saveNewSimulation,
   saveNewSimulationSucceeded,
   saveNewSimulationFailed,
@@ -22,8 +22,10 @@ import {
   // saveHikesFailed,
   saveExecution,
   saveExecutionSucceeded,
+  saveExecutionFailed,
   saveNewExecution,
   saveNewExecutionSucceeded,
+  saveNewExecutionFailed,
   deleteExecution,
   deleteExecutionSucceeded,
   deleteExecutionFailed,
@@ -35,7 +37,11 @@ import {
   deleteRenderingSucceeded,
   deleteRenderingFailed,
 } from 'editor/modules/actions/data';
-import { simulationByIdSelector } from 'editor/modules/selectors';
+import {
+  simulationByIdSelector,
+  executionByIdSelector,
+  // renderingByIdSelector,
+} from 'editor/modules/selectors';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
 import _debug from 'debug';
@@ -101,7 +107,7 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
     yield* restApiSaga(
       [`/simulations/${simulationId}`, { method: 'PUT', body }],
       payload => saveSimulationSucceeded({ ...payload, executions: originalSimulation.executions }),
-      saveNewSimulationFailed,
+      saveSimulationFailed,
     );
   }
 }
@@ -124,7 +130,7 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
 
     yield put(saveNewSimulationSucceeded(clonedeep(newSimulation)));
   } else {
-    const { executions: ignored, storedValues } = simulation;
+    const { executions: ignoredExecutions, isNew: ignoredIsNew, ...storedValues } = simulation;
     const body = { simulation: { ...storedValues } };
     yield* restApiSaga(
       ['/simulations', { method: 'POST', body }],
@@ -137,39 +143,59 @@ export function* saveNewSimulationSaga({ payload: { simulation } }) {
 export function* saveExecutionSaga({ payload: { executionId, simulationId, sourceId, changes } }) {
   debug('saveExecutionSaga', { executionId, simulationId, sourceId, changes });
 
-  const modified = Date.now();
-  const simulations = mockSimulationsData[sourceId];
-  const simulation = simulations.find(s => s.id === simulationId);
-  let execution = simulation.executions.find(e => e.id === executionId);
+  if (useMockData) {
+    const modified = Date.now();
+    const simulations = mockSimulationsData[sourceId];
+    const simulation = simulations.find(s => s.id === simulationId);
+    let execution = simulation.executions.find(e => e.id === executionId);
 
-  // just mock data, don't have to be immutable
-  execution = {
-    ...execution,
-    ...changes,
-    modified,
-  };
+    // just mock data, don't have to be immutable
+    execution = {
+      ...execution,
+      ...changes,
+      modified,
+    };
 
-  simulation.executions = simulation.executions.map(e => (e.id === executionId ? execution : e));
+    simulation.executions = simulation.executions.map(e => (e.id === executionId ? execution : e));
 
-  yield put(saveExecutionSucceeded({ simulationId, execution: clonedeep(execution) }));
+    yield put(saveExecutionSucceeded({ simulationId, execution: clonedeep(execution) }));
+  } else {
+    const originalExecution = yield select(executionByIdSelector, simulationId, executionId);
+    const body = { changes };
+    yield* restApiSaga(
+      [`/executions/${executionId}`, { method: 'PUT', body }],
+      payload => saveExecutionSucceeded({ ...payload, renderings: originalExecution.renderings }),
+      saveExecutionFailed,
+    );
+  }
 }
 
 export function* saveNewExecutionSaga({ payload: { sourceId, execution } }) {
   debug('saveNewExecutionSaga', { sourceId, execution });
 
-  const created = Date.now();
-  const { isNew, ...props } = execution;
-  const newExecution = {
-    ...props,
-    created,
-    modified: created,
-    renderings: [],
-  };
-  const simulations = mockSimulationsData[sourceId];
-  const simulation = simulations.find(s => s.id === execution.simulationId);
-  simulation.executions = [...simulation.executions, newExecution];
+  if (useMockData) {
+    const created = Date.now();
+    const { isNew, ...props } = execution;
+    const newExecution = {
+      ...props,
+      created,
+      modified: created,
+      renderings: [],
+    };
+    const simulations = mockSimulationsData[sourceId];
+    const simulation = simulations.find(s => s.id === execution.simulationId);
+    simulation.executions = [...simulation.executions, newExecution];
 
-  yield put(saveNewExecutionSucceeded(clonedeep(newExecution)));
+    yield put(saveNewExecutionSucceeded(clonedeep(newExecution)));
+  } else {
+    const { renderings: ignoredRenderings, isNew: ignoredIsNew, ...storedValues } = execution;
+    const body = { execution: { ...storedValues } };
+    yield* restApiSaga(
+      ['/executions', { method: 'POST', body }],
+      payload => saveNewExecutionSucceeded({ ...payload, renderings: [] }),
+      saveNewExecutionFailed,
+    );
+  }
 }
 
 export function* saveRenderingSaga({
@@ -216,18 +242,27 @@ export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {
 export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
   debug('deleteSimulationSaga', { sourceId, simulationId });
 
-  const simulations = mockSimulationsData[sourceId] || [];
-  const simulation = simulations.find(s => s.id === simulationId);
-  yield delay(0);
-  if (simulation) {
-    simulation.isDeleted = true;
-    // mockSimulationsData[sourceId] = simulations.map(s =>
-    //   s.id === simulationId ? { ...s, isDeleted: true } : s,
-    // );
-    yield put(deleteSimulationSucceeded({ simulationId }));
-    return;
+  if (useMockData) {
+    const simulations = mockSimulationsData[sourceId] || [];
+    const simulation = simulations.find(s => s.id === simulationId);
+    yield delay(0);
+    if (simulation) {
+      simulation.isDeleted = true;
+      // mockSimulationsData[sourceId] = simulations.map(s =>
+      //   s.id === simulationId ? { ...s, isDeleted: true } : s,
+      // );
+      yield put(deleteSimulationSucceeded({ simulationId, sourceId }));
+      return;
+    }
+    yield put(deleteSimulationFailed({ simulationId }));
+  } else {
+    const body = { changes: { isDeleted: true } };
+    yield* restApiSaga(
+      [`/simulations/${simulationId}`, { method: 'PUT', body }],
+      () => deleteSimulationSucceeded({ simulationId, sourceId }),
+      deleteSimulationFailed,
+    );
   }
-  yield put(deleteSimulationFailed({ simulationId }));
 }
 
 export function* saveHikesSaga({ payload: { simulationId, hikes } }) {

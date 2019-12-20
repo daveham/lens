@@ -31,7 +31,6 @@ export interface IExecutionModel {
   modified: number;
   simulationId: number;
   name: string;
-  renderingsCount: number;
 }
 
 export function defaultNewExecution(simulationId, props): IExecutionModel {
@@ -39,7 +38,6 @@ export function defaultNewExecution(simulationId, props): IExecutionModel {
     id: uuid(),
     simulationId,
     name: 'New Execution',
-    renderingsCount: 0,
     ...props,
   };
 }
@@ -58,7 +56,6 @@ export interface ISimulationModel {
   created: number;
   modified: number;
   name: string;
-  executionsCount: number;
   isNew?: boolean;
   isDeleted?: boolean;
 }
@@ -71,7 +68,6 @@ export function defaultNewSimulation(sourceId, props = {}): ISimulationModel {
     modified: created,
     sourceId,
     name: 'New Simulation',
-    executionsCount: 0,
     ...props,
   };
 }

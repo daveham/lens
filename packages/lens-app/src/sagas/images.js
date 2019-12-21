@@ -1,5 +1,5 @@
 import { takeEvery, select, all, call, put } from 'redux-saga/effects';
-import { invokeRestService } from './utils';
+import { invokeRestApiReturnData } from './utils';
 import { clientIdSelector } from './socket';
 import {
   ensureImage,
@@ -32,7 +32,7 @@ export function* ensureImagesSaga({ payload }) {
   const clientId = yield select(clientIdSelector);
   try {
     const body = { clientId, imageDescriptors: filteredDescriptors };
-    const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
+    const payload = yield call(invokeRestApiReturnData, '/image', { method: 'POST', body });
     const { existingUrls, existingImageDescriptors } = payload;
     if (existingUrls && existingUrls.length) {
       yield put(imagesLoaded({
@@ -58,7 +58,7 @@ export function* ensureImageSaga({ payload }) {
   const clientId = yield select(clientIdSelector);
   try {
     const body = { clientId, imageDescriptor };
-    const payload = yield call(invokeRestService, '/image', { method: 'POST', body });
+    const payload = yield call(invokeRestApiReturnData, '/image', { method: 'POST', body });
     const { url } = payload;
     if (url) {
       yield put(imageLoaded({ imageDescriptor, data: { url } } ));

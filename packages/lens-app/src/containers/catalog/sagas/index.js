@@ -1,5 +1,5 @@
 import { takeEvery, select, all, put } from 'redux-saga/effects';
-import { invokeRestService, apiSaga } from 'sagas/utils';
+import { restApiSaga } from 'sagas/utils';
 import { ACTIONS, receiveCatalog, requestCatalogFailed } from '../modules/actions';
 import {
   catalogName as catalogNameSelector,
@@ -11,7 +11,7 @@ import { setTitle } from 'modules/ui';
 // const debug = _debug('lens:catalog:sagas');
 
 export function* loadCatalogSaga() {
-  yield* apiSaga(invokeRestService, [ '/catalog' ], receiveCatalog, requestCatalogFailed);
+  yield* restApiSaga(['/catalog'], receiveCatalog, requestCatalogFailed);
 }
 
 export function* ensureTitleSaga({ payload }) {
@@ -19,10 +19,12 @@ export function* ensureTitleSaga({ payload }) {
   if (payload) {
     const catalogSources = yield select(catalogSourcesSelector);
     const sourceName = catalogSources.byIds[payload].name;
-    yield put(setTitle({
-      catalogName,
-      sourceName,
-    }));
+    yield put(
+      setTitle({
+        catalogName,
+        sourceName,
+      }),
+    );
   } else {
     yield put(setTitle({ catalogName }));
   }

@@ -1,5 +1,5 @@
 import { takeEvery, select, all, call, put } from 'redux-saga/effects';
-import { apiSaga, invokeRestService } from './utils';
+import { restApiSaga, invokeRestApiReturnData } from './utils';
 import { clientIdSelector } from './socket';
 import {
   ensureStats,
@@ -27,7 +27,7 @@ export function* ensureStatsSaga({ payload }) {
   const clientId = yield select(clientIdSelector);
   try {
     const body = { clientId, statsDescriptor };
-    const payload = yield call(invokeRestService, '/stats', { method: 'POST', body });
+    const payload = yield call(invokeRestApiReturnData, '/stats', { method: 'POST', body });
 
     const { status } = payload;
     if (status === 'ok') {
@@ -46,7 +46,7 @@ export function* deleteStatsSaga({ payload }) {
   const { sourceId, group } = payload;
   const clientId = yield select(clientIdSelector);
   const body = { clientId, sourceId, group };
-  yield* apiSaga(invokeRestService, [ '/deleteStats', { method: 'POST', body } ], statsDeleted, statsDeleteFailed);
+  yield* restApiSaga([ '/deleteStats', { method: 'POST', body } ], statsDeleted, statsDeleteFailed);
 }
 
 export default function* statsSaga() {

@@ -277,18 +277,27 @@ export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
 export function* deleteExecutionSaga({ payload: { executionId, simulationId, sourceId } }) {
   debug('deleteExecutionSaga', { sourceId, simulationId, executionId });
 
-  const simulations = mockSimulationsData[sourceId] || [];
-  const simulation = simulations.find(s => s.id === simulationId);
-  yield delay(0);
-  if (simulation) {
-    const execution = simulation.executions.find(e => e.id === executionId);
-    if (execution) {
-      execution.isDeleted = true;
-      yield put(deleteExecutionSucceeded({ executionId, simulationId }));
-      return;
+  if (useMockData) {
+    const simulations = mockSimulationsData[sourceId] || [];
+    const simulation = simulations.find(s => s.id === simulationId);
+    yield delay(0);
+    if (simulation) {
+      const execution = simulation.executions.find(e => e.id === executionId);
+      if (execution) {
+        execution.isDeleted = true;
+        yield put(deleteExecutionSucceeded({ executionId, simulationId }));
+        return;
+      }
     }
+    yield put(deleteExecutionFailed({ executionId, simulationId }));
+  } else {
+    const body = { changes: { isDeleted: true } };
+    yield* restApiSaga(
+      [`/executions/${executionId}`, { method: 'PUT', body }],
+      () => deleteExecutionSucceeded({ executionId, simulationId, sourceId }),
+      deleteExecutionFailed,
+    );
   }
-  yield put(deleteExecutionFailed({ executionId, simulationId }));
 }
 
 export function* deleteRenderingSaga({

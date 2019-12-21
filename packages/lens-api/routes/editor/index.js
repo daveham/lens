@@ -1,11 +1,24 @@
 import _debug from 'debug';
 const debug = _debug('lens:api-editor');
 
+function filterDeleted(collection) {
+  return collection.filter(i => !i.isDeleted);
+}
+
 export function addRoutes(server, dataManager) {
   const getSimulations = (req, res, next) => {
-    dataManager.getSimulationsForSource(req.params.sourceId)
+    dataManager
+      .getSimulationsForSource(req.params.sourceId)
       .then(data => {
-        res.send(data.filter(s => !s.isDeleted));
+        res.send(
+          filterDeleted(data).map(s => ({
+            ...s,
+            executions: filterDeleted(s.executions).map(e => ({
+              ...e,
+              renderings: filterDeleted(e.renderings),
+            })),
+          })),
+        );
         next();
       })
       .catch(err => {
@@ -18,7 +31,8 @@ export function addRoutes(server, dataManager) {
   const postSimulation = (req, res, next) => {
     const { simulation } = req.body;
     debug('post simulation', { simulation });
-    dataManager.addSimulation(simulation)
+    dataManager
+      .addSimulation(simulation)
       .then(data => {
         res.send(data);
         next();
@@ -34,7 +48,8 @@ export function addRoutes(server, dataManager) {
     const { simulationId } = req.params;
     const { changes } = req.body;
     debug('put simulations', { simulationId, changes });
-    dataManager.updateSimulation(simulationId, changes)
+    dataManager
+      .updateSimulation(simulationId, changes)
       .then(data => {
         res.send(data);
         next();
@@ -49,7 +64,8 @@ export function addRoutes(server, dataManager) {
   const postExecution = (req, res, next) => {
     const { execution } = req.body;
     debug('post execution', { execution });
-    dataManager.addExecution(execution)
+    dataManager
+      .addExecution(execution)
       .then(data => {
         res.send(data);
         next();
@@ -65,7 +81,8 @@ export function addRoutes(server, dataManager) {
     const { executionId } = req.params;
     const { changes } = req.body;
     debug('put executions', { executionId, changes });
-    dataManager.updateExecution(executionId, changes)
+    dataManager
+      .updateExecution(executionId, changes)
       .then(data => {
         res.send(data);
         next();

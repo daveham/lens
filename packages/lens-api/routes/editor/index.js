@@ -94,9 +94,44 @@ export function addRoutes(server, dataManager) {
       });
   };
 
+  const postRendering = (req, res, next) => {
+    const { rendering } = req.body;
+    debug('post rendering', { rendering });
+    dataManager
+      .addRendering(rendering)
+      .then(data => {
+        res.send(data);
+        next();
+      })
+      .catch(err => {
+        debug('post rendering error', { err });
+        res.send(err);
+        next();
+      });
+  };
+
+  const putRendering = (req, res, next) => {
+    const { renderingId } = req.params;
+    const { changes } = req.body;
+    debug('put renderings', { renderingId, changes });
+    dataManager
+      .updateRendering(renderingId, changes)
+      .then(data => {
+        res.send(data);
+        next();
+      })
+      .catch(err => {
+        debug('put renderings error', { err });
+        res.send(err);
+        next();
+      });
+  };
+
   server.get('/simulations/:sourceId', getSimulations);
   server.put('/simulations/:simulationId', putSimulation);
   server.post('/simulations', postSimulation);
   server.put('/executions/:executionId', putExecution);
   server.post('/executions', postExecution);
+  server.put('/renderings/:renderingId', putRendering);
+  server.post('/renderings', postRendering);
 }

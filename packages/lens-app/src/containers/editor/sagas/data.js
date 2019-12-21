@@ -31,8 +31,10 @@ import {
   deleteExecutionFailed,
   saveRendering,
   saveRenderingSucceeded,
+  saveRenderingFailed,
   saveNewRendering,
   saveNewRenderingSucceeded,
+  saveNewRenderingFailed,
   deleteRendering,
   deleteRenderingSucceeded,
   deleteRenderingFailed,
@@ -203,40 +205,63 @@ export function* saveRenderingSaga({
 }) {
   debug('saveRenderingSaga', { renderingId, executionId, simulationId, sourceId, changes });
 
-  const modified = Date.now();
-  const simulations = mockSimulationsData[sourceId];
-  const simulation = simulations.find(s => s.id === simulationId);
-  const execution = simulation.executions.find(e => e.id === executionId);
-  let rendering = execution.renderings.find(r => r.id === renderingId);
+  if (useMockData) {
+    const modified = Date.now();
+    const simulations = mockSimulationsData[sourceId];
+    const simulation = simulations.find(s => s.id === simulationId);
+    const execution = simulation.executions.find(e => e.id === executionId);
+    let rendering = execution.renderings.find(r => r.id === renderingId);
 
-  // just mock data, don't have to be immutable
-  rendering = {
-    ...rendering,
-    ...changes,
-    modified,
-  };
+    // just mock data, don't have to be immutable
+    rendering = {
+      ...rendering,
+      ...changes,
+      modified,
+    };
 
-  execution.renderings = execution.renderings.map(r => (r.id === renderingId ? rendering : r));
+    execution.renderings = execution.renderings.map(r => (r.id === renderingId ? rendering : r));
 
-  yield put(saveRenderingSucceeded({ simulationId, executionId, rendering: clonedeep(rendering) }));
+    yield put(saveRenderingSucceeded({
+      simulationId,
+      executionId,
+      rendering: clonedeep(rendering)
+    }));
+  } else {
+    const body = { changes };
+    yield* restApiSaga(
+      [`/renderings/${renderingId}`, { method: 'PUT', body }],
+      saveRenderingSucceeded,
+      saveRenderingFailed,
+    );
+  }
 }
 
 export function* saveNewRenderingSaga({ payload: { sourceId, rendering } }) {
   debug('saveNewRenderingSaga', { sourceId, rendering });
 
-  const created = Date.now();
-  const { isNew, ...props } = rendering;
-  const newRendering = {
-    ...props,
-    created,
-    modified: created,
-  };
-  const simulations = mockSimulationsData[sourceId];
-  const simulation = simulations.find(s => s.id === rendering.simulationId);
-  const execution = simulation.executions.find(e => e.id === rendering.executionId);
-  execution.renderings = [...execution.renderings, newRendering];
+  if (useMockData) {
+    const created = Date.now();
+    const { isNew, ...props } = rendering;
+    const newRendering = {
+      ...props,
+      created,
+      modified: created,
+    };
+    const simulations = mockSimulationsData[sourceId];
+    const simulation = simulations.find(s => s.id === rendering.simulationId);
+    const execution = simulation.executions.find(e => e.id === rendering.executionId);
+    execution.renderings = [...execution.renderings, newRendering];
 
-  yield put(saveNewRenderingSucceeded(clonedeep(newRendering)));
+    yield put(saveNewRenderingSucceeded(clonedeep(newRendering)));
+  } else {
+    const { isNew: ignoredIsNew, ...storedValues } = rendering;
+    const body = { rendering: { ...storedValues } };
+    yield* restApiSaga(
+      ['/renderings', { method: 'POST', body }],
+      saveNewRenderingSucceeded,
+      saveNewRenderingFailed,
+    );
+  }
 }
 
 export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
@@ -305,21 +330,30 @@ export function* deleteRenderingSaga({
 }) {
   debug('deleteRenderingSaga', { sourceId, simulationId, executionId, renderingId });
 
-  const simulations = mockSimulationsData[sourceId] || [];
-  const simulation = simulations.find(s => s.id === simulationId);
-  yield delay(0);
-  if (simulation) {
-    const execution = simulation.executions.find(e => e.id === executionId);
-    if (execution) {
-      const rendering = execution.renderings.find(r => r.id === renderingId);
-      if (rendering) {
-        rendering.isDeleted = true;
-        yield put(deleteRenderingSucceeded({ renderingId, executionId, simulationId }));
-        return;
+  if (useMockData) {
+    const simulations = mockSimulationsData[sourceId] || [];
+    const simulation = simulations.find(s => s.id === simulationId);
+    yield delay(0);
+    if (simulation) {
+      const execution = simulation.executions.find(e => e.id === executionId);
+      if (execution) {
+        const rendering = execution.renderings.find(r => r.id === renderingId);
+        if (rendering) {
+          rendering.isDeleted = true;
+          yield put(deleteRenderingSucceeded({ renderingId, executionId, simulationId }));
+          return;
+        }
       }
     }
+    yield put(deleteRenderingFailed({ renderingId, executionId, simulationId }));
+  } else {
+    const body = { changes: { isDeleted: true } };
+    yield* restApiSaga(
+      [`/renderings/${renderingId}`, { method: 'PUT', body }],
+      () => deleteRenderingSucceeded({ renderingId, executionId, simulationId, sourceId }),
+      deleteRenderingFailed,
+    );
   }
-  yield put(deleteRenderingFailed({ renderingId, executionId, simulationId }));
 }
 
 export default function* dataRootSaga() {

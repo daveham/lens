@@ -9,13 +9,17 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { default as getConfig } from 'src/config';
 
-const useStyles: any = makeStyles((theme) => ({
+const cardWidth = 225;
+const cardHeight = 260;
+const mediaHeight = 150;
+
+const useStyles: any = makeStyles({
   card: {
-    maxWidth: 225,
-    minWidth: 225,
+    maxWidth: cardWidth,
+    minWidth: cardWidth,
   },
   cardAction: {
     width: '100%',
@@ -24,12 +28,9 @@ const useStyles: any = makeStyles((theme) => ({
     justifyContent: 'space-around',
   },
   media: {
-    height: 150,
+    height: mediaHeight,
   },
-  loading: {
-    padding: theme.spacing(8),
-  },
-}));
+});
 
 interface IProps {
   thumbnailUrl?: string;
@@ -39,18 +40,11 @@ interface IProps {
 }
 
 type ButtonLinkProps = ButtonProps<typeof Link, LinkProps>;
-const ButtonLink = (props: ButtonLinkProps) => (
-  <Button {...props} component={Link} />
-);
+const ButtonLink = (props: ButtonLinkProps) => <Button {...props} component={Link} />;
 
 const ThumbnailCard = (props: IProps) => {
   const classes = useStyles();
-  const {
-    thumbnailUrl,
-    label,
-    imageDataLink,
-    catalogLink,
-  } = props;
+  const { thumbnailUrl, label, imageDataLink, catalogLink } = props;
 
   if (thumbnailUrl) {
     const dataHost = getConfig().dataHost;
@@ -58,31 +52,19 @@ const ThumbnailCard = (props: IProps) => {
 
     return (
       <Card className={classes.card}>
-        <CardActionArea
-          classes={{ root: classes.cardAction }}
-        >
-          <CardMedia
-            className={classes.media}
-            image={fullUrl}
-            title={label}
-          />
+        <CardActionArea classes={{ root: classes.cardAction }}>
+          <CardMedia className={classes.media} image={fullUrl} title={label} />
           <CardContent>
-            <Typography variant='h5' component='h2'>{label}</Typography>
+            <Typography variant='h5' component='h2'>
+              {label}
+            </Typography>
           </CardContent>
         </CardActionArea>
         <CardActions classes={{ root: classes.cardButtons }}>
-          <ButtonLink
-            color='primary'
-            to={catalogLink}
-            size='small'
-          >
+          <ButtonLink color='primary' to={catalogLink} size='small'>
             Definition
           </ButtonLink>
-          <ButtonLink
-            color='primary'
-            to={imageDataLink}
-            size='small'
-          >
+          <ButtonLink color='primary' to={imageDataLink} size='small'>
             Data
           </ButtonLink>
         </CardActions>
@@ -90,11 +72,7 @@ const ThumbnailCard = (props: IProps) => {
     );
   }
 
-  return (
-    <div className={classes.loading}>
-      <CircularProgress size={80} />
-    </div>
-  );
+  return <Skeleton variant='rect' width={cardWidth} height={cardHeight} />;
 };
 
 export default ThumbnailCard;

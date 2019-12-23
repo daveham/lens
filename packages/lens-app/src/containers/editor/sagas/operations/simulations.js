@@ -77,7 +77,7 @@ export function* startSimulationOperationSaga({ type, payload: { simulationId } 
   const simulations = yield select(simulationsSelector);
   const simulation = simulations.find(simulation => simulation.id === simulationId);
   yield put(setSelectedSimulation(simulation));
-  yield put(requestHikes({ simulationId }));
+  yield put(requestHikes({ simulationId, sourceId: simulation.sourceId }));
   const result = yield take([receiveHikes, requestHikesFailed]);
   if (result.type === `${receiveHikes}`) {
     yield* validateSimulationSaga();
@@ -108,7 +108,7 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
       yield take([saveSimulationSucceeded, saveSimulationFailed]);
     }
     const hikes = yield select(hikesSelector);
-    yield put(saveHikes({ simulationId, hikes }));
+    yield put(saveHikes({ sourceId, simulationId, hikes }));
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
   yield delay(0);
@@ -147,7 +147,8 @@ export function* finishNewSimulationSaga() {
   const result = yield take([saveNewSimulationSucceeded, saveNewSimulationFailed]);
   if (result.type === `${saveNewSimulationSucceeded}`) {
     const hikes = yield select(hikesSelector);
-    yield put(saveHikes({ simulationId: result.payload.id, hikes }));
+    const newSimulation = result.payload;
+    yield put(saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes }));
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
   yield delay(animationDelay);

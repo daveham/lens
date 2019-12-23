@@ -1,8 +1,17 @@
+import path from 'path';
+import fs from 'fs';
 import _debug from 'debug';
 const debug = _debug('lens:api-editor');
 
+const dataFolder = process.env.LENS_DATA || '/data';
+const hikesFolder = path.join(dataFolder, 'db');
+
+function hikesFilename(sourceId, simulationId) {
+  return path.join(hikesFolder, `hikes-${sourceId}-${simulationId}.json`);
+}
+
 function filterDeleted(collection) {
-  return collection.filter(i => !i.isDeleted);
+  return collection ? collection.filter(i => !i.isDeleted) : [];
 }
 
 export function addRoutes(server, dataManager) {
@@ -23,8 +32,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('get simulations error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -39,8 +47,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('post simulation error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -56,8 +63,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('put simulations error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -72,8 +78,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('post execution error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -89,8 +94,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('put executions error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -105,8 +109,7 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('post rendering error', { err });
-        res.send(err);
-        next();
+        next(err);
       });
   };
 
@@ -122,9 +125,60 @@ export function addRoutes(server, dataManager) {
       })
       .catch(err => {
         debug('put renderings error', { err });
-        res.send(err);
+        next(err);
+      });
+  };
+
+  const getHikes = (req, res, next) => {
+    const { sourceId, simulationId } = req.params;
+    debug('get hikes', { sourceId, simulationId });
+    try {
+      const filename = hikesFilename(sourceId, simulationId);
+      fs.readFile(filename, 'utf8', (err, data) => {
+        if (err) {
+          debug('getHikes:fs.readFile err', { err });
+          res.send([]);
+          return next();
+        }
+        const hikes = JSON.parse(data);
+        res.send(hikes);
         next();
       });
+    } catch (error) {
+      debug('getHikes - exception', { error });
+      next(error);
+    }
+  };
+
+  const postHikes = (req, res, next) => {
+    const { sourceId, simulationId } = req.params;
+    const { hikes } = req.body;
+    debug('post hikes', { sourceId, simulationId });
+    try {
+      const filename = hikesFilename(sourceId, simulationId);
+      const data = JSON.stringify(
+        filterDeleted(hikes).map(({ isNew: ignoredIsNew, ...hProps }) => ({
+          ...hProps,
+          trails: filterDeleted(hProps.trails).map(({ isNew: ignoredIsNew, ...tProps }) => ({
+            ...tProps,
+            hikers: filterDeleted(tProps.hikers).map(({ isNew: ignoredIsNew, ...kProps }) => ({
+              ...kProps,
+            })),
+          })),
+        })),
+      );
+      fs.writeFile(filename, data, 'utf8', err => {
+        if (err) {
+          debug('postHikes:fs.writeFile err', { err });
+          return next(err);
+        }
+        res.send(200);
+        next();
+      });
+    } catch (error) {
+      debug('postHikes - exception', { error });
+      next(error);
+    }
   };
 
   server.get('/simulations/:sourceId', getSimulations);
@@ -134,4 +188,6 @@ export function addRoutes(server, dataManager) {
   server.post('/executions', postExecution);
   server.put('/renderings/:renderingId', putRendering);
   server.post('/renderings', postRendering);
+  server.get('/hikes/:sourceId/:simulationId', getHikes);
+  server.post('/hikes/:sourceId/:simulationId', postHikes);
 }

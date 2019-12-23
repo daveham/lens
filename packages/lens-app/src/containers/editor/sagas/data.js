@@ -5,6 +5,7 @@ import { restApiSaga } from 'sagas/utils';
 import {
   requestHikes,
   receiveHikes,
+  requestHikesFailed,
   requestSimulationsForSource,
   receiveSimulationsForSource,
   requestSimulationsForSourceFailed,
@@ -19,7 +20,7 @@ import {
   deleteSimulationFailed,
   saveHikes,
   saveHikesSucceeded,
-  // saveHikesFailed,
+  saveHikesFailed,
   saveExecution,
   saveExecutionSucceeded,
   saveExecutionFailed,
@@ -74,15 +75,23 @@ export function* readSimulationsForSourceSaga({ payload: { sourceId } }) {
 
 const mockHikesData = {};
 
-export function* readHikesSaga({ payload: { simulationId } }) {
-  debug('readHikesSaga', { simulationId });
+export function* readHikesSaga({ payload: { sourceId, simulationId } }) {
+  debug('readHikesSaga', { sourceId, simulationId });
 
-  let mockHikes = mockHikesData[simulationId];
-  if (!mockHikes) {
-    mockHikes = generateMockHikesData(simulationId);
-    mockHikesData[simulationId] = mockHikes;
+  if (useMockData) {
+    let mockHikes = mockHikesData[simulationId];
+    if (!mockHikes) {
+      mockHikes = generateMockHikesData(simulationId);
+      mockHikesData[simulationId] = mockHikes;
+    }
+    yield put(receiveHikes(clonedeep(mockHikes)));
+  } else {
+    yield* restApiSaga(
+      [`/hikes/${sourceId}/${simulationId}`],
+      receiveHikes,
+      requestHikesFailed,
+    );
   }
-  yield put(receiveHikes(clonedeep(mockHikes)));
 }
 
 export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes } }) {
@@ -290,13 +299,22 @@ export function* deleteSimulationSaga({ payload: { simulationId, sourceId } }) {
   }
 }
 
-export function* saveHikesSaga({ payload: { simulationId, hikes } }) {
-  debug('saveHikesSaga', { simulationId, hikes });
+export function* saveHikesSaga({ payload: { sourceId, simulationId, hikes } }) {
+  debug('saveHikesSaga', { sourceId, simulationId, hikes });
 
-  const updatedHikes = [...hikes];
-  mockHikesData[simulationId] = updatedHikes;
+  if (useMockData) {
+    const updatedHikes = [...hikes];
+    mockHikesData[simulationId] = updatedHikes;
 
-  yield put(saveHikesSucceeded(clonedeep(updatedHikes)));
+    yield put(saveHikesSucceeded(clonedeep(updatedHikes)));
+  } else {
+    const body = { hikes };
+    yield* restApiSaga(
+      [`/hikes/${sourceId}/${simulationId}`, { method: 'POST', body }],
+      saveHikesSucceeded,
+      saveHikesFailed,
+    );
+  }
 }
 
 export function* deleteExecutionSaga({ payload: { executionId, simulationId, sourceId } }) {

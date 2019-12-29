@@ -1,6 +1,9 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import { TypedUseSelectorHook, useSelector as useSelectorGeneric } from 'react-redux';
+import { RootEditorState } from 'editor/modules';
+import { simulationsLoadingSelector } from 'editor/modules/selectors';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:editor/simulation/simulationEmptyState/view');
@@ -27,6 +30,9 @@ interface IProps {
 const SimulationEmptyStateView = (props: IProps) => {
   const classes = useStyles();
 
+  const useSelector: TypedUseSelectorHook<RootEditorState> = useSelectorGeneric;
+  const simulationsLoading = useSelector(simulationsLoadingSelector);
+
   const handleAddNewSimulation = () => {
     const {
       history,
@@ -39,14 +45,16 @@ const SimulationEmptyStateView = (props: IProps) => {
 
   return (
     <div className={classes.empty}>
-      <Button
-        size='small'
-        onClick={handleAddNewSimulation}
-        color='primary'
-        variant='contained'
-      >
-        Add a new Simulation
-      </Button>
+      {!simulationsLoading && (
+        <Button
+          size='small'
+          onClick={handleAddNewSimulation}
+          color='primary'
+          variant='contained'
+        >
+          Add a new Simulation
+        </Button>
+      )}
     </div>
   );
 };

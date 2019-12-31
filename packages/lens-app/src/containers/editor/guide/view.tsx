@@ -178,22 +178,25 @@ const EditorGuideView = ({
   } = determineItems(simulations, simulationId, executionId, renderingId, action);
 
   useEffect(() => {
-    setPathname(prev => {
-      const nextPathname = history.location.pathname.toLowerCase();
-      if (prev !== nextPathname) {
-        checkOperationStart(
-          dispatch,
-          activeItem,
-          sourceId,
-          resolvedSimulationId,
-          resolvedExecutionId,
-          resolvedRenderingId,
-          resolvedAction,
-        );
-      }
-      return nextPathname;
-    });
+    if (simulations && simulations.length) {
+      setPathname(prev => {
+        const nextPathname = history.location.pathname.toLowerCase();
+        if (prev !== nextPathname) {
+          checkOperationStart(
+            dispatch,
+            activeItem,
+            sourceId,
+            resolvedSimulationId,
+            resolvedExecutionId,
+            resolvedRenderingId,
+            resolvedAction,
+          );
+        }
+        return nextPathname;
+      });
+    }
   }, [
+    simulations,
     history.location.pathname,
     dispatch,
     sourceId,

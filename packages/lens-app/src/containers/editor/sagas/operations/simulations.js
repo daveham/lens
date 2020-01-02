@@ -4,7 +4,6 @@ import {
   selectedSimulationSelector,
   simulationAndDataValid,
   simulationByIdSelector,
-  simulationsSelector,
   hikesSelector,
 } from 'editor/modules/selectors';
 import {
@@ -34,10 +33,7 @@ import {
   cancelDeleteSimulation,
   deleteSimulationCanceled,
 } from 'editor/modules/actions/operations';
-import {
-  setSelectedSimulation,
-  editorActionValid,
-} from 'editor/modules/actions/ui';
+import { setSelectedSimulation, editorActionValid } from 'editor/modules/actions/ui';
 import {
   requestHikes,
   receiveHikes,
@@ -64,30 +60,30 @@ import {
 import _debug from 'debug';
 const debug = _debug('lens:editor:sagas:operations:simulations');
 
-const animationDelay = 350;
-
 function* validateSimulationSaga() {
   const isValid = yield select(simulationAndDataValid);
   yield put(editorActionValid(isValid));
 }
 
 // same saga for starting new, edit, delete simulation operations
-export function* startSimulationOperationSaga({ type, payload: { simulationId } }) {
-  yield delay(animationDelay);
-  const simulations = yield select(simulationsSelector);
-  const simulation = simulations.find(simulation => simulation.id === simulationId);
-  yield put(setSelectedSimulation(simulation));
-  yield put(requestHikes({ simulationId, sourceId: simulation.sourceId }));
-  const result = yield take([receiveHikes, requestHikesFailed]);
-  if (result.type === `${receiveHikes}`) {
-    yield* validateSimulationSaga();
-  } // else error - what to do?
-  if (type === `${startViewSimulation}`) {
-    yield put(viewSimulationStarted({ simulationId }));
-  } else if (type === `${startEditSimulation}`) {
-    yield put(editSimulationStarted({ simulationId }));
+export function* startSimulationOperationSaga({ type, payload: { sourceId, simulationId } }) {
+  const simulation = yield select(simulationByIdSelector, simulationId);
+  if (simulation && simulation.sourceId === sourceId) {
+    yield put(setSelectedSimulation(simulation));
+    yield put(requestHikes({ simulationId, sourceId: simulation.sourceId }));
+    const result = yield take([receiveHikes, requestHikesFailed]);
+    if (result.type === `${receiveHikes}`) {
+      yield* validateSimulationSaga();
+    } // else error - what to do?
+    if (type === `${startViewSimulation}`) {
+      yield put(viewSimulationStarted({ simulationId }));
+    } else if (type === `${startEditSimulation}`) {
+      yield put(editSimulationStarted({ simulationId }));
+    } else {
+      yield put(deleteSimulationStarted({ simulationId }));
+    }
   } else {
-    yield put(deleteSimulationStarted({ simulationId }));
+    yield put(setSelectedSimulation());
   }
 }
 
@@ -127,13 +123,11 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
     yield put(setSelectedSimulation());
   }
 
-  yield delay(animationDelay);
   yield put(deleteSimulationFinished());
 }
 
 export function* startNewSimulationSaga({ payload: { sourceId } }) {
   debug('startNewSimulationSaga', { sourceId });
-  yield delay(animationDelay);
   const simulation = defaultNewSimulation(sourceId, { isNew: true });
   yield put(setSelectedSimulation(simulation));
   yield put(receiveHikes());
@@ -148,25 +142,26 @@ export function* finishNewSimulationSaga() {
   if (result.type === `${saveNewSimulationSucceeded}`) {
     const hikes = yield select(hikesSelector);
     const newSimulation = result.payload;
-    yield put(saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes }));
+    yield put(
+      saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes }),
+    );
     yield take([saveHikesSucceeded, saveHikesFailed]);
   }
-  yield delay(animationDelay);
   yield put(newSimulationFinished());
 }
 
 export function* cancelEditSimulationSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(editSimulationCanceled());
 }
 
 export function* cancelDeleteSimulationSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(deleteSimulationCanceled());
 }
 
 export function* cancelNewSimulationSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(newSimulationCanceled());
 }
 

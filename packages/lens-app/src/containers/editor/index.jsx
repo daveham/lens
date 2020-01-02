@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Snackbar from '@material-ui/core/Snackbar';
 import { errorMessageSelector } from 'editor/modules/selectors';
 import { makeStyles } from '@material-ui/core/styles';
-import { clearErrorMessage } from 'editor/modules/actions/ui';
+import { clearErrorMessage, clearEditor } from 'editor/modules/actions/ui';
 
 import Guide from './guide';
 import Simulation from './simulation';
@@ -37,6 +37,12 @@ const SimulationRouteSwitch = ({ match: { path } }) => {
 
   const errorMessage = useSelector(errorMessageSelector);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearEditor());
+    };
+  }, [dispatch]);
 
   const handleCloseSnackbar = () => {
     dispatch(clearErrorMessage());

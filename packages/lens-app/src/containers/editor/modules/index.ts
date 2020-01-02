@@ -63,6 +63,7 @@ import {
 import {
   setErrorMessage,
   clearErrorMessage,
+  clearEditor,
   setSelectedSimulation,
   updateSelectedSimulation,
   addHike,
@@ -114,6 +115,7 @@ const simulationsLoading = handleActions(
 const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
+    [clearEditor]: () => initialSimulationsState,
     [receiveSimulationsForSource]: (state, { payload }) => payload,
     [saveSimulationSucceeded]: (state, { payload }) =>
       state.map(s => (s.id === payload.id ? payload : s)),
@@ -244,6 +246,7 @@ const hikesLoading = handleActions(
 const initialHikesState: ReadonlyArray<IHike> = [];
 const hikes = handleActions(
   {
+    [clearEditor]: () => initialHikesState,
     [combineActions(receiveHikes, saveHikesSucceeded)]: (state, { payload }) =>
       payload || initialHikesState,
     [addHike]: (state, { payload: { hike } }) => [...state, hike],

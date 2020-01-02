@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import groupby from 'lodash.groupby';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:modules:selectors');
+import _debug from 'debug';
+const debug = _debug('lens:editor:modules:selectors');
 
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;
@@ -22,7 +22,10 @@ export const renderingByIdSelector = (state, simulationId, executionId, id) => {
 
 export const errorMessageSelector = state => state.editor.errorMessage;
 
-export const operationPendingSelector = state => state.editor.operationPending;
+export const operationPendingSelector = state => {
+  debug('operationPendingSelector', { operationPending: state.editor.operationPending });
+  return state.editor.operationPending;
+};
 
 export const hikesLoadingSelector = state => state.editor.hikesLoading;
 

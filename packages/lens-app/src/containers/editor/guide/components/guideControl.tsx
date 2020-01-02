@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -171,7 +171,7 @@ const useStyles: any = makeStyles((theme: any) => {
   };
 });
 
-const animationDelay = 350;
+const animationDelay = 400;
 
 interface IProps {
   loading?: boolean;
@@ -242,52 +242,38 @@ const getIdForSegmentKey = (controlParameters, key) => {
 };
 
 const guideActions = {
-  expandForContent: 'EXPAND_FOR_CONTENT',
   setExpandedPanel: 'SET_EXPANDED_PANEL',
-  clearExpandedPanel: 'CLEAR_EXPANDED_PANEL',
   calculateNextPath: 'CALCULATE_NEXT_PATH',
-  update: 'UPDATE',
+  updateFromProps: 'UPDATE_FROM_PROPS',
 };
 
 const guideParametersReducer = (state, { type, payload }) => {
   debug('guideParametersReducer', { type });
   switch (type) {
-    case guideActions.expandForContent: {
-      return {
-        ...state,
-        expandedPanel: state.activeItem,
-        locked: false,
-      };
-    }
-    case guideActions.update:
+    case guideActions.updateFromProps:
+      const { action, activeItem } = payload;
       const nextState = {
         ...state,
         ...payload,
       };
       let locked = false;
       if (payload.hasOwnProperty('action')) {
-        locked = payload.action && lockingActions.includes(payload.action);
-        nextState.locked = locked;
+        locked = Boolean(action && lockingActions.includes(action));
         if (locked) {
-          nextState.renderLockedAction = payload.action;
+          nextState.renderLockedAction = action;
         }
       }
       if (payload.hasOwnProperty('activeItem')) {
-        nextState.expandedPanel = payload.activeItem;
         if (locked) {
-          nextState.renderLockedItem = payload.activeItem;
+          nextState.renderLockedItem = activeItem;
         }
       }
+      nextState.locked = locked;
       return nextState;
     case guideActions.setExpandedPanel:
       return {
         ...state,
         expandedPanel: payload,
-      };
-    case guideActions.clearExpandedPanel:
-      return {
-        ...state,
-        expandedPanel: '',
       };
     case guideActions.calculateNextPath: {
       const { nextPanel, nextId = '', nextAction = '' } = payload;
@@ -338,23 +324,94 @@ const GuideControl = (props: IProps) => {
   // hooks
   const dispatch = useDispatch();
 
-  const operationPending = useSelector(operationPendingSelector);
-  const previousOperationPending = usePrevious(operationPending);
-
   const [guideParameters, dispatchGuideParameters] = useReducer(
     guideParametersReducer,
     initialGuideParameters,
   );
 
+  const operationPending = useSelector(operationPendingSelector);
+  const previousOperationPending = usePrevious(operationPending);
+
+  const [collapseIn, setCollapseIn] = useState(false);
+
+  const previousSimulationsLength = usePrevious(
+    guideParameters.simulations ? guideParameters.simulations.length : 0,
+  );
+
+  const expandedPanelTimerActive = useRef(false);
+  const collapseTimerActive = useRef(false);
+
+  debug('on render', {
+    guideParameters,
+    operationPending,
+    previousOperationPending,
+    collapseIn,
+    expandedPanelTimerActive: expandedPanelTimerActive.current,
+    collapseTimerActive: collapseTimerActive.current,
+    previousSimulationsLength,
+    props,
+  });
+
+  // sometimes delay the expanded panel setting to allow time for animation
   useEffect(() => {
-    debug('useEffect(initial) -> expandForContent');
-    // @ts-ignore
-    dispatchGuideParameters({ type: guideActions.expandForContent });
-  }, []);
+    if (expandedPanelTimerActive.current) {
+      return;
+    }
+    const nextSimulationsLength = guideParameters.simulations.length;
+    const nextExpandedPanel = nextSimulationsLength ? guideParameters.activeItem : '';
+    const lastExpandedPanel = guideParameters.expandedPanel;
+    debug('useEffect(expandedPanel)', {
+      nextSimulationsLength,
+      nextExpandedPanel,
+      lastExpandedPanel,
+    });
+    if (nextExpandedPanel !== lastExpandedPanel) {
+      if (!previousSimulationsLength && nextSimulationsLength) {
+        expandedPanelTimerActive.current = true;
+        debug('useEffect(expandPanel) - set timer', { nextExpandedPanel });
+        setTimeout(() => {
+          expandedPanelTimerActive.current = false;
+          debug('useEffect(expandPanel) - on timer', { nextExpandedPanel });
+          dispatchGuideParameters({
+            type: guideActions.setExpandedPanel,
+            payload: nextExpandedPanel,
+          });
+        }, animationDelay);
+      }
+    }
+  }, [
+    guideParameters.activeItem,
+    guideParameters.expandedPanel,
+    simulations,
+    previousSimulationsLength,
+    guideParameters.simulations.length,
+  ]);
+
+  // sometimes delay the collapse of dialog controls to allow time for animation
+  useEffect(() => {
+    if (operationPending || collapseTimerActive.current) {
+      return;
+    }
+    const nextCollapseIn = Boolean(guideParameters.locked && guideParameters.simulation);
+    debug('useEffect(collapse)', {
+      locked: guideParameters.locked,
+      simulation: guideParameters.simulation,
+      nextCollapseIn,
+    });
+    if (nextCollapseIn !== collapseIn) {
+      collapseTimerActive.current = true;
+      debug('useEffect(collapse) - set timer', { nextCollapseIn });
+      setTimeout(() => {
+        collapseTimerActive.current = false;
+        debug('useEffect(collapse) - on timer', { nextCollapseIn });
+        setCollapseIn(nextCollapseIn);
+      }, animationDelay);
+    }
+  }, [collapseIn, guideParameters.locked, guideParameters.simulation, operationPending]);
 
   // update rendered control parameters
   useEffect(() => {
-    debug('useEffect(props) -> update', {
+    debug('useEffect(props) props changed', {
       simulations,
       simulation,
       execution,
@@ -363,7 +420,7 @@ const GuideControl = (props: IProps) => {
       action,
     });
     dispatchGuideParameters({
-      type: guideActions.update,
+      type: guideActions.updateFromProps,
       payload: {
         simulations,
         simulation,
@@ -376,19 +433,22 @@ const GuideControl = (props: IProps) => {
   }, [simulations, simulation, execution, rendering, activeItem, action]);
 
   useEffect(() => {
-    debug('useEffect(gp.nextPath) -> onControlChanged', { nextPath: guideParameters.nextPath });
     if (guideParameters.nextPath) {
+      debug('useEffect(gpNextPath) invoke onControlChanged', {
+        nextPath: guideParameters.nextPath,
+      });
       onControlChanged(guideParameters.nextPath);
     }
   }, [guideParameters.nextPath, onControlChanged]);
 
+  // when current operation completes, trigger panel update and path calculation
   useEffect(() => {
-    debug('useEffect(operationPending, activeItem) -> calculateNextPath', {
-      previousOperationPending,
-      operationPending,
-      activeItem,
-    });
     if (previousOperationPending && !operationPending) {
+      debug('useEffect(operationPending, activeItem) at end of operation, calculateNextPath', {
+        previousOperationPending,
+        operationPending,
+        activeItem,
+      });
       dispatchGuideParameters({
         type: guideActions.calculateNextPath,
         payload: {
@@ -426,15 +486,11 @@ const GuideControl = (props: IProps) => {
   };
 
   const handlePanelChange = key => (event, expanded) => {
-    if (guideParameters.locked || operationPending) {
-      return;
-    }
-
-    if (expanded) {
-      dispatchGuideParameters({ type: guideActions.setExpandedPanel, payload: key });
-    } else {
-      // @ts-ignore
-      dispatchGuideParameters({ type: guideActions.clearExpandedPanel });
+    if (!guideParameters.locked && !operationPending) {
+      dispatchGuideParameters({
+        type: guideActions.setExpandedPanel,
+        payload: expanded ? key : '',
+      });
     }
   };
 
@@ -452,48 +508,42 @@ const GuideControl = (props: IProps) => {
   };
 
   const handlePanelListItemChange = (key, item) => () => {
-    if (guideParameters.locked) {
-      return;
+    if (!guideParameters.locked) {
+      const currentActiveItem = activeItem ? guideParameters[activeItem] : null;
+      if (item !== currentActiveItem) {
+        dispatchGuideParameters({
+          type: guideActions.calculateNextPath,
+          payload: {
+            nextPanel: key,
+            nextId: item.id,
+          },
+        });
+      }
     }
-
-    const currentActiveItem = activeItem ? guideParameters[activeItem] : null;
-    if (item === currentActiveItem) {
-      return;
-    }
-
-    dispatchGuideParameters({
-      type: guideActions.calculateNextPath,
-      payload: {
-        nextPanel: key,
-        nextId: item.id,
-      },
-    });
   };
 
   const handleListMenuSelection = (key, itemIndex) => menuItem => {
-    if (guideParameters.locked) {
-      return;
+    if (!guideParameters.locked) {
+      const { action } = menuItem;
+      const item = getItemsForKey(key)[itemIndex];
+      let nextPanel;
+      if (action === controlSegmentActions.new) {
+        nextPanel =
+          key === controlSegmentKeys.execution
+            ? controlSegmentKeys.rendering
+            : controlSegmentKeys.execution;
+      } else {
+        nextPanel = key;
+      }
+      dispatchGuideParameters({
+        type: guideActions.calculateNextPath,
+        payload: {
+          nextPanel,
+          nextId: item.id,
+          nextAction: action,
+        },
+      });
     }
-
-    const { action } = menuItem;
-    const item = getItemsForKey(key)[itemIndex];
-    let nextPanel;
-    if (action === controlSegmentActions.new) {
-      nextPanel =
-        key === controlSegmentKeys.execution
-          ? controlSegmentKeys.rendering
-          : controlSegmentKeys.execution;
-    } else {
-      nextPanel = key;
-    }
-    dispatchGuideParameters({
-      type: guideActions.calculateNextPath,
-      payload: {
-        nextPanel,
-        nextId: item.id,
-        nextAction: action,
-      },
-    });
   };
 
   const handleCancelLock = () =>
@@ -656,18 +706,19 @@ const GuideControl = (props: IProps) => {
   };
 
   const renderActions = () => {
-    switch (guideParameters.renderLockedAction) {
-      case controlSegmentActions.edit:
-        return renderActionControls('Save');
-      case controlSegmentActions.new:
-        return renderActionControls('Add');
-      default:
-        return renderActionControls();
+    if (guideParameters.renderLockedAction) {
+      switch (guideParameters.renderLockedAction) {
+        case controlSegmentActions.edit:
+          return renderActionControls('Save');
+        case controlSegmentActions.new:
+          return renderActionControls('Add');
+        default:
+          return renderActionControls();
+      }
     }
   };
 
   const renderLockedDetails = item => {
-    debug('renderLockedDetails', { item });
     let message;
     switch (guideParameters.renderLockedAction) {
       case controlSegmentActions.new:
@@ -697,11 +748,11 @@ const GuideControl = (props: IProps) => {
   };
 
   const renderLockedContent = () => {
-    const { renderLockedItem, locked } = guideParameters;
+    const { renderLockedItem } = guideParameters;
     return (
       <Collapse
-        in={Boolean(locked && renderLockedItem)}
-        timeout={{ enter: animationDelay, exit: animationDelay }}
+        in={collapseIn}
+        timeout={{ enter: animationDelay - 100, exit: animationDelay - 100 }}
       >
         <Paper elevation={4} className={classes.actionPaper}>
           {renderLockedDetails(renderLockedItem)}

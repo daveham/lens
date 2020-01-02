@@ -55,8 +55,6 @@ import {
 import _debug from 'debug';
 const debug = _debug('lens:editor:sagas:operations:executions');
 
-const animationDelay = 350;
-
 function* validateExecutionSaga() {
   const isValid = yield select(executionValid);
   yield put(editorActionValid(isValid));
@@ -64,16 +62,19 @@ function* validateExecutionSaga() {
 
 // same saga for starting new, edit, delete execution operations
 export function* startExecutionOperationSaga({ type, payload: { simulationId, executionId } }) {
-  yield delay(animationDelay);
   const execution = yield select(executionByIdSelector, simulationId, executionId);
-  yield put(setSelectedExecution(execution));
-  yield* validateExecutionSaga();
-  if (type === `${startViewExecution}`) {
-    yield put(viewExecutionStarted({ simulationId, executionId }));
-  } else if (type === `${startEditExecution}`) {
-    yield put(editExecutionStarted({ simulationId, executionId }));
+  if (execution && execution.simulationId === simulationId) {
+    yield put(setSelectedExecution(execution));
+    yield* validateExecutionSaga();
+    if (type === `${startViewExecution}`) {
+      yield put(viewExecutionStarted({ simulationId, executionId }));
+    } else if (type === `${startEditExecution}`) {
+      yield put(editExecutionStarted({ simulationId, executionId }));
+    } else {
+      yield put(deleteExecutionStarted({ simulationId, executionId }));
+    }
   } else {
-    yield put(deleteExecutionStarted({ simulationId, executionId }));
+    yield put(setSelectedExecution());
   }
 }
 
@@ -108,13 +109,12 @@ export function* finishDeleteExecutionSaga({ payload: { simulationId, executionI
   yield put(deleteExecution({ sourceId, simulationId, executionId }));
   yield take([deleteExecutionSucceeded, deleteExecutionFailed]);
 
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(deleteExecutionFinished());
 }
 
 export function* startNewExecutionSaga({ payload: { simulationId } }) {
   debug('startNewExecutionSaga', { simulationId });
-  yield delay(animationDelay);
   const execution = defaultNewExecution(simulationId, { isNew: true });
   yield put(setSelectedExecution(execution));
   yield* validateExecutionSaga();
@@ -126,22 +126,21 @@ export function* finishNewExecutionSaga() {
   const execution = yield select(selectedExecutionSelector);
   yield put(saveNewExecution({ sourceId: simulation.sourceId, execution }));
   yield take([saveNewExecutionSucceeded, saveNewExecutionFailed]);
-  yield delay(animationDelay);
   yield put(newExecutionFinished());
 }
 
 export function* cancelEditExecutionSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(editExecutionCanceled());
 }
 
 export function* cancelDeleteExecutionSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(deleteExecutionCanceled());
 }
 
 export function* cancelNewExecutionSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(newExecutionCanceled());
 }
 

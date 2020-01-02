@@ -54,8 +54,6 @@ import {
 import _debug from 'debug';
 const debug = _debug('lens:editor:sagas:operations:renderings');
 
-const animationDelay = 350;
-
 function* validateRenderingSaga() {
   const isValid = yield select(renderingValid);
   yield put(editorActionValid(isValid));
@@ -66,16 +64,19 @@ export function* startRenderingOperationSaga({
   type,
   payload: { simulationId, executionId, renderingId },
 }) {
-  yield delay(animationDelay);
   const rendering = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
-  yield put(setSelectedRendering(rendering));
-  yield* validateRenderingSaga();
-  if (type === `${startViewRendering}`) {
-    yield put(viewRenderingStarted({ simulationId, executionId, renderingId }));
-  } else if (type === `${startEditRendering}`) {
-    yield put(editRenderingStarted({ simulationId, executionId, renderingId }));
+  if (rendering && rendering.executionId === executionId) {
+    yield put(setSelectedRendering(rendering));
+    yield* validateRenderingSaga();
+    if (type === `${startViewRendering}`) {
+      yield put(viewRenderingStarted({ simulationId, executionId, renderingId }));
+    } else if (type === `${startEditRendering}`) {
+      yield put(editRenderingStarted({ simulationId, executionId, renderingId }));
+    } else {
+      yield put(deleteRenderingStarted({ simulationId, executionId, renderingId }));
+    }
   } else {
-    yield put(deleteRenderingStarted({ simulationId, executionId, renderingId }));
+    yield put(setSelectedRendering());
   }
 }
 
@@ -117,13 +118,12 @@ export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
   yield put(deleteRendering({ sourceId, simulationId, executionId, renderingId }));
   yield take([deleteRenderingSucceeded, deleteRenderingFailed]);
 
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(deleteRenderingFinished());
 }
 
 export function* startNewRenderingSaga({ payload: { simulationId, executionId } }) {
   debug('startNewRenderingSaga', { simulationId, executionId });
-  yield delay(animationDelay);
   const rendering = defaultNewRendering(simulationId, executionId, { isNew: true });
   yield put(setSelectedRendering(rendering));
   yield* validateRenderingSaga();
@@ -141,22 +141,22 @@ export function* finishNewRenderingSaga() {
     }),
   );
   yield take([saveNewRenderingSucceeded, saveNewRenderingFailed]);
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(newRenderingFinished());
 }
 
 export function* cancelEditRenderingSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(editRenderingCanceled());
 }
 
 export function* cancelDeleteRenderingSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(deleteRenderingCanceled());
 }
 
 export function* cancelNewRenderingSaga() {
-  yield delay(animationDelay);
+  yield delay(0);
   yield put(newRenderingCanceled());
 }
 

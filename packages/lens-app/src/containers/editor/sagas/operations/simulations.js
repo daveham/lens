@@ -67,9 +67,9 @@ function* validateSimulationSaga() {
 
 // same saga for starting new, edit, delete simulation operations
 export function* startSimulationOperationSaga({ type, payload: { sourceId, simulationId } }) {
-  const simulation = yield select(simulationByIdSelector, simulationId);
+  const { simulation } = yield select(simulationByIdSelector, simulationId);
   if (simulation && simulation.sourceId === sourceId) {
-    yield put(setSelectedSimulation(simulation));
+    yield put(setSelectedSimulation({ simulation }));
     yield put(requestHikes({ simulationId, sourceId: simulation.sourceId }));
     const result = yield take([receiveHikes, requestHikesFailed]);
     if (result.type === `${receiveHikes}`) {
@@ -90,7 +90,7 @@ export function* startSimulationOperationSaga({ type, payload: { sourceId, simul
 export function* finishEditSimulationSaga({ payload: { simulationId } }) {
   debug('finishEditSimulationSaga', { simulationId });
   const changedSimulation = yield select(selectedSimulationSelector);
-  const originalSimulation = yield select(simulationByIdSelector, simulationId);
+  const { simulation : originalSimulation } = yield select(simulationByIdSelector, simulationId);
   if (!originalSimulation || originalSimulation.id !== changedSimulation.id) {
     debug('finishEditSimulationSaga - changed simulation id not the expected id');
   } else {
@@ -114,13 +114,13 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
 export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   debug('finishDeleteSimulationSaga', { simulationId });
 
-  const simulation = yield select(simulationByIdSelector, simulationId);
+  const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
   yield put(deleteSimulation({ sourceId, simulationId }));
   const result = yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
   if (result.type === `${deleteSimulationSucceeded}`) {
-    yield put(setSelectedSimulation());
+    yield put(setSelectedSimulation({}));
   }
 
   yield put(deleteSimulationFinished());
@@ -129,7 +129,7 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
 export function* startNewSimulationSaga({ payload: { sourceId } }) {
   debug('startNewSimulationSaga', { sourceId });
   const simulation = defaultNewSimulation(sourceId, { isNew: true });
-  yield put(setSelectedSimulation(simulation));
+  yield put(setSelectedSimulation({ simulation }));
   yield put(receiveHikes());
   yield* validateSimulationSaga();
   yield put(newSimulationStarted());

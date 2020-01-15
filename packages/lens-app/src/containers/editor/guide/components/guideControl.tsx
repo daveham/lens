@@ -24,7 +24,12 @@ import { ISimulation, IExecution, IRendering } from 'editor/interfaces';
 import { default as getConfig } from 'src/config';
 import { Loading } from 'components/loading';
 
-import { operationPendingSelector } from 'editor/modules/selectors';
+import {
+  operationPendingSelector,
+  selectedExecutionSelector,
+  selectedRenderingSelector,
+  selectedSimulationSelector,
+} from 'editor/modules/selectors';
 
 import { usePrevious } from 'helpers/usePrevious';
 import ExpansionPanel from './ExpansionPanel';
@@ -212,103 +217,119 @@ const initialGuideParameters: IGuideParameters = {
   nextPath: '',
 };
 
-// Helper to get id of selected element type indicated by key,
-// cascade to next available item of type if none selected
-const getIdForSegmentKey = (controlParameters, key) => {
-  if (controlParameters[key]) {
-    return controlParameters[key].id;
-  }
-
-  // no element of type indicated by key is selected, do cascade
-  if (controlParameters.simulations.length) {
-    if (key === controlSegmentKeys.simulation) {
-      // return id of first simulation
-      return controlParameters.simulations[0].id;
-    } else if (key === controlSegmentKeys.execution) {
-      const s = controlParameters.simulation;
-      if (s && s.executions && s.executions.length) {
-        // return id of first execution selected simulation
-        return s.executions[0].id;
-      }
-    } else if (key === controlSegmentKeys.rendering) {
-      const e = controlParameters.execution;
-      if (e && e.renderings && e.renderings.length) {
-        // return id of first rendering of selected execution
-        return e.renderings[0].id;
-      }
-    }
-  }
-  return '';
-};
-
 const guideActions = {
   setExpandedPanel: 'SET_EXPANDED_PANEL',
-  calculateNextPath: 'CALCULATE_NEXT_PATH',
+  calculateNextPathAtEndOfOperation: 'CALCULATE_NEXT_PATH_AT_END_OF_OPERATION',
+  calculateNextPathOnGuideMenuSelection: 'CALCULATE_NEXT_PATH_ON_GUIDE_MENU_SELECTION',
+  calculateNextPathOnListMenuSelection: 'CALCULATE_NEXT_PATH_ON_LIST_MENU_SELECTION',
+  calculateNextPathOnPanelListItemChange: 'CALCULATE_NEXT_PATH_ON_PANEL_LIST_ITEM_CHANGE',
   updateFromProps: 'UPDATE_FROM_PROPS',
 };
 
-const guideParametersReducer = (state, { type, payload }) => {
-  debug('guideParametersReducer', { type });
-  switch (type) {
-    case guideActions.updateFromProps:
-      const { action, activeItem } = payload;
-      const nextState = {
-        ...state,
-        ...payload,
-      };
-      let locked = false;
-      if (payload.hasOwnProperty('action')) {
-        locked = Boolean(action && lockingActions.includes(action));
-        if (locked) {
-          nextState.renderLockedAction = action;
-        }
-      }
-      if (payload.hasOwnProperty('activeItem')) {
-        if (locked) {
-          nextState.renderLockedItem = activeItem;
-        }
-      }
-      nextState.locked = locked;
-      return nextState;
-    case guideActions.setExpandedPanel:
-      return {
-        ...state,
-        expandedPanel: payload,
-      };
-    case guideActions.calculateNextPath: {
-      const { nextPanel, nextId = '', nextAction = '' } = payload;
-      debug('guideParametersReducer(calculateNextPath)', { nextPanel, nextId, nextAction });
-      if (!nextPanel) {
-        return state;
-      }
-      const id = nextId || getIdForSegmentKey(state, nextPanel);
-
-      let nextPath = 'Simulation';
-      if (nextPanel === controlSegmentKeys.execution) {
-        nextPath = `${nextPath}/${state.simulation!.id}/Execution`;
-      } else if (nextPanel === controlSegmentKeys.rendering) {
-        nextPath = `${nextPath}/${state.simulation!.id}/Execution/${state.execution!.id}/Rendering`;
-      }
-
-      if (nextAction === controlSegmentActions.new) {
-        debug('guideParametersReducer(calculateNextPath) - new', { nextPath, nextAction, id });
-        nextPath = `${nextPath}/${nextAction}`;
-      } else if (id) {
-        nextPath = `${nextPath}/${id}`;
-        if (nextAction) {
-          nextPath = `${nextPath}/${nextAction}`;
-        }
-      }
-      debug('guideParametersReducer(calculateNextPath)', { nextPath });
-      return {
-        ...state,
-        nextPath,
-      };
-    }
-    default:
-      throw new Error();
+function parentKeyFor(key) {
+  if (key === controlSegmentKeys.rendering) {
+    return controlSegmentKeys.execution;
   }
+  return controlSegmentKeys.simulation;
+}
+
+const resolvePath = (nextActiveItem, nextAction, nextActiveId, simulation, execution) => {
+  let nextPath = 'Simulation';
+  if (nextActiveItem === controlSegmentKeys.execution) {
+    nextPath = `${nextPath}/${simulation.id}/Execution`;
+  } else if (nextActiveItem === controlSegmentKeys.rendering) {
+    nextPath = `${nextPath}/${simulation.id}/Execution/${execution.id}/Rendering`;
+  }
+
+  if (nextAction === controlSegmentActions.new) {
+    nextPath = `${nextPath}/${nextAction}`;
+  } else if (nextActiveId) {
+    nextPath = `${nextPath}/${nextActiveId}`;
+    if (nextAction) {
+      nextPath = `${nextPath}/${nextAction}`;
+    }
+  }
+  debug('resolvePath', { nextPath });
+  return nextPath;
 };
+
+const determineNextPathAtEndOfOperation = (payload) => {
+  const {
+    activeItem, // one of controlSegmentKeys: simulation | execution | rendering
+    lastAction = '', // one of controlSegmentActions: view | edit | new | delete
+    actionFinishedBy = '', // one of: commit | cancel | ''
+  } = payload;
+
+  debug('determineNextPathAtEndOfOperation - inputs', {
+    activeItem,
+    lastAction,
+    actionFinishedBy,
+  });
+
+  let nextActiveItem = activeItem;
+  let nextActiveId = payload[activeItem] ? payload[activeItem].id : '';
+  const nextAction = ''; // controlSegmentActions.view;
+
+  debug('determineNextPathAtEndOfOperation - before resolve', { nextActiveItem, nextActiveId });
+
+  if (lastAction && actionFinishedBy) {
+    if (lastAction === controlSegmentActions.new) {
+      // /sim/new or /sim/x/exe/new or /sim/x/exe/y/ren/new
+      //   if commit, /sim/x` or /sim/x/exe/y` or /sim/x/exe/y/ren/z`
+      //   if cancel, /sim/n or /sim/x/exe/o or /sim/x/exe/y/ren/p
+      if (actionFinishedBy === 'commit') {
+        // commit new
+        // use key and payload[key].id
+        //  defaults should work here, assuming id is not changed by db layer
+      } else {
+        // cancel new
+        // use parent key and payload[parent key].id or first available sim
+        nextActiveItem = parentKeyFor(activeItem);
+        if (activeItem === nextActiveItem) {
+          nextActiveId = payload.simulations.length ? payload.simulations[0].id : '';
+        } else {
+          nextActiveId = payload[nextActiveItem].id;
+        }
+      }
+    } else if (lastAction === controlSegmentActions.delete) {
+      // /sim/x/delete or /sim/x/exe/y/delete or /sim/x/exe/y/ren/z/delete
+      //    if commit, /sim/n or /sim/x/exe/o or /sim/x/exe/y/ren/p
+      //    if cancel, /sim/x or /sim/x/exe/y or /sim/x/exe/y/ren/z
+      if (actionFinishedBy === 'commit') {
+        // commit delete
+        // select prior sibling if exists, otherwise select parent
+        // use parent key and payload[parent key].id
+        const parentItem = parentKeyFor(activeItem);
+        const deletedItemCreated = payload[activeItem].created;
+        const activeCollection = parentItem === activeItem ? payload.simulations : payload[parentItem][`${activeItem}s`];
+        const nextItem = activeCollection.find(i => i.created > deletedItemCreated && i.id !== nextActiveId);
+        if (nextItem) {
+          nextActiveId = nextItem.id;
+        } else {
+          nextActiveItem = parentItem;
+          nextActiveId = payload[parentItem].id;
+        }
+      } else {
+        // cancel delete
+        // use key and payload[key].id
+        // defaults will work here
+      }
+    }
+  }
+
+  debug('determineNextPathAtEndOfOperation - resolve next', { nextActiveItem, nextActiveId });
+  return resolvePath(nextActiveItem, nextAction, nextActiveId, payload.simulation, payload.execution);
+};
+
+// currently only used for new simulation
+const determineNextPathOnGuideMenuSelection = ({ key, action, simulation, execution }) =>
+  resolvePath(key, action, '', simulation, execution);
+
+const determineNextPathOnPanelListItemChange = ({ key, nextId, simulation, execution }) =>
+  resolvePath(key, '', nextId, simulation, execution);
+
+const determineNextPathOnListMenuSelection = ({ key, nextId, action, simulation, execution }) =>
+  resolvePath(key, action, nextId, simulation, execution);
 
 const GuideControl = (props: IProps) => {
   const {
@@ -324,35 +345,156 @@ const GuideControl = (props: IProps) => {
   // hooks
   const dispatch = useDispatch();
 
-  const [guideParameters, dispatchGuideParameters] = useReducer(
-    guideParametersReducer,
-    initialGuideParameters,
-  );
+  const selectedSimulation = useSelector(selectedSimulationSelector);
+  const selectedExecution = useSelector(selectedExecutionSelector);
+  const selectedRendering = useSelector(selectedRenderingSelector);
 
   const operationPending = useSelector(operationPendingSelector);
   const previousOperationPending = usePrevious(operationPending);
 
   const [collapseIn, setCollapseIn] = useState(false);
 
+  const [guideParameters, dispatchGuideParameters] = useReducer((state, { type, payload }) => {
+    debug('guideParametersReducer', { type });
+    switch (type) {
+      case guideActions.updateFromProps:
+        const { action, activeItem } = payload;
+        const nextState = {
+          ...state,
+          ...payload,
+        };
+        let locked = false;
+        if (payload.hasOwnProperty('action')) {
+          locked = Boolean(action && lockingActions.includes(action));
+          if (locked) {
+            nextState.renderLockedAction = action;
+          }
+        }
+        if (payload.hasOwnProperty('activeItem')) {
+          if (locked) {
+            nextState.renderLockedItem = activeItem;
+          }
+        }
+        nextState.locked = locked;
+        return nextState;
+      case guideActions.setExpandedPanel:
+        return {
+          ...state,
+          expandedPanel: payload,
+        };
+      case guideActions.calculateNextPathAtEndOfOperation:
+        return {
+          ...state,
+          nextPath: determineNextPathAtEndOfOperation({
+            ...payload,
+            simulations,
+            simulation: selectedSimulation,
+            execution: selectedExecution,
+            rendering: selectedRendering,
+          }),
+        };
+      case guideActions.calculateNextPathOnGuideMenuSelection:
+        return {
+          ...state,
+          nextPath: determineNextPathOnGuideMenuSelection({
+            ...payload,
+            simulations,
+            simulation: state.simulation,
+            execution: state.execution,
+            rendering: state.rendering,
+          }),
+        };
+      case guideActions.calculateNextPathOnPanelListItemChange:
+        return {
+          ...state,
+          nextPath: determineNextPathOnPanelListItemChange({
+            ...payload,
+            simulations,
+            simulation: state.simulation,
+            execution: state.execution,
+            rendering: state.rendering,
+          }),
+        };
+      case guideActions.calculateNextPathOnListMenuSelection:
+        return {
+          ...state,
+          nextPath: determineNextPathOnListMenuSelection({
+            ...payload,
+            simulations,
+            simulation: state.simulation,
+            execution: state.execution,
+            rendering: state.rendering,
+          }),
+        };
+      default:
+        throw new Error();
+    }
+  }, initialGuideParameters);
   const previousSimulationsLength = usePrevious(
     guideParameters.simulations ? guideParameters.simulations.length : 0,
   );
-
-  const expandedPanelTimerActive = useRef(false);
-  const collapseTimerActive = useRef(false);
 
   debug('on render', {
     guideParameters,
     operationPending,
     previousOperationPending,
     collapseIn,
-    expandedPanelTimerActive: expandedPanelTimerActive.current,
-    collapseTimerActive: collapseTimerActive.current,
     previousSimulationsLength,
     props,
   });
 
+  const lastAction = useRef(action);
+  const actionFinishedBy = useRef('');
+
+  // update rendered control parameters from prop changes
+  useEffect(() => {
+    debug('useEffect(props) props changed', {
+      simulations,
+      simulation,
+      execution,
+      rendering,
+      activeItem,
+      action,
+    });
+    dispatchGuideParameters({
+      type: guideActions.updateFromProps,
+      payload: {
+        simulations,
+        simulation,
+        execution,
+        rendering,
+        activeItem, // one of controlSegmentKeys: simulation | execution | rendering
+        action, // one of controlSegmentActions: view | edit | new | delete
+      },
+    });
+  }, [simulations, simulation, execution, rendering, activeItem, action]);
+
+  // when current operation completes, trigger panel update and path calculation
+  useEffect(() => {
+    if (previousOperationPending && !operationPending) {
+      dispatchGuideParameters({
+        type: guideActions.calculateNextPathAtEndOfOperation,
+        payload: {
+          activeItem,
+          lastAction: lastAction.current,
+          actionFinishedBy: actionFinishedBy.current,
+        },
+      });
+    }
+  }, [operationPending, previousOperationPending, activeItem]);
+
+  // if nextPath has changed, notify parent control which handles routing.
+  useEffect(() => {
+    if (guideParameters.nextPath) {
+      debug('useEffect(gpNextPath) invoke onControlChanged', {
+        nextPath: guideParameters.nextPath,
+      });
+      onControlChanged(guideParameters.nextPath);
+    }
+  }, [guideParameters.nextPath, onControlChanged]);
+
   // sometimes delay the expanded panel setting to allow time for animation
+  const expandedPanelTimerActive = useRef(false);
   useEffect(() => {
     if (expandedPanelTimerActive.current) {
       return;
@@ -388,14 +530,15 @@ const GuideControl = (props: IProps) => {
   ]);
 
   // sometimes delay the collapse of dialog controls to allow time for animation
+  const collapseTimerActive = useRef(false);
   useEffect(() => {
     if (operationPending || collapseTimerActive.current) {
       return;
     }
-    const nextCollapseIn = Boolean(guideParameters.locked && guideParameters.simulation);
+    const nextCollapseIn = Boolean(guideParameters.locked && guideParameters.simulations);
     debug('useEffect(collapse)', {
       locked: guideParameters.locked,
-      simulation: guideParameters.simulation,
+      simulations: guideParameters.simulations,
       nextCollapseIn,
     });
     if (nextCollapseIn !== collapseIn) {
@@ -407,56 +550,7 @@ const GuideControl = (props: IProps) => {
         setCollapseIn(nextCollapseIn);
       }, animationDelay);
     }
-  }, [collapseIn, guideParameters.locked, guideParameters.simulation, operationPending]);
-
-  // update rendered control parameters
-  useEffect(() => {
-    debug('useEffect(props) props changed', {
-      simulations,
-      simulation,
-      execution,
-      rendering,
-      activeItem,
-      action,
-    });
-    dispatchGuideParameters({
-      type: guideActions.updateFromProps,
-      payload: {
-        simulations,
-        simulation,
-        execution,
-        rendering,
-        activeItem, // one of controlSegmentKeys: simulation | execution | rendering
-        action, // one of controlSegmentActions: view | edit | new | delete
-      },
-    });
-  }, [simulations, simulation, execution, rendering, activeItem, action]);
-
-  useEffect(() => {
-    if (guideParameters.nextPath) {
-      debug('useEffect(gpNextPath) invoke onControlChanged', {
-        nextPath: guideParameters.nextPath,
-      });
-      onControlChanged(guideParameters.nextPath);
-    }
-  }, [guideParameters.nextPath, onControlChanged]);
-
-  // when current operation completes, trigger panel update and path calculation
-  useEffect(() => {
-    if (previousOperationPending && !operationPending) {
-      debug('useEffect(operationPending, activeItem) at end of operation, calculateNextPath', {
-        previousOperationPending,
-        operationPending,
-        activeItem,
-      });
-      dispatchGuideParameters({
-        type: guideActions.calculateNextPath,
-        payload: {
-          nextPanel: activeItem,
-        },
-      });
-    }
-  }, [operationPending, previousOperationPending, activeItem]);
+  }, [collapseIn, guideParameters.locked, guideParameters.simulations, operationPending]);
 
   const getItemsForKey = key => {
     if (key === controlSegmentKeys.simulation) {
@@ -496,12 +590,14 @@ const GuideControl = (props: IProps) => {
 
   const handleGuideMenuSelection = menuItem => {
     const { action } = menuItem;
+    lastAction.current = action;
+    actionFinishedBy.current = '';
     if (action === controlSegmentActions.new) {
       dispatchGuideParameters({
-        type: guideActions.calculateNextPath,
+        type: guideActions.calculateNextPathOnGuideMenuSelection,
         payload: {
-          nextPanel: controlSegmentKeys.simulation,
-          nextAction: action,
+          key: controlSegmentKeys.simulation,
+          action,
         },
       });
     }
@@ -512,9 +608,9 @@ const GuideControl = (props: IProps) => {
       const currentActiveItem = activeItem ? guideParameters[activeItem] : null;
       if (item !== currentActiveItem) {
         dispatchGuideParameters({
-          type: guideActions.calculateNextPath,
+          type: guideActions.calculateNextPathOnPanelListItemChange,
           payload: {
-            nextPanel: key,
+            key,
             nextId: item.id,
           },
         });
@@ -535,22 +631,28 @@ const GuideControl = (props: IProps) => {
       } else {
         nextPanel = key;
       }
+      lastAction.current = action;
+      actionFinishedBy.current = '';
       dispatchGuideParameters({
-        type: guideActions.calculateNextPath,
+        type: guideActions.calculateNextPathOnListMenuSelection,
         payload: {
-          nextPanel,
+          key: nextPanel,
           nextId: item.id,
-          nextAction: action,
+          action,
         },
       });
     }
   };
 
-  const handleCancelLock = () =>
+  const handleCancelLock = () => {
+    actionFinishedBy.current = 'cancel';
     dispatch(reduxActionForCancelOperation(activeItem, action, getIdsForReduxAction()));
+  };
 
-  const handleCommitLock = () =>
+  const handleCommitLock = () => {
+    actionFinishedBy.current = 'commit';
     dispatch(reduxActionForFinishOperation(activeItem, action, getIdsForReduxAction()));
+  };
 
   // rendering
   const classes = useStyles();

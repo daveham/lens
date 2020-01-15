@@ -10,14 +10,21 @@ export const selectedSimulationSelector = state => state.editor.simulation;
 export const selectedExecutionSelector = state => state.editor.execution;
 export const selectedRenderingSelector = state => state.editor.rendering;
 export const simulationByIdSelector = (state, id) =>
-  state.editor.simulations.find(s => s.id === id);
+  ({ simulation: state.editor.simulations.find(s => s.id === id) });
 export const executionByIdSelector = (state, simulationId, id) => {
-  const simulation = simulationByIdSelector(state, simulationId);
-  return simulation ? simulation.executions.find(e => e.id === id) : simulation;
+  const { simulation } = simulationByIdSelector(state, simulationId);
+  return {
+    simulation,
+    execution: simulation ? simulation.executions.find(e => e.id === id) : simulation,
+  };
 };
 export const renderingByIdSelector = (state, simulationId, executionId, id) => {
-  const execution = executionByIdSelector(state, simulationId, executionId);
-  return execution ? execution.renderings.find(r => r.id === id) : execution;
+  const { simulation, execution } = executionByIdSelector(state, simulationId, executionId);
+  return {
+    simulation,
+    execution,
+    rendering: execution ? execution.renderings.find(r => r.id === id) : execution,
+  };
 };
 
 export const errorMessageSelector = state => state.editor.errorMessage;
@@ -93,7 +100,7 @@ export const hikesSelector = createSelector(
 
 export const simulationDeleteListSelector = createSelector(
   simulationByIdSelector,
-  simulation => {
+  ({ simulation }) => {
     const items = [];
     if (simulation) {
       items.push({ key: simulation.id, type: 'simulation', name: simulation.name });
@@ -110,7 +117,7 @@ export const simulationDeleteListSelector = createSelector(
 
 export const executionDeleteListSelector = createSelector(
   executionByIdSelector,
-  execution => {
+  ({ execution }) => {
     const items = [];
     if (execution) {
       items.push({ key: execution.id, type: 'execution', name: execution.name });
@@ -124,7 +131,7 @@ export const executionDeleteListSelector = createSelector(
 
 export const renderingDeleteListSelector = createSelector(
   renderingByIdSelector,
-  rendering => {
+  ({ rendering }) => {
     const items = [];
     if (rendering) {
       items.push({ key: rendering.id, type: 'rendering', name: rendering.name });

@@ -4,7 +4,7 @@ import {
   simulationByIdSelector,
   renderingByIdSelector,
   selectedRenderingSelector,
-  renderingValid,
+  renderingValid, executionByIdSelector,
 } from 'editor/modules/selectors';
 import {
   // execution operations actions
@@ -64,9 +64,9 @@ export function* startRenderingOperationSaga({
   type,
   payload: { simulationId, executionId, renderingId },
 }) {
-  const rendering = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
+  const { rendering, execution, simulation } = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
   if (rendering && rendering.executionId === executionId) {
-    yield put(setSelectedRendering(rendering));
+    yield put(setSelectedRendering({ simulation, execution, rendering }));
     yield* validateRenderingSaga();
     if (type === `${startViewRendering}`) {
       yield put(viewRenderingStarted({ simulationId, executionId, renderingId }));
@@ -76,14 +76,14 @@ export function* startRenderingOperationSaga({
       yield put(deleteRenderingStarted({ simulationId, executionId, renderingId }));
     }
   } else {
-    yield put(setSelectedRendering());
+    yield put(setSelectedRendering({}));
   }
 }
 
 export function* finishEditRenderingSaga({ payload: { simulationId, executionId, renderingId } }) {
   debug('finishEditRenderingSaga', { simulationId, executionId });
   const changedRendering = yield select(selectedRenderingSelector);
-  const originalRendering = yield select(
+  const { rendering: originalRendering } = yield select(
     renderingByIdSelector,
     simulationId,
     executionId,
@@ -93,7 +93,7 @@ export function* finishEditRenderingSaga({ payload: { simulationId, executionId,
     debug('finishEditRenderingSaga - changed rendering id not the expected id');
   } else {
     const changes = {};
-    const simulation = yield select(simulationByIdSelector, simulationId);
+    const { simulation } = yield select(simulationByIdSelector, simulationId);
     const { sourceId } = simulation;
     if (changedRendering.name !== originalRendering.name) {
       changes.name = changedRendering.name;
@@ -112,7 +112,7 @@ export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
 
   const rendering = yield select(selectedRenderingSelector);
   const { simulationId, executionId } = rendering;
-  const simulation = yield select(simulationByIdSelector, simulationId);
+  const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
   yield put(deleteRendering({ sourceId, simulationId, executionId, renderingId }));
@@ -124,15 +124,16 @@ export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
 
 export function* startNewRenderingSaga({ payload: { simulationId, executionId } }) {
   debug('startNewRenderingSaga', { simulationId, executionId });
+  const { execution, simulation } = yield select(executionByIdSelector, simulationId, executionId);
   const rendering = defaultNewRendering(simulationId, executionId, { isNew: true });
-  yield put(setSelectedRendering(rendering));
+  yield put(setSelectedRendering({ simulation, execution, rendering }));
   yield* validateRenderingSaga();
   yield put(newRenderingStarted());
 }
 
 export function* finishNewRenderingSaga() {
   const rendering = yield select(selectedRenderingSelector);
-  const simulation = yield select(simulationByIdSelector, rendering.simulationId);
+  const { simulation } = yield select(simulationByIdSelector, rendering.simulationId);
   debug('finishNewRenderingSaga', { simulation, rendering });
   yield put(
     saveNewRendering({

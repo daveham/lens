@@ -86,11 +86,7 @@ export function* readHikesSaga({ payload: { sourceId, simulationId } }) {
     }
     yield put(receiveHikes(clonedeep(mockHikes)));
   } else {
-    yield* restApiSaga(
-      [`/hikes/${sourceId}/${simulationId}`],
-      receiveHikes,
-      requestHikesFailed,
-    );
+    yield* restApiSaga([`/hikes/${sourceId}/${simulationId}`], receiveHikes, requestHikesFailed);
   }
 }
 
@@ -113,7 +109,7 @@ export function* saveSimulationSaga({ payload: { simulationId, sourceId, changes
 
     yield put(saveSimulationSucceeded(clonedeep(changedSimulation)));
   } else {
-    const originalSimulation = yield select(simulationByIdSelector, simulationId);
+    const { simulation: originalSimulation } = yield select(simulationByIdSelector, simulationId);
     const body = { changes };
     yield* restApiSaga(
       [`/simulations/${simulationId}`, { method: 'PUT', body }],
@@ -171,7 +167,11 @@ export function* saveExecutionSaga({ payload: { executionId, simulationId, sourc
 
     yield put(saveExecutionSucceeded({ simulationId, execution: clonedeep(execution) }));
   } else {
-    const originalExecution = yield select(executionByIdSelector, simulationId, executionId);
+    const { execution: originalExecution } = yield select(
+      executionByIdSelector,
+      simulationId,
+      executionId,
+    );
     const body = { changes };
     yield* restApiSaga(
       [`/executions/${executionId}`, { method: 'PUT', body }],
@@ -230,11 +230,13 @@ export function* saveRenderingSaga({
 
     execution.renderings = execution.renderings.map(r => (r.id === renderingId ? rendering : r));
 
-    yield put(saveRenderingSucceeded({
-      simulationId,
-      executionId,
-      rendering: clonedeep(rendering)
-    }));
+    yield put(
+      saveRenderingSucceeded({
+        simulationId,
+        executionId,
+        rendering: clonedeep(rendering),
+      }),
+    );
   } else {
     const body = { changes };
     yield* restApiSaga(

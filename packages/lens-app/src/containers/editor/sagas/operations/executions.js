@@ -62,9 +62,9 @@ function* validateExecutionSaga() {
 
 // same saga for starting new, edit, delete execution operations
 export function* startExecutionOperationSaga({ type, payload: { simulationId, executionId } }) {
-  const execution = yield select(executionByIdSelector, simulationId, executionId);
+  const { execution, simulation } = yield select(executionByIdSelector, simulationId, executionId);
   if (execution && execution.simulationId === simulationId) {
-    yield put(setSelectedExecution(execution));
+    yield put(setSelectedExecution({ execution, simulation }));
     yield* validateExecutionSaga();
     if (type === `${startViewExecution}`) {
       yield put(viewExecutionStarted({ simulationId, executionId }));
@@ -74,19 +74,19 @@ export function* startExecutionOperationSaga({ type, payload: { simulationId, ex
       yield put(deleteExecutionStarted({ simulationId, executionId }));
     }
   } else {
-    yield put(setSelectedExecution());
+    yield put(setSelectedExecution({}));
   }
 }
 
 export function* finishEditExecutionSaga({ payload: { simulationId, executionId } }) {
   debug('finishEditExecutionSaga', { simulationId, executionId });
   const changedExecution = yield select(selectedExecutionSelector);
-  const originalExecution = yield select(executionByIdSelector, simulationId, executionId);
+  const { execution: originalExecution } = yield select(executionByIdSelector, simulationId, executionId);
   if (!originalExecution || originalExecution.id !== changedExecution.id) {
     debug('finishEditExecutionSaga - changed execution id not the expected id');
   } else {
     const changes = {};
-    const simulation = yield select(simulationByIdSelector, simulationId);
+    const { simulation } = yield select(simulationByIdSelector, simulationId);
     const { sourceId } = simulation;
     if (changedExecution.name !== originalExecution.name) {
       changes.name = changedExecution.name;
@@ -103,7 +103,7 @@ export function* finishEditExecutionSaga({ payload: { simulationId, executionId 
 export function* finishDeleteExecutionSaga({ payload: { simulationId, executionId } }) {
   debug('finishDeleteExecutionSaga', { simulationId, executionId });
 
-  const simulation = yield select(simulationByIdSelector, simulationId);
+  const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
   yield put(deleteExecution({ sourceId, simulationId, executionId }));
@@ -115,8 +115,9 @@ export function* finishDeleteExecutionSaga({ payload: { simulationId, executionI
 
 export function* startNewExecutionSaga({ payload: { simulationId } }) {
   debug('startNewExecutionSaga', { simulationId });
+  const { simulation } = yield select(simulationByIdSelector, simulationId);
   const execution = defaultNewExecution(simulationId, { isNew: true });
-  yield put(setSelectedExecution(execution));
+  yield put(setSelectedExecution({ simulation, execution }));
   yield* validateExecutionSaga();
   yield put(newExecutionStarted());
 }

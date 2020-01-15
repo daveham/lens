@@ -112,63 +112,57 @@ const simulationsLoading = handleActions(
   false,
 );
 
+function replaceSimulation(simulations, id, simulation, executions) {
+  // ...other?
+  return simulations.map(s => (s.id === id ? { ...simulation, executions } : s));
+}
 const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [clearEditor]: () => initialSimulationsState,
-    [receiveSimulationsForSource]: (state, { payload }) => payload,
-    [saveSimulationSucceeded]: (state, { payload }) =>
-      state.map(s => (s.id === payload.id ? payload : s)),
-    [saveExecutionSucceeded]: (state, { payload }) => {
-      const simulation = state.find(s => s.id === payload.simulationId);
+    [receiveSimulationsForSource]: (state, { payload }) => payload.sort((a, b) => a.created - b.created),
+    [saveSimulationSucceeded]: (state, { payload: simulation }) =>
+      state.map(s => (s.id === simulation.id ? simulation : s)),
+    [saveExecutionSucceeded]: (state, { payload: execution }) => {
+      const simulation = state.find(s => s.id === execution.simulationId);
       const changedExecutions = simulation.executions.map(e =>
-        e.id === payload.id ? payload : e,
+        e.id === execution.id ? execution : e,
       );
-      return state.map(s =>
-        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+      return replaceSimulation(state, execution.simulationId, simulation, changedExecutions);
     },
-    [saveRenderingSucceeded]: (state, { payload }) => {
-      const simulation = state.find(s => s.id === payload.simulationId);
-      const execution = simulation.executions.find(e => e.id === payload.executionId);
+    [saveRenderingSucceeded]: (state, { payload: rendering }) => {
+      const simulation = state.find(s => s.id === rendering.simulationId);
+      const execution = simulation.executions.find(e => e.id === rendering.executionId);
       const changedRenderings = execution.renderings.map(r =>
-        r.id === payload.id ? payload : r,
+        r.id === rendering.id ? rendering : r,
       );
       const changedExecution = { ...execution, renderings: changedRenderings };
       const changedExecutions = simulation.executions.map(e =>
-        e.id === payload.executionId ? changedExecution : e,
+        e.id === rendering.executionId ? changedExecution : e,
       );
-      return state.map(s =>
-        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+      return replaceSimulation(state, rendering.simulationId, simulation, changedExecutions);
     },
     [saveNewSimulationSucceeded]: (state, { payload }) => [...state, payload],
-    [saveNewExecutionSucceeded]: (state, { payload }) => {
-      const simulation = state.find(s => s.id === payload.simulationId);
-      const changedExecutions = [...simulation.executions, payload];
-      return state.map(s =>
-        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+    [saveNewExecutionSucceeded]: (state, { payload: execution }) => {
+      const simulation = state.find(s => s.id === execution.simulationId);
+      const changedExecutions = [...simulation.executions, execution];
+      return replaceSimulation(state, execution.simulationId, simulation, changedExecutions);
     },
-    [saveNewRenderingSucceeded]: (state, { payload }) => {
-      const simulation = state.find(s => s.id === payload.simulationId);
-      const execution = simulation.executions.find(e => e.id === payload.executionId);
-      const changedRenderings = [...execution.renderings, payload];
+    [saveNewRenderingSucceeded]: (state, { payload: rendering }) => {
+      const simulation = state.find(s => s.id === rendering.simulationId);
+      const execution = simulation.executions.find(e => e.id === rendering.executionId);
+      const changedRenderings = [...execution.renderings, rendering];
       const changedExecutions = simulation.executions.map(e =>
-        e.id === payload.executionId ? { ...execution, renderings: changedRenderings } : e,
+        e.id === rendering.executionId ? { ...execution, renderings: changedRenderings } : e,
       );
-      return state.map(s =>
-        s.id === payload.simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+      return replaceSimulation(state, rendering.simulationId, simulation, changedExecutions);
     },
     [deleteSimulationSucceeded]: (state, { payload: { simulationId } }) =>
       state.filter(s => s.id !== simulationId),
     [deleteExecutionSucceeded]: (state, { payload: { executionId, simulationId } }) => {
       const simulation = state.find(s => s.id === simulationId);
       const changedExecutions = simulation.executions.filter(e => e.id !== executionId);
-      return state.map(s =>
-        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+      return replaceSimulation(state, simulationId, simulation, changedExecutions);
     },
     [deleteRenderingSucceeded]: (
       state,
@@ -181,9 +175,7 @@ const simulations = handleActions(
       const changedExecutions = simulation.executions.map(e =>
         e.id === executionId ? changedExecution : e,
       );
-      return state.map(s =>
-        s.id === simulationId ? { ...simulation, executions: changedExecutions } : s,
-      );
+      return replaceSimulation(state, simulationId, simulation, changedExecutions);
     },
   },
   initialSimulationsState,
@@ -282,7 +274,12 @@ const hikes = handleActions(
 const initialSimulationState = {};
 const simulation = handleActions(
   {
-    [setSelectedSimulation]: (state, { payload }) => ({ ...(payload || initialSimulationState) }),
+    [combineActions(setSelectedSimulation, setSelectedExecution, setSelectedRendering)]: (
+      state,
+      { payload: { simulation } },
+    ) => ({
+      ...(simulation || initialSimulationState),
+    }),
     [updateSelectedSimulation]: (state, { payload }) => ({
       ...state,
       ...payload,
@@ -295,7 +292,12 @@ const simulation = handleActions(
 const initialExecutionState = {};
 const execution = handleActions(
   {
-    [setSelectedExecution]: (state, { payload }) => ({ ...(payload || initialExecutionState) }),
+    [combineActions(setSelectedExecution, setSelectedRendering)]: (
+      state,
+      { payload: { execution } },
+    ) => ({
+      ...(execution || initialExecutionState),
+    }),
     [updateSelectedExecution]: (state, { payload }) => ({
       ...state,
       ...payload,
@@ -308,7 +310,9 @@ const execution = handleActions(
 const initialRenderingState = {};
 const rendering = handleActions(
   {
-    [setSelectedRendering]: (state, { payload }) => ({ ...(payload || initialRenderingState) }),
+    [setSelectedRendering]: (state, { payload: { rendering } }) => ({
+      ...(rendering || initialRenderingState),
+    }),
     [updateSelectedRendering]: (state, { payload }) => ({
       ...state,
       ...payload,

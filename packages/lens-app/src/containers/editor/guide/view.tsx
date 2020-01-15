@@ -120,36 +120,6 @@ const determineItems = (simulations, simulationId, executionId, renderingId, act
   };
 };
 
-const checkOperationStart = (
-  dispatch,
-  activeItem,
-  sourceId,
-  simulationId,
-  executionId,
-  renderingId,
-  resolvedAction,
-) => {
-  const action = resolvedAction || controlSegmentActions.view;
-  if (activeItem && (simulationId || action === controlSegmentActions.new)) {
-    switch (activeItem) {
-      case controlSegmentKeys.execution:
-        dispatch(reduxActionForStartOperation(activeItem, action, { simulationId, executionId }));
-        break;
-      case controlSegmentKeys.rendering:
-        dispatch(
-          reduxActionForStartOperation(activeItem, action, {
-            simulationId,
-            executionId,
-            renderingId,
-          }),
-        );
-        break;
-      default:
-        dispatch(reduxActionForStartOperation(activeItem, action, { sourceId, simulationId }));
-    }
-  }
-};
-
 const EditorGuideView = ({
   history,
   match: {
@@ -177,20 +147,28 @@ const EditorGuideView = ({
     resolvedAction,
   } = determineItems(simulations, simulationId, executionId, renderingId, action);
 
+  // check if time to dispatch start of operation
   useEffect(() => {
     if (simulations && simulations.length) {
       setPathname(prev => {
         const nextPathname = history.location.pathname.toLowerCase();
         if (prev !== nextPathname) {
-          checkOperationStart(
-            dispatch,
-            activeItem,
-            sourceId,
-            resolvedSimulationId,
-            resolvedExecutionId,
-            resolvedRenderingId,
-            resolvedAction,
-          );
+          const startAction = resolvedAction || controlSegmentActions.view;
+          if (activeItem && (resolvedSimulationId || startAction === controlSegmentActions.new)) {
+            let parameters;
+            if (activeItem === controlSegmentKeys.execution) {
+              parameters = { simulationId: resolvedSimulationId, executionId: resolvedExecutionId };
+            } else if (activeItem === controlSegmentKeys.rendering) {
+              parameters = {
+                simulationId: resolvedSimulationId,
+                executionId: resolvedExecutionId,
+                renderingId: resolvedRenderingId,
+              };
+            } else {
+              parameters = { sourceId, simulationId: resolvedSimulationId };
+            }
+            dispatch(reduxActionForStartOperation(activeItem, startAction, parameters));
+          }
         }
         return nextPathname;
       });
@@ -207,6 +185,7 @@ const EditorGuideView = ({
     resolvedAction,
   ]);
 
+  // get initial data for title, image and simulations
   useEffect(() => {
     if (sourceId) {
       dispatch(ensureEditorTitle(sourceId));
@@ -219,6 +198,7 @@ const EditorGuideView = ({
     }
   }, [dispatch, sourceId]);
 
+  // move to first simulation if path ends with '/simulation
   useEffect(() => {
     if (pathname.endsWith(controlSegmentKeys.simulation) && simulations.length) {
       debug('useEffect(history) - extending to specific simulation', { pathname });

@@ -70,8 +70,12 @@ export function* startSimulationOperationSaga({ type, payload: { sourceId, simul
   const { simulation } = yield select(simulationByIdSelector, simulationId);
   if (simulation && simulation.sourceId === sourceId) {
     yield put(setSelectedSimulation({ simulation }));
-    yield put(requestHikes({ simulationId, sourceId: simulation.sourceId }));
-    const result = yield take([receiveHikes, requestHikesFailed]);
+
+    const [, result] = yield all([
+      put(requestHikes({ simulationId, sourceId: simulation.sourceId })),
+      take([receiveHikes, requestHikesFailed]),
+    ]);
+
     if (result.type === `${receiveHikes}`) {
       yield* validateSimulationSaga();
     } // else error - what to do?
@@ -90,7 +94,7 @@ export function* startSimulationOperationSaga({ type, payload: { sourceId, simul
 export function* finishEditSimulationSaga({ payload: { simulationId } }) {
   debug('finishEditSimulationSaga', { simulationId });
   const changedSimulation = yield select(selectedSimulationSelector);
-  const { simulation : originalSimulation } = yield select(simulationByIdSelector, simulationId);
+  const { simulation: originalSimulation } = yield select(simulationByIdSelector, simulationId);
   if (!originalSimulation || originalSimulation.id !== changedSimulation.id) {
     debug('finishEditSimulationSaga - changed simulation id not the expected id');
   } else {
@@ -100,12 +104,16 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
       changes.name = changedSimulation.name;
     }
     if (Object.keys(changes).length > 0) {
-      yield put(saveSimulation({ simulationId, sourceId, changes }));
-      yield take([saveSimulationSucceeded, saveSimulationFailed]);
+      yield all([
+        put(saveSimulation({ simulationId, sourceId, changes })),
+        take([saveSimulationSucceeded, saveSimulationFailed]),
+      ]);
     }
     const hikes = yield select(hikesSelector);
-    yield put(saveHikes({ sourceId, simulationId, hikes }));
-    yield take([saveHikesSucceeded, saveHikesFailed]);
+    yield all([
+      put(saveHikes({ sourceId, simulationId, hikes })),
+      take([saveHikesSucceeded, saveHikesFailed]),
+    ]);
   }
   yield delay(0);
   yield put(editSimulationFinished());
@@ -117,8 +125,11 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
-  yield put(deleteSimulation({ sourceId, simulationId }));
-  const result = yield take([deleteSimulationSucceeded, deleteSimulationFailed]);
+  const [, result] = yield all([
+    put(deleteSimulation({ sourceId, simulationId })),
+    take([deleteSimulationSucceeded, deleteSimulationFailed]),
+  ]);
+
   if (result.type === `${deleteSimulationSucceeded}`) {
     yield put(setSelectedSimulation({}));
   }
@@ -137,15 +148,17 @@ export function* startNewSimulationSaga({ payload: { sourceId } }) {
 
 export function* finishNewSimulationSaga() {
   const simulation = yield select(selectedSimulationSelector);
-  yield put(saveNewSimulation({ simulation }));
-  const result = yield take([saveNewSimulationSucceeded, saveNewSimulationFailed]);
+  const [, result] = yield all([
+    put(saveNewSimulation({ simulation })),
+    take([saveNewSimulationSucceeded, saveNewSimulationFailed]),
+  ]);
   if (result.type === `${saveNewSimulationSucceeded}`) {
     const hikes = yield select(hikesSelector);
     const newSimulation = result.payload;
-    yield put(
-      saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes }),
-    );
-    yield take([saveHikesSucceeded, saveHikesFailed]);
+    yield all([
+      put(saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes })),
+      take([saveHikesSucceeded, saveHikesFailed]),
+    ]);
   }
   yield put(newSimulationFinished());
 }

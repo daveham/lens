@@ -36,14 +36,15 @@ export function invokeRestApi(url, options = {}) {
 export function* invokeRestApiReturnData(url, options) {
   const response = yield invokeRestApi(url, options);
   if (response.status >= 200 && response.status < 300) {
-    return yield response.json();
+    const data = yield response.text();
+    return data ? JSON.parse(data) : {};
   } else {
     debug('invokeRestApiReturnData - failed status', { status: response.status });
     throw response;
   }
 }
 
-export function* fnApiSaga(fn, args, successAction, errorAction) {
+export function* fnApiSaga(args, successAction, errorAction) {
   try {
     const data = yield* invokeRestApiReturnData(...args);
     yield put(successAction(data));
@@ -54,5 +55,5 @@ export function* fnApiSaga(fn, args, successAction, errorAction) {
 }
 
 export function* restApiSaga(args, successAction, errorAction) {
-  yield* fnApiSaga(invokeRestApi, args, successAction, errorAction);
+  yield* fnApiSaga(args, successAction, errorAction);
 }

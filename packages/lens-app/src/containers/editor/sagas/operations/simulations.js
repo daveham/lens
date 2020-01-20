@@ -33,7 +33,12 @@ import {
   cancelDeleteSimulation,
   deleteSimulationCanceled,
 } from 'editor/modules/actions/operations';
-import { setSelectedSimulation, editorActionValid } from 'editor/modules/actions/ui';
+import {
+  setSelectedSimulation,
+  editorActionValid,
+  setSnackbarMessage,
+  setSnackbarErrorMessage,
+} from 'editor/modules/actions/ui';
 import {
   requestHikes,
   receiveHikes,
@@ -78,13 +83,15 @@ export function* startSimulationOperationSaga({ type, payload: { sourceId, simul
 
     if (result.type === `${receiveHikes}`) {
       yield* validateSimulationSaga();
-    } // else error - what to do?
-    if (type === `${startViewSimulation}`) {
-      yield put(viewSimulationStarted({ simulationId }));
-    } else if (type === `${startEditSimulation}`) {
-      yield put(editSimulationStarted({ simulationId }));
+      if (type === `${startViewSimulation}`) {
+        yield put(viewSimulationStarted({ simulationId }));
+      } else if (type === `${startEditSimulation}`) {
+        yield put(editSimulationStarted({ simulationId }));
+      } else {
+        yield put(deleteSimulationStarted({ simulationId }));
+      }
     } else {
-      yield put(deleteSimulationStarted({ simulationId }));
+      yield put(setSnackbarErrorMessage(`An error occurred reading hikes: ${result.payload}`));
     }
   } else {
     yield put(setSelectedSimulation());
@@ -103,17 +110,33 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
     if (changedSimulation.name !== originalSimulation.name) {
       changes.name = changedSimulation.name;
     }
+    let errorOccurred = false;
     if (Object.keys(changes).length > 0) {
-      yield all([
+      const [, result] = yield all([
         put(saveSimulation({ simulationId, sourceId, changes })),
         take([saveSimulationSucceeded, saveSimulationFailed]),
       ]);
+
+      if (result.type === `${saveSimulationFailed}`) {
+        errorOccurred = true;
+        yield put(setSnackbarErrorMessage(`Save Simulation failed: ${result.payload}`));
+      }
     }
-    const hikes = yield select(hikesSelector);
-    yield all([
-      put(saveHikes({ sourceId, simulationId, hikes })),
-      take([saveHikesSucceeded, saveHikesFailed]),
-    ]);
+    if (!errorOccurred) {
+      const hikes = yield select(hikesSelector);
+      const [, saveHikesResult] = yield all([
+        put(saveHikes({ sourceId, simulationId, hikes })),
+        take([saveHikesSucceeded, saveHikesFailed]),
+      ]);
+
+      if (saveHikesResult.type === `${saveHikesFailed}`) {
+        errorOccurred = true;
+        yield put(setSnackbarErrorMessage(`Save Simulation Hikes failed: ${saveHikesResult.payload}`));
+      }
+    }
+    if (!errorOccurred) {
+      yield put(setSnackbarMessage(`Simulation '${changes.name || originalSimulation.name}' saved.`))
+    }
   }
   yield delay(0);
   yield put(editSimulationFinished());
@@ -131,7 +154,12 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   ]);
 
   if (result.type === `${deleteSimulationSucceeded}`) {
-    yield put(setSelectedSimulation({}));
+    yield all([
+      put(setSelectedSimulation({})),
+      put(setSnackbarMessage(`Simulation '${simulation.name}' deleted.`)),
+    ]);
+  } else {
+    yield put(setSnackbarErrorMessage(`Delete Simulation failed: ${result.payload}`));
   }
 
   yield put(deleteSimulationFinished());
@@ -155,10 +183,17 @@ export function* finishNewSimulationSaga() {
   if (result.type === `${saveNewSimulationSucceeded}`) {
     const hikes = yield select(hikesSelector);
     const newSimulation = result.payload;
-    yield all([
+    const [, saveHikesResult] = yield all([
       put(saveHikes({ sourceId: newSimulation.sourceId, simulationId: newSimulation.id, hikes })),
       take([saveHikesSucceeded, saveHikesFailed]),
     ]);
+    if (saveHikesResult.type === `${saveHikesSucceeded}`) {
+      yield put(setSnackbarMessage('New Simulation saved.'));
+    } else {
+      yield put(setSnackbarErrorMessage(`Saving hikes for new Simulation failed: ${saveHikesResult.payload}`));
+    }
+  } else {
+    yield put(setSnackbarErrorMessage(`Saving new Simulation failed: ${result.payload}`));
   }
   yield put(newSimulationFinished());
 }

@@ -1,5 +1,11 @@
 import red from '@material-ui/core/colors/red';
-import { createMuiTheme } from '@material-ui/core/styles';
+import orange from '@material-ui/core/colors/orange';
+import blue from '@material-ui/core/colors/blue';
+import green from '@material-ui/core/colors/green';
+import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
+
+// import _debug from 'debug';
+// const debug = _debug('theme');
 
 const theme = createMuiTheme({
   palette: {
@@ -15,7 +21,26 @@ const theme = createMuiTheme({
       dark: '#c75b39',
       contrastText: '#000',
     },
-    error: red,
+    error: {
+      light: red[300],
+      main: red[500],
+      dark: red[700],
+    },
+    warning: {
+      light: orange[300],
+      main: orange[500],
+      dark: orange[700],
+    },
+    info: {
+      light: blue[300],
+      main: blue[500],
+      dark: blue[700],
+    },
+    success: {
+      light: green[300],
+      main: green[500],
+      dark: green[700],
+    },
     // Used by `getContrastText()` to maximize the contrast between the background and
     // the text.
     contrastThreshold: 3,

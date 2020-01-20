@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
-import { errorMessageSelector } from 'editor/modules/selectors';
+import { snackbarMessageSelector } from 'editor/modules/selectors';
 import { makeStyles } from '@material-ui/core/styles';
-import { clearErrorMessage, clearEditor } from 'editor/modules/actions/ui';
+import { clearSnackbarMessage, clearEditor } from 'editor/modules/actions/ui';
 
 import Guide from './guide';
 import Simulation from './simulation';
@@ -35,7 +36,9 @@ const useStyles = makeStyles((theme) => ({
 const SimulationRouteSwitch = ({ match: { path } }) => {
   debug('SimulationRouteSwitch', { path });
 
-  const errorMessage = useSelector(errorMessageSelector);
+  const [open, setOpen] = useState(false);
+  const { snackbarMessage, snackbarError } = useSelector(snackbarMessageSelector);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,8 +47,12 @@ const SimulationRouteSwitch = ({ match: { path } }) => {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    setOpen(Boolean(snackbarMessage));
+  }, [snackbarMessage]);
+
   const handleCloseSnackbar = () => {
-    dispatch(clearErrorMessage());
+    dispatch(clearSnackbarMessage());
   };
 
   const classes = useStyles();
@@ -79,11 +86,18 @@ const SimulationRouteSwitch = ({ match: { path } }) => {
           vertical: 'bottom',
           horizontal: 'center',
         }}
-        open={Boolean(errorMessage)}
-        autoHideDuration={4000}
-        message={errorMessage}
+        open={open}
+        autoHideDuration={snackbarError ? 9000 : 4000}
         onClose={handleCloseSnackbar}
-      />
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarError ? 'error' : 'success' }
+          variant='filled'
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

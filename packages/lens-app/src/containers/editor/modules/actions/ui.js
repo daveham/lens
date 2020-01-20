@@ -2,8 +2,9 @@ import { createActions } from 'redux-actions';
 
 export const EDITOR_ACTIONS_PREFIX_SIMULATION_EDIT = 'editor-simulation-edit';
 export const {
-  setErrorMessage,
-  clearErrorMessage,
+  setSnackbarMessage,
+  setSnackbarErrorMessage,
+  clearSnackbarMessage,
   clearEditor,
   setSelectedSimulation,
   updateSelectedSimulation,
@@ -21,8 +22,9 @@ export const {
   setSelectedRendering,
   updateSelectedRendering,
 } = createActions(
-  'SET_ERROR_MESSAGE',
-  'CLEAR_ERROR_MESSAGE',
+  'SET_SNACKBAR_MESSAGE',
+  'SET_SNACKBAR_ERROR_MESSAGE',
+  'CLEAR_SNACKBAR_MESSAGE',
   'CLEAR_EDITOR',
   'SET_SELECTED_SIMULATION',
   'UPDATE_SELECTED_SIMULATION',

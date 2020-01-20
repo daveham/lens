@@ -50,7 +50,6 @@ import {
   requestHikesFailed,
   saveSimulationSucceeded,
   saveNewSimulationSucceeded,
-  saveNewSimulationFailed,
   saveHikesSucceeded,
   deleteSimulationSucceeded,
   saveExecutionSucceeded,
@@ -61,8 +60,9 @@ import {
   deleteRenderingSucceeded,
 } from './actions/data';
 import {
-  setErrorMessage,
-  clearErrorMessage,
+  setSnackbarMessage,
+  setSnackbarErrorMessage,
+  clearSnackbarMessage,
   clearEditor,
   setSelectedSimulation,
   updateSelectedSimulation,
@@ -89,11 +89,11 @@ import { IHike, ISimulation } from 'editor/interfaces';
 // const debug = _debug('lens:editor:modules:reducers');
 
 // reducers
-const emptyErrorMessage = '';
-const errorMessage = handleActions(
+const emptySnackbarMessage = '';
+const snackbarMessage = handleActions(
   {
-    [clearErrorMessage]: () => emptyErrorMessage,
-    [combineActions(setErrorMessage, saveNewSimulationFailed)]: (state, { payload }) => {
+    [clearSnackbarMessage]: () => emptySnackbarMessage,
+    [combineActions(setSnackbarMessage, setSnackbarErrorMessage)]: (state, { payload }) => {
       const { message } = payload;
       if (message) {
         return message;
@@ -101,8 +101,16 @@ const errorMessage = handleActions(
       return payload.toString();
     },
   },
-  emptyErrorMessage,
+  emptySnackbarMessage,
 );
+
+ const snackbarError = handleActions(
+   {
+    [combineActions(clearSnackbarMessage, setSnackbarMessage)]: () => false,
+    [setSnackbarErrorMessage]: () => true,
+   },
+   false
+ );
 
 const simulationsLoading = handleActions(
   {
@@ -435,7 +443,8 @@ const active = handleActions(
 );
 
 const editorModuleReducer = combineReducers({
-  errorMessage,
+  snackbarMessage,
+  snackbarError,
   simulationsLoading,
   simulations,
   hikesLoading,

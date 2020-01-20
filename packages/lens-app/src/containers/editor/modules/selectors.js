@@ -27,7 +27,10 @@ export const renderingByIdSelector = (state, simulationId, executionId, id) => {
   };
 };
 
-export const errorMessageSelector = state => state.editor.errorMessage;
+export const snackbarMessageSelector = state => ({
+  snackbarMessage: state.editor.snackbarMessage,
+  snackbarError: state.editor.snackbarError,
+});
 
 export const operationPendingSelector = state => {
   debug('operationPendingSelector', { operationPending: state.editor.operationPending });

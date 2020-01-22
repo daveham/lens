@@ -104,13 +104,16 @@ export function* finishEditSimulationSaga({ payload: { simulationId } }) {
   const { simulation: originalSimulation } = yield select(simulationByIdSelector, simulationId);
   if (!originalSimulation || originalSimulation.id !== changedSimulation.id) {
     debug('finishEditSimulationSaga - changed simulation id not the expected id');
+    yield put(setSnackbarErrorMessage('Save Simulation failed - mismatched id'));
   } else {
-    const changes = {};
     const { sourceId } = originalSimulation;
+    let errorOccurred = false;
+
+    // gather all of the possible changes
+    const changes = {};
     if (changedSimulation.name !== originalSimulation.name) {
       changes.name = changedSimulation.name;
     }
-    let errorOccurred = false;
     if (Object.keys(changes).length > 0) {
       const [, result] = yield all([
         put(saveSimulation({ simulationId, sourceId, changes })),
@@ -154,10 +157,7 @@ export function* finishDeleteSimulationSaga({ payload: { simulationId } }) {
   ]);
 
   if (result.type === `${deleteSimulationSucceeded}`) {
-    yield all([
-      put(setSelectedSimulation({})),
-      put(setSnackbarMessage(`Simulation '${simulation.name}' deleted.`)),
-    ]);
+    yield put(setSnackbarMessage(`Simulation '${simulation.name}' deleted.`));
   } else {
     yield put(setSnackbarErrorMessage(`Delete Simulation failed: ${result.payload}`));
   }

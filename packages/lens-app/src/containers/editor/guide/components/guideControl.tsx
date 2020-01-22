@@ -357,7 +357,7 @@ const GuideControl = (props: IProps) => {
   const [guideParameters, dispatchGuideParameters] = useReducer((state, { type, payload }) => {
     debug('guideParametersReducer', { type });
     switch (type) {
-      case guideActions.updateFromProps:
+      case guideActions.updateFromProps: {
         const { action, activeItem } = payload;
         const nextState = {
           ...state,
@@ -377,6 +377,7 @@ const GuideControl = (props: IProps) => {
         }
         nextState.locked = locked;
         return nextState;
+      }
       case guideActions.setExpandedPanel:
         return {
           ...state,
@@ -387,6 +388,7 @@ const GuideControl = (props: IProps) => {
           ...state,
           nextPath: determineNextPathAtEndOfOperation({
             ...payload,
+            activeItem,
             simulations,
             simulation: selectedSimulation,
             execution: selectedExecution,
@@ -475,13 +477,12 @@ const GuideControl = (props: IProps) => {
       dispatchGuideParameters({
         type: guideActions.calculateNextPathAtEndOfOperation,
         payload: {
-          activeItem,
           lastAction: lastAction.current,
           actionFinishedBy: actionFinishedBy.current,
         },
       });
     }
-  }, [operationPending, previousOperationPending, activeItem]);
+  }, [operationPending, previousOperationPending]);
 
   // if nextPath has changed, notify parent control which handles routing.
   useEffect(() => {

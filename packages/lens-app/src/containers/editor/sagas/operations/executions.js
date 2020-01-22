@@ -34,7 +34,12 @@ import {
   cancelDeleteExecution,
   deleteExecutionCanceled,
 } from 'editor/modules/actions/operations';
-import { setSelectedExecution, editorActionValid } from 'editor/modules/actions/ui';
+import {
+  setSelectedExecution,
+  editorActionValid,
+  setSnackbarMessage,
+  setSnackbarErrorMessage,
+} from 'editor/modules/actions/ui';
 
 import {
   // execution data actions
@@ -81,19 +86,37 @@ export function* startExecutionOperationSaga({ type, payload: { simulationId, ex
 export function* finishEditExecutionSaga({ payload: { simulationId, executionId } }) {
   debug('finishEditExecutionSaga', { simulationId, executionId });
   const changedExecution = yield select(selectedExecutionSelector);
-  const { execution: originalExecution } = yield select(executionByIdSelector, simulationId, executionId);
+  const { execution: originalExecution } = yield select(
+    executionByIdSelector,
+    simulationId,
+    executionId,
+  );
   if (!originalExecution || originalExecution.id !== changedExecution.id) {
     debug('finishEditExecutionSaga - changed execution id not the expected id');
+    yield put(setSnackbarErrorMessage('Save Execution failed - mismatched id'));
   } else {
-    const changes = {};
     const { simulation } = yield select(simulationByIdSelector, simulationId);
     const { sourceId } = simulation;
+    let errorOccurred = false;
+
+    // gather all of the possible changes
+    const changes = {};
     if (changedExecution.name !== originalExecution.name) {
       changes.name = changedExecution.name;
     }
     if (Object.keys(changes).length > 0) {
-      yield put(saveExecution({ executionId, simulationId, sourceId, changes }));
-      yield take([saveExecutionSucceeded, saveExecutionFailed]);
+      const [, result] = yield all([
+        put(saveExecution({ executionId, simulationId, sourceId, changes })),
+        take([saveExecutionSucceeded, saveExecutionFailed]),
+      ]);
+
+      if (result.type === `${saveExecutionFailed}`) {
+        errorOccurred = true;
+        yield put(setSnackbarErrorMessage(`Save Execution failed: ${result.payload}`));
+      }
+    }
+    if (!errorOccurred) {
+      yield put(setSnackbarMessage(`Execution '${changes.name || originalExecution.name}' saved.`))
     }
   }
   yield delay(0);
@@ -103,11 +126,20 @@ export function* finishEditExecutionSaga({ payload: { simulationId, executionId 
 export function* finishDeleteExecutionSaga({ payload: { simulationId, executionId } }) {
   debug('finishDeleteExecutionSaga', { simulationId, executionId });
 
+  const { execution } = yield select(executionByIdSelector, simulationId, executionId);
   const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
-  yield put(deleteExecution({ sourceId, simulationId, executionId }));
-  yield take([deleteExecutionSucceeded, deleteExecutionFailed]);
+  const [, result] = yield all([
+    put(deleteExecution({ sourceId, simulationId, executionId })),
+    take([deleteExecutionSucceeded, deleteExecutionFailed]),
+  ]);
+
+  if (result.type === `${deleteExecutionSucceeded}`) {
+    yield put(setSnackbarMessage(`Execution '${execution.name}' deleted.`));
+  } else {
+    yield put(setSnackbarErrorMessage(`Delete Execution failed: ${result.payload}`));
+  }
 
   yield delay(0);
   yield put(deleteExecutionFinished());
@@ -125,8 +157,16 @@ export function* startNewExecutionSaga({ payload: { simulationId } }) {
 export function* finishNewExecutionSaga() {
   const simulation = yield select(selectedSimulationSelector);
   const execution = yield select(selectedExecutionSelector);
-  yield put(saveNewExecution({ sourceId: simulation.sourceId, execution }));
-  yield take([saveNewExecutionSucceeded, saveNewExecutionFailed]);
+  const [, result] = yield all([
+    put(saveNewExecution({ sourceId: simulation.sourceId, execution })),
+    take([saveNewExecutionSucceeded, saveNewExecutionFailed]),
+  ]);
+
+  if (result.type === `${saveNewExecutionSucceeded}`) {
+    yield put(setSnackbarMessage('New Execution saved.'));
+  } else {
+    yield put(setSnackbarErrorMessage(`Saving new Execution failed: ${result.payload}`));
+  }
   yield put(newExecutionFinished());
 }
 

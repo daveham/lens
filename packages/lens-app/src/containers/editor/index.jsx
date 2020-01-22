@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     flex: 'auto',
     flexFlow: 'column',
   },
+  snackRoot: {
+    right: theme.spacing(7),
+    bottom: theme.spacing(7),
+  },
 }));
 
 const SimulationRouteSwitch = ({ match: { path } }) => {
@@ -84,10 +88,11 @@ const SimulationRouteSwitch = ({ match: { path } }) => {
       <Snackbar
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'center',
+          horizontal: 'right',
         }}
+        classes={{ root: classes.snackRoot }}
         open={open}
-        autoHideDuration={snackbarError ? 9000 : 4000}
+        autoHideDuration={snackbarError ? 10000 : 4000}
         onClose={handleCloseSnackbar}
       >
         <Alert

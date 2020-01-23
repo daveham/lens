@@ -116,7 +116,7 @@ export function* finishEditExecutionSaga({ payload: { simulationId, executionId 
       }
     }
     if (!errorOccurred) {
-      yield put(setSnackbarMessage(`Execution '${changes.name || originalExecution.name}' saved.`))
+      yield put(setSnackbarMessage(`Execution '${changes.name || originalExecution.name}' saved.`));
     }
   }
   yield delay(0);
@@ -167,6 +167,8 @@ export function* finishNewExecutionSaga() {
   } else {
     yield put(setSnackbarErrorMessage(`Saving new Execution failed: ${result.payload}`));
   }
+
+  yield delay(0);
   yield put(newExecutionFinished());
 }
 

@@ -4,7 +4,9 @@ import {
   simulationByIdSelector,
   renderingByIdSelector,
   selectedRenderingSelector,
-  renderingValid, executionByIdSelector,
+  renderingValid,
+  executionByIdSelector,
+  selectedSimulationSelector,
 } from 'editor/modules/selectors';
 import {
   // execution operations actions
@@ -33,7 +35,12 @@ import {
   cancelDeleteRendering,
   deleteRenderingCanceled,
 } from 'editor/modules/actions/operations';
-import { setSelectedRendering, editorActionValid } from 'editor/modules/actions/ui';
+import {
+  setSelectedRendering,
+  editorActionValid,
+  setSnackbarMessage,
+  setSnackbarErrorMessage,
+} from 'editor/modules/actions/ui';
 
 import {
   // execution data actions
@@ -64,7 +71,12 @@ export function* startRenderingOperationSaga({
   type,
   payload: { simulationId, executionId, renderingId },
 }) {
-  const { rendering, execution, simulation } = yield select(renderingByIdSelector, simulationId, executionId, renderingId);
+  const { rendering, execution, simulation } = yield select(
+    renderingByIdSelector,
+    simulationId,
+    executionId,
+    renderingId,
+  );
   if (rendering && rendering.executionId === executionId) {
     yield put(setSelectedRendering({ simulation, execution, rendering }));
     yield* validateRenderingSaga();
@@ -91,16 +103,30 @@ export function* finishEditRenderingSaga({ payload: { simulationId, executionId,
   );
   if (!originalRendering || originalRendering.id !== changedRendering.id) {
     debug('finishEditRenderingSaga - changed rendering id not the expected id');
+    yield put(setSnackbarErrorMessage('Save Rendering failed - mismatched id'));
   } else {
-    const changes = {};
     const { simulation } = yield select(simulationByIdSelector, simulationId);
     const { sourceId } = simulation;
+    let errorOccurred = false;
+
+    // gather all of the possible changes
+    const changes = {};
     if (changedRendering.name !== originalRendering.name) {
       changes.name = changedRendering.name;
     }
     if (Object.keys(changes).length > 0) {
-      yield put(saveRendering({ renderingId, executionId, simulationId, sourceId, changes }));
-      yield take([saveRenderingSucceeded, saveRenderingFailed]);
+      const [, result] = yield all([
+        put(saveRendering({ renderingId, executionId, simulationId, sourceId, changes })),
+        take([saveRenderingSucceeded, saveRenderingFailed]),
+      ]);
+
+      if (result.type === `${saveRenderingFailed}`) {
+        errorOccurred = true;
+        yield put(setSnackbarErrorMessage(`Save Rendering failed: ${result.payload}`));
+      }
+    }
+    if (!errorOccurred) {
+      yield put(setSnackbarMessage(`Rendering '${changes.name || originalRendering.name}' saved.`));
     }
   }
   yield delay(0);
@@ -115,8 +141,16 @@ export function* finishDeleteRenderingSaga({ payload: { renderingId } }) {
   const { simulation } = yield select(simulationByIdSelector, simulationId);
   const { sourceId } = simulation;
 
-  yield put(deleteRendering({ sourceId, simulationId, executionId, renderingId }));
-  yield take([deleteRenderingSucceeded, deleteRenderingFailed]);
+  const [, result] = yield all([
+    put(deleteRendering({ sourceId, simulationId, executionId, renderingId })),
+    take([deleteRenderingSucceeded, deleteRenderingFailed]),
+  ]);
+
+  if (result.type === `${deleteRenderingSucceeded}`) {
+    yield put(setSnackbarMessage(`Rendering '${rendering.name}' deleted.`));
+  } else {
+    yield put(setSnackbarErrorMessage(`Delete Rendering failed: ${result.payload}`));
+  }
 
   yield delay(0);
   yield put(deleteRenderingFinished());
@@ -132,16 +166,24 @@ export function* startNewRenderingSaga({ payload: { simulationId, executionId } 
 }
 
 export function* finishNewRenderingSaga() {
+  const simulation = yield select(selectedSimulationSelector);
   const rendering = yield select(selectedRenderingSelector);
-  const { simulation } = yield select(simulationByIdSelector, rendering.simulationId);
-  debug('finishNewRenderingSaga', { simulation, rendering });
-  yield put(
-    saveNewRendering({
-      sourceId: simulation.sourceId,
-      rendering,
-    }),
-  );
-  yield take([saveNewRenderingSucceeded, saveNewRenderingFailed]);
+  const [, result] = yield all([
+    put(
+      saveNewRendering({
+        sourceId: simulation.sourceId,
+        rendering,
+      }),
+    ),
+    take([saveNewRenderingSucceeded, saveNewRenderingFailed]),
+  ]);
+
+  if (result.type === `${saveNewRenderingSucceeded}`) {
+    yield put(setSnackbarMessage('New Rendering saved.'));
+  } else {
+    yield put(setSnackbarErrorMessage(`Saving new Rendering failed: ${result.payload}`));
+  }
+
   yield delay(0);
   yield put(newRenderingFinished());
 }

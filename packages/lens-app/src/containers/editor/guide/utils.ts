@@ -30,6 +30,10 @@ import {
   cancelNewRendering,
   cancelEditRendering,
   cancelDeleteRendering,
+  startRunExecution,
+  cancelRunExecution,
+  startRenderRendering,
+  cancelRenderRendering,
 } from 'editor/modules/actions/operations';
 
 const startMap = {
@@ -44,12 +48,14 @@ const startMap = {
     [controlSegmentActions.new]: startNewExecution,
     [controlSegmentActions.edit]: startEditExecution,
     [controlSegmentActions.delete]: startDeleteExecution,
+    [controlSegmentActions.run]: startRunExecution,
   },
   [controlSegmentKeys.rendering]: {
     [controlSegmentActions.view]: startViewRendering,
     [controlSegmentActions.new]: startNewRendering,
     [controlSegmentActions.edit]: startEditRendering,
     [controlSegmentActions.delete]: startDeleteRendering,
+    [controlSegmentActions.render]: startRenderRendering,
   },
 };
 

@@ -1,8 +1,8 @@
 import { createActions } from 'redux-actions';
 
-const formatOperationConstants = (entity, op, verb) => [
+const formatOperationConstants = (entity, op, verb, suffix = 'ED') => [
   `${verb}_${op}_${entity}`,
-  `${op}_${entity}_${verb}ED`,
+  `${op}_${entity}_${verb}${suffix}`,
 ];
 
 function generateOperationConstants(entities) {
@@ -17,6 +17,15 @@ function generateViewOperationConstants(entities) {
   const op = 'VIEW';
   const verb = 'START';
   return entities.map(entity => formatOperationConstants(entity, op, verb)).flat(1);
+}
+
+function generateRunAndRenderOperationConstants() {
+  return [
+    formatOperationConstants('EXECUTION', 'RUN', 'START'),
+    formatOperationConstants('EXECUTION', 'RUN', 'CANCEL'),
+    formatOperationConstants('RENDERING', 'RENDER', 'START'),
+    formatOperationConstants('RENDERING', 'RENDER', 'CANCEL'),
+  ].flat(2);
 }
 
 const operationEntities = ['SIMULATION', 'EXECUTION', 'RENDERING'];
@@ -95,9 +104,19 @@ export const {
   // view rendering
   startViewRendering,
   viewRenderingStarted,
+  // run and render
+  startRunExecution,
+  runExecutionStarted,
+  cancelRunExecution,
+  runExecutionCanceled,
+  startRenderRendering,
+  renderRenderingStarted,
+  cancelRenderRendering,
+  renderRenderingCanceled,
 } = createActions(
   ...generateOperationConstants(operationEntities),
   ...generateViewOperationConstants(operationEntities),
+  ...generateRunAndRenderOperationConstants(),
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_OPERATIONS,
   },

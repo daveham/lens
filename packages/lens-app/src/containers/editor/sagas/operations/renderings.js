@@ -66,6 +66,12 @@ function* validateRenderingSaga() {
   yield put(editorActionValid(isValid));
 }
 
+const startMap = {
+  [startViewRendering]: viewRenderingStarted,
+  [startEditRendering]: editRenderingStarted,
+  [startDeleteRendering]: deleteRenderingStarted,
+};
+
 // same saga for starting new, edit, delete rendering operations
 export function* startRenderingOperationSaga({
   type,
@@ -80,13 +86,8 @@ export function* startRenderingOperationSaga({
   if (rendering && rendering.executionId === executionId) {
     yield put(setSelectedRendering({ simulation, execution, rendering }));
     yield* validateRenderingSaga();
-    if (type === `${startViewRendering}`) {
-      yield put(viewRenderingStarted({ simulationId, executionId, renderingId }));
-    } else if (type === `${startEditRendering}`) {
-      yield put(editRenderingStarted({ simulationId, executionId, renderingId }));
-    } else {
-      yield put(deleteRenderingStarted({ simulationId, executionId, renderingId }));
-    }
+    const startAction = startMap[type];
+    yield put(startAction({ simulationId, executionId, renderingId }));
   } else {
     yield put(setSelectedRendering({}));
   }

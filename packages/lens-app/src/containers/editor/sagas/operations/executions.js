@@ -26,6 +26,8 @@ import {
   editExecutionFinished,
   cancelEditExecution,
   editExecutionCanceled,
+  startRunExecution,
+  runExecutionStarted,
   // - delete
   startDeleteExecution,
   deleteExecutionStarted,
@@ -65,19 +67,20 @@ function* validateExecutionSaga() {
   yield put(editorActionValid(isValid));
 }
 
+const startMap = {
+  [startViewExecution]: viewExecutionStarted,
+  [startEditExecution]: editExecutionStarted,
+  [startDeleteExecution]: deleteExecutionStarted,
+};
+
 // same saga for starting new, edit, delete execution operations
 export function* startExecutionOperationSaga({ type, payload: { simulationId, executionId } }) {
   const { execution, simulation } = yield select(executionByIdSelector, simulationId, executionId);
   if (execution && execution.simulationId === simulationId) {
     yield put(setSelectedExecution({ execution, simulation }));
     yield* validateExecutionSaga();
-    if (type === `${startViewExecution}`) {
-      yield put(viewExecutionStarted({ simulationId, executionId }));
-    } else if (type === `${startEditExecution}`) {
-      yield put(editExecutionStarted({ simulationId, executionId }));
-    } else {
-      yield put(deleteExecutionStarted({ simulationId, executionId }));
-    }
+    const startAction = startMap[type];
+    yield put(startAction({ simulationId, executionId }));
   } else {
     yield put(setSelectedExecution({}));
   }
@@ -154,6 +157,12 @@ export function* startNewExecutionSaga({ payload: { simulationId } }) {
   yield put(newExecutionStarted());
 }
 
+export function* startRunExecutionSaga({ payload: { simulationId, executionId} }) {
+  debug('startRunExecutionSaga', { simulationId, executionId });
+
+  yield put(runExecutionStarted({ simulationId, executionId }));
+}
+
 export function* finishNewExecutionSaga() {
   const simulation = yield select(selectedSimulationSelector);
   const execution = yield select(selectedExecutionSelector);
@@ -200,5 +209,6 @@ export default function* operationsExecutionsSaga() {
     takeEvery(cancelEditExecution, cancelEditExecutionSaga),
     takeEvery(finishDeleteExecution, finishDeleteExecutionSaga),
     takeEvery(cancelDeleteExecution, cancelDeleteExecutionSaga),
+    takeEvery(startRunExecution, startRunExecutionSaga),
   ]);
 }

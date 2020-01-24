@@ -70,6 +70,12 @@ function* validateSimulationSaga() {
   yield put(editorActionValid(isValid));
 }
 
+const startMap = {
+  [startViewSimulation]: viewSimulationStarted,
+  [startEditSimulation]: editSimulationStarted,
+  [startDeleteSimulation]: deleteSimulationStarted,
+};
+
 // same saga for starting new, edit, delete simulation operations
 export function* startSimulationOperationSaga({ type, payload: { sourceId, simulationId } }) {
   const { simulation } = yield select(simulationByIdSelector, simulationId);
@@ -83,13 +89,8 @@ export function* startSimulationOperationSaga({ type, payload: { sourceId, simul
 
     if (result.type === `${receiveHikes}`) {
       yield* validateSimulationSaga();
-      if (type === `${startViewSimulation}`) {
-        yield put(viewSimulationStarted({ simulationId }));
-      } else if (type === `${startEditSimulation}`) {
-        yield put(editSimulationStarted({ simulationId }));
-      } else {
-        yield put(deleteSimulationStarted({ simulationId }));
-      }
+      const startAction = startMap[type];
+      yield put(startAction({ simulationId }));
     } else {
       yield put(setSnackbarErrorMessage(`An error occurred reading hikes: ${result.payload}`));
     }

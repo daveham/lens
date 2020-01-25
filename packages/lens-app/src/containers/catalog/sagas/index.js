@@ -1,6 +1,11 @@
 import { takeEvery, select, all, put } from 'redux-saga/effects';
 import { restApiSaga } from 'sagas/utils';
-import { ACTIONS, receiveCatalog, requestCatalogFailed } from '../modules/actions';
+import {
+  ensureCatalogTitle,
+  requestCatalog,
+  receiveCatalog,
+  requestCatalogFailed,
+} from '../modules/actions';
 import {
   catalogName as catalogNameSelector,
   catalogSources as catalogSourcesSelector,
@@ -32,8 +37,8 @@ export function* ensureTitleSaga({ payload }) {
 
 export function* rootSaga() {
   yield all([
-    takeEvery(ACTIONS.REQUEST_CATALOG, loadCatalogSaga),
-    takeEvery(ACTIONS.ENSURE_CATALOG_TITLE, ensureTitleSaga),
+    takeEvery(requestCatalog, loadCatalogSaga),
+    takeEvery(ensureCatalogTitle, ensureTitleSaga),
 
     // TODO: ensure images based on ACTIONS.REQUEST_IMAGE (disambiguate catalog ACTIONS from image ACTIONS
     // takeEvery(ACTIONS.REQUEST_IMAGE, ensureImage) - parameter of imageDescriptor flows through?

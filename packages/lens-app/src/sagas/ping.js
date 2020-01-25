@@ -1,7 +1,7 @@
 import { takeEvery, all, select } from 'redux-saga/effects';
 import { restApiSaga } from './utils';
 import { clientIdSelector } from './socket';
-import { ACTIONS, pingSent, pingSendFailed } from '../modules/common';
+import { sendPing, pingSent, pingSendFailed } from '../modules/common';
 
 export function* sendPingSaga() {
   const clientId = yield select(clientIdSelector);
@@ -10,5 +10,5 @@ export function* sendPingSaga() {
 }
 
 export default function* pingSaga() {
-  yield all([takeEvery(ACTIONS.SEND_PING, sendPingSaga)]);
+  yield all([takeEvery(sendPing, sendPingSaga)]);
 }

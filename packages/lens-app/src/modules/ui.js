@@ -1,4 +1,4 @@
-import { createAction } from 'redux-actions';
+import { createActions, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 
@@ -12,28 +12,23 @@ export const photoSelector = createSelector(
   ({ photo }) => photo,
 );
 
-export const ACTIONS = {
-  SET_TITLE: 'SET_TITLE',
-};
-
-export const setTitle = createAction(ACTIONS.SET_TITLE);
+export const { setTitle } = createActions('SET_TITLE', { prefix: 'UI' });
 
 const defaultEmpty = '';
-const title = (state = defaultEmpty, { type, payload }) => {
-  if (type === ACTIONS.SET_TITLE) {
-    return payload.sourceName
-      ? `${payload.catalogName} - ${payload.sourceName}`
-      : payload.catalogName;
-  }
-  return state;
-};
+const title = handleActions(
+  {
+    [setTitle]: (state, { payload }) =>
+      payload.sourceName ? `${payload.catalogName} - ${payload.sourceName}` : payload.catalogName,
+  },
+  defaultEmpty,
+);
 
-const photo = (state = defaultEmpty, { type, payload }) => {
-  if (type === ACTIONS.SET_TITLE) {
-    return payload.sourceName || '';
-  }
-  return state;
-};
+const photo = handleActions(
+  {
+    [setTitle]: (state, { payload }) => payload.sourceName || defaultEmpty,
+  },
+  defaultEmpty,
+);
 
 export default combineReducers({
   title,

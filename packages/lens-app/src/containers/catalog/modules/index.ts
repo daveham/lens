@@ -1,37 +1,38 @@
 import { combineReducers } from 'redux';
-import { ACTIONS } from './actions';
+import { combineActions, handleActions } from 'redux-actions';
+import { requestCatalog, receiveCatalog, requestCatalogFailed } from './actions';
 import { InsertableReducerType } from 'modules/types';
 
 // reducers
-const loading = (state = false, { type }) => {
-  switch (type) {
-    case ACTIONS.REQUEST_CATALOG:
-      return true;
-    case ACTIONS.RECEIVE_CATALOG:
-    case ACTIONS.REQUEST_CATALOG_FAILED:
-      return false;
-    default:
-      return state;
-  }
-};
+const loading = handleActions(
+  {
+    [requestCatalog]: () => true,
+    [combineActions(receiveCatalog, requestCatalogFailed)]: () => false,
+  },
+  false,
+);
 
-const name = (state = '', { type, payload }) => {
-  if (type === ACTIONS.RECEIVE_CATALOG) {
-    return payload.name;
-  }
-  return state;
-};
+const defaultEmptyName = '';
+const name = handleActions(
+  {
+    [receiveCatalog]: (state, { payload }) => payload.name,
+  },
+  defaultEmptyName,
+);
 
-const sources = (state = { ids: [], byIds: {} }, { type, payload}) => {
-  if (type === ACTIONS.RECEIVE_CATALOG) {
-    const { sources } = payload;
-    const ids = sources.map((source) => source.id);
-    const byIds = {};
-    sources.forEach((source) => byIds[source.id] = source);
-    return { ids, byIds };
-  }
-  return state;
-};
+const defaultSources = { ids: [], byIds: [] };
+const sources = handleActions(
+  {
+    [receiveCatalog]: (state, { payload }) => {
+      const { sources } = payload;
+      const ids = sources.map(source => source.id);
+      const byIds = {};
+      sources.forEach(source => (byIds[source.id] = source));
+      return { ids, byIds };
+    },
+  },
+  defaultSources,
+);
 
 const catalogModuleReducer = combineReducers({
   loading,
@@ -40,8 +41,7 @@ const catalogModuleReducer = combineReducers({
 });
 
 export type CatalogModuleState = ReturnType<typeof catalogModuleReducer>;
-export type InsertableCatalogModuleReducer = typeof catalogModuleReducer
-  & InsertableReducerType;
+export type InsertableCatalogModuleReducer = typeof catalogModuleReducer & InsertableReducerType;
 
 const insertableCatalogModuleReducer: InsertableCatalogModuleReducer = catalogModuleReducer;
 

@@ -1,5 +1,5 @@
 import { takeEvery, all, call } from 'redux-saga/effects';
-import { ACTIONS } from '../modules/common';
+import { receiveServiceCommand } from '../modules/common';
 import { registry } from '../store';
 
 import _debug from 'debug';
@@ -18,6 +18,6 @@ export function* routeCommandSaga({ payload }) {
 
 export default function* commandSaga() {
   yield all([
-    takeEvery(ACTIONS.RECEIVE_SERVICE_COMMAND, routeCommandSaga)
+    takeEvery(receiveServiceCommand, routeCommandSaga)
   ]);
 }

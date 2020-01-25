@@ -14,7 +14,7 @@ export const sources = createSelector(
       return ids.map(id => byIds[id]);
     }
     return [];
-  }
+  },
 );
 
 export const thumbnailImageDescriptors = createSelector(
@@ -25,10 +25,10 @@ export const thumbnailImageDescriptors = createSelector(
       return ids.map(id => makeThumbnailImageDescriptor(id));
     }
     return [];
-  }
+  },
 );
 
 export const thumbnailImageKeys = createSelector(
   thumbnailImageDescriptors,
-  imageDescriptors => imageDescriptors.map(imageDescriptor => makeImageKey(imageDescriptor))
+  imageDescriptors => imageDescriptors.map(imageDescriptor => makeImageKey(imageDescriptor)),
 );

@@ -15,14 +15,7 @@ function* observeActions() {
 }
 
 export function* rootSaga() {
-  yield all([
-    observeActions(),
-    socketSaga(),
-    commandSaga(),
-    imagesSaga(),
-    statsSaga(),
-    pingSaga()
-  ]);
+  yield all([observeActions(), socketSaga(), commandSaga(), imagesSaga(), statsSaga(), pingSaga()]);
 }
 
 export default { key: 'base', saga: rootSaga };

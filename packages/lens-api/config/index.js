@@ -4,9 +4,11 @@ const debug = _debug('lens:api-config');
 
 const usingVagrant = process.env.USER === 'vagrant';
 
+// eslint-disable-next-line camelcase
 const server_host = process.env.REST_SERVER ||
 usingVagrant ? '192.168.20.20' : '0.0.0.0';
 
+// eslint-disable-next-line camelcase
 const server_port = process.env.REST_PORT || process.env.PORT || 3001;
 
 const keyPrefix = 'lens:';

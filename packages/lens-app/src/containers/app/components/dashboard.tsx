@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import cx from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,9 +13,22 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Home from '../../home';
-import CommandBar, { ICommand } from './commandBar';
+import CommandBar from './commandBar';
 import { renderMainListItems, renderSecondaryListItems } from './listItems';
 import { catalogRoute } from 'src/routes';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  connecting as connectingSelector,
+  connected as connectedSelector,
+  socketId as socketIdSelector,
+  command as commandSelector,
+} from 'src/modules/selectors';
+import { titleSelector } from 'src/modules/ui';
+import {
+  requestSocket as connectSocket,
+  sendSocketCommand,
+  sendPing
+} from 'modules/common';
 
 // import _debug from 'debug';
 // const debug = _debug('lens:containers:app:dashboard');
@@ -108,44 +121,32 @@ const useStyles: any = makeStyles((theme: any) => ({
   }
 }));
 
-interface IProps {
-  connected: boolean;
-  connecting: boolean;
-  socketId: string;
-  command: ICommand;
-  connectSocket: () => void;
-  sendSocketCommand: (payload: any) => void;
-  sendPing: () => void;
-  location: any;
-  title: string;
-}
+const Dashboard = () => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
 
-const Dashboard = (props: IProps) => {
-  const classes = useStyles(props);
+  const location = useLocation();
+  const { pathname } = location;
 
-  const {
-    connected,
-    connecting,
-    connectSocket,
-    socketId,
-    sendSocketCommand,
-    location: { pathname },
-    title,
-  } = props;
+  const connected = useSelector(connectedSelector);
+  const connecting = useSelector(connectingSelector);
+  const socketId = useSelector(socketIdSelector);
+  const command = useSelector(commandSelector);
+  const title = useSelector(titleSelector);
 
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
     if (!connected && !connecting) {
-      connectSocket();
+      dispatch(connectSocket());
     }
-  }, [connected, connecting, connectSocket]);
+  }, [connected, connecting, dispatch]);
 
   useEffect(() => {
     if (socketId) {
-      sendSocketCommand({ command: 'register' });
+      dispatch(sendSocketCommand({ command: 'register' }));
     }
-  }, [socketId, sendSocketCommand]);
+  }, [socketId, dispatch]);
 
   const appTitle = title ? `Lens: ${title}` : 'Lens';
 
@@ -173,10 +174,10 @@ const Dashboard = (props: IProps) => {
               {appTitle}
             </Typography>
             <CommandBar
-              connected={props.connected}
-              pingFlash={() => props.sendSocketCommand({ command: 'ping' })}
-              pingJob={() => props.sendPing()}
-              command={props.command}
+              connected={connected}
+              pingFlash={() => dispatch(sendSocketCommand({ command: 'ping' }))}
+              pingJob={() => dispatch(sendPing())}
+              command={command}
             />
           </Toolbar>
         </AppBar>

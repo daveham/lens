@@ -44,7 +44,7 @@ class CommandBar extends Component<IProps, IState> {
     this.state = { jobId: -1, flashId: -1, commandType: '' };
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate(prevProps) {
     const { command } = this.props;
     if (command && prevProps.command !== command) {
       const { flashId, jobId } = command;

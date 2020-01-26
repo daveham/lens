@@ -79,7 +79,7 @@ export class MovablePanel extends React.Component<IMovablePanelProps, IState> {
     };
   }
 
-  public componentDidUpdate(prevProps: IMovablePanelProps, prevState: IState): void {
+  public componentDidUpdate(prevProps: IMovablePanelProps): void {
     const prevRect = prevProps.constrainRect;
     const curRect = this.props.constrainRect;
     if ((prevRect.right !== curRect.right) || (prevRect.bottom !== curRect.bottom)) {
@@ -118,7 +118,7 @@ export class MovablePanel extends React.Component<IMovablePanelProps, IState> {
     }
   };
 
-  private handleMouseUp = (ignore: any) => {
+  private handleMouseUp = () => {
     if (this.state.isMoving) {
       this.removeMouseEvents();
       this.setState({ isMoving: false });

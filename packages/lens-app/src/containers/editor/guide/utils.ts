@@ -31,9 +31,9 @@ import {
   cancelEditRendering,
   cancelDeleteRendering,
   startRunExecution,
-  cancelRunExecution,
+  // cancelRunExecution,
   startRenderRendering,
-  cancelRenderRendering,
+  // cancelRenderRendering,
 } from 'editor/modules/actions/operations';
 
 const startMap = {

@@ -90,7 +90,7 @@ class Menu extends React.Component<IProps, IState> {
           className={className}
           onClick={this.handleItemClicked(item)}
           onMouseEnter={this.handleMouseEnterMenuItem(item)}
-          onMouseLeave={this.handleMouseLeaveMenuItem(item)}
+          onMouseLeave={this.handleMouseLeaveMenuItem(/* item */)}
         >
           {item}
         </div>
@@ -124,7 +124,7 @@ class Menu extends React.Component<IProps, IState> {
     }
   };
 
-  private handleMouseLeaveMenuItem = (ignore) => () => {
+  private handleMouseLeaveMenuItem = (/* ignore */) => () => {
     // const { onChannelChanged } = this.props;
     // if (onChannelChanged) {
     //   onChannelChanged(this.preHoverChannel);

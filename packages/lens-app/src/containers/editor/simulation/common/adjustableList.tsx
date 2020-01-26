@@ -76,7 +76,7 @@ class AdjustableList extends React.Component<IProps, any> {
     this.containerRef = React.createRef();
   }
 
-  public componentDidUpdate(prevProps, prevState): void {
+  public componentDidUpdate(prevProps): void {
     const { selectedIndex } = this.props;
     if (prevProps.selectedIndex !== selectedIndex) {
       const selectedRect = this.activeItemRef.current.getBoundingClientRect();

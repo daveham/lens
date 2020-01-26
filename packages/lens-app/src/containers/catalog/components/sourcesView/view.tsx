@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -28,7 +28,8 @@ const useStyles: any = makeStyles((theme) => ({
 const SourcesView = () => {
   const classes = useStyles();
 
-  const [resolution, setResolution] = useState(32);
+  // const [resolution, setResolution] = useState(32);
+  const resolution = 32;
 
   const dispatch = useDispatch();
 

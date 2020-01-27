@@ -4,21 +4,21 @@ import { createActions, combineActions, handleActions } from 'redux-actions';
 export const {
   testActionOne,
   testActionTwo,
-  requestSocket,
-  receiveSocket,
-  requestSocketFailed,
+  requestSocketId,
+  receiveSocketId,
+  requestSocketIdFailed,
   sendPing,
   pingSent,
   pingSendFailed,
   sendSocketCommand,
-  sendSocketCommandFailed,
+  // sendSocketCommandFailed,
   receiveServiceCommand,
 } = createActions(
   'TEST_ACTION_ONE',
   'TEST_ACTION_TWO',
-  'REQUEST_SOCKET',
-  'RECEIVE_SOCKET',
-  'REQUEST_SOCKET_FAILED',
+  'REQUEST_SOCKET_ID',
+  'RECEIVE_SOCKET_ID',
+  'REQUEST_SOCKET_ID_FAILED',
   'SEND_PING',
   'PING_SENT',
   'PING_SEND_FAILED',
@@ -47,17 +47,18 @@ const testTwo = handleActions(
 
 const connecting = handleActions(
   {
-    [requestSocket]: () => true,
-    [combineActions(receiveSocket, requestSocketFailed)]: () => false,
+    [requestSocketId]: () => true,
+    [combineActions(receiveSocketId, requestSocketIdFailed)]: () => false,
   },
   false,
 );
 
-const socket = handleActions(
+const emptySocketId = '';
+const socketId = handleActions(
   {
-    [receiveSocket]: (state, { payload }) => payload,
+    [receiveSocketId]: (state, { payload }) => payload,
   },
-  null,
+  emptySocketId,
 );
 
 const clientId = handleActions(
@@ -77,7 +78,7 @@ const command = handleActions(
 
 export default combineReducers({
   connecting,
-  socket,
+  socketId,
   clientId,
   command,
   testOne,

@@ -1,6 +1,6 @@
 import { takeEvery, select, all, call, put } from 'redux-saga/effects';
 import { invokeRestApiReturnData } from './utils';
-import { clientIdSelector } from './socket';
+import { clientId as clientIdSelector } from '../modules/selectors';
 import {
   ensureImage,
   imageLoading,
@@ -9,21 +9,18 @@ import {
   ensureImages,
   imagesLoaded,
   imageNotLoading,
-  imagesNotLoading
+  imagesNotLoading,
 } from '../modules/images/actions';
-import {
-  imageSelector,
-  imageDescriptorsNotLoadedSelector
-} from '../modules/images/selectors';
+import { imageSelector, imageDescriptorsNotLoadedSelector } from '../modules/images/selectors';
 
 import _debug from 'debug';
 const debug = _debug('lens:saga:image');
 
 export function* ensureImagesSaga({ payload }) {
   const { imageDescriptors, force } = payload;
-  const filteredDescriptors = force ?
-    imageDescriptors :
-    yield select(imageDescriptorsNotLoadedSelector, imageDescriptors);
+  const filteredDescriptors = force
+    ? imageDescriptors
+    : yield select(imageDescriptorsNotLoadedSelector, imageDescriptors);
 
   if (filteredDescriptors.length) {
     debug('ensureImagesSaga', { count: filteredDescriptors.length });
@@ -35,10 +32,12 @@ export function* ensureImagesSaga({ payload }) {
     const payload = yield call(invokeRestApiReturnData, '/image', { method: 'POST', body });
     const { existingUrls, existingImageDescriptors } = payload;
     if (existingUrls && existingUrls.length) {
-      yield put(imagesLoaded({
-        imageDescriptors: existingImageDescriptors,
-        data: existingUrls.map((url) => ({ url }))
-      }));
+      yield put(
+        imagesLoaded({
+          imageDescriptors: existingImageDescriptors,
+          data: existingUrls.map(url => ({ url })),
+        }),
+      );
     }
   } catch (error) {
     debug('ensureImagesSaga image api exception', error);
@@ -61,7 +60,7 @@ export function* ensureImageSaga({ payload }) {
     const payload = yield call(invokeRestApiReturnData, '/image', { method: 'POST', body });
     const { url } = payload;
     if (url) {
-      yield put(imageLoaded({ imageDescriptor, data: { url } } ));
+      yield put(imageLoaded({ imageDescriptor, data: { url } }));
     }
   } catch (error) {
     debug('ensureImageSaga image api exception', error);
@@ -70,8 +69,5 @@ export function* ensureImageSaga({ payload }) {
 }
 
 export default function* imagesSaga() {
-  yield all([
-    takeEvery(ensureImage, ensureImageSaga),
-    takeEvery(ensureImages, ensureImagesSaga)
-  ]);
+  yield all([takeEvery(ensureImage, ensureImageSaga), takeEvery(ensureImages, ensureImagesSaga)]);
 }

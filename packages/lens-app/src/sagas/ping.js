@@ -1,6 +1,6 @@
 import { takeEvery, all, select } from 'redux-saga/effects';
 import { restApiSaga } from './utils';
-import { clientIdSelector } from './socket';
+import { clientId as clientIdSelector } from '../modules/selectors';
 import { sendPing, pingSent, pingSendFailed } from '../modules/common';
 
 export function* sendPingSaga() {

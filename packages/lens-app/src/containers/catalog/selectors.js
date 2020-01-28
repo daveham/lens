@@ -6,6 +6,7 @@ export const catalogIsLoaded = ({ catalog }) => Boolean(catalog.name);
 export const catalogName = ({ catalog }) => catalog.name;
 export const catalogSources = ({ catalog }) => catalog.sources;
 
+const emptySources = [];
 export const sources = createSelector(
   catalogSources,
   catalogSources => {
@@ -13,10 +14,11 @@ export const sources = createSelector(
       const { ids, byIds } = catalogSources;
       return ids.map(id => byIds[id]);
     }
-    return [];
+    return emptySources;
   },
 );
 
+const emptyDescriptors = [];
 export const thumbnailImageDescriptors = createSelector(
   catalogSources,
   catalogSources => {
@@ -24,7 +26,7 @@ export const thumbnailImageDescriptors = createSelector(
       const { ids } = catalogSources;
       return ids.map(id => makeThumbnailImageDescriptor(id));
     }
-    return [];
+    return emptyDescriptors;
   },
 );
 

@@ -7,8 +7,8 @@ of react/redux technology.
 ````
 +----------+           +----------+               +----------+
 |          |           |          |     data      |          |
-|          | requests  |          <--------------->  redis   |
-|  client  +----------->   mgr    |     jobs      |          |
+|          | requests  |  REST    <--------------->  redis   |
+|  client  +----------->   API    |     jobs      |          |
 |          |           |          +--------------->  resque  |
 |          |           |          |               |          |
 +-----^----+           +---+------+               +-----+----+
@@ -16,13 +16,13 @@ of react/redux technology.
       |                    |                     worker |
       |                    v            +----------+    |
       |                                 |          |    |
-      |                  files  <-------+          <----+
-      |   notifications                 |   svc    |
-      +---------------------------------+          |
+      |                  files  <-------+   node-  <----+
+      |   notifications                 |  resque  |
+      +---------------------------------+  client  |
                                         |          |
                                         +----------+
 ````
 
-* mgr (client): lens-app - dev port: 3000
-* mgr (REST API): lens-api - dev port: 3001, dbg port: 5858
-* svc: lens-service - dev port: 3002, dbg port: 5859
+* client: lens-app - dev port: 3000
+* REST API: lens-api - dev port: 3001, dbg port: 5858
+* node-resque client: lens-service - dev port: 3002, dbg port: 5859

@@ -26,6 +26,7 @@ import {
   editExecutionFinished,
   cancelEditExecution,
   editExecutionCanceled,
+  // - run
   startRunExecution,
   runExecutionStarted,
   // - delete
@@ -57,6 +58,10 @@ import {
   deleteExecution,
   deleteExecutionSucceeded,
   deleteExecutionFailed,
+  // - run
+  runExecution,
+  runExecutionSucceeded,
+  runExecutionFailed,
 } from 'editor/modules/actions/data';
 
 import _debug from 'debug';
@@ -159,7 +164,26 @@ export function* startNewExecutionSaga({ payload: { simulationId } }) {
 
 export function* startRunExecutionSaga({ payload: { simulationId, executionId} }) {
   debug('startRunExecutionSaga', { simulationId, executionId });
+  const { execution, simulation } = yield select(executionByIdSelector, simulationId, executionId);
+  if (!execution || execution.simulationId !== simulationId) {
+    debug('startRunExecutionSaga - execution id not the expected id');
+    yield put(setSnackbarErrorMessage('Run Execution failed - mismatched id'));
+  } else {
+    yield put(setSelectedExecution({ simulation, execution }));
 
+    const [, result] = yield all([
+      put(runExecution({ sourceId: simulation.sourceId, simulationId, executionId })),
+      take([runExecutionSucceeded, runExecutionFailed]),
+    ]);
+
+    if (result.type === `${runExecutionSucceeded}`) {
+      yield put(setSnackbarMessage('Execution submitted.'));
+    } else {
+      yield put(setSnackbarErrorMessage(`Execution submission failed: ${result.payload}`));
+    }
+  }
+
+  yield delay(0);
   yield put(runExecutionStarted({ simulationId, executionId }));
 }
 

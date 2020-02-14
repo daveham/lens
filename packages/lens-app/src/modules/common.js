@@ -56,7 +56,7 @@ const connecting = handleActions(
 const emptySocketId = '';
 const socketId = handleActions(
   {
-    [receiveSocketId]: (state, { payload }) => payload,
+    [receiveSocketId]: (state, { payload }) => payload || emptySocketId,
   },
   emptySocketId,
 );

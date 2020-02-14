@@ -30,6 +30,9 @@ import {
   deleteExecution,
   deleteExecutionSucceeded,
   deleteExecutionFailed,
+  runExecution,
+  runExecutionSucceeded,
+  runExecutionFailed,
   saveRendering,
   saveRenderingSucceeded,
   saveRenderingFailed,
@@ -45,6 +48,7 @@ import {
   executionByIdSelector,
   // renderingByIdSelector,
 } from 'editor/modules/selectors';
+import { clientId as clientIdSelector } from 'modules/selectors';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
 import _debug from 'debug';
@@ -345,6 +349,23 @@ export function* deleteExecutionSaga({ payload: { executionId, simulationId, sou
   }
 }
 
+export function* runExecutionSaga({ payload: { executionId, simulationId, sourceId } }) {
+  debug('runExecutionSaga', { executionId, simulationId, sourceId });
+  const clientId = yield select(clientIdSelector);
+
+  const body = {
+    clientId,
+    executionId,
+    simulationId,
+    sourceId,
+  };
+  yield* restApiSaga(
+    [`/executions/${executionId}/run`, { method: 'POST', body }],
+    runExecutionSucceeded,
+    runExecutionFailed,
+  );
+}
+
 export function* deleteRenderingSaga({
   payload: { renderingId, executionId, simulationId, sourceId },
 }) {
@@ -387,6 +408,7 @@ export default function* dataRootSaga() {
     takeEvery(saveExecution, saveExecutionSaga),
     takeEvery(saveNewExecution, saveNewExecutionSaga),
     takeEvery(deleteExecution, deleteExecutionSaga),
+    takeEvery(runExecution, runExecutionSaga),
     takeEvery(saveRendering, saveRenderingSaga),
     takeEvery(saveNewRendering, saveNewRenderingSaga),
     takeEvery(deleteRendering, deleteRenderingSaga),

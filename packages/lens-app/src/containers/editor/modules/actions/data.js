@@ -32,6 +32,9 @@ export const {
   deleteExecution,
   deleteExecutionSucceeded,
   deleteExecutionFailed,
+  runExecution,
+  runExecutionSucceeded,
+  runExecutionFailed,
   // rendering
   saveRendering,
   saveRenderingSucceeded,
@@ -73,6 +76,9 @@ export const {
   'DELETE_EXECUTION',
   'DELETE_EXECUTION_SUCCEEDED',
   'DELETE_EXECUTION_FAILED',
+  'RUN_EXECUTION',
+  'RUN_EXECUTION_SUCCEEDED',
+  'RUN_EXECUTION_FAILED',
   // renderings
   'SAVE_RENDERING',
   'SAVE_RENDERING_SUCCEEDED',

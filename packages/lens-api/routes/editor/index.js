@@ -98,6 +98,50 @@ export function addRoutes(server, dataManager) {
       });
   };
 
+  const readHikes = (sourceId, simulationId) => {
+    debug('read hikes', { sourceId, simulationId });
+    return new Promise((resolve, reject) => {
+      try {
+        const filename = hikesFilename(sourceId, simulationId);
+        fs.readFile(filename, 'utf8', (err, data) => {
+          if (err) {
+            debug('readHikes:fs.readFile err', { err });
+            return reject(err);
+          }
+          const hikes = JSON.parse(data);
+          resolve(hikes);
+        });
+      } catch (error) {
+        debug('getHikes - exception', { error });
+        reject(error);
+      }
+    });
+  };
+
+  const postRunExecution = (req, res, next) => {
+    const { clientId, sourceId, simulationId, executionId } = req.body;
+    debug('post run execution', { clientId, sourceId, simulationId, executionId });
+
+    Promise.all([
+      dataManager.getSimulation(simulationId, false),
+      dataManager.getExecution(executionId, false),
+      readHikes(sourceId, simulationId),
+    ])
+      .then(data => {
+        res.send({
+          clientId,
+          simulation: data[0],
+          execution: data[1],
+          hikes: data[2],
+        });
+        next();
+      })
+      .catch(err => {
+        debug('post run execution error', { err });
+        next(err);
+      });
+  };
+
   const postRendering = (req, res, next) => {
     const { rendering } = req.body;
     debug('post rendering', { rendering });
@@ -184,10 +228,14 @@ export function addRoutes(server, dataManager) {
   server.get('/simulations/:sourceId', getSimulations);
   server.put('/simulations/:simulationId', putSimulation);
   server.post('/simulations', postSimulation);
+
   server.put('/executions/:executionId', putExecution);
+  server.post('/executions/:executionId/run', postRunExecution);
   server.post('/executions', postExecution);
+
   server.put('/renderings/:renderingId', putRendering);
   server.post('/renderings', postRendering);
+
   server.get('/hikes/:sourceId/:simulationId', getHikes);
   server.post('/hikes/:sourceId/:simulationId', postHikes);
 }

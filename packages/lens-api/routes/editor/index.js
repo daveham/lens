@@ -1,3 +1,5 @@
+import { runExecution } from '@lens/data-jobs';
+import { enqueueJob } from '../utils/index';
 import path from 'path';
 import fs from 'fs';
 import _debug from 'debug';
@@ -128,13 +130,22 @@ export function addRoutes(server, dataManager) {
       readHikes(sourceId, simulationId),
     ])
       .then(data => {
-        res.send({
-          clientId,
+        const payload = {
           simulation: data[0],
           execution: data[1],
           hikes: data[2],
+        };
+        enqueueJob(runExecution(clientId, payload), (status) => {
+          res.send(status);
+          next();
         });
-        next();
+        // res.send({
+        //   clientId,
+        //   simulation: data[0],
+        //   execution: data[1],
+        //   hikes: data[2],
+        // });
+        // next();
       })
       .catch(err => {
         debug('post run execution error', { err });

@@ -1,5 +1,5 @@
 import { channel } from 'redux-saga';
-import { call, takeEvery, all, put, select, take } from 'redux-saga/effects';
+import { call, takeEvery, takeLeading, all, put, select, take } from 'redux-saga/effects';
 import {
   receiveSocketId,
   requestSocketId,
@@ -18,6 +18,7 @@ const socketHost = process.env.REACT_APP_SERVICE_SERVER;
 
 const socketChannel = channel();
 let socket;
+let socketId = '';
 
 export function* watchSocketChannel() {
   // eslint-disable-next-line no-constant-condition
@@ -36,17 +37,24 @@ export function* connectSocket() {
 
   socket.on('connect', () => {
     debug('connected');
-    socketChannel.put(receiveSocketId(socket.id));
+    if (socket.id !== socketId) {
+      socketId = socket.id;
+      socketChannel.put(receiveSocketId(socketId));
+    }
   });
 
   socket.on('disconnect', () => {
-    socketChannel.put(receiveSocketId(''));
     debug('disconnected');
+    socketId = '';
+    socketChannel.put(receiveSocketId(socketId));
   });
 
   socket.on('reconnect', () => {
-    socketChannel.put(receiveSocketId(socket.id));
     debug('reconnected');
+    if (socket.id !== socketId) {
+      socketId = socket.id;
+      socketChannel.put(receiveSocketId(socketId));
+    }
   });
 
   socket.on('error', err => {
@@ -87,7 +95,7 @@ export function* socketSend({ payload }) {
 
 export default function* socketSaga() {
   yield all([
-    takeEvery(requestSocketId, connectSocket),
+    takeLeading(requestSocketId, connectSocket),
     takeEvery(sendSocketCommand, socketSend),
     call(watchSocketChannel),
   ]);

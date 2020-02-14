@@ -1,19 +1,15 @@
-import {
-  isSourceStatsDescriptor,
-  isTileStatsDescriptor,
-  ANALYSIS
-} from '@lens/image-descriptors';
+import { isSourceStatsDescriptor, isTileStatsDescriptor, ANALYSIS } from '@lens/image-descriptors';
 import captureContextPlugin from '../utils/captureContextPlugin';
 import { processSource } from './source';
 import { processTile } from './tile';
 
-export default (jobs) => {
+export default jobs => {
   const capture = {};
 
   jobs.stats = {
     plugins: [captureContextPlugin],
     pluginOptions: {
-      captureContextPlugin: { capture }
+      captureContextPlugin: { capture },
     },
     perform: (job, cb) => {
       const { statsDescriptor } = job;
@@ -33,6 +29,6 @@ export default (jobs) => {
 
       context.respondWithError(new Error('unexpected stats job'), job);
       cb();
-    }
+    },
   };
 };

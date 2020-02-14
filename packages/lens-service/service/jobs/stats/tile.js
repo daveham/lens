@@ -1,7 +1,4 @@
-import {
-  makeStatsKey,
-  pathFromImageDescriptor
-} from '@lens/image-descriptors';
+import { makeStatsKey, pathFromImageDescriptor } from '@lens/image-descriptors';
 import co from 'co';
 import toBuffer from '../utils/gmBuffer';
 import tileStats from '../utils/tileStat';
@@ -16,7 +13,7 @@ function* generator(imageDescriptor, key, context) {
   const filename = pathFromImageDescriptor(imageDescriptor);
   const imageExists = yield fileExists(filename);
   if (!imageExists) {
-    yield *tileGenerator(imageDescriptor, context);
+    yield* tileGenerator(imageDescriptor, context);
   }
 
   const buffer = yield toBuffer(filename);
@@ -24,7 +21,7 @@ function* generator(imageDescriptor, key, context) {
 
   const data = {
     filename,
-    ...stats
+    ...stats,
   };
   const payload = { status: 'ok', data };
   const result = yield context.getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
@@ -39,13 +36,15 @@ export function processTile(context, job, cb) {
   const statsKey = makeStatsKey(statsDescriptor);
 
   co(generator(statsDescriptor.imageDescriptor, statsKey, context))
-  .then((data) => {
-    context.respond({ ...job, data });
-    cb();
-  })
-  .catch((error) => {
-    context.getRedisClient().hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
-    context.respondWithError(error, job);
-    cb();
-  });
+    .then(data => {
+      context.respond({ ...job, data });
+      cb();
+    })
+    .catch(error => {
+      context
+        .getRedisClient()
+        .hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
+      context.respondWithError(error, job);
+      cb();
+    });
 }

@@ -15,11 +15,13 @@ const debug = _debug('lens:service-server');
 const name = 'lens-service';
 const log = bunyan.createLogger({
   name,
-  streams: [{
-    level: 'info',
-    stream: process.stdout
-  }],
-  serializers: bunyan.stdSerializers
+  streams: [
+    {
+      level: 'info',
+      stream: process.stdout,
+    },
+  ],
+  serializers: bunyan.stdSerializers,
 });
 
 mkdirp.sync(path.join(data, 'stats'));
@@ -33,7 +35,7 @@ server.get('/', (req, res, next) => {
 });
 
 let serviceStarted = false;
-io.sockets.on('connect', (socket) => {
+io.sockets.on('connect', socket => {
   debug('socket connected', socket.id);
   context.connections.addConnectionForSocket(socket);
 
@@ -45,7 +47,7 @@ io.sockets.on('connect', (socket) => {
     });
   }
 
-  socket.on('flash', (data) => {
+  socket.on('flash', data => {
     debug('flash message', { command: data.command });
     if (data.command === 'ping') {
       const started = Date.now();
@@ -56,7 +58,7 @@ io.sockets.on('connect', (socket) => {
         started,
         finished: started,
         waited,
-        duration: 0
+        duration: 0,
       };
       debug('ping', { response });
       socket.emit('flash', response);
@@ -64,6 +66,6 @@ io.sockets.on('connect', (socket) => {
   });
 });
 
-server.listen(config.server_port, config.server_host, () => {
+server.listen(config.serverPort, config.serverHost, () => {
   debug(`${server.name} listening at ${server.url}`);
 });

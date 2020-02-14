@@ -25,6 +25,8 @@
     "jsx-quotes": [2, "prefer-single"],
     "flowtype/define-flow-type": 1,
     "flowtype/use-flow-type": 1,
+    "generator-star-spacing": "off",
+    "yield-star-spacing": "off",
     "no-console": 0
   }
 }

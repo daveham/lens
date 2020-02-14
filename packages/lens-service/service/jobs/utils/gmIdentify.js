@@ -3,7 +3,7 @@ import gm from 'gm';
 import debugLib from 'debug';
 const debug = debugLib('lens:job-utils-identify');
 
-export default (target) => {
+export default target => {
   return new Promise((resolve, reject) => {
     try {
       gm(target).identify((err, gmdata) => {
@@ -18,11 +18,11 @@ export default (target) => {
           height: gmdata.size.height,
           depth: gmdata.depth,
           resolution: gmdata.Resolution,
-          filesize: gmdata.Filesize
+          filesize: gmdata.Filesize,
         };
         resolve(data);
       });
-    } catch(ex) {
+    } catch (ex) {
       reject(ex);
     }
   });

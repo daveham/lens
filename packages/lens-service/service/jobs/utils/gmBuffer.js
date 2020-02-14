@@ -3,7 +3,7 @@ import gm from 'gm';
 import debugLib from 'debug';
 const debug = debugLib('lens:job-utils-buffer');
 
-export default (source) => {
+export default source => {
   return new Promise((resolve, reject) => {
     try {
       // MPC
@@ -15,7 +15,7 @@ export default (source) => {
 
         resolve(buffer);
       });
-    } catch(ex) {
+    } catch (ex) {
       reject(ex);
     }
   });

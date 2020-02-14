@@ -1,4 +1,4 @@
-const captureContextPlugin = function (worker, func, queue, job, args, options) {
+const captureContextPlugin = function(worker, func, queue, job, args, options) {
   const self = this;
   self.name = 'captureContextPlugin';
   self.worker = worker;
@@ -9,7 +9,7 @@ const captureContextPlugin = function (worker, func, queue, job, args, options) 
   self.options = options;
 };
 
-captureContextPlugin.prototype.before_perform = function (callback) {
+captureContextPlugin.prototype.before_perform = function(callback) {
   this.options.capture.context = this.worker.options.context;
   callback(null, true);
 };

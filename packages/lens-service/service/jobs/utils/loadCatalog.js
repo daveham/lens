@@ -7,11 +7,10 @@ const debug = _debug('lens:service-load-catalog');
 
 const catalogRedisKey = 'catalog';
 
-export default (context) => {
+export default context => {
   return new Promise(function(resolve, reject) {
     const redis = context.getRedisClient();
-    redis.get(catalogRedisKey)
-    .then((cachedCatalog) => {
+    redis.get(catalogRedisKey).then(cachedCatalog => {
       if (cachedCatalog) {
         return resolve(JSON.parse(cachedCatalog));
       }
@@ -25,10 +24,9 @@ export default (context) => {
 
         const catalogData = JSON.parse(data);
         const catalog = {};
-        catalogData.sources.forEach((source) => catalog[source.id] = source);
+        catalogData.sources.forEach(source => (catalog[source.id] = source));
 
-        redis.set(catalogRedisKey, JSON.stringify(catalog))
-        .then((result) => {
+        redis.set(catalogRedisKey, JSON.stringify(catalog)).then(result => {
           if (result !== 'OK') {
             debug('redis set not OK', { result });
           }

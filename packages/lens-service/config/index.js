@@ -1,9 +1,8 @@
 const usingVagrant = process.env.USER === 'vagrant';
 
-const server_host = process.env.SERVICE_SERVER ||
-  usingVagrant ? '192.168.20.20' : '0.0.0.0';
+const serverHost = process.env.SERVICE_SERVER || usingVagrant ? '192.168.20.20' : '0.0.0.0';
 
-const server_port = process.env.SERVICE_PORT || process.env.PORT || 3002;
+const serverPort = process.env.SERVICE_PORT || process.env.PORT || 3002;
 
 const keyPrefix = 'lens:';
 
@@ -13,7 +12,7 @@ const redisOptions = {
   host: '127.0.0.1',
   family: 4,
   password: null,
-  db: 0
+  db: 0,
 };
 
 const resqueOptions = {
@@ -21,17 +20,17 @@ const resqueOptions = {
   host: '127.0.0.1',
   family: 4,
   password: null,
-  db: 0
+  db: 0,
 };
 
 const config = {
   env: process.env.NODE_ENV,
-  server_host,
-  server_port,
+  serverHost,
+  serverPort,
   redisOptions,
   resqueOptions,
   keyPrefix,
-  queue_name: 'il'
+  queueName: 'il',
 };
 
 export default config;

@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-export default (file) => {
+export default file => {
   return new Promise(function(resolve, reject) {
     fs.stat(file, (err, stats) => {
       if (err) {

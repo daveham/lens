@@ -1,19 +1,19 @@
 import captureContextPlugin from '../utils/captureContextPlugin';
 
-export default (jobs) => {
+export default jobs => {
   const capture = {};
 
   jobs.ping = {
     plugins: [captureContextPlugin],
     pluginOptions: {
-      captureContextPlugin: { capture }
+      captureContextPlugin: { capture },
     },
     perform: (job, cb) => {
       capture.context.respond({
         ...job,
-        command: 'pong'
+        command: 'pong',
       });
       cb();
-    }
+    },
   };
 };

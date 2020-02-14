@@ -46,7 +46,7 @@ const connections = {
         started,
         finished: started,
         waited,
-        duration: 0
+        duration: 0,
       };
       socket.emit('flash', response);
       return;
@@ -59,12 +59,12 @@ const connections = {
     this.connectionsBySocketId[socket.id] = { socket, clientId: -1 };
 
     socket.on('disconnect', () => this.removeConnectionForSocket(socket));
-    socket.on('flash', (data) => {
+    socket.on('flash', data => {
       if (data.command === 'register') {
         this.registerClient(socket, data);
       }
     });
-  }
+  },
 };
 
 export default connections;

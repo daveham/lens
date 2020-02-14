@@ -47,7 +47,7 @@ createDataManager().then(mgr => {
   routes(server, mgr);
 
   // start listening
-  server.listen(config.server_port, config.server_host, () => {
+  server.listen(config.serverPort, config.serverHost, () => {
     debug(`${server.name} listening at ${server.url}`);
   });
 });

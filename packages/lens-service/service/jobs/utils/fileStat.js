@@ -3,7 +3,7 @@ import fs from 'fs';
 import debugLib from 'debug';
 const debug = debugLib('lens:job-utils-file-stats');
 
-export default (target) => {
+export default target => {
   return new Promise((resolve, reject) => {
     fs.stat(target, (err, stats) => {
       if (err) {
@@ -18,7 +18,7 @@ export default (target) => {
 
       const data = {
         ctime: stats.ctime,
-        size: stats.size
+        size: stats.size,
       };
       resolve(data);
     });

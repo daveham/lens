@@ -1,8 +1,5 @@
 import co from 'co';
-import {
-  pathFromImageDescriptor,
-  urlFromImageDescriptor
-} from '@lens/image-descriptors';
+import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
 import loadCatalog from '../utils/loadCatalog';
 import thumbnail from '../utils/gmThumbnail';
@@ -19,12 +16,12 @@ function* generator(imageDescriptor, context) {
 
 export function processThumbnail(context, job, cb) {
   co(generator(job.imageDescriptor, context))
-  .then((url) => {
-    context.respond({ ...job, url });
-    cb();
-  })
-  .catch((error) => {
-    context.respondWithError(error, job);
-    cb();
-  });
+    .then(url => {
+      context.respond({ ...job, url });
+      cb();
+    })
+    .catch(error => {
+      context.respondWithError(error, job);
+      cb();
+    });
 }

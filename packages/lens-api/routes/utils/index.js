@@ -9,7 +9,7 @@ import _debug from 'debug';
 const debug = _debug('lens:api-utils');
 
 export const enqueueJob = (job, cb) => {
-  const queue = new Queue({ connection: config.queue_connection });
+  const queue = new Queue({ connection: config.queueConnection });
   queue.on('error', (error) => {
     debug(error);
     cb(error);
@@ -17,7 +17,7 @@ export const enqueueJob = (job, cb) => {
   queue.connect(() => {
     const { command } = job;
     debug(`enqueue job for ${command}`, job);
-    queue.enqueue(config.queue_name, command, job);
+    queue.enqueue(config.queueName, command, job);
     cb(job);
   });
 };

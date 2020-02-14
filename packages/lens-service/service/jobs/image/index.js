@@ -1,18 +1,15 @@
-import {
-  isTileImageDescriptor,
-  isThumbnailImageDescriptor
-} from '@lens/image-descriptors';
+import { isTileImageDescriptor, isThumbnailImageDescriptor } from '@lens/image-descriptors';
 import captureContextPlugin from '../utils/captureContextPlugin';
 import { processThumbnail } from './thumbnail';
 import { processTile } from './tile';
 
-export default (jobs) => {
+export default jobs => {
   const capture = {};
 
   jobs.image = {
     plugins: [captureContextPlugin],
     pluginOptions: {
-      captureContextPlugin: { capture }
+      captureContextPlugin: { capture },
     },
     perform: (job, cb) => {
       const { imageDescriptor } = job;
@@ -28,6 +25,6 @@ export default (jobs) => {
 
       context.respondWithError(new Error('unexpected image job'), job);
       cb();
-    }
+    },
   };
 };

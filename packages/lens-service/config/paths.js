@@ -13,5 +13,5 @@ module.exports = {
   dotenv: resolveApp('.env'),
   data: dataDirectory,
   resolveSourcePath,
-  resolveThumbnailPath
+  resolveThumbnailPath,
 };

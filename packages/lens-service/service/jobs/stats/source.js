@@ -18,7 +18,7 @@ function* generator({ input: { id } }, key, context) {
   const identifyResults = yield identify(sourceFile);
   const data = {
     ...fileResults,
-    ...identifyResults
+    ...identifyResults,
   };
   const payload = { status: 'ok', data };
   const result = yield context.getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
@@ -33,13 +33,15 @@ export function processSource(context, job, cb) {
   const statsKey = makeStatsKey(statsDescriptor);
 
   co(generator(statsDescriptor.imageDescriptor, statsKey, context))
-  .then((data) => {
-    context.respond({ ...job, data });
-    cb();
-  })
-  .catch((error) => {
-    context.getRedisClient().hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
-    context.respondWithError(error, job);
-    cb();
-  });
+    .then(data => {
+      context.respond({ ...job, data });
+      cb();
+    })
+    .catch(error => {
+      context
+        .getRedisClient()
+        .hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
+      context.respondWithError(error, job);
+      cb();
+    });
 }

@@ -23,7 +23,7 @@ const getResqueClient = () => {
   return resque;
 };
 
-const respond = (result) => {
+const respond = result => {
   const { clientId, started, waited } = result;
   const socket = connections.getConnectionByClientId(clientId);
   if (socket) {
@@ -32,7 +32,7 @@ const respond = (result) => {
     const response = {
       ...result,
       finished,
-      duration
+      duration,
     };
     debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}`);
     socket.emit('job', response);
@@ -45,7 +45,7 @@ const respondWithError = (error, job) => {
   debug('respondWithError', { error });
   respond({
     ...job,
-    error
+    error,
   });
 };
 
@@ -54,7 +54,7 @@ const context = {
   getRedisClient,
   respond,
   respondWithError,
-  queue_connection: { redis: getResqueClient() }
+  queueConnection: { redis: getResqueClient() },
 };
 
 export default context;

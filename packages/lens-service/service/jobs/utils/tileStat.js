@@ -41,25 +41,27 @@ function runStats(vector, maxValue, includeZero = true) {
     try {
       const stat = jStat(vector);
       const data = {
-        histogram: absoluteHistogram(vector, maxValue, includeZero)
+        histogram: absoluteHistogram(vector, maxValue, includeZero),
       };
 
-      stat.mean((val) => { data.mean = val; })
-      .min((val) => data.min = val)
-      .max((val) => data.max = val)
-      .mode((val) => data.mode = val)
-      .coeffvar((val) => {
-        data.coeffvar = val;
-        resolve(data);
-      });
-
-    } catch(ex) {
+      stat
+        .mean(val => {
+          data.mean = val;
+        })
+        .min(val => (data.min = val))
+        .max(val => (data.max = val))
+        .mode(val => (data.mode = val))
+        .coeffvar(val => {
+          data.coeffvar = val;
+          resolve(data);
+        });
+    } catch (ex) {
       reject(ex);
     }
   });
 }
 
-export default (buffer) => {
+export default buffer => {
   return new Promise((resolve, reject) => {
     try {
       const length = buffer.length / 3;
@@ -87,19 +89,18 @@ export default (buffer) => {
         runStats(makeRelativeChannel(b, r, g), 256, false),
         runStats(h, 360),
         runStats(s, 1),
-        runStats(l, 1)
-      ])
-      .then((results) => {
+        runStats(l, 1),
+      ]).then(results => {
         resolve({
           red: results[0],
           green: results[1],
           blue: results[2],
           hue: results[3],
           saturation: results[4],
-          luminance: results[5]
+          luminance: results[5],
         });
       });
-    } catch(ex) {
+    } catch (ex) {
       debug('jstat error', { ex });
       reject(ex);
     }

@@ -30,28 +30,29 @@ export function* watchSocketChannel() {
 }
 
 export function* connectSocket() {
-  debug('connectSocket saga called');
-
-  debug(`connecting to '${socketHost}'`);
+  debug(`connectSocket saga, connecting to '${socketHost}'`);
   socket = io(socketHost);
 
   socket.on('connect', () => {
-    debug('connected');
-    if (socket.id !== socketId) {
+    debug('connect');
+    if (socket.id && socket.id !== socketId) {
+      debug(`connect: socketId changed from '${socketId}' to '${socket.id}'`);
       socketId = socket.id;
       socketChannel.put(receiveSocketId(socketId));
     }
   });
 
   socket.on('disconnect', () => {
-    debug('disconnected');
+    debug('disconnect');
+    debug(`disconnect: socketId changed from '${socketId}' to '${socket.id}'`);
     socketId = '';
     socketChannel.put(receiveSocketId(socketId));
   });
 
   socket.on('reconnect', () => {
-    debug('reconnected');
-    if (socket.id !== socketId) {
+    debug('reconnect');
+    if (socket.id && socket.id !== socketId) {
+      debug(`reconnect: socketId changed from '${socketId}' to '${socket.id}'`);
       socketId = socket.id;
       socketChannel.put(receiveSocketId(socketId));
     }

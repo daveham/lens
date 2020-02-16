@@ -4,9 +4,20 @@ import captureContextPlugin from '../utils/captureContextPlugin';
 import _debug from 'debug';
 const debug = _debug('lens:editor');
 
-function* generator(payload) {
+const delayJobStep = (delay) => {
+  return new Promise((resolve) => setTimeout(() => resolve(), delay));
+};
+
+function* generator(job, context) {
+  yield delayJobStep(1000);
+  context.respond({ ...job, message: 'step one' });
+  yield delayJobStep(2000);
+  context.respond({ ...job, message: 'step two' });
+  yield delayJobStep(3000);
+  context.respond({ ...job, message: 'step three' });
+
   yield Promise.resolve(true);
-  return payload;
+  return 'done';
 }
 
 const editor = jobs => {

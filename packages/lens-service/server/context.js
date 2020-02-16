@@ -24,7 +24,7 @@ const getResqueClient = () => {
 };
 
 const respond = result => {
-  const { clientId, started, waited } = result;
+  const { clientId, started, waited, message } = result;
   const socket = connections.getConnectionByClientId(clientId);
   if (socket) {
     const finished = Date.now();
@@ -33,8 +33,9 @@ const respond = result => {
       ...result,
       finished,
       duration,
+      message,
     };
-    debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}`);
+    debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}, ${message}`);
     socket.emit('job', response);
   } else {
     debug(`no socket available for response for client ${clientId}`);

@@ -27,6 +27,8 @@ import {
   deleteExecutionFinished,
   cancelDeleteExecution,
   deleteExecutionCanceled,
+  startRunExecution,
+  runExecutionStarted,
   // renderings
   finishNewRendering,
   newRenderingFinished,
@@ -210,6 +212,7 @@ const operationPending = handleActions(
       cancelEditRendering,
       finishDeleteRendering,
       cancelDeleteRendering,
+      startRunExecution,
     )]: () => true,
     [combineActions(
       newSimulationFinished,
@@ -230,6 +233,7 @@ const operationPending = handleActions(
       editRenderingCanceled,
       deleteRenderingFinished,
       deleteRenderingCanceled,
+      runExecutionStarted,
     )]: () => false,
   },
   false,

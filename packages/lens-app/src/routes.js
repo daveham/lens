@@ -12,7 +12,6 @@ export const catalogRoute = asyncRoute({
 export const editorRoute = asyncRoute({
   getComponent: () => import(/* webpackChunkName: "editorUI" */ './containers/editor'),
   getReducers: () => import(/* webpackChunkName: "editorReducers" */ './containers/editor/modules'),
-  getSagas: () => import(/* webpackChunkName: "editorSagas" */ './containers/editor/sagas')
-  // getCommands
+  getSagas: () => import(/* webpackChunkName: "editorSagas" */ './containers/editor/sagas'),
+  getCommands: () => import(/* webpackChunkName: "editorCommands" */ './containers/editor/commands')
 });
-

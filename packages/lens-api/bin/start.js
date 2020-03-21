@@ -11,7 +11,7 @@ import _debug from 'debug';
 const debug = _debug('lens:api:server');
 
 const cors = corsMiddleware({
-  origins: ['*'],
+  origins: ['http://dev.local:3000'],
 });
 
 const name = 'lens-rest-api';

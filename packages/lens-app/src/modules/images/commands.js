@@ -6,7 +6,7 @@ const debug = _debug('lens:image:commands');
 
 function* imageHandler(payload) {
   debug('image command handler', payload);
-  const { imageDescriptor, url } = payload;
+  const { imageDescriptor, result: { url } } = payload;
   yield put(imageLoaded({ imageDescriptor, data: { url } } ));
 }
 

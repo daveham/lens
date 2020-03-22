@@ -8,7 +8,7 @@ const post = (req, res, next) => {
   const { clientId, sourceId, group } = req.body;
   debug('enqueing delete keys', clientId, sourceId, group);
 
-  enqueueJob(deleteStats(clientId, sourceId, group), (status) => {
+  enqueueJob(deleteStats(clientId, sourceId, group)).then(status => {
     res.send(status);
     next();
   });

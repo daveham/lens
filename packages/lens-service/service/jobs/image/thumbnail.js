@@ -3,9 +3,10 @@ import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-des
 import paths from '../../../config/paths';
 import loadCatalog from '../utils/loadCatalog';
 import thumbnail from '../utils/gmThumbnail';
+import { respond, respondWithError } from '../../../server/context';
 
-function* generator(imageDescriptor, context) {
-  const catalog = yield loadCatalog(context);
+function* generator(imageDescriptor) {
+  const catalog = yield loadCatalog();
   const { file } = catalog[imageDescriptor.input.id];
 
   const sourceFile = paths.resolveSourcePath(file);
@@ -14,14 +15,12 @@ function* generator(imageDescriptor, context) {
   return urlFromImageDescriptor(imageDescriptor);
 }
 
-export function processThumbnail(context, job, cb) {
-  co(generator(job.imageDescriptor, context))
+export function processThumbnail(job) {
+  return co(generator(job.imageDescriptor))
     .then(url => {
-      context.respond({ ...job, url });
-      cb();
+      respond(job, { url });
     })
     .catch(error => {
-      context.respondWithError(error, job);
-      cb();
+      respondWithError(job, error);
     });
 }

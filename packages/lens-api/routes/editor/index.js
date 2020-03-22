@@ -129,19 +129,18 @@ export function addRoutes(server, dataManager) {
       dataManager.getExecution(executionId, false),
       readHikes(sourceId, simulationId),
     ])
-      .then(([simulation, execution, hikes]) => {
+      .then(([simulation, execution, hikes]) =>
         enqueueJob(
           runExecution(clientId, {
             simulation,
             execution,
             hikes,
           }),
-          status => {
-            res.send(status);
-            next();
-          },
-        );
-      })
+        ).then(status => {
+          res.send(status);
+          next();
+        }),
+      )
       .catch(err => {
         debug('post run execution error', { err });
         next(err);

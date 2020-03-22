@@ -1,25 +1,34 @@
-import { queue as Queue } from 'node-resque';
+import { Queue } from 'node-resque';
 import config from '../../config';
 import path from 'path';
 import fs from 'fs';
 import NodeCache from 'node-cache';
-import { dataFolder } from 'config/paths';
+import { dataFolder } from '../../config/paths';
 
 import _debug from 'debug';
 const debug = _debug('lens:api-utils');
 
-export const enqueueJob = (job, cb) => {
-  const queue = new Queue({ connection: config.queueConnection });
-  queue.on('error', (error) => {
-    debug(error);
-    cb(error);
+let _queue;
+const getQueue = async () => {
+  if (_queue) {
+    return _queue;
+  }
+  debug('getQueue - defining new queue');
+  _queue = new Queue({ connection: config.queueConnection });
+  _queue.on('error', (error) => {
+    debug('getQueue error', { error });
+    _queue = undefined;
   });
-  queue.connect(() => {
-    const { command } = job;
-    debug(`enqueue job for ${command}`, job);
-    queue.enqueue(config.queueName, command, job);
-    cb(job);
-  });
+  await _queue.connect();
+  return _queue;
+};
+
+export const enqueueJob = async (job) => {
+  const queue = await getQueue();
+  const { command } = job;
+  debug(`enqueueJob '${command}'`, job);
+  await queue.enqueue(config.queueName, command, [job]);
+  return job;
 };
 
 const catalogCacheKey = 'lens-catalog';

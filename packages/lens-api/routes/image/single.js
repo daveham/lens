@@ -28,7 +28,7 @@ export default function processSingleImage(clientId, imageDescriptor, res, next)
 
     debug('file does not exist - creating task');
 
-    enqueueJob(createImage(clientId, imageDescriptor), (status) => {
+    enqueueJob(createImage(clientId, imageDescriptor)).then(status => {
       res.send(status);
       next();
     });

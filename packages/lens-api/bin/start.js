@@ -1,3 +1,4 @@
+import process from 'process';
 import restify from 'restify';
 import corsMiddleware from 'restify-cors-middleware';
 import { createDataManager } from '../schema';
@@ -9,6 +10,8 @@ import routes from '../routes';
 import bunyan from 'bunyan';
 import _debug from 'debug';
 const debug = _debug('lens:api:server');
+
+process.on('warning', (e) => debug('process.on.warn', e.stack));
 
 const cors = corsMiddleware({
   origins: ['http://dev.local:3000'],

@@ -6,7 +6,7 @@ import _debug from 'debug';
 const debug = _debug('lens:service-context');
 
 let redis = null;
-const getRedisClient = () => {
+export const getRedisClient = () => {
   if (!redis) {
     debug('getRedisClient - creating redis connection');
     redis = new Redis(config.redisOptions);
@@ -15,7 +15,7 @@ const getRedisClient = () => {
 };
 
 let resque = null;
-const getResqueClient = () => {
+export const getResqueClient = () => {
   if (!resque) {
     debug('getResqueClient - creating resque connection');
     resque = new Redis(config.resqueOptions);
@@ -23,31 +23,35 @@ const getResqueClient = () => {
   return resque;
 };
 
-const respond = result => {
-  const { clientId, started, waited, message } = result;
+// A socket job response includes the meta-data from the submission, plus extra
+// meta-data about job performance, plus the results of the job. The payload
+// from the job submission is excluded.
+export const respond = ({ payload, ...metadata }, result) => {
+  const { clientId, started } = metadata;
   const socket = connections.getConnectionByClientId(clientId);
   if (socket) {
     const finished = Date.now();
     const duration = finished - started;
     const response = {
-      ...result,
+      ...metadata,
       finished,
       duration,
-      message,
+      result,
     };
-    debug(`job ${response.jobId} ${response.command}, waited ${waited}, duration ${duration}, ${message}`);
+    debug(
+      `job ${metadata.jobId} ${metadata.command}, waited ${metadata.waited}, duration ${duration}`,
+    );
     socket.emit('job', response);
   } else {
     debug(`no socket available for response for client ${clientId}`);
   }
 };
 
-const respondWithError = (error, job) => {
+// A socket job error response follows the same rules as a non-error response but the
+// "result" is an object containing the error.
+export const respondWithError = (job, error) => {
   debug('respondWithError', { error });
-  respond({
-    ...job,
-    error,
-  });
+  respond(job, { error });
 };
 
 const context = {

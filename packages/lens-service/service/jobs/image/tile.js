@@ -5,9 +5,10 @@ import paths from '../../../config/paths';
 import loadCatalog from '../utils/loadCatalog';
 import ensureDir from '../utils/dirMake';
 import crop from '../utils/gmCrop';
+import { respond, respondWithError } from '../../../server/context';
 
-export function* generator(imageDescriptor, context) {
-  const catalog = yield loadCatalog(context);
+export function* generator(imageDescriptor) {
+  const catalog = yield loadCatalog();
   const { file } = catalog[imageDescriptor.input.id];
 
   const sourceFile = paths.resolveSourcePath(file);
@@ -23,16 +24,14 @@ export function* generator(imageDescriptor, context) {
   return urlFromImageDescriptor(imageDescriptor);
 }
 
-export function processTile(context, job, cb) {
+export function processTile(job) {
   const { imageDescriptor } = job;
 
-  co(generator(imageDescriptor, context))
+  return co(generator(imageDescriptor))
     .then(url => {
-      context.respond({ ...job, url });
-      cb();
+      respond(job, { url });
     })
     .catch(error => {
-      context.respondWithError(error, job);
-      cb();
+      respondWithError(job, error);
     });
 }

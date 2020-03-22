@@ -1,16 +1,17 @@
-import { worker as Worker } from 'node-resque';
+import { Worker } from 'node-resque';
 import loadCatalog from './jobs/utils/loadCatalog';
 
 import _debug from 'debug';
 const debug = _debug('lens:worker');
 
-const start = (connection, queues, context, jobs, cb) => {
+const start = async (connection, queues, jobs) => {
   const timeout = process.env.WORKER_TIMEOUT || 1000;
-  const worker = new Worker({ timeout, connection, queues, context }, jobs);
+  debug('creating worker');
+  const worker = new Worker({ timeout, connection, queues }, jobs);
 
   worker.on('start', () => {
     debug('worker started, loading catalog into redis');
-    loadCatalog(worker.options.context);
+    loadCatalog();
   });
 
   // worker.on('pause',
@@ -38,6 +39,7 @@ const start = (connection, queues, context, jobs, cb) => {
     const params = job.args[0];
     params.started = Date.now();
     params.waited = params.started - params.created;
+    // params.context = context;
   });
 
   worker.on('reEnqueue', (queue, job, plugin) => {
@@ -52,11 +54,12 @@ const start = (connection, queues, context, jobs, cb) => {
     debug(`job failure ${queue} ${JSON.stringify(job)} >> ${failure}`);
   });
 
-  worker.connect(() => {
-    worker.workerCleanup(); // optional: cleanup any previous improperly shutdown workers on this host
-    worker.start();
-    cb(worker);
-  });
+  await worker.connect();
+  await worker.start();
+
+  // cleanup any previous improperly shutdown workers on this host
+  // worker.workerCleanup(); // optional:
+  return worker;
 };
 
 export default start;

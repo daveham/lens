@@ -29,7 +29,7 @@
     "ioredis": "^3.2.2",
     "jStat": "^1.7.1",
     "gm": "^1.21.1",
-    "node-resque": "^4.0.9",
+    "node-resque": "^7.0.2",
     "mkdirp":"^0.5.1",
     "socket.io": "^2.0.3",
     "restify": "^8.4.0",

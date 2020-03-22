@@ -28,7 +28,7 @@ export default function processMultipleImages(clientId, imageDescriptors, res, n
           if (err.code === 'ENOENT') {
             debug('file does not exist - creating task', path);
             enqueuedImageDescriptors.push(imageDescriptor);
-            enqueueJob(createImage(clientId, imageDescriptor), (status) => {
+            enqueueJob(createImage(clientId, imageDescriptor)).then(status => {
               enqueuedStatus.push(status);
               resolve();
             });

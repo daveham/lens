@@ -7314,10 +7314,10 @@ invert-kv@^2.0.0:
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-2.0.0.tgz#7393f5afa59ec9ff5f67a27620d11c226e3eec02"
   integrity sha512-wPVv/y/QQ/Uiirj/vh3oP+1Ww+AWehmi1g5fFWGPF6IpCBCDVrhgHRMvrLfdYcwDh3QJbGXDW4JAuzxElLSqKA==
 
-ioredis@^4.14.0:
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.14.0.tgz#d0e83b1d308ca1ba6e849798bfe91583b560eaac"
-  integrity sha512-vGzyW9QTdGMjaAPUhMj48Z31mIO5qJLzkbsE5dg+orNi7L5Ph035htmkBZNDTDdDk7kp7e9UJUr+alhRuaWp8g==
+ioredis@^4.16.0:
+  version "4.16.0"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.16.0.tgz#44d51288e20da14e5b6f687b2db0312e69106556"
+  integrity sha512-tlalhtuvnxXJNtrPjec1nGicuOCpi9ErYV/fRfwaWSzktX9ESrzHlcFwj1pVAL326E8dmt7h9pPQZyyVPPksRA==
   dependencies:
     cluster-key-slot "^1.1.0"
     debug "^4.1.1"
@@ -9557,12 +9557,12 @@ node-releases@^1.1.29:
   dependencies:
     semver "^5.3.0"
 
-node-resque@^5.4.0:
-  version "5.5.6"
-  resolved "https://registry.yarnpkg.com/node-resque/-/node-resque-5.5.6.tgz#fc6f1cc9f30028ebaf21c9f7775dc6fc4d7830fc"
-  integrity sha512-2hjFRXE6bh9i+F88yHciUsU21Xv9rjGSGeaZmpNwzQrMnlZ5a61M4NbFqr6hB1P3/SmFOeGFg23+6dk4SlB+rg==
+node-resque@^7.0.2:
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/node-resque/-/node-resque-7.0.2.tgz#895af8e5bcd6478534f63b369be7da2a3a056a70"
+  integrity sha512-IhOkSuRNWU3Hk8NZUZwTswSbQTVnQ3Qy2hsRp4bQWhnh9XnIMeD2InqD2RXgziCAnunFktptDeYddMSrQnhy5g==
   dependencies:
-    ioredis "^4.14.0"
+    ioredis "^4.16.0"
 
 node-sass@^4.9.2:
   version "4.12.0"

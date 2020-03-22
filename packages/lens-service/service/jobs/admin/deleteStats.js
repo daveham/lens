@@ -1,32 +1,22 @@
 import co from 'co';
-import captureContextPlugin from '../utils/captureContextPlugin';
 import keysRemove from '../utils/keysRemove';
+import { getRedisClient, respond, respondWithError } from '../../../server/context';
 
-function* generator(pattern, context) {
-  return yield keysRemove(context.getRedisClient(), pattern);
+function* generator(pattern) {
+  return yield keysRemove(getRedisClient(), pattern);
 }
 
 export default jobs => {
-  const capture = {};
-
   jobs.deleteStats = {
-    plugins: [captureContextPlugin],
-    pluginOptions: {
-      captureContextPlugin: { capture },
-    },
-    perform: (job, cb) => {
+    perform: async job => {
       const { sourceId, group } = job;
-      const { context } = capture;
-
       const pattern = `lens:h_${sourceId}_i_${group}_*`;
-      co(generator(pattern, context))
+      return co(generator(pattern))
         .then(data => {
-          context.respond({ ...job, data });
-          cb();
+          respond(job, { data });
         })
         .catch(error => {
-          context.respondWithError(error, job);
-          cb();
+          respondWithError(job, error);
         });
     },
   };

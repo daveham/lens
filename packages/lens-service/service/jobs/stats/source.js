@@ -1,6 +1,7 @@
 import { makeStatsKey } from '@lens/image-descriptors';
 import co from 'co';
 import paths from '../../../config/paths';
+import { getRedisClient, respond, respondWithError } from '../../../server/context';
 import loadCatalog from '../utils/loadCatalog';
 import identify from '../utils/gmIdentify';
 import fileStat from '../utils/fileStat';
@@ -9,8 +10,8 @@ import { basicHashKey } from './constants';
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-stats-source');
 
-function* generator({ input: { id } }, key, context) {
-  const catalog = yield loadCatalog(context);
+function* sourceStatsGenerator({ input: { id } }, key) {
+  const catalog = yield loadCatalog();
   const { file } = catalog[id];
 
   const sourceFile = paths.resolveSourcePath(file);
@@ -21,27 +22,23 @@ function* generator({ input: { id } }, key, context) {
     ...identifyResults,
   };
   const payload = { status: 'ok', data };
-  const result = yield context.getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
+  const result = yield getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
   if (result !== 0 && result !== 1) {
     debug('stats redis.hset failed', { result });
   }
   return data;
 }
 
-export function processSource(context, job, cb) {
+export function processSource(job) {
   const { statsDescriptor } = job;
   const statsKey = makeStatsKey(statsDescriptor);
 
-  co(generator(statsDescriptor.imageDescriptor, statsKey, context))
+  return co(sourceStatsGenerator(statsDescriptor.imageDescriptor, statsKey))
     .then(data => {
-      context.respond({ ...job, data });
-      cb();
+      respond(job, { data });
     })
     .catch(error => {
-      context
-        .getRedisClient()
-        .hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
-      context.respondWithError(error, job);
-      cb();
+      getRedisClient().hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
+      respondWithError(job, error);
     });
 }

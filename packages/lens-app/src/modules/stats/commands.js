@@ -6,7 +6,7 @@ const debug = _debug('lens:stats:commands');
 
 function* statsHandler(payload) {
   debug('stats command handler', payload);
-  const { statsDescriptor, data } = payload;
+  const { statsDescriptor, result: { data } } = payload;
   yield put(statsLoaded({ statsDescriptor, data }));
 }
 

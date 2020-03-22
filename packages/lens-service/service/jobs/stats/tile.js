@@ -1,5 +1,6 @@
 import { makeStatsKey, pathFromImageDescriptor } from '@lens/image-descriptors';
 import co from 'co';
+import { getRedisClient, respond, respondWithError } from '../../../server/context';
 import toBuffer from '../utils/gmBuffer';
 import tileStats from '../utils/tileStat';
 import fileExists from '../utils/fileExists';
@@ -9,11 +10,11 @@ import { basicHashKey } from './constants';
 import debugLib from 'debug';
 const debug = debugLib('lens:jobs-stats-tile');
 
-function* generator(imageDescriptor, key, context) {
+function* tileStatsGenerator(imageDescriptor, key) {
   const filename = pathFromImageDescriptor(imageDescriptor);
   const imageExists = yield fileExists(filename);
   if (!imageExists) {
-    yield* tileGenerator(imageDescriptor, context);
+    yield* tileGenerator(imageDescriptor);
   }
 
   const buffer = yield toBuffer(filename);
@@ -24,27 +25,23 @@ function* generator(imageDescriptor, key, context) {
     ...stats,
   };
   const payload = { status: 'ok', data };
-  const result = yield context.getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
+  const result = yield getRedisClient().hset(key, basicHashKey, JSON.stringify(payload));
   if (result !== 0 && result !== 1) {
     debug('stats redis.hset failed', { result });
   }
   return data;
 }
 
-export function processTile(context, job, cb) {
+export function processTile(job) {
   const { statsDescriptor } = job;
   const statsKey = makeStatsKey(statsDescriptor);
 
-  co(generator(statsDescriptor.imageDescriptor, statsKey, context))
+  return co(tileStatsGenerator(statsDescriptor.imageDescriptor, statsKey))
     .then(data => {
-      context.respond({ ...job, data });
-      cb();
+      respond(job, { data });
     })
     .catch(error => {
-      context
-        .getRedisClient()
-        .hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
-      context.respondWithError(error, job);
-      cb();
+      getRedisClient().hset(statsKey, basicHashKey, JSON.stringify({ status: 'bad', error }));
+      respondWithError(job, error);
     });
 }

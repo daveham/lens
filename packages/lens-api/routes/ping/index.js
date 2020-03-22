@@ -8,7 +8,7 @@ const post = (req, res, next) => {
   const { clientId } = req.body;
   debug('performing ping via job', clientId);
 
-  enqueueJob(createPing(clientId), (status) => {
+  enqueueJob(createPing(clientId)).then(status => {
     res.send(status);
     next();
   });

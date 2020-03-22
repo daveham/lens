@@ -1,3 +1,6 @@
+// import _debug from 'debug';
+// const debug = _debug('lens:service:captureContextPlugin');
+
 const captureContextPlugin = function(worker, func, queue, job, args, options) {
   const self = this;
   self.name = 'captureContextPlugin';

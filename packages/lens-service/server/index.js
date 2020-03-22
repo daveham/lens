@@ -40,9 +40,8 @@ io.sockets.on('connect', socket => {
   context.connections.addConnectionForSocket(socket);
 
   if (!serviceStarted) {
-    serviceStarted = true;
-
-    service(context, () => {
+    service().then(() => {
+      serviceStarted = true;
       debug('Queued job service is running.');
     });
   }

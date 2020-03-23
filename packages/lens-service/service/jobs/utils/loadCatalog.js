@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { data } from '../../../config/paths';
-import context from '../../../server/context';
+import { getRedisClient } from '../../../server/context';
 
 import _debug from 'debug';
 const debug = _debug('lens:service-load-catalog');
@@ -10,7 +10,7 @@ const catalogRedisKey = 'catalog';
 
 export default () =>
   new Promise(function(resolve, reject) {
-    const redis = context.getRedisClient();
+    const redis = getRedisClient();
     redis.get(catalogRedisKey).then(cachedCatalog => {
       if (cachedCatalog) {
         return resolve(JSON.parse(cachedCatalog));

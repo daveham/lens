@@ -7,7 +7,7 @@ import mkdirp from 'mkdirp';
 import config from '../config';
 import { data } from '../config/paths';
 import service from '../service';
-import context from './context';
+import connections from './connections';
 
 import _debug from 'debug';
 const debug = _debug('lens:service-server');
@@ -37,7 +37,7 @@ server.get('/', (req, res, next) => {
 let serviceStarted = false;
 io.sockets.on('connect', socket => {
   debug('socket connected', socket.id);
-  context.connections.addConnectionForSocket(socket);
+  connections.addConnectionForSocket(socket);
 
   if (!serviceStarted) {
     service().then(() => {

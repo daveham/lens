@@ -53,13 +53,3 @@ export const respondWithError = (job, error) => {
   debug('respondWithError', { error });
   respond(job, { error });
 };
-
-const context = {
-  connections,
-  getRedisClient,
-  respond,
-  respondWithError,
-  queueConnection: { redis: getResqueClient() },
-};
-
-export default context;

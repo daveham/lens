@@ -1,73 +1,103 @@
 import co from 'co';
+
+import {
+  startExecution as startExecutionJob,
+  runExecutionPass as runExecutionPassJob,
+  finishExecution as finishExecutionJob,
+} from '@lens/data-jobs';
+
 import paths from '../../../config/paths';
 import { respond, respondWithError } from '../../../server/context';
 
-import _debug from 'debug';
 // import fileStat from '../utils/fileStat';
 import identify from '../utils/gmIdentify';
 import loadCatalog from '../utils/loadCatalog';
+import enqueueJob from '../utils/enqueueJob';
+
+import simulationBuilder from '../../../core/simulationBuilder';
+
+import _debug from 'debug';
 const debug = _debug('lens:editor');
 
 const delayJobStep = delay => {
   return new Promise(resolve => setTimeout(() => resolve(), delay));
 };
 
-function* getExecutionContext(sourceId) {
-  const catalog = yield loadCatalog();
-  const { file } = catalog[sourceId];
-  const sourceFile = paths.resolveSourcePath(file);
-  // const fileStats = yield fileStat(sourceFile);
-  const identifyResults = yield identify(sourceFile);
-  const { width, height } = identifyResults;
-  return {
-    sourceId,
-    sourceFile,
-    height,
-    width,
-  };
-}
-
-function* runExecutionGenerator(job) {
-  respond(job, { message: 'execution started' });
+function* initializeExecution(job) {
+  respond(job, { message: 'execution initialization started' });
   const { payload, ...parameters } = job;
   debug('perform runExecution', { payload, parameters });
   const {
     simulation: { sourceId },
   } = payload;
 
-  const executionContext = yield* getExecutionContext(sourceId);
-  debug('runExecution', { executionContext });
+  const catalog = yield loadCatalog();
+  const { file } = catalog[sourceId];
+  const sourceFile = paths.resolveSourcePath(file);
+  // const fileStats = yield fileStat(sourceFile);
+  const identifyResults = yield identify(sourceFile);
+  const { width, height } = identifyResults;
+  const simulation = simulationBuilder({
+    sourceId,
+    sourceFile,
+    height,
+    width,
+  });
 
-  respond(job, { message: 'hike initialized' });
+  yield enqueueJob(startExecutionJob(job.clientId, { simulation })).catch(error => {
+    respondWithError(job, error);
+  });
+}
 
-  yield delayJobStep(200);
-  respond(job, { message: 'trail initialized' });
+function* startExecution(job) {
+  yield delayJobStep(500);
+  respond(job, { message: 'execution started' });
+  yield enqueueJob(runExecutionPassJob(job.clientId, {})).catch(error => {
+    respondWithError(job, error);
+  });
+}
 
-  yield delayJobStep(200);
-  respond(job, { message: 'hiker initialized' });
+function* runExecutionPass(job) {
+  yield delayJobStep(500);
+  respond(job, { message: 'pass complete' });
+  yield enqueueJob(finishExecutionJob(job.clientId, {})).catch(error => {
+    respondWithError(job, error);
+  });
+}
 
-  yield delayJobStep(1000);
-  respond(job, { message: 'quota 25%' });
-
-  yield delayJobStep(1000);
-  respond(job, { message: 'quota 50%' });
-
-  yield delayJobStep(1000);
-  respond(job, { message: 'quota 75%' });
-
-  yield delayJobStep(1000);
-  respond(job, { message: 'quota 100%' });
-
+function* finishExecution(job) {
   yield delayJobStep(500);
   respond(job, { message: 'execution finished' });
-
-  // yield Promise.resolve(true);
 }
 
 const editor = jobs => {
   jobs.runExecution = {
     perform: async job => {
-      return co(runExecutionGenerator(job)).catch(error => {
+      return co(initializeExecution(job)).catch(error => {
+        respondWithError(job, error);
+      });
+    },
+  };
+
+  jobs.startExecution = {
+    perform: async job => {
+      return co(startExecution(job)).catch(error => {
+        respondWithError(job, error);
+      });
+    },
+  };
+
+  jobs.runExecutionPass = {
+    perform: async job => {
+      return co(runExecutionPass(job)).catch(error => {
+        respondWithError(job, error);
+      });
+    },
+  };
+
+  jobs.finishExecution = {
+    perform: async job => {
+      return co(finishExecution(job)).catch(error => {
         respondWithError(job, error);
       });
     },

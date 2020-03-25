@@ -20,6 +20,7 @@
   "dependencies": {
     "@babel/core": "7.1.6",
     "@babel/register": "^7.0.0",
+    "@lens/data-jobs": "^0.1.0",
     "@lens/image-descriptors": "^0.1.0",
     "bunyan": "^1.8.12",
     "chroma-js": "^1.3.6",

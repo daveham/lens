@@ -1,7 +1,7 @@
 import restify from 'restify';
 import path from 'path';
 import socketio from 'socket.io';
-import bunyan from 'bunyan';
+import { createLogger } from 'feller-buncher';
 import mkdirp from 'mkdirp';
 
 import config from '../config';
@@ -13,7 +13,7 @@ import _debug from 'debug';
 const debug = _debug('lens:service-server');
 
 const name = 'lens-service';
-const log = bunyan.createLogger({
+const log = createLogger({
   name,
   streams: [
     {
@@ -21,7 +21,6 @@ const log = bunyan.createLogger({
       stream: process.stdout,
     },
   ],
-  serializers: bunyan.stdSerializers,
 });
 
 mkdirp.sync(path.join(data, 'stats'));

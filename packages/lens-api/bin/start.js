@@ -7,7 +7,7 @@ import config from '../config';
 
 import routes from '../routes';
 
-import bunyan from 'bunyan';
+import { createLogger } from 'feller-buncher';
 import _debug from 'debug';
 const debug = _debug('lens:api:server');
 
@@ -18,7 +18,7 @@ const cors = corsMiddleware({
 });
 
 const name = 'lens-rest-api';
-const apiLogger = bunyan.createLogger({
+const apiLogger = createLogger({
   name,
   streams: [
     {
@@ -26,7 +26,7 @@ const apiLogger = bunyan.createLogger({
       stream: process.stdout,
     },
   ],
-  serializers: bunyan.stdSerializers,
+  // serializers: bunyan.stdSerializers,
 });
 
 const server = restify.createServer({ name, log: apiLogger });

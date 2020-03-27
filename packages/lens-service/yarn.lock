@@ -559,6 +559,18 @@ fast-decode-uri-component@^1.0.0:
   resolved "https://registry.yarnpkg.com/fast-decode-uri-component/-/fast-decode-uri-component-1.0.1.tgz#46f8b6c22b30ff7a81357d4f59abfae938202543"
   integrity sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==
 
+fast-safe-stringify@^2.0.6:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.7.tgz#124aa885899261f68aedb42a7c080de9da608743"
+  integrity sha512-Utm6CdzT+6xsDk2m8S6uL8VHxNwI6Jub+e9NYTcAms28T84pTa25GJQV9j0CY0N1rM8hK4x6grpF2BQf+2qwVA==
+
+feller-buncher@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/feller-buncher/-/feller-buncher-0.0.9.tgz#08b530e34d7a264e6786959c670b52c206f59408"
+  integrity sha512-v1xujcrJqnDdoV7rGUtFVUZPvcUbDqHjIjLDcyFWBLq6nvHfcxORBhijWpW5Rv7XcIwf75lb/osD3nE2HSPT+w==
+  dependencies:
+    fast-safe-stringify "^2.0.6"
+
 find-cache-dir@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/find-cache-dir/-/find-cache-dir-2.1.0.tgz#8d0f94cd13fe43c6c7c261a0d86115ca918c05f7"

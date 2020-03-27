@@ -25,7 +25,7 @@ import {
 } from 'src/modules/selectors';
 import { titleSelector } from 'src/modules/ui';
 import {
-  requestSocketId,
+  requestSocketStatus,
   sendSocketCommand,
   sendPing
 } from 'modules/common';
@@ -138,7 +138,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!connected && !connecting) {
-      dispatch(requestSocketId());
+      dispatch(requestSocketStatus());
     }
   }, [connected, connecting, dispatch]);
 

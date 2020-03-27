@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux';
 import { createActions, combineActions, handleActions } from 'redux-actions';
 
+import _debug from 'debug';
+const debug = _debug('lens:common');
+
 export const {
-  testActionOne,
-  testActionTwo,
-  requestSocketId,
-  receiveSocketId,
-  requestSocketIdFailed,
+  requestSocketStatus,
+  receiveSocketStatus,
+  requestSocketStatusFailed,
   sendPing,
   pingSent,
   pingSendFailed,
@@ -14,16 +15,14 @@ export const {
   // sendSocketCommandFailed,
   receiveServiceCommand,
 } = createActions(
-  'TEST_ACTION_ONE',
-  'TEST_ACTION_TWO',
-  'REQUEST_SOCKET_ID',
-  'RECEIVE_SOCKET_ID',
-  'REQUEST_SOCKET_ID_FAILED',
+  'REQUEST_SOCKET_STATUS',
+  'RECEIVE_SOCKET_STATUS',
+  'REQUEST_SOCKET_STATUS_FAILED',
   'SEND_PING',
   'PING_SENT',
   'PING_SEND_FAILED',
   'SEND_SOCKET_COMMAND',
-  'SEND_SOCKET_COMMAND_FAILED',
+  // 'SEND_SOCKET_COMMAND_FAILED',
   'RECEIVE_SERVICE_COMMAND',
   {
     prefix: 'COMMON',
@@ -31,34 +30,47 @@ export const {
 );
 
 // reducers
-const testOne = handleActions(
-  {
-    [testActionOne]: () => 'test-one',
-  },
-  '',
-);
-
-const testTwo = handleActions(
-  {
-    [testActionTwo]: () => 'test-two',
-  },
-  '',
-);
-
 const connecting = handleActions(
   {
-    [requestSocketId]: () => true,
-    [combineActions(receiveSocketId, requestSocketIdFailed)]: () => false,
+    [requestSocketStatus]: () => true,
+    [combineActions(receiveSocketStatus, requestSocketStatusFailed)]: () => false,
   },
   false,
 );
 
-const emptySocketId = '';
-const socketId = handleActions(
+const emptySocket = {
+  status: '',
+  id: '',
+};
+const socketStatus = handleActions(
   {
-    [receiveSocketId]: (state, { payload }) => payload || emptySocketId,
+    [receiveSocketStatus]: (state, { payload }) => {
+      const { id: currentId, status: currentStatus } = state;
+      const { status, id } = payload || emptySocket;
+      debug('receiveSocketStatus', {
+        currentId,
+        currentStatus,
+        id,
+        status,
+      });
+
+      switch(status) {
+        case 'connect':
+          return { status, id };
+
+        case 'reconnect':
+          return { status, id };
+
+        case 'disconnect':
+          return { status, id };
+
+        default:
+          debug('receiveSocketStatus - unexpected case', { status, id });
+          return state;
+      }
+    },
   },
-  emptySocketId,
+  emptySocket,
 );
 
 const clientId = handleActions(
@@ -78,9 +90,7 @@ const command = handleActions(
 
 export default combineReducers({
   connecting,
-  socketId,
+  socketStatus,
   clientId,
   command,
-  testOne,
-  testTwo,
 });

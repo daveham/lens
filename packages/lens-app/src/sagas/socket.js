@@ -1,9 +1,9 @@
 import { channel } from 'redux-saga';
 import { call, takeEvery, takeLeading, all, put, select, take } from 'redux-saga/effects';
 import {
-  receiveSocketId,
-  requestSocketId,
-  requestSocketIdFailed,
+  receiveSocketStatus,
+  requestSocketStatus,
+  requestSocketStatusFailed,
   receiveServiceCommand,
   sendSocketCommand,
 } from '../modules/common';
@@ -18,7 +18,6 @@ const socketHost = process.env.REACT_APP_SERVICE_SERVER;
 
 const socketChannel = channel();
 let socket;
-let socketId = '';
 
 export function* watchSocketChannel() {
   // eslint-disable-next-line no-constant-condition
@@ -34,33 +33,20 @@ export function* connectSocket() {
   socket = io(socketHost);
 
   socket.on('connect', () => {
-    debug('connect');
-    if (socket.id && socket.id !== socketId) {
-      debug(`connect: socketId changed from '${socketId}' to '${socket.id}'`);
-      socketId = socket.id;
-      socketChannel.put(receiveSocketId(socketId));
-    }
+    socketChannel.put(receiveSocketStatus({ id: socket.id, status: 'connect' }));
   });
 
   socket.on('disconnect', () => {
-    debug('disconnect');
-    debug(`disconnect: socketId changed from '${socketId}' to '${socket.id}'`);
-    socketId = '';
-    socketChannel.put(receiveSocketId(socketId));
+    socketChannel.put(receiveSocketStatus({ id: socket.id, status: 'disconnect' }));
   });
 
   socket.on('reconnect', () => {
-    debug('reconnect');
-    if (socket.id && socket.id !== socketId) {
-      debug(`reconnect: socketId changed from '${socketId}' to '${socket.id}'`);
-      socketId = socket.id;
-      socketChannel.put(receiveSocketId(socketId));
-    }
+    socketChannel.put(receiveSocketStatus({ id: socket.id, status: 'reconnect' }));
   });
 
   socket.on('error', err => {
     debug('error', err);
-    socketChannel.put(requestSocketIdFailed(err)); // TODO: is this the right action to take here?
+    socketChannel.put(requestSocketStatusFailed(err));
   });
 
   yield socket;
@@ -96,7 +82,7 @@ export function* socketSend({ payload }) {
 
 export default function* socketSaga() {
   yield all([
-    takeLeading(requestSocketId, connectSocket),
+    takeLeading(requestSocketStatus, connectSocket),
     takeEvery(sendSocketCommand, socketSend),
     call(watchSocketChannel),
   ]);

@@ -55,11 +55,32 @@ const connections = {
   },
 
   addConnectionForSocket(socket) {
-    debug('addConnectionForSocket', socket.id);
-    this.connectionsBySocketId[socket.id] = { socket, clientId: -1 };
+    const { id } = socket;
+    debug('addConnectionForSocket', id);
+    this.connectionsBySocketId[id] = { socket, clientId: -1 };
 
-    socket.on('disconnect', () => this.removeConnectionForSocket(socket));
+    socket.on('disconnect', () => {
+      console.log('server socket disconnect', id);
+      this.removeConnectionForSocket(socket);
+    });
+    socket.on('close', () => {
+      console.log('server socket close', id);
+    });
+    socket.on('connect', () => {
+      console.log('server socket connect', id);
+    });
+    socket.on('error', () => {
+      console.log('server socket error', id);
+    });
+    socket.on('reconnect', () => {
+      console.log('server socket reconnect', id);
+    });
+    // socket.on('close', () => {
+    //   console.log('server socket close');
+    // });
+
     socket.on('flash', data => {
+      console.log('server socket flash', id);
       if (data.command === 'register') {
         this.registerClient(socket, data);
       }

@@ -50,16 +50,20 @@ function* initializeExecution(job) {
 }
 
 function* startExecution(job) {
+  debug('* startExecution', { job });
   yield delayJobStep(500);
   respond(job, { message: 'execution started' });
+
   yield enqueueJob(runExecutionPassJob(job.clientId, {})).catch(error => {
     respondWithError(job, error);
   });
 }
 
 function* runExecutionPass(job) {
+  debug('* runExecutionPass', { job });
   yield delayJobStep(500);
   respond(job, { message: 'pass complete' });
+
   yield enqueueJob(finishExecutionJob(job.clientId, {})).catch(error => {
     respondWithError(job, error);
   });
@@ -72,35 +76,31 @@ function* finishExecution(job) {
 
 const editor = jobs => {
   jobs.runExecution = {
-    perform: async job => {
-      return co(initializeExecution(job)).catch(error => {
+    perform: async job =>
+      co(initializeExecution(job)).catch(error => {
         respondWithError(job, error);
-      });
-    },
+      }),
   };
 
   jobs.startExecution = {
-    perform: async job => {
-      return co(startExecution(job)).catch(error => {
+    perform: async job =>
+      co(startExecution(job)).catch(error => {
         respondWithError(job, error);
-      });
-    },
+      }),
   };
 
   jobs.runExecutionPass = {
-    perform: async job => {
-      return co(runExecutionPass(job)).catch(error => {
+    perform: async job =>
+      co(runExecutionPass(job)).catch(error => {
         respondWithError(job, error);
-      });
-    },
+      }),
   };
 
   jobs.finishExecution = {
-    perform: async job => {
-      return co(finishExecution(job)).catch(error => {
+    perform: async job =>
+      co(finishExecution(job)).catch(error => {
         respondWithError(job, error);
-      });
-    },
+      }),
   };
 };
 

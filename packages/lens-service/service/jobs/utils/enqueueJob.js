@@ -20,9 +20,9 @@ const getQueue = async () => {
 };
 
 const enqueueJob = async job => {
-  const queue = await getQueue();
   const { command } = job;
   debug(`enqueueJob '${command}'`, job);
+  const queue = await getQueue();
   await queue.enqueue(config.queueName, command, [job]);
   return job;
 };

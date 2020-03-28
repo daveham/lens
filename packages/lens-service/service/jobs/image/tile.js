@@ -1,9 +1,9 @@
 import path from 'path';
 import co from 'co';
+import mkdirp from 'mkdirp';
 import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 import paths from '../../../config/paths';
 import loadCatalog from '../utils/loadCatalog';
-import ensureDir from '../utils/dirMake';
 import crop from '../utils/gmCrop';
 import { respond, respondWithError } from '../../../server/context';
 
@@ -19,7 +19,7 @@ export function* generator(imageDescriptor) {
     size: { width, height },
   } = imageDescriptor.input;
 
-  yield ensureDir(destPath);
+  yield mkdirp(destPath);
   yield crop(sourceFile, destFile, width, height, x, y);
   return urlFromImageDescriptor(imageDescriptor);
 }

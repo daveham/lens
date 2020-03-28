@@ -21,6 +21,7 @@ import {
   connecting as connectingSelector,
   connected as connectedSelector,
   socketId as socketIdSelector,
+  isSocketInErrorState as isSocketInErrorStateSelector,
   command as commandSelector,
 } from 'src/modules/selectors';
 import { titleSelector } from 'src/modules/ui';
@@ -30,8 +31,8 @@ import {
   sendPing
 } from 'modules/common';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:containers:app:dashboard');
+import _debug from 'debug';
+const debug = _debug('lens:containers:app:dashboard');
 
 const drawerWidth = 240;
 
@@ -131,16 +132,20 @@ const Dashboard = () => {
   const connected = useSelector(connectedSelector);
   const connecting = useSelector(connectingSelector);
   const socketId = useSelector(socketIdSelector);
+  const isSocketInErrorState = useSelector(isSocketInErrorStateSelector);
   const command = useSelector(commandSelector);
   const title = useSelector(titleSelector);
 
   const [open, setOpen] = useState(true);
 
   useEffect(() => {
-    if (!connected && !connecting) {
+    if (isSocketInErrorState) {
+      debug('socket is in error state');
+    }
+    if (!connected && !connecting && !isSocketInErrorState) {
       dispatch(requestSocketStatus());
     }
-  }, [connected, connecting, dispatch]);
+  }, [connected, connecting, isSocketInErrorState, dispatch]);
 
   useEffect(() => {
     if (socketId) {
@@ -175,6 +180,7 @@ const Dashboard = () => {
             </Typography>
             <CommandBar
               connected={connected}
+              hasError={isSocketInErrorState}
               pingFlash={() => dispatch(sendSocketCommand({ command: 'ping' }))}
               pingJob={() => dispatch(sendPing())}
               command={command}

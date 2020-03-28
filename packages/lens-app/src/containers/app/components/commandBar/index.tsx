@@ -17,6 +17,7 @@ export interface ICommand {
 interface IProps {
   connected?: boolean;
   command: ICommand;
+  hasError?: boolean;
   pingFlash: () => void;
   pingJob: () => void;
 }
@@ -57,37 +58,34 @@ class CommandBar extends Component<IProps, IState> {
   }
 
   public render(): any {
-    const { connected, pingFlash, pingJob, command } = this.props;
+    const { connected, hasError, pingFlash, pingJob, command } = this.props;
     const commandStatus = command ? command.command : null;
     const { flashId, jobId, commandType } = this.state;
     const chipStyle = {
       color: commandType === 'j' ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,.7)',
-      backgroundColor: commandType === 'j' ? 'rgba(255,255,255,.3)' : 'inherit',
+      backgroundColor: hasError
+        ? 'rgba(255,128,128,.7)'
+        : commandType === 'j'
+        ? 'rgba(255,255,255,.3)'
+        : 'inherit',
       borderColor: 'rgba(255,255,255,1)',
+      minWidth: '180px',
     };
 
     return (
       <Fragment>
-        {
-          commandStatus &&
-            <Chip
-              style={chipStyle}
-              variant='outlined'
-              color='default'
-              label={commandStatus}
-            />
-        }
-        <IconButton
-          color='inherit'
-          onClick={pingFlash}
-        >
+        {commandStatus && (
+          <Chip
+            style={chipStyle}
+            variant='outlined'
+            color='default'
+            label={hasError ? 'Socket Error' : commandStatus}
+          />
+        )}
+        <IconButton color='inherit' onClick={pingFlash}>
           {CommandBar.renderWithBadge(flashId, flashId >= 0, <SwapHorizontalCircleOutlinedIcon />)}
         </IconButton>
-        <IconButton
-          color='inherit'
-          disabled={!connected}
-          onClick={pingJob}
-        >
+        <IconButton color='inherit' disabled={!connected} onClick={pingJob}>
           {CommandBar.renderWithBadge(jobId, jobId >= 0, <SwapHorizontalCircleIcon />)}
         </IconButton>
       </Fragment>

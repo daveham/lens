@@ -38,23 +38,30 @@ const connecting = handleActions(
   false,
 );
 
-const emptySocket = {
-  status: '',
-  id: '',
-};
+const emptySocketStatus = { status: '', id: '' };
+const errorSocketStatus = { status: 'error', id: '' };
 const socketStatus = handleActions(
   {
+    [requestSocketStatusFailed]: () => errorSocketStatus,
     [receiveSocketStatus]: (state, { payload }) => {
-      const { id: currentId, status: currentStatus } = state;
-      const { status, id } = payload || emptySocket;
+      const { status: currentStatus, id: currentId } = state;
+      const { status, id } = payload || emptySocketStatus;
       debug('receiveSocketStatus', {
-        currentId,
         currentStatus,
-        id,
+        currentId,
         status,
+        id,
       });
 
-      switch(status) {
+      if (
+        currentStatus === 'error' ||
+        status === 'error' ||
+        ((status === 'connect' || status === 'reconnect') && !id)
+      ) {
+        return errorSocketStatus;
+      }
+
+      switch (status) {
         case 'connect':
           return { status, id };
 
@@ -70,7 +77,7 @@ const socketStatus = handleActions(
       }
     },
   },
-  emptySocket,
+  emptySocketStatus,
 );
 
 const clientId = handleActions(

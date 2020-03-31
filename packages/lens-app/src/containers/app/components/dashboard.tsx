@@ -26,6 +26,7 @@ import {
 } from 'src/modules/selectors';
 import { titleSelector } from 'src/modules/ui';
 import {
+  closeSocket,
   requestSocketStatus,
   sendSocketCommand,
   sendPing
@@ -140,10 +141,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isSocketInErrorState) {
-      debug('socket is in error state');
+      debug('socket is in error state, closing socket');
+      dispatch(closeSocket());
     }
     if (!connected && !connecting && !isSocketInErrorState) {
+      debug('useEffect(socketState) - dispatching', {
+        connected,
+        connecting,
+        isSocketInErrorState,
+      });
       dispatch(requestSocketStatus());
+    } else {
+      debug('useEffect(socketState) - not dispatching', {
+        connected,
+        connecting,
+        isSocketInErrorState,
+      });
     }
   }, [connected, connecting, isSocketInErrorState, dispatch]);
 

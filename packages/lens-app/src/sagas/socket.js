@@ -1,6 +1,8 @@
 import { channel } from 'redux-saga';
 import { call, takeEvery, takeLeading, all, put, select, take } from 'redux-saga/effects';
 import {
+  closeSocket,
+  socketClosed,
   receiveSocketStatus,
   requestSocketStatus,
   requestSocketStatusFailed,
@@ -28,7 +30,15 @@ export function* watchSocketChannel() {
   }
 }
 
-export function* connectSocket() {
+export function* closeSocketSaga() {
+  debug('closeSocket saga');
+  if (socket) {
+    socket.close();
+  }
+  yield put(socketClosed());
+}
+
+export function* connectSocketSaga() {
   debug(`connectSocket saga, connecting to '${socketHost}'`);
   socket = io(socketHost);
 
@@ -64,7 +74,7 @@ export function* connectSocket() {
 
 let flashCounter = 0;
 
-export function* socketSend({ payload }) {
+export function* socketSendSaga({ payload }) {
   debug('socketSend', payload);
   const socketId = yield select(socketIdSelector);
   if (socketId) {
@@ -82,8 +92,9 @@ export function* socketSend({ payload }) {
 
 export default function* socketSaga() {
   yield all([
-    takeLeading(requestSocketStatus, connectSocket),
-    takeEvery(sendSocketCommand, socketSend),
+    takeLeading(requestSocketStatus, connectSocketSaga),
+    takeLeading(closeSocket, closeSocketSaga),
+    takeEvery(sendSocketCommand, socketSendSaga),
     call(watchSocketChannel),
   ]);
 }

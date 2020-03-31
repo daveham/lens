@@ -24,7 +24,9 @@ interface IProps {
 
 interface IState {
   flashId: number;
+  flashCounter: number;
   jobId: number;
+  jobCounter: number;
   commandType: string;
 }
 
@@ -42,7 +44,7 @@ class CommandBar extends Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-    this.state = { jobId: -1, flashId: -1, commandType: '' };
+    this.state = { jobId: -1, jobCounter: 0, flashId: -1, flashCounter: 0, commandType: '' };
   }
 
   public componentDidUpdate(prevProps) {
@@ -50,9 +52,17 @@ class CommandBar extends Component<IProps, IState> {
     if (command && prevProps.command !== command) {
       const { flashId, jobId } = command;
       if (jobId >= 0 && jobId !== this.state.jobId) {
-        this.setState({ jobId, commandType: 'j' });
+        this.setState(prevState => ({
+          jobId,
+          jobCounter: prevState.jobCounter + 1,
+          commandType: 'j',
+        }));
       } else if (flashId >= 0 && flashId !== this.state.flashId) {
-        this.setState({ flashId, commandType: 'f' });
+        this.setState(prevState => ({
+          flashId,
+          flashCounter: prevState.flashCounter + 1,
+          commandType: 'f',
+        }));
       }
     }
   }
@@ -60,7 +70,7 @@ class CommandBar extends Component<IProps, IState> {
   public render(): any {
     const { connected, hasError, pingFlash, pingJob, command } = this.props;
     const commandStatus = command ? command.command : null;
-    const { flashId, jobId, commandType } = this.state;
+    const { flashCounter, jobCounter, commandType } = this.state;
     const chipStyle = {
       color: commandType === 'j' ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,.7)',
       backgroundColor: hasError
@@ -83,10 +93,14 @@ class CommandBar extends Component<IProps, IState> {
           />
         )}
         <IconButton color='inherit' onClick={pingFlash}>
-          {CommandBar.renderWithBadge(flashId, flashId >= 0, <SwapHorizontalCircleOutlinedIcon />)}
+          {CommandBar.renderWithBadge(
+            flashCounter,
+            flashCounter >= 0,
+            <SwapHorizontalCircleOutlinedIcon />,
+          )}
         </IconButton>
         <IconButton color='inherit' disabled={!connected} onClick={pingJob}>
-          {CommandBar.renderWithBadge(jobId, jobId >= 0, <SwapHorizontalCircleIcon />)}
+          {CommandBar.renderWithBadge(jobCounter, jobCounter >= 0, <SwapHorizontalCircleIcon />)}
         </IconButton>
       </Fragment>
     );

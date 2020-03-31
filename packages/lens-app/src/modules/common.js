@@ -5,6 +5,8 @@ import _debug from 'debug';
 const debug = _debug('lens:common');
 
 export const {
+  closeSocket,
+  socketClosed,
   requestSocketStatus,
   receiveSocketStatus,
   requestSocketStatusFailed,
@@ -15,6 +17,8 @@ export const {
   // sendSocketCommandFailed,
   receiveServiceCommand,
 } = createActions(
+  'CLOSE_SOCKET',
+  'SOCKET_CLOSED',
   'REQUEST_SOCKET_STATUS',
   'RECEIVE_SOCKET_STATUS',
   'REQUEST_SOCKET_STATUS_FAILED',
@@ -33,19 +37,21 @@ export const {
 const connecting = handleActions(
   {
     [requestSocketStatus]: () => true,
-    [combineActions(receiveSocketStatus, requestSocketStatusFailed)]: () => false,
+    [combineActions(receiveSocketStatus, requestSocketStatusFailed, socketClosed)]: () => false,
   },
   false,
 );
 
-const emptySocketStatus = { status: '', id: '' };
-const errorSocketStatus = { status: 'error', id: '' };
+const emptyValue = '';
+const emptySocketStatus = { status: emptyValue, id: emptyValue };
+const errorSocketStatus = { status: 'error', id: emptyValue };
 const socketStatus = handleActions(
   {
+    [socketClosed]: () => emptySocketStatus,
     [requestSocketStatusFailed]: () => errorSocketStatus,
     [receiveSocketStatus]: (state, { payload }) => {
       const { status: currentStatus, id: currentId } = state;
-      const { status, id } = payload || emptySocketStatus;
+      const { status, id = emptyValue } = payload;
       debug('receiveSocketStatus', {
         currentStatus,
         currentId,
@@ -58,6 +64,7 @@ const socketStatus = handleActions(
         status === 'error' ||
         ((status === 'connect' || status === 'reconnect') && !id)
       ) {
+        debug('returning error socket status');
         return errorSocketStatus;
       }
 
@@ -73,7 +80,7 @@ const socketStatus = handleActions(
 
         default:
           debug('receiveSocketStatus - unexpected case', { status, id });
-          return state;
+          return errorSocketStatus;
       }
     },
   },

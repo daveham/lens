@@ -242,7 +242,8 @@ const View = (props: IProps) => {
   );
 
   const renderSimulation = () => {
-    if (!(selectedSimulation && (selectedSimulation.name || selectedSimulation.nameError))) {
+    if (!(newMode ||
+      (selectedSimulation && (selectedSimulation.name || selectedSimulation.nameError)))) {
       return null;
     }
     return (

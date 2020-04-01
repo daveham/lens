@@ -149,12 +149,13 @@ const EditorGuideView = ({
 
   // check if time to dispatch start of operation
   useEffect(() => {
-    if (simulations && simulations.length) {
+    const startAction = resolvedAction || controlSegmentActions.view;
+    const isNewAction = startAction === controlSegmentActions.new;
+    if (isNewAction || (simulations && simulations.length)) {
       setPathname(prev => {
         const nextPathname = history.location.pathname.toLowerCase();
         if (prev !== nextPathname) {
-          const startAction = resolvedAction || controlSegmentActions.view;
-          if (activeItem && (resolvedSimulationId || startAction === controlSegmentActions.new)) {
+          if (activeItem && (resolvedSimulationId || isNewAction)) {
             let parameters;
             if (activeItem === controlSegmentKeys.execution) {
               parameters = { simulationId: resolvedSimulationId, executionId: resolvedExecutionId };

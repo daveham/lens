@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import cx from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
@@ -139,9 +139,12 @@ const Dashboard = () => {
 
   const [open, setOpen] = useState(true);
 
+  const connectDelayRef = useRef(0);
+
   useEffect(() => {
     if (isSocketInErrorState) {
       debug('socket is in error state, closing socket');
+      connectDelayRef.current = 2000;
       dispatch(closeSocket());
     }
     if (!connected && !connecting && !isSocketInErrorState) {
@@ -150,7 +153,9 @@ const Dashboard = () => {
         connecting,
         isSocketInErrorState,
       });
-      dispatch(requestSocketStatus());
+      setTimeout(() => {
+        dispatch(requestSocketStatus());
+      }, connectDelayRef.current);
     } else {
       debug('useEffect(socketState) - not dispatching', {
         connected,
@@ -169,7 +174,7 @@ const Dashboard = () => {
   const appTitle = title ? `Lens: ${title}` : 'Lens';
 
   return (
-    <Fragment>
+    <>
       <CssBaseline />
       <div className={classes.root}>
         <AppBar
@@ -224,7 +229,7 @@ const Dashboard = () => {
           </Switch>
         </main>
       </div>
-    </Fragment>
+    </>
   );
 };
 

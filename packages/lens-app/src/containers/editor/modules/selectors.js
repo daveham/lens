@@ -26,6 +26,9 @@ export const renderingByIdSelector = (state, simulationId, executionId, id) => {
     rendering: execution ? execution.renderings.find(r => r.id === id) : execution,
   };
 };
+const emptyProgress = {};
+export const progressByIdSelector = (state, id) =>
+  state.editor.progress[id] || emptyProgress;
 
 export const snackbarMessageSelector = state => ({
   snackbarMessage: state.editor.snackbarMessage,

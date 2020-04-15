@@ -60,6 +60,7 @@ import {
   saveRenderingSucceeded,
   saveNewRenderingSucceeded,
   deleteRenderingSucceeded,
+  receiveProgress,
 } from './actions/data';
 import {
   setSnackbarMessage,
@@ -106,13 +107,13 @@ const snackbarMessage = handleActions(
   emptySnackbarMessage,
 );
 
- const snackbarError = handleActions(
-   {
+const snackbarError = handleActions(
+  {
     [combineActions(clearSnackbarMessage, setSnackbarMessage)]: () => false,
     [setSnackbarErrorMessage]: () => true,
-   },
-   false
- );
+  },
+  false,
+);
 
 const simulationsLoading = handleActions(
   {
@@ -130,7 +131,8 @@ const initialSimulationsState: ReadonlyArray<ISimulation> = [];
 const simulations = handleActions(
   {
     [clearEditor]: () => initialSimulationsState,
-    [receiveSimulationsForSource]: (state, { payload }) => payload.sort((a, b) => a.created - b.created),
+    [receiveSimulationsForSource]: (state, { payload }) =>
+      payload.sort((a, b) => a.created - b.created),
     [saveSimulationSucceeded]: (state, { payload: simulation }) =>
       state.map(s => (s.id === simulation.id ? simulation : s)),
     [saveExecutionSucceeded]: (state, { payload: execution }) => {
@@ -189,6 +191,17 @@ const simulations = handleActions(
     },
   },
   initialSimulationsState,
+);
+
+const initialProgressState = {};
+const progress = handleActions(
+  {
+    [receiveProgress]: (state, { payload: { id, ...other } }) => ({
+      ...state,
+      [id]: other,
+    }),
+  },
+  initialProgressState,
 );
 
 const operationPending = handleActions(
@@ -451,6 +464,7 @@ const editorModuleReducer = combineReducers({
   snackbarError,
   simulationsLoading,
   simulations,
+  progress,
   hikesLoading,
   hikes,
   hikesById,

@@ -45,6 +45,8 @@ export const {
   deleteRendering,
   deleteRenderingSucceeded,
   deleteRenderingFailed,
+  // dynamic data
+  receiveProgress,
 } = createActions(
   'REQUEST_SIMULATIONS_FOR_SOURCE',
   'RECEIVE_SIMULATIONS_FOR_SOURCE',
@@ -89,6 +91,8 @@ export const {
   'DELETE_RENDERING',
   'DELETE_RENDERING_SUCCEEDED',
   'DELETE_RENDERING_FAILED',
+  // dynamic data
+  'RECEIVE_PROGRESS',
   {
     prefix: EDITOR_ACTIONS_PREFIX_SIMULATION_DATA,
   },

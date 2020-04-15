@@ -28,6 +28,7 @@ function* initializeExecution(job) {
   debug('perform runExecution', { payload, parameters });
   const {
     simulation: { sourceId },
+    execution: { id },
   } = payload;
 
   const catalog = yield loadCatalog();
@@ -44,6 +45,7 @@ function* initializeExecution(job) {
   });
 
   const progress = {
+    id,
     running: false,
     passCount: 0,
   };
@@ -79,7 +81,7 @@ function* startExecution(job) {
 
 function* runExecutionPass(job) {
   debug('* runExecutionPass', { job });
-  yield delayJobStep(100);
+  yield delayJobStep(500);
 
   const {
     payload: { simulation, progress: priorProgress },

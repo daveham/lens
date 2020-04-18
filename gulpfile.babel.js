@@ -12,16 +12,20 @@ const watch = require('gulp-watch');
 const env = require('gulp-env');
 
 const packagesPath = 'packages';
-const excludedPackages = [
-  'lens-app',
-  'lens-api',
-  'lens-data-manager',
-  'lens-data-service',
-  'lens-vagrant'
+// const excludedPackages = [
+//   'lens-api',
+//   'lens-app',
+//   'lens-service',
+//   'lens-vagrant'
+// ];
+const includedPackages = [
+  'lens-data-jobs',
+  'lens-image-descriptors',
 ];
 const libDirs = fs.readdirSync(packagesPath)
+  // .filter(dir => !excludedPackages.find(exclusion => exclusion === dir))
+  .filter(dir => includedPackages.find(inclusion => inclusion === dir))
   .filter(file => fs.statSync(path.join(packagesPath, file)).isDirectory())
-  .filter(dir => !excludedPackages.find(exclusion => exclusion === dir))
   .join('|');
 const scripts = `${packagesPath}/@(${libDirs})/src/**/*.js`;
 const dest = packagesPath;
@@ -68,7 +72,12 @@ function compile(watching) {
     .pipe(renameSrcToLib())
     .pipe(babel({
       presets: [
-        ['@babel/env', { targets: { node: true } }]
+        ['@babel/env', {
+          targets: { node: true },
+          // useBuiltIns: 'usage',
+          // corejs: 3,
+          // debug: true,
+        }]
       ],
       plugins: ['@babel/transform-runtime'],
       babelrc: false

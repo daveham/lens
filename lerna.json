@@ -1,7 +1,8 @@
 {
-  "lerna": "3.11.1",
+  "lerna": "3.20.2",
   "npmClient": "yarn",
-  "version": "0.0.0",
+  "useWorkspaces": true,
+  "version": "independent",
   "packages": [
     "packages/lens-api",
     "packages/lens-app",

@@ -1,3 +1,5 @@
+import "core-js";
+import "regenerator-runtime/runtime";
 import path from 'path';
 import config from './config';
 

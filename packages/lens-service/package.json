@@ -20,6 +20,7 @@
   "dependencies": {
     "@lens/data-jobs": "^0.1.0",
     "@lens/image-descriptors": "^0.1.0",
+    "@lens/simulation": "^0.1.0",
     "chroma-js": "^1.3.6",
     "co": "^4.6.0",
     "debug": "^4.1.1",

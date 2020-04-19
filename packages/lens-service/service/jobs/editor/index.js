@@ -6,6 +6,8 @@ import {
   finishExecution as finishExecutionJob,
 } from '@lens/data-jobs';
 
+import { simulationBuilder } from '@lens/simulation';
+
 import paths from '../../../config/paths';
 import { respond, respondWithError } from '../../../server/context';
 
@@ -13,8 +15,6 @@ import { respond, respondWithError } from '../../../server/context';
 import identify from '../utils/gmIdentify';
 import loadCatalog from '../utils/loadCatalog';
 import enqueueJob from '../utils/enqueueJob';
-
-import simulationBuilder from '../../../core/simulationBuilder';
 
 import _debug from 'debug';
 const debug = _debug('lens:editor');

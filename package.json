@@ -24,15 +24,20 @@
   "bugs": {
     "url": "https://github.com/daveham/lens/issues"
   },
-  "workspaces": [
-    "packages/lens-api",
-    "packages/lens-app",
-    "packages/lens-data-jobs",
-    "packages/lens-image-descriptors",
-    "packages/lens-service"
-  ],
+  "workspaces": {
+    "packages":[
+      "packages/lens-api",
+      "packages/lens-app",
+      "packages/lens-data-jobs",
+      "packages/lens-image-descriptors",
+      "packages/lens-simulation",
+      "packages/lens-service"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "7.9.0",
+    "@babel/plugin-proposal-export-default-from": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "@babel/register": "^7.9.0",

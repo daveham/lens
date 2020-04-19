@@ -8,6 +8,7 @@
     "packages/lens-app",
     "packages/lens-data-jobs",
     "packages/lens-image-descriptors",
+    "packages/lens-simulation",
     "packages/lens-service"
   ],
   "command": {

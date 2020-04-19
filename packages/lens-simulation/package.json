@@ -1,0 +1,39 @@
+{
+  "private": true,
+  "name": "@lens/simulation",
+  "version": "0.1.0",
+  "description": "inference lens generative image system - simulation",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:daveham/lens.git"
+  },
+  "author": "daveham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daveham/lens/issues"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "regenerator-runtime": "^0.13.5"
+  },
+  "jest": {
+    "testRegex": "(/__tests__/.*|(\\.|/)test)\\.jsx?$",
+    "testPathIgnorePatterns": ["<rootDir>/lib/", "<rootDir>/node_modules/"]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

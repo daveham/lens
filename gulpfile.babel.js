@@ -21,6 +21,7 @@ const packagesPath = 'packages';
 const includedPackages = [
   'lens-data-jobs',
   'lens-image-descriptors',
+  'lens-simulation',
 ];
 const libDirs = fs.readdirSync(packagesPath)
   // .filter(dir => !excludedPackages.find(exclusion => exclusion === dir))
@@ -72,15 +73,23 @@ function compile(watching) {
     .pipe(renameSrcToLib())
     .pipe(babel({
       presets: [
-        ['@babel/env', {
-          targets: { node: true },
-          // useBuiltIns: 'usage',
-          // corejs: 3,
+        [
+          '@babel/env', {
           // debug: true,
+          targets: { node: true },
+          corejs: { version: 3, proposals: true },
+          useBuiltIns: 'entry',
         }]
       ],
-      plugins: ['@babel/transform-runtime'],
-      babelrc: false
+      plugins: [
+        '@babel/transform-runtime',
+        '@babel/plugin-proposal-export-default-from',
+        [
+          '@babel/plugin-proposal-class-properties', {
+          loose: true
+        }],
+      ],
+      babelrc: false,
     }))
     .pipe(gulp.dest(dest));
 }

@@ -1,3 +1,3 @@
 require('dotenv').config();
-require('@babel/register');
+require('@babel/register')({ rootMode: 'upward' });
 require('../server');

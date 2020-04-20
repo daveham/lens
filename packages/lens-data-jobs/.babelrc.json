@@ -8,13 +8,5 @@
         }
       }
     ]
-  ],
-  "plugins": [
-    "@babel/transform-runtime",
-    [
-      "module-resolver", {
-      "root": ["."]
-    }
-    ]
   ]
 }

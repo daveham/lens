@@ -38,7 +38,6 @@
   },
   "scripts": {
     "start": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
-    "dev": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon --inspect=192.168.20.20:5859 bin/register.js"
   }
 }

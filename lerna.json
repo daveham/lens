@@ -1,5 +1,4 @@
 {
-  "lerna": "3.20.2",
   "npmClient": "yarn",
   "useWorkspaces": true,
   "version": "independent",
@@ -10,13 +9,5 @@
     "packages/lens-image-descriptors",
     "packages/lens-simulation",
     "packages/lens-service"
-  ],
-  "command": {
-    "bootstrap": {
-      "ignore": ["@lens/vagrant"]
-    },
-    "clean": {
-      "ignore": ["@lens/vagrant"]
-    }
-  }
+  ]
 }

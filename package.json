@@ -4,13 +4,13 @@
   "version": "0.1.0",
   "description": "inference lens generative image system",
   "scripts": {
-    "build": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build && cd ./packages/lens-app && yarn styleguidist build",
-    "buildgulp": "./node_modules/.bin/gulp build",
-    "buildall": "./node_modules/.bin/lerna run build",
-    "dev": "./node_modules/.bin/gulp dev",
+    "build": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
+    "buildall": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build && cd ./packages/lens-app && yarn styleguidist build",
+    "dev": "./node_modules/.bin/gulp dev",
     "clean": "./node_modules/.bin/lerna clean",
     "watch": "./node_modules/.bin/gulp watch",
+    "test": "./node_modules/.bin/lerna run test",
     "start": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run --parallel start",
     "styleguide": "cd ./packages/lens-app && yarn styleguidist server",
     "styleguide:build": "cd ./packages/lens-app && yarn styleguidist build"

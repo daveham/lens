@@ -1,15 +1,18 @@
 import chalk from 'chalk';
+import { src } from 'gulp';
+import newy from 'gulp-newy';
 import plumber from 'gulp-plumber';
 import util from 'gulp-util';
+import watch from 'gulp-watch';
 import path from "path";
 import through from 'through2';
 
-import { packagesPath } from './config';
+import { packagesPath, scripts } from './config';
 
 export function describeFiles(label) {
   return through.obj((file, enc, cb) => {
     const filepath = path.relative(packagesPath, file.path);
-    util.log(label, '\'' + chalk.cyan(filepath) + '\'...' + ' -' + file.path);
+    util.log(label, '\'' + chalk.cyan(filepath) + '\'');
     cb(null, file);
   });
 }
@@ -36,4 +39,10 @@ export function handleErrors() {
   });
 }
 
-
+export function announce() {
+  watch(scripts, () =>
+    src(scripts)
+      .pipe(handleErrors())
+      .pipe(newy(transformAbsSrcFilePathToAbsDestFilePath))
+      .pipe(describeFiles('changed')));
+}

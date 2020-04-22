@@ -4,7 +4,11 @@ import env from 'gulp-env';
 import newy from 'gulp-newy';
 import util from 'gulp-util';
 
-import { destination, scripts, scriptsOptions } from './config';
+import {
+  destination,
+  transpileScripts,
+  transpileScriptsOptions,
+} from './config';
 import {
   describeFiles,
   handleErrors,
@@ -17,11 +21,11 @@ export default function compile(changedOnly) {
     NODE_ENV: 'development',
     DEBUG: 'lens*'
   });
-  return src(scripts, scriptsOptions)
+  return src(transpileScripts, transpileScriptsOptions)
     .pipe(envs)
     .pipe(handleErrors())
     .pipe(changedOnly ? newy(transformAbsSrcFilePathToAbsDestFilePath) : util.noop())
-    .pipe(describeFiles('Compiling'))
+    .pipe(describeFiles('compiling'))
     .pipe(switchSrcNameToLibName())
     .pipe(babel({
       presets: [

@@ -8,7 +8,7 @@
     "lint": "./node_modules/.bin/gulp lint",
     "buildall": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build && cd ./packages/lens-app && yarn styleguidist build",
     "dev": "./node_modules/.bin/gulp dev",
-    "clean": "./node_modules/.bin/lerna clean",
+    "clean": "./node_modules/.bin/gulp clean",
     "watch": "./node_modules/.bin/gulp watch",
     "test": "./node_modules/.bin/lerna run test",
     "start": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run --parallel start",

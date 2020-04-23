@@ -1,5 +1,9 @@
 import compile from './compile';
 
-export default function build() {
+export function build() {
   return compile(false);
+}
+
+export function buildChanged() {
+  return compile(true);
 }

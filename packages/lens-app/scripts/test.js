@@ -38,6 +38,7 @@ function isInMercurialRepository() {
 // Watch unless on CI or explicitly running all tests
 if (
   !process.env.CI &&
+  argv.indexOf('--no-watch') === -1 &&
   argv.indexOf('--watchAll') === -1
 ) {
   // https://github.com/facebook/create-react-app/issues/5210

@@ -5,13 +5,14 @@
   "description": "inference lens generative image system",
   "scripts": {
     "build": "./node_modules/.bin/gulp build",
+    "build:changed": "./node_modules/.bin/gulp buildChanged",
     "lint": "./node_modules/.bin/gulp lint",
+    "start": "./node_modules/.bin/gulp buildChanged && ./node_modules/.bin/lerna run --parallel start",
+    "test": "./node_modules/.bin/lerna --ignore @lens/vagrant run test",
     "buildall": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run build && cd ./packages/lens-app && yarn styleguidist build",
     "dev": "./node_modules/.bin/gulp dev",
     "clean": "./node_modules/.bin/gulp clean",
     "watch": "./node_modules/.bin/gulp watch",
-    "test": "./node_modules/.bin/lerna run test",
-    "start": "./node_modules/.bin/gulp build && ./node_modules/.bin/lerna run --parallel start",
     "styleguide": "cd ./packages/lens-app && yarn styleguidist server",
     "styleguide:build": "cd ./packages/lens-app && yarn styleguidist build"
   },

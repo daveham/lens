@@ -61,7 +61,7 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom",
+    "test": "node scripts/test.js --env=jsdom --no-watch",
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build"
   },
@@ -106,7 +106,9 @@
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "testURL": "http://localhost",
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", {
+        "rootMode": "upward"
+      }],
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },

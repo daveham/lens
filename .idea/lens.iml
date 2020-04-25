@@ -4,8 +4,11 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/packages/lens-app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/lens-data-jobs/lib" />
       <excludeFolder url="file://$MODULE_DIR$/packages/lens-data-manager" />
       <excludeFolder url="file://$MODULE_DIR$/packages/lens-data-service" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/lens-image-descriptors/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/lens-simulation/lib" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>

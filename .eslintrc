@@ -14,6 +14,7 @@
   "plugins": [
     "babel",
     "jest",
+    "prettier",
     "promise"
   ],
   "env": {
@@ -38,6 +39,7 @@
     "space-before-function-paren": 0,
     "no-console": 0,
     "no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^[iI]gnored" }],
-    "jsx-quotes": [2, "prefer-single"]
+    "jsx-quotes": [2, "prefer-single"],
+    "prettier/prettier": "error"
   }
 }

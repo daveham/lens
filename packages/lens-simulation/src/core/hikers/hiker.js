@@ -3,9 +3,7 @@ class Hiker {
     this.onStep();
   }
 
-  onStep() {
-
-  }
+  onStep() {}
 }
 
 export default Hiker;

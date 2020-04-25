@@ -1,5 +1,5 @@
-import "core-js";
-import "regenerator-runtime/runtime";
+import 'core-js';
+import 'regenerator-runtime/runtime';
 import path from 'path';
 import config from './config';
 
@@ -22,7 +22,7 @@ import config from './config';
 
 export const PURPOSE = {
   THUMBNAIL: 't',
-  TILE: 'i'
+  TILE: 'i',
 };
 
 // used as a key into an image cache
@@ -42,15 +42,15 @@ const getPurpose = ({ input, output }) => {
   return params.purpose;
 };
 
-export const isTileImageDescriptor = (inputDescriptor) => {
+export const isTileImageDescriptor = inputDescriptor => {
   return getPurpose(inputDescriptor) === PURPOSE.TILE;
 };
 
-export const isThumbnailImageDescriptor = (inputDescriptor) => {
+export const isThumbnailImageDescriptor = inputDescriptor => {
   return getPurpose(inputDescriptor) === PURPOSE.THUMBNAIL;
 };
 
-export const isSourceImageDescriptor = (inputDescriptor) => {
+export const isSourceImageDescriptor = inputDescriptor => {
   return !getPurpose(inputDescriptor);
 };
 
@@ -59,16 +59,16 @@ export const makeTileImageKeyFromPrototype = (prototypeKey, group, x, y) => {
   return `${parts[0]}_${parts[1]}_${group}_${y}_${x}`;
 };
 
-export const makeSourceImageDescriptor = (id) => {
+export const makeSourceImageDescriptor = id => {
   return {
-    input: { id }
+    input: { id },
   };
 };
 
-export const makeThumbnailImageDescriptor = (id) => {
+export const makeThumbnailImageDescriptor = id => {
   return {
     input: { id },
-    output: { purpose: PURPOSE.THUMBNAIL }
+    output: { purpose: PURPOSE.THUMBNAIL },
   };
 };
 
@@ -78,13 +78,13 @@ export const makeTileImageDescriptor = (id, group, x, y, width, height) => {
       id,
       group,
       location: { x, y },
-      size: { width, height }
+      size: { width, height },
     },
-    output: { purpose: PURPOSE.TILE}
+    output: { purpose: PURPOSE.TILE },
   };
 };
 
-const thumbnailFileName = (id) => {
+const thumbnailFileName = id => {
   return `${id}_thumb.jpg`;
 };
 
@@ -96,13 +96,15 @@ const tileFileName = (group, y, x) => {
 export const pathFromImageDescriptor = ({ input, output }) => {
   if (output) {
     if (output.purpose === PURPOSE.THUMBNAIL)
-      return config.utils_paths.thumbs(thumbnailFileName(input.id));
+      return config.utilsPaths.thumbs(thumbnailFileName(input.id));
 
     if (output.purpose === PURPOSE.TILE)
-      return config.utils_paths.tiles(input.id,
+      return config.utilsPaths.tiles(
+        input.id,
         input.group.toString(),
         input.location.y.toString(),
-        tileFileName(input.group, input.location.y, input.location.x));
+        tileFileName(input.group, input.location.y, input.location.x),
+      );
   }
   // TODO: every other case
 };
@@ -111,15 +113,17 @@ export const pathFromImageDescriptor = ({ input, output }) => {
 export const urlFromImageDescriptor = ({ input, output }) => {
   if (output) {
     if (output.purpose === PURPOSE.THUMBNAIL)
-      return path.join('/', config.dir_thumbs, thumbnailFileName(input.id));
+      return path.join('/', config.dirThumbs, thumbnailFileName(input.id));
 
     if (output.purpose === PURPOSE.TILE)
-      return path.join('/',
-        config.dir_tiles,
+      return path.join(
+        '/',
+        config.dirTiles,
         input.id,
         input.group.toString(),
         input.location.y.toString(),
-        tileFileName(input.group, input.location.y, input.location.x));
+        tileFileName(input.group, input.location.y, input.location.x),
+      );
   }
   // TODO: every other case
 };
@@ -134,7 +138,7 @@ export const urlFromImageDescriptor = ({ input, output }) => {
 
 export const ANALYSIS = {
   IDENTIFY: 'i',
-  HISTOGRAM: 'h'
+  HISTOGRAM: 'h',
 };
 
 export const isTileStatsDescriptor = ({ imageDescriptor }) => {
@@ -149,17 +153,17 @@ export const isSourceStatsDescriptor = ({ imageDescriptor }) => {
   return isSourceImageDescriptor(imageDescriptor);
 };
 
-export const makeSourceStatsDescriptor = (imageDescriptor) => {
+export const makeSourceStatsDescriptor = imageDescriptor => {
   return {
     analysis: ANALYSIS.IDENTIFY,
-    imageDescriptor
+    imageDescriptor,
   };
 };
 
-export const makeTileStatsDescriptor = (imageDescriptor) => {
+export const makeTileStatsDescriptor = imageDescriptor => {
   return {
     analysis: ANALYSIS.HISTOGRAM,
-    imageDescriptor
+    imageDescriptor,
   };
 };
 

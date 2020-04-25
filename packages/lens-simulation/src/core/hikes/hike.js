@@ -5,9 +5,7 @@ class Hike {
     this.trails.push(trail);
   }
 
-  run() {
-
-  }
+  run() {}
 
   open() {
     this.trails.forEach(trail => trail.open());
@@ -17,9 +15,7 @@ class Hike {
     this.trails.forEach(trail => trail.close());
   }
 
-  onRun() {
-
-  }
+  onRun() {}
 }
 
 export default Hike;

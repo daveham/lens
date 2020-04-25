@@ -20,4 +20,3 @@ describe('createJob', () => {
     expect(job1.one).toBe(1);
   });
 });
-

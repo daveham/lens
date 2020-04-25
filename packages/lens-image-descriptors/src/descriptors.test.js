@@ -8,15 +8,15 @@ import {
   urlFromImageDescriptor,
   ANALYSIS,
   makeSourceStatsDescriptor,
-  makeStatsKey
+  makeStatsKey,
 } from './index';
 
 describe('makeImageKey', () => {
   test('from input with id', () => {
     const keyData = {
       input: {
-        id: 'inputId'
-      }
+        id: 'inputId',
+      },
     };
     const imageKey = makeImageKey(keyData);
 
@@ -26,11 +26,11 @@ describe('makeImageKey', () => {
   test('from output with id', () => {
     const keyData = {
       input: {
-        id: 'inputId'
+        id: 'inputId',
       },
       output: {
-        id: 'outputId'
-      }
+        id: 'outputId',
+      },
     };
     const imageKey = makeImageKey(keyData);
 
@@ -41,8 +41,8 @@ describe('makeImageKey', () => {
     const keyData = {
       input: {
         id: 'inputId',
-        purpose: 'inputPurpose'
-      }
+        purpose: 'inputPurpose',
+      },
     };
     const imageKey = makeImageKey(keyData);
 
@@ -53,12 +53,12 @@ describe('makeImageKey', () => {
     const keyData = {
       input: {
         id: 'inputId',
-        purpose: 'inputPurpose'
+        purpose: 'inputPurpose',
       },
       output: {
         id: 'outputId',
-        purpose: 'outputPurpose'
-      }
+        purpose: 'outputPurpose',
+      },
     };
     const imageKey = makeImageKey(keyData);
 
@@ -71,8 +71,8 @@ describe('makeImageKey', () => {
         id: 'inputId',
         purpose: PURPOSE.TILE,
         group: 'group',
-        location: { x: 1, y: 2 }
-      }
+        location: { x: 1, y: 2 },
+      },
     };
     const imageKey = makeImageKey(keyData);
 
@@ -122,17 +122,17 @@ describe('pathFromImageDescriptor', () => {
     expect(sourcePath).toBeFalsy();
   });
 
-  // test('for thumbnail', () => {
-  //   const imgd = makeThumbnailImageDescriptor('test-image');
-  //   const thumbnailPath = pathFromImageDescriptor(imgd);
-  //   expect(thumbnailPath).toMatchSnapshot();
-  // });
+  test('for thumbnail', () => {
+    const imgd = makeThumbnailImageDescriptor('test-image');
+    const thumbnailPath = pathFromImageDescriptor(imgd);
+    expect(thumbnailPath).toEqual('');
+  });
 
-  // test('for tile', () => {
-  //   const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
-  //   const tilePath = pathFromImageDescriptor(imgd);
-  //   expect(tilePath).toMatchSnapshot();
-  // });
+  test('for tile', () => {
+    const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
+    const tilePath = pathFromImageDescriptor(imgd);
+    expect(tilePath).toEqual('');
+  });
 });
 
 describe('urlFromImageDescriptor', () => {
@@ -143,17 +143,17 @@ describe('urlFromImageDescriptor', () => {
     expect(sourceUrl).toBeFalsy();
   });
 
-  // test('for thumbnail', () => {
-  //   const imgd = makeThumbnailImageDescriptor('test-image');
-  //   const thumbnailUrl = urlFromImageDescriptor(imgd);
-  //   expect(thumbnailUrl).toMatchSnapshot();
-  // });
+  test('for thumbnail', () => {
+    const imgd = makeThumbnailImageDescriptor('test-image');
+    const thumbnailUrl = urlFromImageDescriptor(imgd);
+    expect(thumbnailUrl).toEqual('');
+  });
 
-//   test('for tile', () => {
-//     const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
-//     const tileUrl = urlFromImageDescriptor(imgd);
-//     expect(tileUrl).toMatchSnapshot();
-//   });
+  test('for tile', () => {
+    const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
+    const tileUrl = urlFromImageDescriptor(imgd);
+    expect(tileUrl).toEqual('');
+  });
 });
 
 describe('makeStatsKey', () => {

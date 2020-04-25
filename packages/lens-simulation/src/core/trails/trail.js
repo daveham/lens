@@ -5,21 +5,13 @@ class Trail {
     this.hikers.push(hiker);
   }
 
-  open() {
+  open() {}
 
-  }
+  onOpen() {}
 
-  onOpen() {
+  close() {}
 
-  }
-
-  close() {
-
-  }
-
-  onClose() {
-
-  }
+  onClose() {}
 }
 
 export default Trail;

@@ -125,13 +125,13 @@ describe('pathFromImageDescriptor', () => {
   test('for thumbnail', () => {
     const imgd = makeThumbnailImageDescriptor('test-image');
     const thumbnailPath = pathFromImageDescriptor(imgd);
-    expect(thumbnailPath).toEqual('');
+    expect(thumbnailPath).toEqual('/data/thumbs/test-image_thumb.jpg');
   });
 
   test('for tile', () => {
     const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
     const tilePath = pathFromImageDescriptor(imgd);
-    expect(tilePath).toEqual('');
+    expect(tilePath).toEqual('/data/tiles/test-image/abc/2/abc_2_1.png');
   });
 });
 
@@ -146,13 +146,13 @@ describe('urlFromImageDescriptor', () => {
   test('for thumbnail', () => {
     const imgd = makeThumbnailImageDescriptor('test-image');
     const thumbnailUrl = urlFromImageDescriptor(imgd);
-    expect(thumbnailUrl).toEqual('');
+    expect(thumbnailUrl).toEqual('/thumbs/test-image_thumb.jpg');
   });
 
   test('for tile', () => {
     const imgd = makeTileImageDescriptor('test-image', 'abc', 1, 2, 10, 20);
     const tileUrl = urlFromImageDescriptor(imgd);
-    expect(tileUrl).toEqual('');
+    expect(tileUrl).toEqual('/tiles/test-image/abc/2/abc_2_1.png');
   });
 });
 

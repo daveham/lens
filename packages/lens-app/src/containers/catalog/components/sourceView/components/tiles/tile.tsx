@@ -19,16 +19,18 @@ class Tile extends React.Component<IProps, any> {
       const dataHost = getConfig().dataHost;
       const fullUrl = `${dataHost}${url}`;
       const imageStyles = { top, left };
-      return <img src={fullUrl} className={styles.image} style={imageStyles}/>;
+      return (
+        <img src={fullUrl} className={styles.image} style={imageStyles} alt={`${left}-${top}`} />
+      );
     }
     const divStyles = {
       minWidth: width,
       minHeight: height,
       top,
-      left
+      left,
     };
     const tileClasses = classNames(styles.tile, loading && styles.loading);
-    return <div className={tileClasses} style={divStyles}/>;
+    return <div className={tileClasses} style={divStyles} />;
   }
 }
 

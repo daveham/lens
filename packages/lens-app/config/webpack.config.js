@@ -48,10 +48,13 @@ const imageInlineSizeLimit = parseInt(
 const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 // style files regexes
-const cssRegex = /\.css$/;
-const cssModuleRegex = /\.module\.css$/;
-const sassRegex = /\.(scss|sass)$/;
-const sassModuleRegex = /\.module\.(scss|sass)$/;
+// assume any css, sass or scss should be processed as CSS Modules.
+const cssRegex = /\.xcss$/;
+// const cssModuleRegex = /\.module\.css$/;
+const cssModuleRegex = /\.css$/;
+const sassRegex = /\.x(scss|sass)$/;
+// const sassModuleRegex = /\.module\.(scss|sass)$/;
+const sassModuleRegex = /\.(scss|sass)$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
@@ -503,9 +506,11 @@ module.exports = function(webpackEnv) {
                 {
                   importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
-                  modules: {
-                    getLocalIdent: getCSSModuleLocalIdent,
-                  },
+                  modules: true,
+                  getLocalIdent: getCSSModuleLocalIdent,
+                  // modules: {
+                  //   getLocalIdent: getCSSModuleLocalIdent,
+                  // },
                 },
                 'sass-loader'
               ),

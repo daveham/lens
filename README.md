@@ -1,5 +1,7 @@
 # Lens: The Inference Lens
 
+![Node.js CI](https://github.com/daveham/lens/workflows/Node.js%20CI/badge.svg?branch=dev&event=status)
+
 [Project Documentation](https://daveham.github.io/lens/info/intro/overview)
 
 [Style Guide](https://damp-everglades-77125.herokuapp.com)

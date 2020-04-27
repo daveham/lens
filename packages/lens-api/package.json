@@ -5,8 +5,8 @@
   "description": "inference lens generative image system - data rest api",
   "main": "index.js",
   "engines": {
-    "node": ">=4.2.0",
-    "npm": "^3.0.0"
+    "node": ">=12.13.0",
+    "npm": "^6.12.0"
   },
   "repository": {
     "type": "git",

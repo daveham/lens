@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:8.14
+      - image: circleci/node:12.16.2
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -24,12 +24,8 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: yarn install top
+          name: yarn install
           command: yarn install
-
-      - run:
-          name: Lerna Bootstrap
-          command: yarn run bootstrap
 
       - save_cache:
           paths:
@@ -38,15 +34,12 @@ jobs:
           key: v1-dependencies-{{ .Branch }}-{{ checksum "package.json" }}-{{ checksum "packages/lens-app/package.json" }}
 
       - run:
-          name: Gulp Build
-          command: yarn run build
+          name: yarn build
+          command: yarn build
 
       - run:
-          name: Lerna Build
-          command: yarn run buildall
-
-      # run tests!
-      # - run: yarn test
+          name: yarn test
+          command: yarn test
 
 workflows:
   version: 2
@@ -55,4 +48,4 @@ workflows:
       - build:
           filters:
             branches:
-              only: deployment
+              only: dev

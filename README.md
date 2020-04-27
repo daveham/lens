@@ -1,6 +1,6 @@
 # Lens: The Inference Lens
 
-![Node.js CI](https://github.com/daveham/lens/workflows/Node.js%20CI/badge.svg?branch=dev&event=status)
+![Node.js CI](https://github.com/daveham/lens/workflows/Node.js%20CI/badge.svg?branch=dev)
 
 [Project Documentation](https://daveham.github.io/lens/info/intro/overview)
 

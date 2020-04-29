@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import _debug from 'debug';
+import { Queue } from 'node-resque';
 const debug = _debug('lens:service:config');
 
 const usingVagrant = process.env.USER === 'vagrant';
@@ -35,6 +36,21 @@ const getResqueClient = () => {
   }
   return resque;
 };
+
+let _queue;
+export async function getQueue() {
+  if (_queue) {
+    return _queue;
+  }
+  debug('getQueue - defining new queue');
+  _queue = new Queue({ connection: config.queueConnection });
+  _queue.on('error', error => {
+    debug('getQueue error', { error });
+    _queue = undefined;
+  });
+  await _queue.connect();
+  return _queue;
+}
 
 const config = {
   env: process.env.NODE_ENV,

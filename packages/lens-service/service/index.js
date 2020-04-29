@@ -3,7 +3,6 @@ import jobs from './jobs';
 import startWorker from './worker';
 import { getResqueClient } from '../server/context';
 
-const start = async () =>
-  startWorker({ redis: getResqueClient() }, [config.queueName], jobs);
+const start = async () => startWorker({ redis: getResqueClient() }, [config.queueName], jobs);
 
 export default start;

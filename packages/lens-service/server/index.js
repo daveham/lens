@@ -9,8 +9,8 @@ import { data } from '../config/paths';
 import service from '../service';
 import connections from './connections';
 
-import _debug from 'debug';
-const debug = _debug('lens:service-server');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const name = 'lens-service';
 const log = createLogger({

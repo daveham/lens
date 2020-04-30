@@ -1,7 +1,7 @@
 import gm from 'gm';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-identify');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('identify');
 
 export default target => {
   return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
-import _debug from 'debug';
-const debug = _debug('lens:connections');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('connections');
 
 const connections = {
   clientIdCounter: 0,

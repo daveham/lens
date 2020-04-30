@@ -1,7 +1,7 @@
 import fs from 'fs';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-file-stats');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('fileStat');
 
 export default target => {
   return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
-// import _debug from 'debug';
-// const debug = _debug('lens:service:captureContextPlugin');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('captureContextPlugin');
 
 const captureContextPlugin = function(worker, func, queue, job, args, options) {
   const self = this;

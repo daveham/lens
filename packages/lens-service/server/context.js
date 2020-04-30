@@ -2,8 +2,8 @@ import Redis from 'ioredis';
 import config from '../config';
 import connections from './connections';
 
-import _debug from 'debug';
-const debug = _debug('lens:service-context');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('context');
 
 let redis = null;
 export const getRedisClient = () => {

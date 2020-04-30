@@ -1,8 +1,8 @@
 import { Worker } from 'node-resque';
 import loadCatalog from './jobs/utils/loadCatalog';
 
-import _debug from 'debug';
-const debug = _debug('lens:worker');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('worker');
 
 const start = async (connection, queues, jobs) => {
   const timeout = process.env.WORKER_TIMEOUT || 1000;

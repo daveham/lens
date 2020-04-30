@@ -7,8 +7,8 @@ import identify from '../utils/gmIdentify';
 import fileStat from '../utils/fileStat';
 import { basicHashKey } from './constants';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-stats-source');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('stats:source');
 
 function* sourceStatsGenerator({ input: { id } }, key) {
   const catalog = yield loadCatalog();

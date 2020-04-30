@@ -1,7 +1,8 @@
 import Redis from 'ioredis';
-import _debug from 'debug';
 import { Queue } from 'node-resque';
-const debug = _debug('lens:service:config');
+
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const usingVagrant = process.env.USER === 'vagrant';
 

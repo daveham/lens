@@ -1,7 +1,7 @@
 import gm from 'gm';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-crop');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('gmCrop');
 
 export default (source, dest, width, height, x, y) => {
   return new Promise((resolve, reject) => {

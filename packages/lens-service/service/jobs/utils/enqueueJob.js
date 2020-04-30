@@ -1,7 +1,7 @@
 import config, { getQueue } from '../../../config';
 
-import _debug from 'debug';
-const debug = _debug('lens:service:enqueueJob');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('enqueueJob');
 
 const enqueueJob = async job => {
   const { command } = job;

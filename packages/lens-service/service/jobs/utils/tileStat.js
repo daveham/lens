@@ -1,8 +1,8 @@
 import jst from 'jStat';
 import chroma from 'chroma-js';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-tile-stats');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('tileStat');
 
 const jStat = jst.jStat;
 

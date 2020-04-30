@@ -7,8 +7,8 @@ import fileExists from '../utils/fileExists';
 import { generator as tileGenerator } from '../image/tile';
 import { basicHashKey } from './constants';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:jobs-stats-tile');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('stats:tile');
 
 function* tileStatsGenerator(imageDescriptor, key) {
   const filename = pathFromImageDescriptor(imageDescriptor);

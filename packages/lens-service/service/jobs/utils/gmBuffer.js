@@ -1,7 +1,7 @@
 import gm from 'gm';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-buffer');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('gmBuffer');
 
 export default source => {
   return new Promise((resolve, reject) => {

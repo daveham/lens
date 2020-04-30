@@ -1,7 +1,7 @@
 import gm from 'gm';
 
-import debugLib from 'debug';
-const debug = debugLib('lens:job-utils-thumbnail');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('gmThumbnail');
 
 export default (sourceFile, destFile) => {
   return new Promise((resolve, reject) => {

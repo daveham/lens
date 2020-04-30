@@ -3,8 +3,8 @@ import path from 'path';
 import { data } from '../../../config/paths';
 import { getRedisClient } from '../../../server/context';
 
-import _debug from 'debug';
-const debug = _debug('lens:service-load-catalog');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('loadCatalog');
 
 const catalogRedisKey = 'catalog';
 

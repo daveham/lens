@@ -16,8 +16,8 @@ import identify from '../utils/gmIdentify';
 import loadCatalog from '../utils/loadCatalog';
 import enqueueJob from '../utils/enqueueJob';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('editor');
 
 const delayJobStep = delay => {
   return new Promise(resolve => setTimeout(() => resolve(), delay));

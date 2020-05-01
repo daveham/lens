@@ -88,8 +88,8 @@ import {
 import { InsertableReducerType } from 'modules/types';
 import { IHike, ISimulation } from 'editor/interfaces';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:modules:reducers');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 // reducers
 const emptySnackbarMessage = '';

@@ -1,7 +1,7 @@
 import { call, put } from 'redux-saga/effects';
 
-import _debug from 'debug';
-const debug = _debug('lens:utils');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('utils');
 
 const apiServer = process.env.REACT_APP_REST_SERVER || 'http://localhost:3001';
 

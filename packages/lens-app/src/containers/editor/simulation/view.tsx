@@ -8,8 +8,8 @@ import SimulationShow from './simulationShow';
 import SimulationEdit from './simulationEdit';
 import SimulationDelete from './simulationDelete';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   root: {

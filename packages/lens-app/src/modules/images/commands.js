@@ -1,8 +1,8 @@
 import { put } from 'redux-saga/effects';
 import { imageLoaded } from './actions';
 
-import _debug from 'debug';
-const debug = _debug('lens:image:commands');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('images');
 
 function* imageHandler(payload) {
   debug('image command handler', payload);

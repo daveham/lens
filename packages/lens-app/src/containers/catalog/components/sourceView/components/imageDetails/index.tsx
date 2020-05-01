@@ -4,8 +4,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Info from '@material-ui/icons/Info';
 import Popover from '@material-ui/core/Popover';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:catalog:imageDetails');
+// import getDebugLog from '../debugLog';
+// const debug = getDebugLog('imageDetails');
 
 interface IProps {
   classes?: any;

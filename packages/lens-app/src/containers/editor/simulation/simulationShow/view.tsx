@@ -43,8 +43,8 @@ import {
   changeHikerList,
 } from 'editor/modules/actions/sagas';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:simulationShow:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 interface IProps {
   editMode?: boolean;

@@ -46,8 +46,8 @@ import GuideMenu from './guideMenu';
 import GuideListMenu from './guideListMenu';
 import { reduxActionForCancelOperation, reduxActionForFinishOperation } from '../utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:guideControl');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('guideControl');
 
 const useStyles: any = makeStyles((theme: any) => {
   const borderRadius = theme.shape.borderRadius * 2;

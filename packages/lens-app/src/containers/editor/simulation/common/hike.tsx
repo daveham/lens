@@ -8,8 +8,8 @@ import { withStyles} from '@material-ui/core/styles';
 import { IHike } from 'editor/interfaces';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:hike');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('hike');
 
 const styles: any = (theme) => ({
   root: {

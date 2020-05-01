@@ -6,8 +6,8 @@ import reducers from '../modules';
 import commands from '../modules/commands';
 import sagas from '../sagas';
 
-import _debug from 'debug';
-const debug = _debug('lens:store');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 export const registry = new Registry({ reducers, commands });
 

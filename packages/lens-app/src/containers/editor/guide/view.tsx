@@ -19,8 +19,8 @@ import { reduxActionForStartOperation } from 'editor/guide/utils';
 import GuideControl from './components/guideControl';
 import { controlSegmentKeys, controlSegmentActions } from './components/guideConstants';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:guide:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 interface IProps {
   match: any;

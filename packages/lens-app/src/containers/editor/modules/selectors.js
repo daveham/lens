@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import groupby from 'lodash.groupby';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:modules:selectors');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('selectors');
 
 export const simulationsLoadingSelector = state => state.editor.simulationsLoading;
 export const simulationsSelector = state => state.editor.simulations;

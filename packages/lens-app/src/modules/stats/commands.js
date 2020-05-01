@@ -1,8 +1,8 @@
 import { put } from 'redux-saga/effects';
 import { statsLoaded } from './actions';
 
-import _debug from 'debug';
-const debug = _debug('lens:stats:commands');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('commands');
 
 function* statsHandler(payload) {
   debug('stats command handler', payload);

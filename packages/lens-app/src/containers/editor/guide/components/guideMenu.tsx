@@ -2,8 +2,8 @@ import React from 'react';
 import DropDownMenu, { TMenuItem } from 'editor/components/dropDownMenu';
 import { withStyles } from '@material-ui/core/styles';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:guide:menu');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('guideMenus');
 
 const styles: any = ({ spacing, palette }) => {
   return {

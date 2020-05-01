@@ -3,8 +3,8 @@ import operationsSimulationsSaga from 'editor/sagas/operations/simulations';
 import operationsExecutionsSaga from 'editor/sagas/operations/executions';
 import operationsRenderingsSaga from 'editor/sagas/operations/renderings';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:sagas:operations');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('operations');
 
 export default function* operationsRootSaga() {
   yield all([

@@ -8,8 +8,8 @@ import App from './containers/app';
 import registerServiceWorker from './registerServiceWorker';
 import theme from './theme';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:index');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 const target = document.getElementById('root');
 

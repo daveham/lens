@@ -2,8 +2,8 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor/rendering/renderingEmptyState/view');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   empty: {

@@ -12,8 +12,8 @@ import Simulation from './simulation';
 import Execution from './execution';
 import Rendering from './rendering';
 
-import _debug from 'debug';
-const debug = _debug('lens:containers:editor:index');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -4,8 +4,8 @@ import blue from '@material-ui/core/colors/blue';
 // import green from '@material-ui/core/colors/green';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 
-// import _debug from 'debug';
-// const debug = _debug('theme');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('theme');
 
 const theme = createMuiTheme({
   palette: {

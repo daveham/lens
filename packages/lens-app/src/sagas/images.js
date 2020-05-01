@@ -10,11 +10,11 @@ import {
   imagesLoaded,
   imageNotLoading,
   imagesNotLoading,
-} from '../modules/images/actions';
-import { imageSelector, imageDescriptorsNotLoadedSelector } from '../modules/images/selectors';
+} from 'modules/images/actions';
+import { imageSelector, imageDescriptorsNotLoadedSelector } from 'modules/images/selectors';
 
-import _debug from 'debug';
-const debug = _debug('lens:saga:image');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('images');
 
 export function* ensureImagesSaga({ payload }) {
   const { imageDescriptors, force } = payload;

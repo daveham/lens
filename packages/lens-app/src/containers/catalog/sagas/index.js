@@ -12,8 +12,8 @@ import {
 } from '../selectors';
 import { setTitle } from 'modules/ui';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:catalog:sagas');
+// import getDebugLog from '../debugLog';
+// const debug = getDebugLog('sagas');
 
 export function* loadCatalogSaga() {
   yield* restApiSaga(['/catalog'], receiveCatalog, requestCatalogFailed);

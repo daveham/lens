@@ -18,8 +18,8 @@ import {
 
 import { changeExecution } from 'editor/modules/actions/sagas';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:execution:executionShow:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => {
   const paddingHalf = theme.spacing(1);

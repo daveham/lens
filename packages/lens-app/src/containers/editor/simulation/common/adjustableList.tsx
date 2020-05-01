@@ -12,8 +12,8 @@ import ExpandMore from '@material-ui/icons/ExpandMoreRounded';
 import ExpandLess from '@material-ui/icons/ExpandLessRounded';
 import { withStyles } from '@material-ui/core/styles';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:adjustableList');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('adjustableList');
 
 const styles: any = theme => {
   const borderStyle = `1px solid ${theme.palette.divider}`;

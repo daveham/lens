@@ -9,11 +9,11 @@ import {
   deleteStats,
   statsDeleted,
   statsDeleteFailed,
-} from '../modules/stats/actions';
-import { statsSelector } from '../modules/stats/selectors';
+} from 'modules/stats/actions';
+import { statsSelector } from 'modules/stats/selectors';
 
-import _debug from 'debug';
-const debug = _debug('lens:saga:stats');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('stats');
 
 export function* ensureStatsSaga({ payload }) {
   const { statsDescriptor, force } = payload;

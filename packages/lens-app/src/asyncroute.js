@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { ReactReduxContext } from 'react-redux';
 import { injectReducers, injectSagas, injectCommands } from './store/registry/actions';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:asyncRoute');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('asyncroute');
 
 const moduleDefaultExport = module => module.default || module;
 

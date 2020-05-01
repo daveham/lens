@@ -18,8 +18,8 @@ import { createTileSpec, tileSizeFromSourceSpec } from './utils';
 import { default as getConfig } from 'src/config';
 import { Details, Tiles, Toolbar, ImageDetails } from './components';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:sourceView');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('view');
 
 const styles: any = (theme) => {
   const unit = theme.spacing(1);

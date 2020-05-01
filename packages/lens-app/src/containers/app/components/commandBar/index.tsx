@@ -5,8 +5,8 @@ import Chip from '@material-ui/core/Chip';
 import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import SwapHorizontalCircleOutlinedIcon from '@material-ui/icons/SwapHorizontalCircleOutlined';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:containers:app:commandBar');
+// import getDebugLog from '../debugLog';
+// const debug = getDebugLog('commandBar');
 
 export interface ICommand {
   command?: string;

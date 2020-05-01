@@ -8,8 +8,8 @@ import RenderingShow from './renderingShow';
 import RenderingEdit from './renderingEdit';
 import RenderingDelete from './renderingDelete';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:rendering:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   root: {

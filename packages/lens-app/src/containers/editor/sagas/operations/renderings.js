@@ -58,8 +58,8 @@ import {
   deleteRenderingFailed,
 } from 'editor/modules/actions/data';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:sagas:operations:renderings');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('renderings');
 
 function* validateRenderingSaga() {
   const isValid = yield select(renderingValid);

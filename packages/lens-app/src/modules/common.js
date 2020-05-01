@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import { createActions, combineActions, handleActions } from 'redux-actions';
 
-import _debug from 'debug';
-const debug = _debug('lens:common');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('common');
 
 export const {
   closeSocket,

@@ -17,8 +17,8 @@ import { ensureStats, deleteStats } from 'modules/stats/actions';
 import { ensureImage, ensureImages } from 'modules/images/actions';
 import { SourceView as View, displayTileResolution } from './view';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:sourceView:index');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 const mapDispatchToProps = {
   ensureStats,

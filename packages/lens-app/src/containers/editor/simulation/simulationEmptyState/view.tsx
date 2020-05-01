@@ -5,8 +5,8 @@ import { TypedUseSelectorHook, useSelector as useSelectorGeneric } from 'react-r
 import { RootEditorState } from 'editor/modules';
 import { simulationsLoadingSelector } from 'editor/modules/selectors';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor/simulation/simulationEmptyState/view');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   empty: {

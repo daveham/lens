@@ -8,8 +8,8 @@ import { withStyles} from '@material-ui/core/styles';
 import { ITrail } from 'editor/interfaces';
 import ReadOnlyTextField from 'editor/components/readOnlyTextField';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:simulation:trail');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('trail');
 
 const styles: any = (theme) => ({
   root: {

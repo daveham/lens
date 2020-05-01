@@ -38,8 +38,8 @@ import {
   selectedRenderingSelector,
 } from 'editor/modules/selectors';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:sagas:edit');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('edit');
 
 const emptyArray = [];
 const extractOrderChanges = (items, removed = emptyArray) => {

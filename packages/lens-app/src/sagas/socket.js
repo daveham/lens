@@ -8,13 +8,13 @@ import {
   requestSocketStatusFailed,
   receiveServiceCommand,
   sendSocketCommand,
-} from '../modules/common';
+} from 'modules/common';
 import { socketId as socketIdSelector } from '../modules/selectors';
 
 import io from 'socket.io-client';
 
-import _debug from 'debug';
-const debug = _debug('lens:socket');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('socket');
 
 const socketHost = process.env.REACT_APP_SERVICE_SERVER;
 

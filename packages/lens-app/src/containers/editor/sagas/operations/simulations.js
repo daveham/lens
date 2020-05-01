@@ -62,8 +62,8 @@ import {
   saveHikesFailed,
 } from 'editor/modules/actions/data';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:sagas:operations:simulations');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('simulations');
 
 function* validateSimulationSaga() {
   const isValid = yield select(simulationAndDataValid);

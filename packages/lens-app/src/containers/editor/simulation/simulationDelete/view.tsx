@@ -13,8 +13,8 @@ import { simulationDeleteListSelector } from 'editor/modules/selectors';
 
 import Layout from '../common/layout';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:simulationDelete:view');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   root: {

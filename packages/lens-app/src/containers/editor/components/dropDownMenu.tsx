@@ -7,8 +7,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import cx from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:dropDownMenu');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('dropDownMenu');
 
 const styles: any = ({ spacing, palette }) => {
   return {

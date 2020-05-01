@@ -36,8 +36,8 @@ const styles: any = (theme) => {
   };
 };
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:common:layout');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('layout');
 
 interface IProps {
   children?: any;

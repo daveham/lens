@@ -3,8 +3,8 @@ import TextField, { TextFieldProps } from '@material-ui/core/TextField';
 import cx from 'classnames';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:readOnlyTestField');
+// import getDebugLog from '../debugLog';
+// const debug = getDebugLog('readOnlyTextField');
 
 const styles = (theme) => createStyles({
   input: {

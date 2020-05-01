@@ -8,8 +8,8 @@ import ExecutionShow from './executionShow';
 import ExecutionEdit from './executionEdit';
 import ExecutionDelete from './executionDelete';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:execution:view');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('view');
 
 const useStyles: any = makeStyles((theme: any) => ({
   root: {

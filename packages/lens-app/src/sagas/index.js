@@ -5,8 +5,8 @@ import pingSaga from './ping';
 import imagesSaga from './images';
 import statsSaga from './stats';
 
-import _debug from 'debug';
-const debug = _debug('lens:sagas');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 function* observeActions() {
   while (true) {

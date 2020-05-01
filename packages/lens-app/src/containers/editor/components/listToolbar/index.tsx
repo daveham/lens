@@ -13,8 +13,8 @@ import Delete from '@material-ui/icons/Delete';
 import AddToPhotos from '@material-ui/icons/AddToPhotos';
 import Tooltip from '@material-ui/core/Tooltip';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:simulation:components:listToolbar');
+// import getDebugLog from '../debugLog';
+// const debug = getDebugLog('listToolbar');
 
 interface IProps {
   links: {[key: string]: string};

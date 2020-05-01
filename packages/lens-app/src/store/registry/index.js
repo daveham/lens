@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
-import _debug from 'debug';
-const debug = _debug('lens:registry');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 export default class Registry {
   constructor({ reducers, sagas, commands }) {

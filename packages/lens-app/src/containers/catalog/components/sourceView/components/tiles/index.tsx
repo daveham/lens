@@ -9,8 +9,8 @@ import Selection from './selection';
 import Tile from './tile';
 import { TileAnalysis } from '../tileAnalysis';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:source-tiles');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 const styles: any = {
   root: {

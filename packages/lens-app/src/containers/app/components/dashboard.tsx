@@ -32,8 +32,8 @@ import {
   sendPing
 } from 'modules/common';
 
-import _debug from 'debug';
-const debug = _debug('lens:containers:app:dashboard');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('dashboard');
 
 const drawerWidth = 240;
 

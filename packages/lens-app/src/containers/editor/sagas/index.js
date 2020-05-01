@@ -9,8 +9,8 @@ import dataSaga from './data';
 import editSaga from './edit';
 import operationsSaga from './operations';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:sagas');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 export function* ensureTitleSaga({ payload }) {
   const catalogName = yield select(catalogNameSelector);

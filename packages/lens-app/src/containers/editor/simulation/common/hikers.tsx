@@ -2,8 +2,8 @@ import React from 'react';
 import AdjustableList from './adjustableList';
 import { IHiker } from 'editor/interfaces';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:hikers');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('hikers');
 
 interface IProps {
   disabled?: boolean;

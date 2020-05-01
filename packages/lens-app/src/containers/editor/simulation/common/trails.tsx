@@ -2,8 +2,8 @@ import React from 'react';
 import AdjustableList from './adjustableList';
 import { ITrail } from 'editor/interfaces';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:trails');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('trails');
 
 interface IProps {
   disabled?: boolean;

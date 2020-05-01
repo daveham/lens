@@ -51,8 +51,8 @@ import {
 import { clientId as clientIdSelector } from 'modules/selectors';
 import { generateMockHikesData, generateMockSimulationsData } from 'editor/sagas/mockData';
 
-import _debug from 'debug';
-const debug = _debug('lens:editor:dataSagas');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('data');
 
 const mockSimulationsData = {};
 

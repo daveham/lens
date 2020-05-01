@@ -4,8 +4,8 @@ import path from 'path';
 import Histogram from './histogram';
 import Menu from './menu';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:catalog:tileAnalysis');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog();
 
 interface IProps {
   classes?: any;

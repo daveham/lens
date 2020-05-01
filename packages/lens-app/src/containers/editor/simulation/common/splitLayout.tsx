@@ -27,8 +27,8 @@ const styles: any = theme => {
   };
 };
 
-// import _debug from 'debug';
-// const debug = _debug('lens:editor:simulation:common:splitLayout');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('splitLayout');
 
 interface IProps {
   classes?: any;

@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 
-// import _debug from 'debug';
-// const debug = _debug('lens:catalog:sourceView/details');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('details');
 
 const addCommas = (v) => v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const formatDate =  (v) => moment(v).format('h:mm a, MM/DD/YY');

@@ -1,20 +1,17 @@
 import errors from 'restify-errors';
 import fs from 'fs';
-import {
-  pathFromImageDescriptor,
-  urlFromImageDescriptor
-} from '@lens/image-descriptors';
+import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 import { createImage } from '@lens/data-jobs';
 import { enqueueJob } from '../utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-image-single');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('single');
 
 export default function processSingleImage(clientId, imageDescriptor, res, next) {
   const path = pathFromImageDescriptor(imageDescriptor);
   debug('processSingleImage', path);
 
-  fs.access(path, fs.constants.R_OK, (err) => {
+  fs.access(path, fs.constants.R_OK, err => {
     if (!err) {
       res.send({ url: urlFromImageDescriptor(imageDescriptor) });
       return next();

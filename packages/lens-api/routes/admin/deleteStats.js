@@ -1,8 +1,8 @@
 import { deleteStats } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-deleteStats');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('admin:deleteStats');
 
 const post = (req, res, next) => {
   const { clientId, sourceId, group } = req.body;

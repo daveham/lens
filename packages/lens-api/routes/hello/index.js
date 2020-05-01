@@ -1,7 +1,7 @@
 const get = (req, res, next) => {
   const data = {
     greeting: 'hello',
-    name: req.params.name
+    name: req.params.name,
   };
   res.send(data);
   next();

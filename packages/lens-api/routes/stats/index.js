@@ -9,8 +9,8 @@ import { handleStatsError, basicHashKey } from './utils';
 import { requestSourceStats } from './source';
 import { requestTileStats } from './tile';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-stats');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const post = (req, res, next) => {
   const { clientId, statsDescriptor } = req.body;

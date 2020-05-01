@@ -1,8 +1,8 @@
 import { createStats } from '@lens/data-jobs';
 import { enqueueJob } from '../utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-stats-source');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('source');
 
 export function requestSourceStats(clientId, statsDescriptor, statsKey, res, next) {
   return enqueueJob(createStats(clientId, statsDescriptor)).then(status => {

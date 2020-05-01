@@ -1,11 +1,11 @@
-import _debug from 'debug';
-const debug = _debug('lens:api-stats-utils');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('utils');
 
 export function handleStatsError(redis, res, next, statsKey, hashKey, err) {
   debug('handleStatsError', { err });
   const payload = {
     status: 'bad',
-    error: err
+    error: err,
   };
   res.send(payload);
   next();

@@ -1,8 +1,8 @@
 import { createPing } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-ping');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('ping');
 
 const post = (req, res, next) => {
   const { clientId } = req.body;

@@ -1,11 +1,10 @@
 import Redis from 'ioredis';
-import _debug from 'debug';
-const debug = _debug('lens:api-config');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const usingVagrant = process.env.USER === 'vagrant';
 
-const serverHost = process.env.REST_SERVER ||
-usingVagrant ? '192.168.20.20' : '0.0.0.0';
+const serverHost = process.env.REST_SERVER || usingVagrant ? '192.168.20.20' : '0.0.0.0';
 
 const serverPort = process.env.REST_PORT || process.env.PORT || 3001;
 
@@ -17,7 +16,7 @@ const redisOptions = {
   host: '127.0.0.1',
   family: 4,
   password: null,
-  db: 0
+  db: 0,
 };
 let redis = null;
 const getRedisClient = () => {
@@ -33,7 +32,7 @@ const resqueOptions = {
   host: '127.0.0.1',
   family: 4,
   password: null,
-  db: 0
+  db: 0,
 };
 let resque = null;
 const getResqueClient = () => {
@@ -52,7 +51,7 @@ const config = {
   keyPrefix,
   queueConnection: { redis: getResqueClient() },
 
-  queueName: 'il'
+  queueName: 'il',
 };
 
 export default config;

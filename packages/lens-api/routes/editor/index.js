@@ -2,8 +2,9 @@ import { runExecution } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
 import path from 'path';
 import fs from 'fs';
-import _debug from 'debug';
-const debug = _debug('lens:api-editor');
+
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('editor');
 
 const dataFolder = process.env.LENS_DATA || '/data';
 const hikesFolder = path.join(dataFolder, 'db');

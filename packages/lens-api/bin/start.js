@@ -8,10 +8,10 @@ import config from '../config';
 import routes from '../routes';
 
 import { createLogger } from 'feller-buncher';
-import _debug from 'debug';
-const debug = _debug('lens:api:server');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('start');
 
-process.on('warning', (e) => debug('process.on.warn', e.stack));
+process.on('warning', e => debug('process.on.warn', e.stack));
 
 const cors = corsMiddleware({
   origins: ['http://dev.local:3000'],

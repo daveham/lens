@@ -1,7 +1,7 @@
 import { loadCatalog } from '../utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-catalog');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('catalog');
 
 const get = (req, res, next) => {
   loadCatalog((err, catalog) => {

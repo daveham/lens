@@ -1,13 +1,10 @@
 import fs from 'fs';
-import {
-  pathFromImageDescriptor,
-  urlFromImageDescriptor
-} from '@lens/image-descriptors';
+import { pathFromImageDescriptor, urlFromImageDescriptor } from '@lens/image-descriptors';
 import { createImage } from '@lens/data-jobs';
 import { enqueueJob } from '../utils/index';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-image-multiple');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('multiple');
 
 export default function processMultipleImages(clientId, imageDescriptors, res, next) {
   debug('processMultipleImages', { count: imageDescriptors.length });
@@ -22,8 +19,8 @@ export default function processMultipleImages(clientId, imageDescriptors, res, n
   function processItem(imageDescriptor) {
     const path = pathFromImageDescriptor(imageDescriptor);
 
-    return new Promise((resolve) => {
-      fs.access(path, fs.constants.R_OK, (err) => {
+    return new Promise(resolve => {
+      fs.access(path, fs.constants.R_OK, err => {
         if (err) {
           if (err.code === 'ENOENT') {
             debug('file does not exist - creating task', path);
@@ -58,7 +55,7 @@ export default function processMultipleImages(clientId, imageDescriptors, res, n
     debug(`processed ${imageDescriptors.length} image descriptors`, {
       existing: existingImageDescriptors.length,
       enqueued: enqueuedImageDescriptors.length,
-      errored: erroredImageDescriptors.length
+      errored: erroredImageDescriptors.length,
     });
 
     res.send({
@@ -67,7 +64,7 @@ export default function processMultipleImages(clientId, imageDescriptors, res, n
       erroredImageDescriptors,
       erroredErrors,
       existingImageDescriptors,
-      existingUrls
+      existingUrls,
     });
     next();
   });

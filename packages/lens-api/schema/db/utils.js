@@ -9,8 +9,8 @@ import sub from 'subleveldown';
 
 import Manager from './manager';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-utils');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('utils');
 
 export const dataDbOptions = { valueEncoding: 'json' };
 export const indexDbOptions = { keyEncoding: charwise, valueEncoding: 'json' };
@@ -145,8 +145,13 @@ export function generateMockSimulation(sourceId, renderingsCount) {
 export function instrumentDatabase(db, label, debugOptions = {}) {
   const traceOptions = { ...defaultInstrumentOptions, ...debugOptions };
 
-  if (traceOptions.db || traceOptions.read || traceOptions.write ||
-    traceOptions.delete || traceOptions.batch) {
+  if (
+    traceOptions.db ||
+    traceOptions.read ||
+    traceOptions.write ||
+    traceOptions.delete ||
+    traceOptions.batch
+  ) {
     debug('instrumentDatabase', label);
   }
   if (traceOptions.db) {

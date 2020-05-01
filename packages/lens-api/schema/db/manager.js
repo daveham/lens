@@ -1,8 +1,8 @@
 import uuid from 'uuid/v1';
 import _ from 'highland';
 
-import _debug from 'debug';
-const debug = _debug('lens:api-manager');
+import getDebugLog from './debugLog';
+const debug = getDebugLog('manager');
 
 class Manager {
   constructor(db, dbOptions, indexOptions) {

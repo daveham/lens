@@ -1,11 +1,8 @@
 import { database } from 'config/paths';
-import {
-  createManager,
-  defineDatabase,
-} from './db/utils';
+import { createManager, defineDatabase } from './db/utils';
 
-import _debug from 'debug';
-const debug = _debug('lens:api:schema');
+import getDebugLog from './debugLog';
+const debug = getDebugLog();
 
 const debugOptions = {
   db: true,
@@ -17,6 +14,6 @@ const debugOptions = {
 
 export function createDataManager() {
   return defineDatabase(database, debugOptions)
-    .then((db) => createManager(db))
+    .then(db => createManager(db))
     .catch(err => debug('caught error', { err }));
 }

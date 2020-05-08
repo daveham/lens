@@ -22,6 +22,9 @@
       {
         "loose": true
       }
-    ]
+    ],
+    ["transform-gl-matrix", {
+      "glMatrixArray": false
+    }]
   ]
 }

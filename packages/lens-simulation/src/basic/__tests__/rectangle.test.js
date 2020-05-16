@@ -160,4 +160,140 @@ describe('Size', () => {
     point = rect.topLeft;
     expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
   });
+
+  test('rect.topRight', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.topRight;
+    expect(point.equals({ x: 30, y: 10 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.topRight = [10, 15];
+    point = rect.topRight;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.bottomLeft', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.bottomLeft;
+    expect(point.equals({ x: 10, y: 30 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.bottomLeft = [10, 15];
+    point = rect.bottomLeft;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.bottomRight', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.bottomRight;
+    expect(point.equals({ x: 30, y: 30 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.bottomRight = [10, 15];
+    point = rect.bottomRight;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.bottomCenter', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.bottomCenter;
+    expect(point.equals({ x: 20, y: 30 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.bottomCenter = [10, 15];
+    point = rect.bottomCenter;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.topCenter', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.topCenter;
+    expect(point.equals({ x: 20, y: 10 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.topCenter = [10, 15];
+    point = rect.topCenter;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.leftCenter', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.leftCenter;
+    expect(point.equals({ x: 10, y: 20 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.leftCenter = [10, 15];
+    point = rect.leftCenter;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect.rightCenter', () => {
+    let rect = new Rectangle(10, 10, 20, 20);
+    let point = rect.rightCenter;
+    expect(point.equals({ x: 30, y: 20 })).toBeTruthy();
+
+    rect = new Rectangle(10, 10, 20, 20);
+    rect.rightCenter = [10, 15];
+    point = rect.rightCenter;
+    expect(point.equals({ x: 10, y: 15 })).toBeTruthy();
+  });
+
+  test('rect1.intersects(rect2)', () => {
+    let rect1 = new Rectangle(160, 270, 20, 20);
+    let rect2 = new Rectangle(195, 301, 19, 19);
+    expect(rect1.intersects(rect2)).toBeFalsy();
+
+    rect1 = new Rectangle(160, 270, 20, 20);
+    rect2 = new Rectangle(170.5, 280.5, 19, 19);
+    expect(rect1.intersects(rect2)).toBeTruthy();
+  });
+
+  test('rect1.contains(rect2)', () => {
+    let rect1 = new Rectangle(160, 270, 20, 20);
+    let rect2 = new Rectangle(195, 301, 19, 19);
+    expect(rect1.contains(rect2)).toBeFalsy();
+
+    rect1 = new Rectangle(160, 270, 20, 20);
+    rect2 = new Rectangle(170.5, 280.5, 19, 19);
+    expect(rect1.contains(rect2)).toBeFalsy();
+
+    rect1 = new Rectangle(299, 161, 137, 129);
+    rect2 = new Rectangle(340, 197, 61, 61);
+    expect(rect1.contains(rect2)).toBeTruthy();
+    expect(rect2.contains(rect1)).toBeFalsy();
+  });
+
+  test('rect.contains(point)', () => {
+    const rect = new Rectangle(160, 270, 20, 20);
+    let point = new Point(166, 280);
+    expect(rect.contains(point)).toBeTruthy();
+
+    point = new Point(30, 30);
+    expect(rect.contains(point)).toBeFalsy();
+  });
+
+  test('rect1.intersect(rect2)', () => {
+    const rect1 = new Rectangle(160, 270, 20, 20);
+    const rect2 = new Rectangle(170.5, 280.5, 19, 19);
+    const intersected = rect1.intersect(rect2);
+    expect(intersected.equals(new Rectangle(170.5, 280.5, 9.5, 9.5))).toBeTruthy();
+  });
+
+  test('rect1.unite(rect2)', () => {
+    const rect1 = new Rectangle(160, 270, 20, 20);
+    const rect2 = new Rectangle(170.5, 280.5, 19, 19);
+    const united = rect1.unite(rect2);
+    expect(united.equals(new Rectangle(160, 270, 29.5, 29.5))).toBeTruthy();
+  });
+
+  test('rect.include(point)', () => {
+    const rect1 = new Rectangle(95, 151, 20, 20);
+    const included = rect1.include([50, 50]);
+    expect(included.equals(new Rectangle(50, 50, 65, 121))).toBeTruthy();
+  });
+
+  test('rect.toString()', () => {
+    const string = new Rectangle(10, 20, 30, 40).toString();
+    expect(string).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
+  });
 });

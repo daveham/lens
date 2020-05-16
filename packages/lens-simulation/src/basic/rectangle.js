@@ -299,8 +299,8 @@ class Rectangle {
     // or by looking at the amount of elements in the arguments list,
     // or the passed array:
     return (arg && arg.width !== undefined) || (Array.isArray(arg) ? arg : arguments).length === 4
-      ? this.containsRectangle(new Rectangle(arguments))
-      : this.containsPoint(new Point(arguments));
+      ? this.containsRectangle(new Rectangle(...arguments))
+      : this.containsPoint(new Point(...arguments));
   }
 
   containsPoint({ x, y }) {
@@ -341,7 +341,11 @@ class Rectangle {
     return new Rectangle(x1, y1, x2 - x1, y2 - y1);
   }
 
-  include({ x, y }) {
+  include(arg0) {
+    const argIsArray = Array.isArray(arg0);
+    const x = argIsArray ? arg0[0] : arg0.x;
+    const y = argIsArray ? arg0[1] : arg0.y;
+
     const x1 = Math.min(this.x, x);
     const y1 = Math.min(this.y, y);
     const x2 = Math.max(this.x + this.width, x);

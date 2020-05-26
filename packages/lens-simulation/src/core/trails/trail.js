@@ -4,14 +4,22 @@ import getDebugLog from './debugLog';
 const debug = getDebugLog('trail');
 
 class Trail {
-  hike = null;
-  plan = null;
+  _compass;
+  hike;
+  plan;
   hikers = [];
   isOpen = false;
 
   constructor(hike, plan) {
     this.hike = hike;
     this.plan = plan;
+  }
+
+  get compass() {
+    if (!this._compass) {
+      this._compass = this.plan.createCompass(this.hike.width, this.hike.height);
+    }
+    return this._compass;
   }
 
   addHiker(hiker) {

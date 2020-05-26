@@ -1,4 +1,4 @@
-import { hikerExitReason } from '../../constants';
+import { HikerExitReason } from '../../constants';
 
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('movementBehavior');
@@ -43,7 +43,7 @@ class MovementBehavior {
 
   onMove() {
     debug('onMove');
-    this.abort(hikerExitReason.reachedStepLimit);
+    this.abort(HikerExitReason.reachedStepLimit);
   }
 
   onEnd() {

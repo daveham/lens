@@ -1,4 +1,4 @@
-export const hikerExitReason = {
+export const HikerExitReason = {
   none: 'none',
   dataError: 'dataError',
   renderError: 'renderError',

@@ -1,5 +1,9 @@
 /*
- * Derived from:
+ * Derived from Paper.js, evolved with Ramda.js.
+ *
+ * Ramda.js - A practical functional library for JavaScript programmers.
+ * http://ramdajs.com
+ *
  * Paper.js - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
  *
@@ -115,8 +119,10 @@ describe('Point', () => {
 
   test('equals()', () => {
     expect(new Point(10, 10).equals([10, 10])).toBeTruthy();
-    expect(new Point(0, 0).equals({})).toBeFalsy();
-    expect(new Point(0, 0).equals(null)).toBeFalsy();
+    expect(new Point(0, 0).equals({})).toBeTruthy();
+    expect(new Point(0, 0).equals(null)).toBeTruthy();
+    expect(new Point({ length: 10, angle: 90 }).equals([0, 10])).toBeTruthy();
+    expect(new Point([0, 10]).equals({ length: 10, angle: 90 })).toBeTruthy();
   });
 
   test('isCollinear()', function() {
@@ -131,5 +137,15 @@ describe('Point', () => {
     expect(new Point(5, 10).isOrthogonal(new Point(-10, 5))).toBeTruthy();
     expect(new Point(10, 10).isOrthogonal(new Point(20, 20))).toBeFalsy();
     expect(new Point(10, 10).isOrthogonal(new Point(10, -20))).toBeFalsy();
+  });
+
+  test('isZero()', () => {
+    const point = new Point();
+    expect(point.isZero()).toBeTruthy();
+  });
+
+  test('clone', () => {
+    const point = new Point([10, 20]).clone();
+    expect(point.toString()).toEqual('{ x: 10, y: 20 }');
   });
 });

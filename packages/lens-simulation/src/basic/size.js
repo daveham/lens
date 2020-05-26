@@ -1,5 +1,9 @@
 /*
- * Derived from:
+ * Derived from Paper.js, evolved with Ramda.js.
+ *
+ * Ramda.js - A practical functional library for JavaScript programmers.
+ * http://ramdajs.com
+ *
  * Paper.js - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
  *
@@ -12,70 +16,52 @@
  */
 
 import Numerical from './numerical';
+import { getWidthAndHeightFromArguments } from './common';
 
 class Size {
   width;
   height;
 
-  constructor(arg0, arg1) {
-    const type = typeof arg0;
-    if (type === 'number') {
-      this.width = arg0;
-      this.height = arg1;
-    } else if (type === 'undefined' || arg0 === null) {
-      this.width = 0;
-      this.height = 0;
-    } else if (Array.isArray(arg0)) {
-      this.width = arg0[0];
-      this.height = arg0[1];
-    } else if ('width' in arg0) {
-      this.width = arg0.width || 0;
-      this.height = arg0.height || 0;
-    } else if ('x' in arg0) {
-      this.width = arg0.x || 0;
-      this.height = arg0.y || 0;
-    } else {
-      this.width = 0;
-      this.height = 0;
-    }
+  constructor(...args) {
+    [this.width, this.height] = getWidthAndHeightFromArguments(args);
   }
 
-  equals(size) {
-    return (
-      size === this ||
-      (size &&
-        ((this.width === size.width && this.height === size.height) ||
-          (Array.isArray(size) && this.width === size[0] && this.height === size[1]))) ||
-      false
-    );
+  equals(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return w === this.width && h === this.height;
   }
 
   clone() {
-    return new Size(this.width, this.height);
+    return new Size(this);
   }
 
   toString() {
     return `{ width: ${this.width}, height: ${this.height} }`;
   }
 
-  add(size) {
-    return new Size(this.width + size.width, this.height + size.height);
+  add(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return new Size(this.width + w, this.height + h);
   }
 
-  subtract(size) {
-    return new Size(this.width - size.width, this.height - size.height);
+  subtract(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return new Size(this.width - w, this.height - h);
   }
 
-  multiply(size) {
-    return new Size(this.width * size.width, this.height * size.height);
+  multiply(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return new Size(this.width * w, this.height * h);
   }
 
-  divide(size) {
-    return new Size(this.width / size.width, this.height / size.height);
+  divide(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return new Size(this.width / w, this.height / h);
   }
 
-  modulo(size) {
-    return new Size(this.width % size.width, this.height % size.height);
+  modulo(...args) {
+    const [w, h] = getWidthAndHeightFromArguments(args);
+    return new Size(this.width % w, this.height % h);
   }
 
   negate() {
@@ -83,8 +69,7 @@ class Size {
   }
 
   isZero() {
-    const isZero = Numerical.isZero;
-    return isZero(this.width) && isZero(this.height);
+    return Numerical.isZero(this);
   }
 
   isNaN() {

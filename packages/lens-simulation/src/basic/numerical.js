@@ -1,5 +1,9 @@
 /*
- * Derived from:
+ * Derived from Paper.js, evolved with Ramda.js.
+ *
+ * Ramda.js - A practical functional library for JavaScript programmers.
+ * http://ramdajs.com
+ *
  * Paper.js - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
  *
@@ -10,6 +14,8 @@
  *
  * All rights reserved.
  */
+
+import { isZeroFromArguments } from './common';
 
 const EPSILON = 1e-12;
 const MACHINE_EPSILON = 1.12e-16;
@@ -298,16 +304,19 @@ class Numerical {
     return value < min ? min : value > max ? max : value;
   }
 
-  static isZero(val) {
-    return val >= -EPSILON && val <= EPSILON;
+  static isZero(...args) {
+    const testZeroFn = val => val >= -EPSILON && val <= EPSILON;
+    return isZeroFromArguments(testZeroFn)(args);
   }
 
-  static isMachineZero(val) {
-    return val >= -MACHINE_EPSILON && val <= MACHINE_EPSILON;
+  static isMachineZero(...args) {
+    const testZeroFn = val => val >= -MACHINE_EPSILON && val <= MACHINE_EPSILON;
+    return isZeroFromArguments(testZeroFn)(args);
   }
 
-  static isGeometricZero(val) {
-    return val >= -GEOMETRIC_EPSILON && val <= GEOMETRIC_EPSILON;
+  static isGeometricZero(...args) {
+    const testZeroFn = val => val >= -GEOMETRIC_EPSILON && val <= GEOMETRIC_EPSILON;
+    return isZeroFromArguments(testZeroFn)(args);
   }
 
   /**

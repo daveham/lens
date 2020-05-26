@@ -1,5 +1,9 @@
 /*
- * Derived from:
+ * Derived from Paper.js, evolved with Ramda.js.
+ *
+ * Ramda.js - A practical functional library for JavaScript programmers.
+ * http://ramdajs.com
+ *
  * Paper.js - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
  *
@@ -12,49 +16,53 @@
  */
 
 import Numerical from './numerical';
+import { getXAndYFromArguments } from './common';
+
+const toDegrees = radians => (radians * 180) / Math.PI;
+const toRadians = degrees => (degrees * Math.PI) / 180;
+
+// angle is in radians
+const locationFromLengthAndAngle = (length, angle = 0) =>
+  length ? [Math.cos(angle) * length, Math.sin(angle) * length] : [0, 0];
+
+const rotateLocation = (angle, x, y) => {
+  const sin = Math.sin(angle);
+  const cos = Math.cos(angle);
+  return [x * cos - y * sin, x * sin + y * cos];
+};
 
 class Point {
   x;
   y;
 
-  constructor(arg0, arg1) {
-    const type = typeof arg0;
-    if (type === 'number') {
-      this.x = arg0;
-      this.y = arg1;
-    } else if (type === 'undefined' || arg0 === null) {
-      this.x = 0;
-      this.y = 0;
-    } else if (Array.isArray(arg0)) {
-      this.x = arg0[0];
-      this.y = arg0[1];
-    } else if ('x' in arg0) {
-      this.x = arg0.x;
-      this.y = arg0.y || 0;
-    } else if ('width' in arg0) {
-      this.x = arg0.width;
-      this.y = arg0.height || 0;
-    } else if ('angle' in arg0) {
-      this.x = arg0.length || 0;
-      this.y = 0;
-      this.setAngle(arg0.angle || 0);
-    } else {
-      this.x = 0;
-      this.y = 0;
+  constructor(...args) {
+    let angleFlag;
+    [this.x, this.y, angleFlag] = getXAndYFromArguments(args);
+
+    if (angleFlag) {
+      // The argument was a point specified with length and angle (in degrees)
+      // so an extra step is required to get x, y from length, angle.
+      // Currently, this.x = requested length, this.y = requested angle (degrees).
+      this._angle = toRadians(this.y);
+      [this.x, this.y] = rotateLocation(this._angle, this.x, 0);
     }
   }
 
-  equals(point) {
-    return (
-      this === point ||
-      (point && this.x === point.x && this.y === point.y) ||
-      (Array.isArray(point) && this.x === point[0] && this.y === point[1]) ||
-      false
-    );
+  equals(...args) {
+    let [x, y, angleFlag] = getXAndYFromArguments(args);
+
+    if (angleFlag) {
+      // The argument was a point specified with length and angle (in degrees)
+      // so an extra step is required to get x, y from length, angle.
+      // Currently, this.x = requested length, this.y = requested angle (degrees).
+      [x, y] = rotateLocation(toRadians(y), x, 0);
+    }
+
+    return Numerical.isZero(this.subtract([x, y]));
   }
 
   clone() {
-    return new Point(this.x, this.y);
+    return new Point(this);
   }
 
   toString() {
@@ -62,8 +70,7 @@ class Point {
   }
 
   isZero() {
-    const isZero = Numerical.isZero;
-    return isZero(this.x) && isZero(this.y);
+    return Numerical.isZero(this);
   }
 
   getLength() {
@@ -72,9 +79,7 @@ class Point {
 
   setLength(length) {
     if (this.isZero()) {
-      const angle = this._angle || 0;
-      this.x = Math.cos(angle) * length;
-      this.y = Math.sin(angle) * length;
+      [this.x, this.y] = locationFromLengthAndAngle(length, this._angle);
     } else {
       const scale = length / this.getLength();
       // Force calculation of angle now, so it will be preserved even when
@@ -103,27 +108,25 @@ class Point {
     this.setLength(value);
   }
 
-  getAngleInRadians(/* point */) {
-    if (!arguments.length) {
-      if (this.isZero()) {
-        // Return the preserved angle in case the vector has no
-        // length, and update the internal _angle in case the
-        // vector has a length. See #setAngle() for more
-        // explanations.
-        return this._angle || 0;
-      }
-      this._angle = Math.atan2(this.y, this.x);
-      return this._angle;
-    } else {
-      const point = new Point(...arguments);
+  getAngleInRadians(/* point */ ...args) {
+    if (args.length) {
+      const point = new Point(...args);
       const div = this.getLength() * point.getLength();
       if (Numerical.isZero(div)) {
         return NaN;
-      } else {
-        const a = this.dot(point) / div;
-        return Math.acos(a < -1 ? -1 : a > 1 ? 1 : a);
       }
+      const a = this.dot(point) / div;
+      return Math.acos(a < -1 ? -1 : a > 1 ? 1 : a);
     }
+
+    if (!this.isZero()) {
+      this._angle = Math.atan2(this.y, this.x);
+    }
+    // Return the preserved angle in case the vector has no
+    // length, and update the internal _angle in case the
+    // vector has a length. See #setAngle() for more
+    // explanations.
+    return this._angle || 0;
   }
 
   setAngleInRadians(angle) {
@@ -133,18 +136,18 @@ class Point {
     // since updating x / y does not automatically change _angle!
     this._angle = angle;
     if (!this.isZero()) {
-      const length = this.getLength();
-      this.x = Math.cos(angle) * length;
-      this.y = Math.sin(angle) * length;
+      [this.x, this.y] = locationFromLengthAndAngle(this.getLength(), angle);
     }
   }
 
-  getAngle(/* point */) {
-    return (this.getAngleInRadians.apply(this, arguments) * 180) / Math.PI;
+  // Returns the smaller angle between two vectors. The angle is unsigned, no
+  // information about rotational direction is given.
+  getAngle(/* point */ ...args) {
+    return toDegrees(this.getAngleInRadians(...args));
   }
 
   setAngle(angle) {
-    this.setAngleInRadians((angle * Math.PI) / 180);
+    this.setAngleInRadians(toRadians(angle));
   }
 
   getQuadrant() {
@@ -177,12 +180,14 @@ class Point {
     return this.x * (q > 1 && q < 4 ? -1 : 1) >= 0 && this.y * (q > 2 ? -1 : 1) >= 0;
   }
 
-  dot(point) {
-    return this.x * point.x + this.y * point.y;
+  dot(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return this.x * x + this.y * y;
   }
 
-  cross(point) {
-    return this.x * point.y - this.y * point.x;
+  cross(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return this.x * y - this.y * x;
   }
 
   project(point) {
@@ -191,7 +196,7 @@ class Point {
   }
 
   getDirectedAngle(point) {
-    return (Math.atan2(this.cross(point), this.dot(point)) * 180) / Math.PI;
+    return toDegrees(Math.atan2(this.cross(point), this.dot(point)));
   }
 
   /**
@@ -225,11 +230,8 @@ class Point {
     if (angle === 0) {
       return this.clone();
     }
-    angle = (angle * Math.PI) / 180;
     const { x, y } = center ? this.subtract(center) : this;
-    const sin = Math.sin(angle);
-    const cos = Math.cos(angle);
-    const point = new Point(x * cos - y * sin, x * sin + y * cos);
+    const point = new Point(rotateLocation(toRadians(angle), x, y));
     return center ? point.add(center) : point;
   }
 
@@ -241,24 +243,29 @@ class Point {
     return matrix ? matrix._transformPoint(this) : this;
   }
 
-  add(point) {
-    return new Point(this.x + point.x, this.y + point.y);
+  add(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return new Point(this.x + x, this.y + y);
   }
 
-  subtract(point) {
-    return new Point(this.x - point.x, this.y - point.y);
+  subtract(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return new Point(this.x - x, this.y - y);
   }
 
-  multiply(point) {
-    return new Point(this.x * point.x, this.y * point.y);
+  multiply(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return new Point(this.x * x, this.y * y);
   }
 
-  divide(point) {
-    return new Point(this.x / point.x, this.y / point.y);
+  divide(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return new Point(this.x / x, this.y / y);
   }
 
-  modulo(point) {
-    return new Point(this.x % point.x, this.y % point.y);
+  modulo(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return new Point(this.x % x, this.y % y);
   }
 
   negate() {
@@ -269,12 +276,14 @@ class Point {
     return rect.contains(this);
   }
 
-  isCollinear(point) {
-    return Point.isCollinear(this.x, this.y, point.x, point.y);
+  isCollinear(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return Point.isCollinear(this.x, this.y, x, y);
   }
 
-  isOrthogonal(point) {
-    return Point.isOrthogonal(this.x, this.y, point.x, point.y);
+  isOrthogonal(...args) {
+    const [x, y] = getXAndYFromArguments(args);
+    return Point.isOrthogonal(this.x, this.y, x, y);
   }
 
   isNaN() {

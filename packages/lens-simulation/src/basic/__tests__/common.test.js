@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 import {
+  getWidthAndHeightFrom,
   getWidthAndHeightFromArguments,
   getXAndYFromArguments,
   isHeadEmpty,
@@ -39,6 +40,32 @@ describe('common', () => {
       20,
       0,
     ]);
+  });
+
+  describe('getWidthAndHeightFrom', () => {
+    test('from [10, 20]', () => {
+      expect(getWidthAndHeightFrom([10, 20])).toEqual([10, 20]);
+    });
+
+    test('from { width: 10, height: 20 }', () => {
+      expect(getWidthAndHeightFrom({ width: 10, height: 20 })).toEqual([10, 20]);
+    });
+
+    test('from { width: 10 } defaults height to 0', () => {
+      expect(getWidthAndHeightFrom({ width: 10 })).toEqual([10, 0]);
+    });
+
+    test('from { x: 10, y: 20 }', () => {
+      expect(getWidthAndHeightFrom({ x: 10, y: 20 })).toEqual([10, 20]);
+    });
+
+    test('from { x: 10 } defaults y to 0', () => {
+      expect(getWidthAndHeightFrom({ x: 10 })).toEqual([10, 0]);
+    });
+
+    test('from empty', () => {
+      expect(getWidthAndHeightFrom(null)).toEqual([0, 0]);
+    });
   });
 
   describe('getWidthAndHeightFromArguments', () => {

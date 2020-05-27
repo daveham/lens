@@ -16,7 +16,7 @@
  */
 
 import Numerical from './numerical';
-import { getXAndYFromArguments } from './common';
+import { getXAndYFrom, getXAndYFromArguments } from './common';
 
 const toDegrees = radians => (radians * 180) / Math.PI;
 const toRadians = degrees => (degrees * Math.PI) / 180;
@@ -154,10 +154,11 @@ class Point {
     return this.x >= 0 ? (this.y >= 0 ? 1 : 4) : this.y >= 0 ? 2 : 3;
   }
 
-  getDistance(point, squared) {
-    const x = point.x - this.x;
-    const y = point.y - this.y;
-    const d = x * x + y * y;
+  getDistance(/* point */ arg0, squared = false) {
+    const [x, y] = getXAndYFrom(arg0);
+    const dx = x - this.x;
+    const dy = y - this.y;
+    const d = dx * dx + dy * dy;
     return squared ? d : Math.sqrt(d);
   }
 
@@ -180,12 +181,12 @@ class Point {
     return this.x * (q > 1 && q < 4 ? -1 : 1) >= 0 && this.y * (q > 2 ? -1 : 1) >= 0;
   }
 
-  dot(...args) {
+  dot(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return this.x * x + this.y * y;
   }
 
-  cross(...args) {
+  cross(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return this.x * y - this.y * x;
   }
@@ -243,27 +244,27 @@ class Point {
     return matrix ? matrix._transformPoint(this) : this;
   }
 
-  add(...args) {
+  add(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return new Point(this.x + x, this.y + y);
   }
 
-  subtract(...args) {
+  subtract(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return new Point(this.x - x, this.y - y);
   }
 
-  multiply(...args) {
+  multiply(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return new Point(this.x * x, this.y * y);
   }
 
-  divide(...args) {
+  divide(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return new Point(this.x / x, this.y / y);
   }
 
-  modulo(...args) {
+  modulo(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return new Point(this.x % x, this.y % y);
   }
@@ -276,12 +277,12 @@ class Point {
     return rect.contains(this);
   }
 
-  isCollinear(...args) {
+  isCollinear(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return Point.isCollinear(this.x, this.y, x, y);
   }
 
-  isOrthogonal(...args) {
+  isOrthogonal(/* point */ ...args) {
     const [x, y] = getXAndYFromArguments(args);
     return Point.isOrthogonal(this.x, this.y, x, y);
   }
@@ -306,12 +307,16 @@ class Point {
     return new Point(Math.abs(this.x), Math.abs(this.y));
   }
 
-  static min(point1, point2) {
-    return new Point(Math.min(point1.x, point2.x), Math.min(point1.y, point2.y));
+  static min(/* point */ arg0, /* point */ arg1) {
+    const [x0, y0] = getXAndYFrom(arg0);
+    const [x1, y1] = getXAndYFrom(arg1);
+    return new Point(Math.min(x0, x1), Math.min(y0, y1));
   }
 
-  static max(point1, point2) {
-    return new Point(Math.max(point1.x, point2.x), Math.max(point1.y, point2.y));
+  static max(/* point */ arg0, /* point */ arg1) {
+    const [x0, y0] = getXAndYFrom(arg0);
+    const [x1, y1] = getXAndYFrom(arg1);
+    return new Point(Math.max(x0, x1), Math.max(y0, y1));
   }
 
   static random() {

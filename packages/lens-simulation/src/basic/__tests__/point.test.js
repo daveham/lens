@@ -148,4 +148,24 @@ describe('Point', () => {
     const point = new Point([10, 20]).clone();
     expect(point.toString()).toEqual('{ x: 10, y: 20 }');
   });
+
+  test('min(point, point)', () => {
+    const point = Point.min(new Point(4, 6), new Point(9, 2));
+    expect(point.toString()).toEqual('{ x: 4, y: 2 }');
+  });
+
+  test('min(point, array)', () => {
+    const point = Point.min(new Point(4, 6), [9, 2]);
+    expect(point.toString()).toEqual('{ x: 4, y: 2 }');
+  });
+
+  test('max(point, point)', () => {
+    const point = Point.max(new Point(4, 6), new Point(9, 2));
+    expect(point.toString()).toEqual('{ x: 9, y: 6 }');
+  });
+
+  test('max(point, array)', () => {
+    const point = Point.max(new Point(4, 6), [9, 2]);
+    expect(point.toString()).toEqual('{ x: 9, y: 6 }');
+  });
 });

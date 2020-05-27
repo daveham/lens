@@ -6,55 +6,59 @@ const pointProps = ['x', 'y'];
 const pointAngleProps = ['length', 'angle'];
 
 export const isHeadNumber = R.pipe(R.head, RA.isNumber);
-export const isHeadArray = R.pipe(R.head, RA.isArray);
 export const isHeadEmpty = R.pipe(R.head, RA.isNilOrEmpty);
-export const isHeadWidthProperty = R.pipe(R.head, R.has('width'));
-export const isHeadXProperty = R.pipe(R.head, R.has('x'));
-export const isHeadAngleProperty = R.pipe(R.head, R.has('angle'));
 
 export const defaultUndefinedItemsToZero = R.map(R.defaultTo(0));
-export const widthAndHeightFromObject = R.pipe(
-  R.head,
-  R.props(sizeProps),
-  defaultUndefinedItemsToZero,
-);
-export const xAndYFromObject = R.pipe(R.head, R.props(pointProps), defaultUndefinedItemsToZero);
-export const angleAndLengthFromObject = R.pipe(
-  R.head,
+export const twoEmptyNumbers = R.always([0, 0]);
+export const takeTwo = R.take(2);
+
+export const pipeSizeProps = R.pipe(R.props(sizeProps), defaultUndefinedItemsToZero);
+export const pipePointProps = R.pipe(R.props(pointProps), defaultUndefinedItemsToZero);
+export const pipeAngleProps = R.pipe(
   R.props(pointAngleProps),
   defaultUndefinedItemsToZero,
   R.append(true),
 );
-export const takeTwoNumbers = R.take(2);
-export const takeTwoNumbersFromArray = R.pipe(R.head, takeTwoNumbers);
-export const twoEmptyNumbers = R.always([0, 0]); // () => [0, 0];
+
+export const getWidthAndHeightFrom = R.cond([
+  [RA.isArray, takeTwo],
+  [R.has('width'), pipeSizeProps],
+  [RA.isNilOrEmpty, twoEmptyNumbers],
+  [R.has('x'), pipePointProps],
+  [R.T, twoEmptyNumbers],
+]);
 
 export const getWidthAndHeightFromArguments = R.cond([
-  [isHeadNumber, takeTwoNumbers],
-  [isHeadArray, takeTwoNumbersFromArray],
-  [isHeadWidthProperty, widthAndHeightFromObject],
-  [isHeadEmpty, twoEmptyNumbers],
-  [isHeadXProperty, xAndYFromObject],
+  [isHeadNumber, takeTwo],
+  [R.T, R.pipe(R.head, getWidthAndHeightFrom)],
+]);
+
+export const getXAndYFrom = R.cond([
+  [RA.isArray, takeTwo],
+  [R.has('x'), pipePointProps],
+  [R.has('width'), pipeSizeProps],
+  [R.has('angle'), pipeAngleProps],
+  [RA.isNilOrEmpty, twoEmptyNumbers],
   [R.T, twoEmptyNumbers],
 ]);
 
 export const getXAndYFromArguments = R.cond([
-  [isHeadNumber, takeTwoNumbers],
-  [isHeadArray, takeTwoNumbersFromArray],
-  [isHeadXProperty, xAndYFromObject],
-  [isHeadWidthProperty, widthAndHeightFromObject],
-  [isHeadAngleProperty, angleAndLengthFromObject], // need to signal post processing of angle
-  [isHeadEmpty, twoEmptyNumbers],
-  [R.T, twoEmptyNumbers],
+  [isHeadNumber, takeTwo],
+  [R.T, R.pipe(R.head, getXAndYFrom)],
 ]);
 
-export const isZeroFromArguments = zeroTestFn => {
+export const isZeroFrom = zeroTestFn => {
   const curryZeroTestFn = R.curry(zeroTestFn);
   return R.cond([
-    [isHeadNumber, R.pipe(R.head, curryZeroTestFn)],
-    [isHeadArray, R.pipe(R.head, R.all(curryZeroTestFn))],
-    [isHeadXProperty, R.pipe(R.head, R.props(pointProps), R.all(curryZeroTestFn))],
-    [isHeadWidthProperty, R.pipe(R.head, R.props(sizeProps), R.any(curryZeroTestFn))],
+    [RA.isArray, R.all(curryZeroTestFn)],
+    [R.has('x'), R.pipe(R.props(pointProps), R.all(curryZeroTestFn))],
+    [R.has('width'), R.pipe(R.props(sizeProps), R.any(curryZeroTestFn))],
     [R.T, R.always(false)],
   ]);
 };
+
+export const isZeroFromArguments = zeroTestFn =>
+  R.cond([
+    [isHeadNumber, R.pipe(R.head, R.curry(zeroTestFn))],
+    [R.T, R.pipe(R.head, isZeroFrom(zeroTestFn))],
+  ]);

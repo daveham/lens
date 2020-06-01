@@ -1,5 +1,9 @@
 /*
- * Derived from:
+ * Derived from Paper.js, evolved with Ramda.js.
+ *
+ * Ramda.js - A practical functional library for JavaScript programmers.
+ * http://ramdajs.com
+ *
  * Paper.js - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
  *
@@ -15,13 +19,32 @@ import Numerical from './numerical';
 import Point from './point';
 import Size from './size';
 
+import {
+  getRectParamsFromArguments,
+  getRectParamsFromOneArg,
+  getSizeParamsFromArguments,
+} from './common';
+
+const getRectParamsUsingPrototype = options => {
+  const proto = new Rectangle();
+  Object.keys(options).forEach(k => (proto[k] = options[k]));
+  return [proto.x, proto.y, proto.width, proto.height];
+};
+
 class Rectangle {
   x;
   y;
   width;
   height;
 
-  constructor(arg0, arg1, arg2, arg3) {
+  constructor(...args) {
+    let rectParams = getRectParamsFromArguments(args);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(args[0]);
+    }
+    [this.x, this.y, this.width, this.height] = rectParams;
+
+    /*
     const args = arguments;
     const type = typeof arg0;
     if (type === 'number') {
@@ -101,22 +124,21 @@ class Rectangle {
       this.y = this.y + this.height;
       this.height = -this.height;
     }
+   */
   }
 
   clone() {
     return new Rectangle(this.x, this.y, this.width, this.height);
   }
 
-  equals(rect) {
-    return (
-      rect === this ||
-      (rect &&
-        this.x === rect.x &&
-        this.y === rect.y &&
-        this.width === rect.width &&
-        this.height === rect.height) ||
-      false
-    );
+  equals(/* rect */ ...args) {
+    let rectParams = getRectParamsFromArguments(args);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(args[0]);
+    }
+    const [x, y, width, height] = rectParams;
+
+    return this.x === x && this.y === y && this.width === width && this.height === height;
   }
 
   toString() {
@@ -141,12 +163,10 @@ class Rectangle {
   _sx;
   _sy;
 
-  setSize(size) {
+  setSize(/* size */ ...args) {
+    const [w, h] = getSizeParamsFromArguments(args);
     const sx = this._sx;
     const sy = this._sy;
-    const sizeIsArray = Array.isArray(size);
-    const w = sizeIsArray ? size[0] : size.width;
-    const h = sizeIsArray ? size[1] : size.height;
     // Keep track of how dimensions were specified through this._s*
     // attributes.
     // _sx / _sy can either be 0 (left), 0.5 (center) or 1 (right), and is
@@ -277,7 +297,7 @@ class Rectangle {
     return new Point(this.getCenterX(), this.getCenterY());
   }
 
-  setCenter(value) {
+  setCenter(/* point */ value) {
     const isValueArray = Array.isArray(value);
     this.setCenterX(isValueArray ? value[0] : value.x);
     this.setCenterY(isValueArray ? value[1] : value.y);
@@ -307,7 +327,13 @@ class Rectangle {
     return x >= this.x && y >= this.y && x <= this.x + this.width && y <= this.y + this.height;
   }
 
-  containsRectangle({ x, y, width, height }) {
+  containsRectangle(/* rect */ ...args) {
+    let rectParams = getRectParamsFromArguments(args);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(args[0]);
+    }
+    const [x, y, width, height] = rectParams;
+
     return (
       x >= this.x &&
       y >= this.y &&
@@ -316,7 +342,13 @@ class Rectangle {
     );
   }
 
-  intersects({ x, y, width, height }, epsilon = Numerical.GEOMETRIC_EPSILON) {
+  intersects(/* rect */ arg0, epsilon = Numerical.GEOMETRIC_EPSILON) {
+    let rectParams = getRectParamsFromOneArg(arg0);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(arg0);
+    }
+    const [x, y, width, height] = rectParams;
+
     return (
       x + width > this.x - epsilon &&
       y + height > this.y - epsilon &&
@@ -325,7 +357,13 @@ class Rectangle {
     );
   }
 
-  intersect({ x, y, width, height }) {
+  intersect(/* rect */ ...args) {
+    let rectParams = getRectParamsFromArguments(args);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(args[0]);
+    }
+    const [x, y, width, height] = rectParams;
+
     const x1 = Math.max(this.x, x);
     const y1 = Math.max(this.y, y);
     const x2 = Math.min(this.x + this.width, x + width);
@@ -333,7 +371,13 @@ class Rectangle {
     return new Rectangle(x1, y1, x2 - x1, y2 - y1);
   }
 
-  unite({ x, y, width, height }) {
+  unite(/* rect */ ...args) {
+    let rectParams = getRectParamsFromArguments(args);
+    if (!Array.isArray(rectParams)) {
+      rectParams = getRectParamsUsingPrototype(args[0]);
+    }
+    const [x, y, width, height] = rectParams;
+
     const x1 = Math.min(this.x, x);
     const y1 = Math.min(this.y, y);
     const x2 = Math.max(this.x + this.width, x + width);
@@ -341,7 +385,7 @@ class Rectangle {
     return new Rectangle(x1, y1, x2 - x1, y2 - y1);
   }
 
-  include(arg0) {
+  include(/* point */ arg0) {
     const argIsArray = Array.isArray(arg0);
     const x = argIsArray ? arg0[0] : arg0.x;
     const y = argIsArray ? arg0[1] : arg0.y;
@@ -460,13 +504,9 @@ class Rectangle {
   }
 
   set topLeft(value) {
-    if (Array.isArray(value)) {
-      this.setLeft(value[0]);
-      this.setTop(value[1]);
-    } else {
-      this.setLeft(value.x);
-      this.setTop(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setLeft(isArray ? value[0] : value.x);
+    this.setTop(isArray ? value[1] : value.y);
   }
 
   get topRight() {
@@ -474,13 +514,9 @@ class Rectangle {
   }
 
   set topRight(value) {
-    if (Array.isArray(value)) {
-      this.setRight(value[0]);
-      this.setTop(value[1]);
-    } else {
-      this.setRight(value.x);
-      this.setTop(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setRight(isArray ? value[0] : value.x);
+    this.setTop(isArray ? value[1] : value.y);
   }
 
   get bottomLeft() {
@@ -488,13 +524,9 @@ class Rectangle {
   }
 
   set bottomLeft(value) {
-    if (Array.isArray(value)) {
-      this.setLeft(value[0]);
-      this.setBottom(value[1]);
-    } else {
-      this.setLeft(value.x);
-      this.setBottom(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setLeft(isArray ? value[0] : value.x);
+    this.setBottom(isArray ? value[1] : value.y);
   }
 
   get bottomRight() {
@@ -502,13 +534,9 @@ class Rectangle {
   }
 
   set bottomRight(value) {
-    if (Array.isArray(value)) {
-      this.setRight(value[0]);
-      this.setBottom(value[1]);
-    } else {
-      this.setRight(value.x);
-      this.setBottom(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setRight(isArray ? value[0] : value.x);
+    this.setBottom(isArray ? value[1] : value.y);
   }
 
   get leftCenter() {
@@ -516,13 +544,9 @@ class Rectangle {
   }
 
   set leftCenter(value) {
-    if (Array.isArray(value)) {
-      this.setLeft(value[0]);
-      this.setCenterY(value[1]);
-    } else {
-      this.setLeft(value.x);
-      this.setCenterY(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setLeft(isArray ? value[0] : value.x);
+    this.setCenterY(isArray ? value[1] : value.y);
   }
 
   get topCenter() {
@@ -530,13 +554,9 @@ class Rectangle {
   }
 
   set topCenter(value) {
-    if (Array.isArray(value)) {
-      this.setCenterX(value[0]);
-      this.setTop(value[1]);
-    } else {
-      this.setCenterX(value.x);
-      this.setTop(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setCenterX(isArray ? value[0] : value.x);
+    this.setTop(isArray ? value[1] : value.y);
   }
 
   get rightCenter() {
@@ -544,13 +564,9 @@ class Rectangle {
   }
 
   set rightCenter(value) {
-    if (Array.isArray(value)) {
-      this.setRight(value[0]);
-      this.setCenterY(value[1]);
-    } else {
-      this.setRight(value.x);
-      this.setCenterY(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setRight(isArray ? value[0] : value.x);
+    this.setCenterY(isArray ? value[1] : value.y);
   }
 
   get bottomCenter() {
@@ -558,13 +574,9 @@ class Rectangle {
   }
 
   set bottomCenter(value) {
-    if (Array.isArray(value)) {
-      this.setCenterX(value[0]);
-      this.setBottom(value[1]);
-    } else {
-      this.setCenterX(value.x);
-      this.setBottom(value.y);
-    }
+    const isArray = Array.isArray(value);
+    this.setCenterX(isArray ? value[0] : value.x);
+    this.setBottom(isArray ? value[1] : value.y);
   }
 }
 

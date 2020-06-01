@@ -16,18 +16,18 @@
  */
 
 import Numerical from './numerical';
-import { getWidthAndHeightFromArguments } from './common';
+import { getSizeParamsFromArguments } from './common';
 
 class Size {
   width;
   height;
 
   constructor(...args) {
-    [this.width, this.height] = getWidthAndHeightFromArguments(args);
+    [this.width, this.height] = getSizeParamsFromArguments(args);
   }
 
   equals(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return w === this.width && h === this.height;
   }
 
@@ -40,27 +40,27 @@ class Size {
   }
 
   add(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return new Size(this.width + w, this.height + h);
   }
 
   subtract(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return new Size(this.width - w, this.height - h);
   }
 
   multiply(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return new Size(this.width * w, this.height * h);
   }
 
   divide(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return new Size(this.width / w, this.height / h);
   }
 
   modulo(...args) {
-    const [w, h] = getWidthAndHeightFromArguments(args);
+    const [w, h] = getSizeParamsFromArguments(args);
     return new Size(this.width % w, this.height % h);
   }
 

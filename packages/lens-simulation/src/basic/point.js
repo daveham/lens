@@ -16,7 +16,7 @@
  */
 
 import Numerical from './numerical';
-import { getXAndYFrom, getXAndYFromArguments } from './common';
+import { getPointParams, getPointParamsFromArguments } from './common';
 
 const toDegrees = radians => (radians * 180) / Math.PI;
 const toRadians = degrees => (degrees * Math.PI) / 180;
@@ -37,7 +37,7 @@ class Point {
 
   constructor(...args) {
     let angleFlag;
-    [this.x, this.y, angleFlag] = getXAndYFromArguments(args);
+    [this.x, this.y, angleFlag] = getPointParamsFromArguments(args);
 
     if (angleFlag) {
       // The argument was a point specified with length and angle (in degrees)
@@ -49,7 +49,7 @@ class Point {
   }
 
   equals(...args) {
-    let [x, y, angleFlag] = getXAndYFromArguments(args);
+    let [x, y, angleFlag] = getPointParamsFromArguments(args);
 
     if (angleFlag) {
       // The argument was a point specified with length and angle (in degrees)
@@ -155,7 +155,7 @@ class Point {
   }
 
   getDistance(/* point */ arg0, squared = false) {
-    const [x, y] = getXAndYFrom(arg0);
+    const [x, y] = getPointParams(arg0);
     const dx = x - this.x;
     const dy = y - this.y;
     const d = dx * dx + dy * dy;
@@ -182,12 +182,12 @@ class Point {
   }
 
   dot(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return this.x * x + this.y * y;
   }
 
   cross(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return this.x * y - this.y * x;
   }
 
@@ -206,12 +206,9 @@ class Point {
    * parameter defines the length to normalize to. The object itself is not
    * modified!
    */
-  normalize(length) {
-    if (length === undefined) {
-      length = 1;
-    }
-    const current = this.getLength();
-    const scale = current !== 0 ? length / current : 0;
+  normalize(length = 1) {
+    const currentLength = this.getLength();
+    const scale = currentLength ? length / currentLength : 0;
     const point = new Point(this.x * scale, this.y * scale);
     // Preserve angle.
     if (scale >= 0) {
@@ -245,27 +242,27 @@ class Point {
   }
 
   add(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return new Point(this.x + x, this.y + y);
   }
 
   subtract(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return new Point(this.x - x, this.y - y);
   }
 
   multiply(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return new Point(this.x * x, this.y * y);
   }
 
   divide(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return new Point(this.x / x, this.y / y);
   }
 
   modulo(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return new Point(this.x % x, this.y % y);
   }
 
@@ -278,12 +275,12 @@ class Point {
   }
 
   isCollinear(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return Point.isCollinear(this.x, this.y, x, y);
   }
 
   isOrthogonal(/* point */ ...args) {
-    const [x, y] = getXAndYFromArguments(args);
+    const [x, y] = getPointParamsFromArguments(args);
     return Point.isOrthogonal(this.x, this.y, x, y);
   }
 
@@ -308,14 +305,14 @@ class Point {
   }
 
   static min(/* point */ arg0, /* point */ arg1) {
-    const [x0, y0] = getXAndYFrom(arg0);
-    const [x1, y1] = getXAndYFrom(arg1);
+    const [x0, y0] = getPointParams(arg0);
+    const [x1, y1] = getPointParams(arg1);
     return new Point(Math.min(x0, x1), Math.min(y0, y1));
   }
 
   static max(/* point */ arg0, /* point */ arg1) {
-    const [x0, y0] = getXAndYFrom(arg0);
-    const [x1, y1] = getXAndYFrom(arg1);
+    const [x0, y0] = getPointParams(arg0);
+    const [x1, y1] = getPointParams(arg1);
     return new Point(Math.max(x0, x1), Math.max(y0, y1));
   }
 

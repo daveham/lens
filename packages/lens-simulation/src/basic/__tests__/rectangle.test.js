@@ -16,37 +16,48 @@ import Point from '../point';
 import Size from '../size';
 import Rectangle from '../rectangle';
 
-describe('Size', () => {
+describe('Rectangle', () => {
   test('new Rectangle(Point, Size)', () => {
     const rect = new Rectangle(new Point(10, 20), new Size(30, 40));
-    expect(rect).toEqual(new Rectangle(10, 20, 30, 40));
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle({ point, size })', () => {
-    let rect = new Rectangle({ point: [10, 20], size: [30, 40] });
-    expect(rect).toEqual(new Rectangle(10, 20, 30, 40));
-    rect = new Rectangle({ point: new Point(10, 20), size: new Size(30, 40) });
-    expect(rect).toEqual(new Rectangle(10, 20, 30, 40));
+    let rect = new Rectangle({ point: new Point(10, 20), size: new Size(30, 40) });
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
+
+    rect = new Rectangle({ point: [10, 20], size: [30, 40] });
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle(Array, Array)', () => {
     const rect = new Rectangle([10, 20], [30, 40]);
-    expect(rect).toEqual(new Rectangle(10, 20, 30, 40));
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle(Point, Point)', () => {
-    const rect = new Rectangle(new Point(10, 20), new Point(30, 40));
-    expect(rect).toEqual(new Rectangle(10, 20, 20, 20));
+    const rect = new Rectangle(new Point(10, 20), new Point(33, 48));
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 23, height: 28 }');
+  });
+
+  test('new Rectangle(Point, Point, reversed)', () => {
+    const rect = new Rectangle(new Point(33, 48), new Point(10, 20));
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 23, height: 28 }');
+  });
+
+  test('new Rectangle({ top, left, right, bottom })', () => {
+    const rect = new Rectangle({ left: 10, top: 20, right: 40, bottom: 60 });
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle({ from, to })', () => {
-    const rect = new Rectangle({ from: [10, 20], to: [30, 40] });
-    expect(rect).toEqual(new Rectangle(10, 20, 20, 20));
+    const rect = new Rectangle({ from: [10, 20], to: [40, 60] });
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle({ to, from })', () => {
-    const rect = new Rectangle({ to: [10, 20], from: [30, 40] });
-    expect(rect).toEqual(new Rectangle(10, 20, 20, 20));
+    const rect = new Rectangle({ to: [10, 20], from: [40, 60] });
+    expect(rect.toString()).toEqual('{ x: 10, y: 20, width: 30, height: 40 }');
   });
 
   test('new Rectangle(x, y, width, height)', () => {
@@ -61,19 +72,20 @@ describe('Size', () => {
 
   test('new Rectangle(object)', () => {
     const expected = new Rectangle(100, 50, 100, 200);
-    const equalRect = new Rectangle({
+    const equalRectString = new Rectangle({
       top: expected.top,
       right: expected.right,
       bottom: expected.bottom,
       left: expected.left,
-    });
+    }).toString();
 
     function testProperties(key1, key2) {
       const obj = {};
       obj[key1] = expected[key1];
       obj[key2] = expected[key2];
+      console.log('testing ctor with', { obj });
       const rect = new Rectangle(obj);
-      expect(rect).toEqual(equalRect);
+      expect(rect.toString()).toEqual(equalRectString);
     }
 
     const tests = [
@@ -246,6 +258,16 @@ describe('Size', () => {
     rect1 = new Rectangle(160, 270, 20, 20);
     rect2 = new Rectangle(170.5, 280.5, 19, 19);
     expect(rect1.intersects(rect2)).toBeTruthy();
+  });
+
+  test('rect1.intersects(rect2 from array)', () => {
+    let rect1 = new Rectangle(160, 270, 20, 20);
+    let rect2Array = [195, 301, 19, 19];
+    expect(rect1.intersects(rect2Array)).toBeFalsy();
+
+    rect1 = new Rectangle(160, 270, 20, 20);
+    rect2Array = [170.5, 280.5, 19, 19];
+    expect(rect1.intersects(rect2Array)).toBeTruthy();
   });
 
   test('rect1.contains(rect2)', () => {

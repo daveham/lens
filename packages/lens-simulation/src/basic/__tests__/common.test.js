@@ -1,22 +1,26 @@
 import * as R from 'ramda';
 
 import {
-  getWidthAndHeightFrom,
-  getWidthAndHeightFromArguments,
-  getXAndYFromArguments,
-  isHeadEmpty,
+  getSizeParams,
+  getSizeParamsFromArguments,
+  getPointParamsFromArguments,
+  getRectParamsFromArguments,
   isZeroFromArguments,
-  twoEmptyNumbers,
 } from '../common';
 
 function testSizeWith(...args) {
   console.log('testSizeWith', { a: arguments, args });
-  return getWidthAndHeightFromArguments(args);
+  return getSizeParamsFromArguments(args);
 }
 
 function testPointWith(...args) {
   console.log('testPointWith', { a: arguments, args });
-  return getXAndYFromArguments(args);
+  return getPointParamsFromArguments(args);
+}
+
+function testRectWith(...args) {
+  console.log('testRectWith', { a: arguments, args });
+  return getRectParamsFromArguments(args);
 }
 
 function testZeroWith(fn, ...args) {
@@ -25,14 +29,6 @@ function testZeroWith(fn, ...args) {
 }
 
 describe('common', () => {
-  test('isEmpty', () => {
-    expect(isHeadEmpty([])).toBeTruthy();
-  });
-
-  test('twoEmptyNumbers', () => {
-    expect(twoEmptyNumbers([])).toEqual([0, 0]);
-  });
-
   test('two props with null check', () => {
     expect(R.props(['width', 'height'])({ width: 20, height: 10 })).toEqual([20, 10]);
     expect(R.props(['width', 'height'])({ width: 20 })).toEqual([20, undefined]);
@@ -42,33 +38,33 @@ describe('common', () => {
     ]);
   });
 
-  describe('getWidthAndHeightFrom', () => {
+  describe('getSizeParamsFrom', () => {
     test('from [10, 20]', () => {
-      expect(getWidthAndHeightFrom([10, 20])).toEqual([10, 20]);
+      expect(getSizeParams([10, 20])).toEqual([10, 20]);
     });
 
     test('from { width: 10, height: 20 }', () => {
-      expect(getWidthAndHeightFrom({ width: 10, height: 20 })).toEqual([10, 20]);
+      expect(getSizeParams({ width: 10, height: 20 })).toEqual([10, 20]);
     });
 
     test('from { width: 10 } defaults height to 0', () => {
-      expect(getWidthAndHeightFrom({ width: 10 })).toEqual([10, 0]);
+      expect(getSizeParams({ width: 10 })).toEqual([10, 0]);
     });
 
     test('from { x: 10, y: 20 }', () => {
-      expect(getWidthAndHeightFrom({ x: 10, y: 20 })).toEqual([10, 20]);
+      expect(getSizeParams({ x: 10, y: 20 })).toEqual([10, 20]);
     });
 
     test('from { x: 10 } defaults y to 0', () => {
-      expect(getWidthAndHeightFrom({ x: 10 })).toEqual([10, 0]);
+      expect(getSizeParams({ x: 10 })).toEqual([10, 0]);
     });
 
     test('from empty', () => {
-      expect(getWidthAndHeightFrom(null)).toEqual([0, 0]);
+      expect(getSizeParams(null)).toEqual([0, 0]);
     });
   });
 
-  describe('getWidthAndHeightFromArguments', () => {
+  describe('getSizeParamsFromArguments', () => {
     test('from 10, 20', () => {
       expect(testSizeWith(10, 20)).toEqual([10, 20]);
     });
@@ -98,7 +94,7 @@ describe('common', () => {
     });
   });
 
-  describe('getXAndYFromArguments', () => {
+  describe('getPointParamsFromArguments', () => {
     test('from 10, 20', () => {
       expect(testPointWith(10, 20)).toEqual([10, 20]);
     });
@@ -117,6 +113,37 @@ describe('common', () => {
 
     test('from empty', () => {
       expect(testPointWith()).toEqual([0, 0]);
+    });
+  });
+
+  describe('getRectParamsFromArguments', () => {
+    test('from 10, 20, 30, 40', () => {
+      expect(testRectWith(10, 20, 30, 40)).toEqual([10, 20, 30, 40]);
+    });
+
+    test('from [10, 20, 30, 40]', () => {
+      expect(testRectWith([10, 20, 30, 40])).toEqual([10, 20, 30, 40]);
+    });
+
+    test('from { x: 10, y: 20, width: 30, height: 40 }', () => {
+      expect(testRectWith({ x: 10, y: 20, width: 30, height: 40 })).toEqual([10, 20, 30, 40]);
+    });
+
+    test('from { point: { x: 10, y: 20 }, size: { width: 30, height: 40 } }', () => {
+      expect(testRectWith({ point: { x: 10, y: 20 }, size: { width: 30, height: 40 } })).toEqual([
+        10,
+        20,
+        30,
+        40,
+      ]);
+    });
+
+    test('from { from: [10, 20], to: [40, 60] }', () => {
+      expect(testRectWith({ from: [10, 20], to: [40, 60] })).toEqual([10, 20, 30, 40]);
+    });
+
+    test('from empty', () => {
+      expect(testRectWith()).toEqual([0, 0, 0, 0]);
     });
   });
 

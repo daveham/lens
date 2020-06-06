@@ -68,6 +68,22 @@ class Size {
     return new Size(-this.width, -this.height);
   }
 
+  inc() {
+    return new Size(this.width + 1, this.height + 1);
+  }
+
+  dec() {
+    return new Size(this.width - 1, this.height - 1);
+  }
+
+  half() {
+    return new Size(this.width / 2, this.height / 2);
+  }
+
+  double() {
+    return new Size(this.width * 2, this.height * 2);
+  }
+
   isZero() {
     return Numerical.isZero(this);
   }

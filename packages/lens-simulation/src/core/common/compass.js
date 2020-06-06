@@ -3,46 +3,37 @@ import { ImageCompassMode } from './imageCompass';
 
 class Compass {
   imageCompass;
-
-  numSlicesWide;
-  numSlicesHigh;
-
-  deltaX;
-  deltaXHalf;
-  deltaY;
-  deltaYHalf;
-  limitX;
-  limitY;
+  numSlices; // Size
+  delta; // Size
+  deltaHalf; // Size
+  limit; // Rectangle
 
   constructor(imageCompass) {
     this.imageCompass = imageCompass;
   }
 
   static CompassFor(imageCompass, mode) {
-    let compass;
+    let CompassClass;
     switch (mode) {
       case ImageCompassMode.normal:
-        compass = new NormalCompass(imageCompass);
+        CompassClass = MixNormalCompass(Compass);
         break;
       case ImageCompassMode.constrain:
-        compass = new ConstrainedCompass(imageCompass);
+        CompassClass = MixConstrainedCompass(Compass);
         break;
       case ImageCompassMode.clip:
-        compass = new ClippedCompass(imageCompass);
+        CompassClass = MixClippedCompass(Compass);
         break;
       default:
         throw new Error('unexpected image compass mode');
     }
+    const compass = new CompassClass(imageCompass);
     compass.calculate();
     return compass;
   }
 
-  get slicesWide() {
-    return this.numSlicesWide;
-  }
-
-  get slicesHigh() {
-    return this.numSlicesHigh;
+  get slicesSize() {
+    return this.numSlices;
   }
 
   calculate() {
@@ -50,48 +41,43 @@ class Compass {
     if (this.imageCompass.lapped) {
       this.onCalculateLapped();
     }
-    this.deltaXHalf = this.deltaX / 2;
-    this.deltaYHalf = this.deltaY / 2;
+    this.deltaHalf = this.delta.half();
   }
 
   onCalculate() {}
 
   onCalculateLapped() {
-    this.numSlicesWide = this.numSlicesWide + this.numSlicesWide - 1;
-    this.numSlicesHigh = this.numSlicesHigh + this.numSlicesHigh - 1;
-    this.deltaX = this.deltaX / 2;
-    this.deltaY = this.deltaY / 2;
+    this.numSlices = this.numSlices.double().dec();
+    this.delta = this.delta.half().floor();
   }
 
   *slices() {
     const {
-      numSlicesWide,
-      numSlicesHigh,
-      deltaX,
-      deltaY,
-      imageCompass: { grainX, grainY },
+      numSlices,
+      delta,
+      imageCompass: { grain },
     } = this;
-    for (let yIndex = 0; yIndex < numSlicesHigh; yIndex++)
-      for (let xIndex = 0; xIndex < numSlicesWide; xIndex++)
-        yield new Rectangle(xIndex * deltaX, yIndex * deltaY, grainX, grainY);
+    for (let yIndex = 0; yIndex < numSlices.height; yIndex++)
+      for (let xIndex = 0; xIndex < numSlices.width; xIndex++)
+        yield new Rectangle(xIndex * delta.width, yIndex * delta.height, grain.width, grain.height);
   }
 
-  isOutOfBounds({ x, y }, allowVirtual) {
-    return !allowVirtual && (x < 0 || y < 0 || x >= this.limitX || y >= this.limitY);
+  isOutOfBounds(point, allowVirtual) {
+    return !allowVirtual && !this.limit.containsPoint(point);
   }
 
   unlappedBoundsFromLocation({ x, y }) {
     // +---- ----+---- ----+---- ----+---- ----+
     // |         |         |         |         |
 
-    const { grainX, grainY } = this.imageCompass;
-    let offsetX = (x / grainX) * grainX;
-    if (x < 0) offsetX -= grainX;
+    const { width, height } = this.imageCompass.grain;
+    let offsetX = Math.floor(x / width) * width;
+    if (x < 0) offsetX -= width;
 
-    let offsetY = (y / grainY) * grainY;
-    if (y < 0) offsetY -= grainY;
+    let offsetY = Math.floor(y / height) * height;
+    if (y < 0) offsetY -= height;
 
-    return new Rectangle(offsetX, offsetY, grainX, grainY);
+    return new Rectangle(offsetX, offsetY, width, height);
   }
 
   nearestMiddleBoundsFromLocation({ x, y }, first, second) {
@@ -103,20 +89,20 @@ class Compass {
       return first;
     }
 
-    const distFirstCenter = first.center;
-    const distFirstX = Math.abs(distFirstCenter.x - x);
-    const distFirstY = Math.abs(distFirstCenter.y - y);
+    const { x: cx1, y: cy1 } = first.center;
+    const dx1 = Math.abs(cx1 - x);
+    const dy1 = Math.abs(cy1 - y);
 
-    const distSecondCenter = second.center;
-    const distSecondX = Math.abs(distSecondCenter.x - x);
-    const distSecondY = Math.abs(distSecondCenter.y - y);
+    const { x: cx2, y: cy2 } = second.center;
+    const dx2 = Math.abs(cx2 - x);
+    const dy2 = Math.abs(cy2 - y);
 
     const bounds = first.clone();
-    if (distSecondX < distFirstX) {
+    if (dx2 < dx1) {
       bounds.left = second.left;
       bounds.width = second.width;
     }
-    if (distSecondY < distFirstY) {
+    if (dy2 < dy1) {
       bounds.top = second.top;
       bounds.height = second.height;
     }
@@ -124,21 +110,22 @@ class Compass {
     return first;
   }
 
-  overlappedBoundsFromLocation({ x, y }) {
+  overlappedBoundsFromLocation(point) {
     // if (x < _deltaX || y < _deltaY ||
     //    x >= _imageCompass.Width - _deltaX || y >= _imageCompass.Height - _deltaY)
     //   return Rectangle.Empty;
 
-    const { width, height, grainX, grainY } = this.imageCompass;
-    if (x < 0 || y < 0 || x >= width || y >= height) {
+    if (!this.imageCompass.bounds.containsPoint(point)) {
       return new Rectangle();
     }
 
-    const { deltaX, deltaY } = this;
-    const offsetX = ((x - deltaX) / grainX) * grainX + deltaX;
-    const offsetY = ((y - deltaY) / grainY) * grainY + deltaY;
+    const { x, y } = point;
+    const { width: gw, height: gh } = this.imageCompass.grain;
+    const { width: dw, height: dh } = this.delta;
+    const offsetX = ((x - dw) / gw) * gw + dw;
+    const offsetY = ((y - dh) / gh) * gh + dh;
 
-    return new Rectangle(offsetX, offsetY, grainX, grainY);
+    return new Rectangle(offsetX, offsetY, gw, gh);
   }
 
   lappedBoundsFromLocation(point) {
@@ -163,110 +150,114 @@ class Compass {
   }
 }
 
-export class NormalCompass extends Compass {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(imageCompass) {
-    super(imageCompass);
-  }
+const MixNormalCompass = superclass =>
+  class extends superclass {
+    onCalculate() {
+      const {
+        imageCompass: { grain, bounds },
+      } = this;
+      this.delta = grain.clone();
+      // derive slices from bounds and grain, round up on partial slices
+      this.numSlices = bounds.size
+        .add(grain)
+        .dec()
+        .divide(grain)
+        .floor();
+      // limit based on number of (possibly rounded up) slices
+      this.limit = new Rectangle([0, 0], this.numSlices.multiply(grain));
+      console.log('NormalCompass.onCalculate', {
+        bounds: bounds.toString(),
+        grain: grain.toString(),
+        delta: this.delta.toString(),
+        numSlices: this.numSlices.toString(),
+        limit: this.limit.toString(),
+      });
+    }
+  };
 
-  onCalculate() {
-    const {
-      imageCompass: { grainX, grainY, width, height },
-    } = this;
-    this.deltaX = grainX;
-    this.deltaY = grainY;
-    this.numSlicesWide = Math.floor((width + this.deltaX - 1) / this.deltaX);
-    this.numSlicesHigh = Math.floor((height + this.deltaY - 1) / this.deltaY);
-    this.limitX = this.numSlicesWide * this.deltaX;
-    this.limitY = this.numSlicesHigh * this.deltaY;
-    console.log('NormalCompass.onCalculate', [
-      this.deltaX,
-      this.deltaY,
-      this.numSlicesWide,
-      this.numSlicesHigh,
-      this.limitX,
-      this.limitY,
-    ]);
-  }
-}
+const MixConstrainedCompass = superclass =>
+  class extends superclass {
+    onCalculate() {
+      const {
+        imageCompass: { grain, bounds },
+      } = this;
+      this.delta = grain.clone();
+      // derive slices from bounds and grain, floor any partial slices
+      this.numSlices = bounds.size.divide(grain).floor();
+      // limit based on number of (possibly floored) slices
+      this.limit = new Rectangle([0, 0], this.numSlices.multiply(grain));
+      console.log('ConstrainedCompass.onCalculate', {
+        bounds: bounds.toString(),
+        grain: grain.toString(),
+        delta: this.delta.toString(),
+        numSlices: this.numSlices.toString(),
+        limit: this.limit.toString(),
+      });
+    }
+  };
 
-export class ConstrainedCompass extends Compass {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(imageCompass) {
-    super(imageCompass);
-  }
+const MixClippedCompass = superclass =>
+  class extends superclass {
+    onCalculate() {
+      const {
+        imageCompass: { grain, bounds },
+      } = this;
+      this.delta = grain.clone();
+      // derive slices from bounds and grain, round up on partial slices
+      this.numSlices = bounds.size
+        .add(grain)
+        .dec()
+        .divide(grain)
+        .floor();
+      // limit set directly from requested bounds
+      this.limit = new Rectangle([0, 0], bounds);
+      console.log('ClippedCompass.onCalculate', {
+        bounds: bounds.toString(),
+        grain: grain.toString(),
+        delta: this.delta.toString(),
+        numSlices: this.numSlices.toString(),
+        limit: this.limit.toString(),
+      });
+    }
 
-  onCalculate() {
-    const {
-      imageCompass: { grainX, grainY, width, height },
-    } = this;
-    this.deltaX = grainX;
-    this.deltaY = grainY;
-    this.numSlicesWide = width / this.deltaX;
-    this.numSlicesHigh = height / this.deltaY;
-    this.limitX = this.numSlicesWide * this.deltaX;
-    this.limitY = this.numSlicesHigh * this.deltaY;
-  }
-}
+    *slices() {
+      const {
+        numSlices: { width: sw, height: sh },
+        delta: { width: dw, height: dh },
+        imageCompass: { grain, lapped },
+      } = this;
 
-export class ClippedCompass extends Compass {
-  // eslint-disable-next-line no-useless-constructor
-  constructor(imageCompass) {
-    super(imageCompass);
-  }
+      const { right, bottom } = this.limit;
 
-  onCalculate() {
-    const {
-      imageCompass: { grainX, grainY, width, height },
-    } = this;
-    this.deltaX = grainX;
-    this.deltaY = grainY;
-    this.numSlicesWide = (width + this.deltaX - 1) / this.deltaX;
-    this.numSlicesHigh = (height + this.deltaY - 1) / this.deltaY;
-    this.limitX = width;
-    this.limitY = height;
-  }
+      for (let yIndex = 0; yIndex < sh; yIndex++)
+        for (let xIndex = 0; xIndex < sw; xIndex++) {
+          const r = new Rectangle([xIndex * dw, yIndex * dh], grain);
 
-  *slices() {
-    const {
-      numSlicesWide,
-      numSlicesHigh,
-      deltaX,
-      deltaY,
-      imageCompass: { grainX, grainY, lapped },
-    } = this;
+          if (lapped) {
+            if (xIndex % 2 === 1 && r.right >= right) continue;
 
-    const { limitX, limitY } = this;
+            if (yIndex % 2 === 1 && r.bottom >= bottom) continue;
 
-    for (let yIndex = 0; yIndex < numSlicesHigh; yIndex++)
-      for (let xIndex = 0; xIndex < numSlicesWide; xIndex++) {
-        const r = new Rectangle(xIndex * deltaX, yIndex * deltaY, grainX, grainY);
+            if (
+              (xIndex % 2 === 0 && r.right >= right) ||
+              (xIndex % 2 === 1 && r.right + r.width >= right)
+            )
+              r.Width = right - r.left;
 
-        if (lapped) {
-          if (xIndex % 2 === 1 && r.right >= limitX) continue;
+            if (
+              (yIndex % 2 === 0 && r.bottom >= bottom) ||
+              (yIndex % 2 === 1 && r.bottom + r.height >= bottom)
+            )
+              r.height = bottom - r.top;
+          } else {
+            if (r.right >= right) r.width = right - r.left;
 
-          if (yIndex % 2 === 1 && r.bottom >= limitY) continue;
+            if (r.bottom >= bottom) r.height = bottom - r.top;
+          }
 
-          if (
-            (xIndex % 2 === 0 && r.right >= limitX) ||
-            (xIndex % 2 === 1 && r.right + r.width >= limitX)
-          )
-            r.Width = limitX - r.left;
-
-          if (
-            (yIndex % 2 === 0 && r.bottom >= limitY) ||
-            (yIndex % 2 === 1 && r.bottom + r.height >= limitY)
-          )
-            r.height = limitY - r.top;
-        } else {
-          if (r.right >= limitX) r.width = limitX - r.left;
-
-          if (r.bottom >= limitY) r.height = limitY - r.top;
+          yield r;
         }
-
-        yield r;
-      }
-  }
-}
+    }
+  };
 
 export default Compass;

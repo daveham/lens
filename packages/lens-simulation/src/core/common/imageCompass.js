@@ -6,62 +6,33 @@ export const ImageCompassMode = {
   clip: 'clip',
 };
 
-function assertArgumentOutOfRangeError(param, predicate) {
-  if (predicate) {
-    throw new Error(`${param} argument out of range`);
-  }
-}
-
 class ImageCompass {
   _compass;
   _calculated;
-  _width;
-  _height;
-  _grainX;
-  _grainY;
+  _bounds; // rectangle
+  _grain;
   _mode;
   _lapped;
 
-  constructor(width, height, grainX, grainY, mode = ImageCompassMode.normal, lapped = false) {
-    assertArgumentOutOfRangeError('width', width < 1);
-    assertArgumentOutOfRangeError('height', height < 1);
-    assertArgumentOutOfRangeError('grainX', grainX < 1);
-    assertArgumentOutOfRangeError('grainY', grainY < 1);
-
+  constructor(bounds, grain, mode = ImageCompassMode.normal, lapped = false) {
     this._calculated = false;
-    this._width = width;
-    this._height = height;
-    this._grainX = grainX;
-    this._grainY = grainY;
+    this._bounds = bounds;
+    this._grain = grain;
     this._mode = mode;
     this._lapped = lapped;
   }
 
-  get width() {
-    return this._width;
+  get bounds() {
+    return this._bounds;
   }
 
-  set width(value) {
-    assertArgumentOutOfRangeError('width', value < 1);
-    this._width = value;
+  set bounds(value) {
+    this._bounds = value;
     this._calculated = false;
   }
 
-  set height(value) {
-    assertArgumentOutOfRangeError('height', value < 1);
-    this._height = value;
-    this._calculated = false;
-  }
-
-  set grainX(value) {
-    assertArgumentOutOfRangeError('grainX', value < 1);
-    this._grainX = value;
-    this._calculated = false;
-  }
-
-  set grainY(value) {
-    assertArgumentOutOfRangeError('grainY', value < 1);
-    this._grainY = value;
+  set grain(value) {
+    this._grain = value;
     this._calculated = false;
   }
 
@@ -77,7 +48,7 @@ class ImageCompass {
 
   ensureCalculated() {
     if (!this._calculated) {
-      this._compass = Compass.CompassFor(this._mode, this);
+      this._compass = Compass.CompassFor(this, this._mode);
       this._calculated = true;
     }
   }

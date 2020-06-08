@@ -14,9 +14,10 @@ import { ImageCompassMode } from '../imageCompass';
 describe('compass', () => {
   const onGrainBounds = new Rectangle(0, 0, 128, 64);
   const offGrainBounds = new Rectangle(0, 0, 129, 65);
+  const grain = new Size(8, 8);
   const mockImageCompass = {
     bounds: onGrainBounds,
-    grain: new Size(8, 8),
+    grain,
     lapped: false,
   };
   const makeCompass = (mode, bounds = onGrainBounds) =>
@@ -107,6 +108,27 @@ describe('compass', () => {
         expect(compass.isOutOfBounds(loc2)).toBeTruthy();
         expect(compass.boundsFromLocation(loc2).isEmpty()).toBeTruthy();
       });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          expect(slice.width).toBe(grain.width);
+          expect(slice.height).toBe(grain.height);
+          if (onGrainBounds.contains(slice)) {
+            inCounter++;
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is a multiple of the grain size, any
+        // compass for that image will produce slices that always fit within
+        // the compass' limits.
+        const { slicesSize } = compass;
+        const sliceCount = slicesSize.width * slicesSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(0);
+      });
     });
 
     describe('off-grain', () => {
@@ -191,6 +213,33 @@ describe('compass', () => {
         loc2 = loc.add([0, 1]);
         expect(compass.isOutOfBounds(loc2)).toBeFalsy();
         expect(compass.boundsFromLocation(loc2).top).toBe(64);
+      });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          expect(slice.width).toBe(grain.width);
+          expect(slice.height).toBe(grain.height);
+          if (offGrainBounds.contains(slice)) {
+            inCounter++;
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is not a multiple of the grain size,
+        // the normal compass will produce slices based on a size that is rounded
+        // up to a multiple of the grain. The slices that cover the "rounded up"
+        // area will not be within the bounds of the compass' limit.
+        const { slicesSize } = compass;
+        const flooredSize = slicesSize
+          .divide(grain)
+          .floor()
+          .multiply(grain);
+        const sliceCount = flooredSize.width * flooredSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(slicesSize.width * slicesSize.height - sliceCount);
+        expect(outCounter).toBe(slicesSize.width + slicesSize.height - 1);
       });
     });
   });
@@ -279,6 +328,27 @@ describe('compass', () => {
         loc2 = loc.add([0, 1]);
         expect(compass.isOutOfBounds(loc2)).toBeTruthy();
         expect(compass.boundsFromLocation(loc2).isEmpty()).toBeTruthy();
+      });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          expect(slice.width).toBe(grain.width);
+          expect(slice.height).toBe(grain.height);
+          if (onGrainBounds.contains(slice)) {
+            inCounter++;
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is a multiple of the grain size, any
+        // compass for that image will produce slices that always fit within
+        // the compass' limits.
+        const { slicesSize } = compass;
+        const sliceCount = slicesSize.width * slicesSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(0);
       });
     });
 
@@ -373,6 +443,28 @@ describe('compass', () => {
         expect(compass.isOutOfBounds(loc2)).toBeTruthy();
         expect(compass.boundsFromLocation(loc2).isEmpty()).toBeTruthy();
       });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          expect(slice.width).toBe(grain.width);
+          expect(slice.height).toBe(grain.height);
+          if (offGrainBounds.contains(slice)) {
+            inCounter++;
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is not a multiple of the grain size,
+        // the constrain compass will produce slices based on a size that is floored
+        // to a size that is a multiple of the grain. The slices produced by the
+        // constrain compass will always fit within the compass' limit.
+        const { slicesSize } = compass;
+        const sliceCount = slicesSize.width * slicesSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(0);
+      });
     });
   });
 
@@ -461,6 +553,27 @@ describe('compass', () => {
         expect(compass.isOutOfBounds(loc2)).toBeTruthy();
         expect(compass.boundsFromLocation(loc2).isEmpty()).toBeTruthy();
       });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          expect(slice.width).toBe(grain.width);
+          expect(slice.height).toBe(grain.height);
+          if (onGrainBounds.contains(slice)) {
+            inCounter++;
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is a multiple of the grain size, any
+        // compass for that image will produce slices that always fit within
+        // the compass' limits.
+        const { slicesSize } = compass;
+        const sliceCount = slicesSize.width * slicesSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(0);
+      });
     });
 
     describe('off-grain', () => {
@@ -544,6 +657,28 @@ describe('compass', () => {
         loc2 = loc.add([0, 1]);
         expect(compass.isOutOfBounds(loc2)).toBeTruthy();
         expect(compass.boundsFromLocation(loc2).isEmpty()).toBeTruthy();
+      });
+
+      test('generates all slices', () => {
+        let inCounter = 0;
+        let outCounter = 0;
+        for (const slice of compass.slices()) {
+          if (offGrainBounds.contains(slice)) {
+            inCounter++;
+            expect(slice.width).toBeLessThanOrEqual(grain.width);
+            expect(slice.height).toBeLessThanOrEqual(grain.height);
+          } else {
+            outCounter++;
+          }
+        }
+        // Given an image with a size that is not a multiple of the grain size,
+        // the clipped compass will produce slices that fit within the compass'
+        // limit by truncating the size of any slices that extend beyond the
+        // limit. Therefore, all slices will fit within the compass' limit.
+        const { slicesSize } = compass;
+        const sliceCount = slicesSize.width * slicesSize.height;
+        expect(inCounter).toBe(sliceCount);
+        expect(outCounter).toBe(0);
       });
     });
   });

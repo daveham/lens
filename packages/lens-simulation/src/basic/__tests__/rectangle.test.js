@@ -83,7 +83,6 @@ describe('Rectangle', () => {
       const obj = {};
       obj[key1] = expected[key1];
       obj[key2] = expected[key2];
-      console.log('testing ctor with', { obj });
       const rect = new Rectangle(obj);
       expect(rect.toString()).toEqual(equalRectString);
     }

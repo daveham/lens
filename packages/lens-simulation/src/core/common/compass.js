@@ -81,6 +81,12 @@ class Compass {
   }
 
   nearestMiddleBoundsFromLocation({ x, y }, first, second) {
+    console.log('nearestMiddleBoundsFromLocation', {
+      x,
+      y,
+      first: first.toString(),
+      second: second.toString(),
+    });
     if (first.isEmpty()) {
       return second;
     }
@@ -100,32 +106,38 @@ class Compass {
     const bounds = first.clone();
     if (dx2 < dx1) {
       bounds.left = second.left;
-      bounds.width = second.width;
+      bounds.setSize([second.width, bounds.height]);
+      // bounds.width = second.width;
     }
     if (dy2 < dy1) {
       bounds.top = second.top;
-      bounds.height = second.height;
+      bounds.setSize([bounds.width, second.height]);
+      // bounds.height = second.height;
     }
 
-    return first;
+    return bounds;
   }
 
   overlappedBoundsFromLocation(point) {
+    // This was commented out in C#.
     // if (x < _deltaX || y < _deltaY ||
     //    x >= _imageCompass.Width - _deltaX || y >= _imageCompass.Height - _deltaY)
     //   return Rectangle.Empty;
 
     if (!this.imageCompass.bounds.containsPoint(point)) {
-      return new Rectangle();
+      return Rectangle.Empty;
     }
 
-    const { x, y } = point;
-    const { width: gw, height: gh } = this.imageCompass.grain;
-    const { width: dw, height: dh } = this.delta;
-    const offsetX = ((x - dw) / gw) * gw + dw;
-    const offsetY = ((y - dh) / gh) * gh + dh;
+    const { delta } = this;
+    const { grain } = this.imageCompass;
+    const offset = point
+      .subtract(delta)
+      .divide(grain)
+      .floor()
+      .multiply(grain)
+      .add(delta);
 
-    return new Rectangle(offsetX, offsetY, gw, gh);
+    return new Rectangle(offset, grain);
   }
 
   lappedBoundsFromLocation(point) {
@@ -165,13 +177,13 @@ const MixNormalCompass = superclass =>
         .floor();
       // limit based on number of (possibly rounded up) slices
       this.limit = new Rectangle([0, 0], this.numSlices.multiply(grain));
-      console.log('NormalCompass.onCalculate', {
-        bounds: bounds.toString(),
-        grain: grain.toString(),
-        delta: this.delta.toString(),
-        numSlices: this.numSlices.toString(),
-        limit: this.limit.toString(),
-      });
+      // console.log('NormalCompass.onCalculate', {
+      //   bounds: bounds.toString(),
+      //   grain: grain.toString(),
+      //   delta: this.delta.toString(),
+      //   numSlices: this.numSlices.toString(),
+      //   limit: this.limit.toString(),
+      // });
     }
   };
 
@@ -186,13 +198,13 @@ const MixConstrainedCompass = superclass =>
       this.numSlices = bounds.size.divide(grain).floor();
       // limit based on number of (possibly floored) slices
       this.limit = new Rectangle([0, 0], this.numSlices.multiply(grain));
-      console.log('ConstrainedCompass.onCalculate', {
-        bounds: bounds.toString(),
-        grain: grain.toString(),
-        delta: this.delta.toString(),
-        numSlices: this.numSlices.toString(),
-        limit: this.limit.toString(),
-      });
+      // console.log('ConstrainedCompass.onCalculate', {
+      //   bounds: bounds.toString(),
+      //   grain: grain.toString(),
+      //   delta: this.delta.toString(),
+      //   numSlices: this.numSlices.toString(),
+      //   limit: this.limit.toString(),
+      // });
     }
   };
 
@@ -211,13 +223,13 @@ const MixClippedCompass = superclass =>
         .floor();
       // limit set directly from requested bounds
       this.limit = new Rectangle([0, 0], bounds);
-      console.log('ClippedCompass.onCalculate', {
-        bounds: bounds.toString(),
-        grain: grain.toString(),
-        delta: this.delta.toString(),
-        numSlices: this.numSlices.toString(),
-        limit: this.limit.toString(),
-      });
+      // console.log('ClippedCompass.onCalculate', {
+      //   bounds: bounds.toString(),
+      //   grain: grain.toString(),
+      //   delta: this.delta.toString(),
+      //   numSlices: this.numSlices.toString(),
+      //   limit: this.limit.toString(),
+      // });
     }
 
     *slices() {
@@ -234,29 +246,129 @@ const MixClippedCompass = superclass =>
           const r = new Rectangle([xIndex * dw, yIndex * dh], grain);
 
           if (lapped) {
-            if (xIndex % 2 === 1 && r.right >= right) continue;
-
-            if (yIndex % 2 === 1 && r.bottom >= bottom) continue;
+            if (
+              // lapped slice exceeds right bounds
+              (xIndex % 2 === 1 && r.right >= right) ||
+              // lapped slice exceeds bottom bounds
+              (yIndex % 2 === 1 && r.bottom >= bottom)
+            ) {
+              continue;
+            }
 
             if (
+              // non-lapped slice exceeds right bounds
               (xIndex % 2 === 0 && r.right >= right) ||
+              // next lapped slice to the right would exceed right bounds
               (xIndex % 2 === 1 && r.right + r.width >= right)
-            )
-              r.Width = right - r.left;
+            ) {
+              // adjust this slice to cover this width and the partial width of next slice over
+              r.size = [right - r.left, r.height];
+            }
 
             if (
+              // non-lapped slice exceeds bottom bounds
               (yIndex % 2 === 0 && r.bottom >= bottom) ||
+              // next lapped slice to the right would exceed bottom bounds
               (yIndex % 2 === 1 && r.bottom + r.height >= bottom)
-            )
-              r.height = bottom - r.top;
+            ) {
+              // adjust this slice to cover this height and the partial height of next slice down
+              r.size = [r.width, bottom - r.top];
+            }
           } else {
-            if (r.right >= right) r.width = right - r.left;
+            if (r.right >= right) {
+              r.size = [right - r.left, r.height];
+            }
 
-            if (r.bottom >= bottom) r.height = bottom - r.top;
+            if (r.bottom >= bottom) {
+              r.size = [r.width, bottom - r.top];
+            }
           }
 
           yield r;
         }
+    }
+
+    unlappedBoundsFromLocation(location) {
+      const r = super.unlappedBoundsFromLocation(location);
+      // console.log('unlappedBoundsFromLocation - r', r.toString());
+      // console.log('unlappedBoundsFromLocation - r', r.right, r.bottom);
+
+      const { right, bottom } = this.limit;
+      // console.log('unlappedBoundsFromLocation - limit', this.limit.toString());
+      // console.log('unlappedBoundsFromLocation - limit', right, bottom);
+
+      if (r.right > right) {
+        r.size = [right - r.left, r.height];
+        // r.width = right - r.left;
+        // console.log('unlappedBoundsFromLocation - adjusting width', r.toString());
+      }
+      if (r.bottom > bottom) {
+        r.size = [r.width, bottom - r.top];
+        // r.height = bottom - r.top;
+        // console.log('unlappedBoundsFromLocation - adjusting height', r.toString());
+      }
+
+      console.log('unlappedBoundsFromLocation', r.toString());
+      return r;
+    }
+
+    overlappedBoundsFromLocation(location) {
+      // +----- -----+----- -----+----- -----+----- -----+--+
+      // |           |           |           |           |  |
+      // |     +----- -----+----- -----+----- -----+----- --|
+      // |     |           |           |                    |
+
+      // This was commented out in C#.
+      // if (x < _deltaX || y < _deltaY ||
+      //   x >= _limitX || y >= _limitY)
+      // return Rectangle.Empty;
+
+      if (!this.limit.containsPoint(location)) {
+        return Rectangle.Empty;
+      }
+
+      const { delta } = this;
+      const { grain } = this.imageCompass;
+      // find location at nearest grain boundary
+      const offsetLocation = location
+        .subtract(delta)
+        .divide(grain)
+        .floor()
+        .multiply(grain)
+        .add(delta);
+
+      const r = new Rectangle([0, 0], grain).offset(offsetLocation);
+      // console.log('overlappedBoundsFromLocation - r', r.toString());
+
+      const { right, bottom } = this.limit;
+      // console.log('overlappedBoundsFromLocation - limit', this.limit.toString());
+
+      if (r.right >= right) {
+        r.left = r.left - grain.width;
+        // r.x -= grain.width;
+        r.setSize([right - r.left, r.height]);
+        // r.width = right - r.left;
+        // console.log('overlappedBoundsFromLocation - adjusting left, width', r.toString());
+      } else if (r.right + grain.width >= right) {
+        r.setSize([right - r.left, r.height]);
+        // r.width = right - r.left;
+        // console.log('overlappedBoundsFromLocation - adjusting width', r.toString());
+      }
+
+      if (r.bottom >= bottom) {
+        r.top = r.top - grain.height;
+        // r.Y -= grain.height;
+        r.setSize([r.width, bottom - r.top]);
+        // r.height = bottom - r.top;
+        // console.log('overlappedBoundsFromLocation - adjusting top, height', r.toString());
+      } else if (r.bottom + grain.height >= bottom) {
+        r.setSize([r.width, bottom - r.top]);
+        // r.height = bottom - r.top;
+        // console.log('overlappedBoundsFromLocation - adjusting height', r.toString());
+      }
+
+      console.log('overlappedBoundsFromLocation', r.toString());
+      return r;
     }
   };
 

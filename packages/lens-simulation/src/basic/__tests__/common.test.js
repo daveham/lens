@@ -9,22 +9,18 @@ import {
 } from '../common';
 
 function testSizeWith(...args) {
-  console.log('testSizeWith', { a: arguments, args });
   return getSizeParamsFromArguments(args);
 }
 
 function testPointWith(...args) {
-  console.log('testPointWith', { a: arguments, args });
   return getPointParamsFromArguments(args);
 }
 
 function testRectWith(...args) {
-  console.log('testRectWith', { a: arguments, args });
   return getRectParamsFromArguments(args);
 }
 
 function testZeroWith(fn, ...args) {
-  console.log('testZeroWith', { a: arguments, args });
   return isZeroFromArguments(fn)(args);
 }
 

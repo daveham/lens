@@ -23,6 +23,7 @@ import {
   getRectParamsFromArguments,
   getRectParamsFromOneArg,
   getSizeParamsFromArguments,
+  getPointParamsFromArguments,
 } from './common';
 
 const getRectParamsUsingPrototype = options => {
@@ -30,6 +31,8 @@ const getRectParamsUsingPrototype = options => {
   Object.keys(options).forEach(k => (proto[k] = options[k]));
   return [proto.x, proto.y, proto.width, proto.height];
 };
+
+let emptyRectangle;
 
 class Rectangle {
   x;
@@ -125,6 +128,13 @@ class Rectangle {
       this.height = -this.height;
     }
    */
+  }
+
+  static get Empty() {
+    if (!emptyRectangle) {
+      emptyRectangle = new Rectangle();
+    }
+    return emptyRectangle;
   }
 
   clone() {
@@ -324,7 +334,7 @@ class Rectangle {
   }
 
   containsPoint({ x, y }) {
-    return x >= this.x && y >= this.y && x <= this.x + this.width && y <= this.y + this.height;
+    return x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
   }
 
   containsRectangle(/* rect */ ...args) {
@@ -395,6 +405,11 @@ class Rectangle {
     const x2 = Math.max(this.x + this.width, x);
     const y2 = Math.max(this.y + this.height, y);
     return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+  }
+
+  offset(/* point */ ...args) {
+    const [x, y] = getPointParamsFromArguments(args);
+    return new Rectangle(this.x + x, this.y + y, this.width, this.height);
   }
 
   expand(arg0, arg1) {

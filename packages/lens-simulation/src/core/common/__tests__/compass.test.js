@@ -854,27 +854,66 @@ describe('compass', () => {
         expect(compass.slicesSize).toEqual(new Size(16, 8).double().dec());
       });
 
-      test('chooses nearest bounds', () => {
+      test('chooses nearest bounds on normal slices', () => {
         const loc = onGrainBounds.center;
         expect(loc).toEqual(new Point(64, 32));
 
-        const loc1 = loc.add([1, 1]);
-        const loc2 = loc.add([2, 1]);
-        const loc3 = loc.add([1, 2]);
-        const loc4 = loc.add([2, 2]);
+        // choose bounds who's center is closest to these locations
+        const loc1 = loc.add([1, 1]); // favor lapped x and y
+        const loc2 = loc.add([2, 1]); // favor unlapped x, lapped y
+        const loc3 = loc.add([1, 2]); // favor lapped x, unlapped y
+        const loc4 = loc.add([2, 2]); // favor unlapped x and y
+
+        const unlappedBounds = compass.unlappedBoundsFromLocation(loc);
+        const lappedBounds = compass.overlappedBoundsFromLocation(loc);
+        const expectedUnlappedLeft = unlappedBounds.left;
+        const expectedUnlappedTop = unlappedBounds.top;
+        const expectedLappedLeft = lappedBounds.left;
+        const expectedLappedTop = lappedBounds.top;
 
         const b1 = compass.boundsFromLocation(loc1);
-        console.log('b1', loc1.toString(), b1.toString());
-        expect(b1.topLeft).toEqual(new Point(60, 28));
+        expect(b1.topLeft).toEqual(new Point(expectedLappedLeft, expectedLappedTop));
+
         const b2 = compass.boundsFromLocation(loc2);
-        console.log('b2', loc2.toString(), b2.toString());
-        expect(b2.topLeft).toEqual(new Point(64, 28));
+        expect(b2.topLeft).toEqual(new Point(expectedUnlappedLeft, expectedLappedTop));
+
         const b3 = compass.boundsFromLocation(loc3);
-        console.log('b3', loc3.toString(), b3.toString());
-        expect(b3.topLeft).toEqual(new Point(60, 32));
+        expect(b3.topLeft).toEqual(new Point(expectedLappedLeft, expectedUnlappedTop));
+
         const b4 = compass.boundsFromLocation(loc4);
-        console.log('b4', loc4.toString(), b4.toString());
-        expect(b4.topLeft).toEqual(new Point(64, 32));
+        expect(b4.topLeft).toEqual(new Point(expectedUnlappedLeft, expectedUnlappedTop));
+      });
+
+      test('chooses nearest bounds on edge slices', () => {
+        const loc = offGrainBounds.bottomRight.subtract([9, 9]);
+        expect(loc).toEqual(new Point(129 - 9, 65 - 9));
+
+        // choose bounds who's center is closest to these locations
+        const loc1 = loc.add([2, 2]); // favor lapped x and y
+        const loc2 = loc.add([3, 2]); // favor unlapped x, lapped y
+        const loc3 = loc.add([2, 3]); // favor lapped x, unlapped y
+        const loc4 = loc.add([3, 3]); // favor unlapped x and y
+
+        const unlappedBounds = compass.unlappedBoundsFromLocation(loc);
+        expect(unlappedBounds.size).toEqual(new Size(8, 8));
+        const lappedBounds = compass.overlappedBoundsFromLocation(loc);
+        expect(lappedBounds.size).toEqual(new Size(12, 12));
+        const expectedUnlappedLeft = unlappedBounds.left;
+        const expectedUnlappedTop = unlappedBounds.top;
+        const expectedLappedLeft = lappedBounds.left;
+        const expectedLappedTop = lappedBounds.top;
+
+        const b1 = compass.boundsFromLocation(loc1);
+        expect(b1.topLeft).toEqual(new Point(expectedLappedLeft, expectedLappedTop));
+
+        const b2 = compass.boundsFromLocation(loc2);
+        expect(b2.topLeft).toEqual(new Point(expectedUnlappedLeft, expectedLappedTop));
+
+        const b3 = compass.boundsFromLocation(loc3);
+        expect(b3.topLeft).toEqual(new Point(expectedLappedLeft, expectedUnlappedTop));
+
+        const b4 = compass.boundsFromLocation(loc4);
+        expect(b4.topLeft).toEqual(new Point(expectedUnlappedLeft, expectedUnlappedTop));
       });
 
       test('generates all slices', () => {

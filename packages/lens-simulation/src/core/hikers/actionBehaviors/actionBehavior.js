@@ -1,60 +1,57 @@
+import * as R from 'ramda';
+
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('actionBehavior');
 
+const nullStrategy = {
+  onStart() {},
+  onAct() {
+    this.onObserve();
+    this.onInfer();
+  },
+  onObserve() {},
+  onInfer() {},
+  onEnd() {},
+};
+const withDefaults = R.mergeRight(nullStrategy);
+
 class ActionBehavior {
-  hiker = null;
   started = false;
 
-  constructor(hiker) {
+  constructor(hiker, strategy = {}) {
     this.hiker = hiker;
+    this.strategy = withDefaults(strategy);
+    this.strategy.behavior = this;
   }
 
   start() {
+    debug('start', this.hiker.name);
     this.assertStarted(false);
-    this.onStart();
+    this.strategy.onStart();
     this.started = true;
   }
 
   act() {
-    this.assertStarted(true);
-    this.onAct();
+    debug('act', this.hiker.name);
+    this.assertStarted();
+    this.strategy.onAct();
   }
 
   end() {
-    this.assertStarted(true);
-    this.onEnd();
+    debug('end', this.hiker.name);
+    this.assertStarted();
+    this.strategy.onEnd();
   }
 
-  assertStarted(expected) {
+  assertStarted(expected = true) {
     if (this.started !== expected) {
       throw new Error(`action behavior ${expected ? 'not' : 'already'} started`);
     }
   }
 
   abort(reason) {
+    debug('abort', { name: this.hiker.name, reason });
     this.hiker.abort(reason);
-  }
-
-  onStart() {
-    debug('onStart');
-  }
-
-  onAct() {
-    debug('onAct');
-    this.onObserve();
-    this.onInfer();
-  }
-
-  onObserve() {
-    debug('onObserve');
-  }
-
-  onInfer() {
-    debug('onInfer');
-  }
-
-  onEnd() {
-    debug('onEnd');
   }
 }
 

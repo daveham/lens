@@ -1,31 +1,15 @@
-import EventEmitter from 'events';
-// import Point from '../../basic/point';
+import E3 from 'eventemitter3';
 
 import getDebugLog from './debugLog';
 const debug = getDebugLog('trailState');
 
-export const TrailStateChangeReason = {
-  initialLocation: 'initialLocation',
-  location: 'location',
-  movement: 'movement',
-};
-
-export const TrailStateEvent = {
-  change: 'change',
-};
-
-class TrailState extends EventEmitter {
+class TrailState {
   _initialLocation;
   _location;
   _movement;
 
   constructor() {
-    super();
-    debug('constructed location', this.location);
-  }
-
-  raiseChangeEvent(reason) {
-    this.emit(TrailStateEvent.change, { state: this, reason });
+    this.events = new E3.EventEmitter();
   }
 
   get initialLocation() {
@@ -33,8 +17,10 @@ class TrailState extends EventEmitter {
   }
 
   set initialLocation(value) {
+    debug('set initial location', value);
     this._initialLocation = value;
-    this.raiseChangeEvent(TrailStateChangeReason.initialLocation);
+    // noinspection JSCheckFunctionSignatures
+    this.events.emit('initialLocation', { initialLocation: this._initialLocation });
   }
 
   get location() {
@@ -42,8 +28,10 @@ class TrailState extends EventEmitter {
   }
 
   set location(value) {
+    debug('set location', value);
     this._location = value;
-    this.raiseChangeEvent(TrailStateChangeReason.location);
+    // noinspection JSCheckFunctionSignatures
+    this.events.emit('location', { location: this._location });
   }
 
   get movement() {
@@ -52,7 +40,9 @@ class TrailState extends EventEmitter {
 
   set movement(value) {
     this._movement = value;
-    this.raiseChangeEvent(TrailStateChangeReason.movement);
+    debug('set movement', value);
+    // noinspection JSCheckFunctionSignatures
+    this.events.emit('movement', { movement: this._movement });
   }
 }
 

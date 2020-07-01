@@ -1,6 +1,4 @@
-import { vec2 } from 'gl-matrix';
-
-import MovementBehavior from './movementBehavior';
+import Size from '../../../basic/size';
 // import TrailState from '../../trails/trailState';
 
 // import getDebugLog from '../debugLog';
@@ -13,22 +11,25 @@ export const DisplacementScheme = {
   bounds: 'bounds',
 };
 
-class TrailMovementBehavior extends MovementBehavior {
+class TrailMovementStrategy {
   initialLocation;
-  hasInitialLocation;
-  displacementScheme;
-  fixedDisplacement;
   trailState;
   steps;
   stepLimit;
 
-  constructor(hiker) {
-    super(hiker);
+  constructor(movementBehavior) {
+    this.movementBehavior = movementBehavior;
 
     this.hasInitialLocation = false;
     this.displacementScheme = DisplacementScheme.fixed;
-    this.fixedDisplacement = vec2(0, 0);
+    this.fixedDisplacement = new Size(0, 0);
   }
+
+  onStart() {}
+
+  onMove() {}
+
+  onEnd() {}
 
   setInitialLocation(location) {
     this.initialLocation = location;
@@ -36,4 +37,4 @@ class TrailMovementBehavior extends MovementBehavior {
   }
 }
 
-export default TrailMovementBehavior;
+export default TrailMovementStrategy;

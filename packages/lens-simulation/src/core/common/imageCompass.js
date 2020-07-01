@@ -53,14 +53,9 @@ class ImageCompass {
     }
   }
 
-  get slicesWide() {
+  get slicesSize() {
     this.ensureCalculated();
-    return this._compass.slicesWide;
-  }
-
-  get slicesHigh() {
-    this.ensureCalculated();
-    return this._compass.slicesHigh;
+    return this._compass.slicesSize();
   }
 
   boundsFromLocation(point, allowVirtual = false) {

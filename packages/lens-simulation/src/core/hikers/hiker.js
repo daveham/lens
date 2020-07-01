@@ -1,18 +1,42 @@
+import * as R from 'ramda';
 import MovementBehavior from './movementBehaviors/movementBehavior';
 import ActionBehavior from './actionBehaviors/actionBehavior';
 
 import getDebugLog from './debugLog';
 const debug = getDebugLog('hiker');
 
+const nullStrategy = {
+  onStart() {},
+  onStep() {
+    if (this.hiker.active) {
+      this.hiker.actionBehavior.act();
+    }
+    if (this.hiker.active) {
+      this.hiker.movementBehavior.move();
+    }
+  },
+  onEnd() {},
+  onCreateMovementBehavior() {
+    return new MovementBehavior(this.hiker);
+  },
+  onCreateActionBehavior() {
+    return new ActionBehavior(this.hiker);
+  },
+};
+const withDefaults = R.mergeRight(nullStrategy);
+
 class Hiker {
-  trail = null;
   active = true;
   movementBehavior = null;
   actionBehavior = null;
   exitReason = '';
 
-  constructor(trail) {
+  constructor(id, name, trail, strategy = {}) {
+    this.id = id;
+    this.name = name;
     this.trail = trail;
+    this.strategy = withDefaults(strategy);
+    this.strategy.hiker = this;
   }
 
   isActive() {
@@ -20,21 +44,31 @@ class Hiker {
   }
 
   step() {
-    if (!(this.movementBehavior && this.movementBehavior.started)) {
-      this.onStart();
+    debug('step', this.name);
+    this.ensureBehaviorsCreated();
+    if (!this.started) {
+      this.strategy.onStart();
+      this.started = true;
       this.movementBehavior.start();
       this.actionBehavior.start();
     }
 
-    this.onStep();
+    this.strategy.onStep();
 
     if (!this.active) {
-      this.onEnd();
+      this.strategy.onEnd();
       this.movementBehavior.end();
       this.actionBehavior.end();
     }
 
     return this.isActive();
+  }
+
+  ensureBehaviorsCreated() {
+    if (!this.movementBehavior || !this.actionBehavior) {
+      this.movementBehavior = this.strategy.onCreateMovementBehavior();
+      this.actionBehavior = this.strategy.onCreateActionBehavior();
+    }
   }
 
   onStep() {
@@ -45,27 +79,6 @@ class Hiker {
     if (this.active) {
       this.movementBehavior.move();
     }
-  }
-
-  onStart() {
-    debug('onStart');
-    this.started = true;
-    this.movementBehavior = this.onCreateMovementBehavior();
-    this.actionBehavior = this.onCreateActionBehavior();
-  }
-
-  onEnd() {
-    debug('onEnd');
-  }
-
-  onCreateMovementBehavior() {
-    debug('onCreateMovementBehavior');
-    return new MovementBehavior(this);
-  }
-
-  onCreateActionBehavior() {
-    debug('onCreateActionBehavior');
-    return new ActionBehavior(this);
   }
 
   abort(reason) {

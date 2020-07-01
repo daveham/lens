@@ -1,37 +1,20 @@
+import Size from '../../../basic/size';
+import DicePlan from '../../common/dicePlan';
 import Hike from '../hike';
 import Trail from '../../trails/trail';
 import Hiker from '../../hikers/hiker';
 
 describe('hike', () => {
-  class MockHike extends Hike {
-    onRun() {
-      super.onRun();
-    }
-  }
-
-  test('constructs over base class', () => {
-    const testHike = new MockHike();
-    expect(testHike instanceof Hike).toBeTruthy();
-  });
-
-  test('runs through base class', () => {
-    const testHike = new MockHike();
-    testHike.onRun = jest.fn();
-
-    testHike.run();
-    expect(testHike.onRun).toHaveBeenCalled();
-  });
-
   test('runs active hikers', () => {
-    const testHike = new MockHike();
-    const testTrail = new Trail();
+    const testPlan = new DicePlan(new Size(8, 8), new Size(2, 2));
+    const testHike = new Hike(1, 'mock-hike', new Size(200, 100));
+    const testTrail = new Trail(2, 'mock-trail', testHike, testPlan);
     testHike.addTrail(testTrail);
-    const testHiker = new Hiker();
+    const testHiker = new Hiker(3, 'mock-hiker', testTrail);
     testTrail.addHiker(testHiker);
 
     testHike.run();
 
-    // expect(testHiker.isActive()).toBeFalsy();
     expect(testHike.stepCount).toEqual(1);
   });
 });

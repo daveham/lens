@@ -63,7 +63,8 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom --no-watch",
     "styleguide": "styleguidist server",
-    "styleguide:build": "styleguidist build"
+    "styleguide:build": "styleguidist build",
+    "rmrf": "rimraf node_modules"
   },
   "eslintConfig": {
     "extends": "plugin:react-app/recommended",

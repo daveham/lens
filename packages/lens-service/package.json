@@ -38,6 +38,7 @@
   },
   "scripts": {
     "start": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
-    "dev": "nodemon --inspect=192.168.20.20:5859 bin/register.js"
+    "dev": "nodemon --inspect=192.168.20.20:5859 bin/register.js",
+    "rmrf": "rimraf node_modules"
   }
 }

@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 export const packagesPath = path.resolve(__dirname, '../packages');
 
@@ -32,7 +32,7 @@ export const transpileScriptsOptions = {
   ignore: [
     `${packagesPath}/@(${transpileFoldersJoined})/src/**/__tests__/**/*.js`,
     `${packagesPath}/@(${transpileFoldersJoined})/src/**/*.test.js`,
-  ]
+  ],
 };
 
 // lint

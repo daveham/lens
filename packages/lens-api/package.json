@@ -40,7 +40,8 @@
   },
   "scripts": {
     "start": "nodemon --inspect=192.168.20.20:5858 bin/register.js",
-    "dev": "nodemon --inspect=192.168.20.20:5858 bin/register.js"
+    "dev": "nodemon --inspect=192.168.20.20:5858 bin/register.js",
+    "rmrf": "rimraf node_modules"
   },
   "devDependencies": {
     "@types/restify-errors": "^4.3.2",

@@ -14,7 +14,8 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "rmrf": "rimraf lib"
   },
   "jest": {
     "testRegex": "(/__tests__/.*|(\\.|/)test)\\.jsx?$",

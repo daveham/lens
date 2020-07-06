@@ -1,36 +1,58 @@
+import invariant from 'tiny-invariant';
 import * as R from 'ramda';
 import TrailState from './trailState';
 
 import getDebugLog from './debugLog';
 const debug = getDebugLog('trail');
 
-const nullStrategy = {
-  onOpen() {},
-  onClose() {},
+class NullTrailStrategy {
+  onOpen() {}
+
+  onClose() {}
+
   onCreateTrailState() {
+    debug('NullTrailStrategy onCreateTrailState', this.trail.name);
     return new TrailState();
-  },
-  onInitializeTrailState() {},
-  onUpdateTrailState() {},
-};
-const withDefaults = R.mergeRight(nullStrategy);
+  }
+
+  onInitializeTrailState(trailState) {
+    invariant(this.trail, 'trail should be assigned to trail strategy');
+    debug('NullTrailStrategy onInitializeTrailState', this.trail.name);
+    this.trail.applyInitModifiers(trailState);
+  }
+
+  onUpdateTrailState(trailState) {
+    invariant(this.trail, 'trail should be assigned to trail strategy');
+    debug('NullTrailStrategy onUpdateTrailState', this.trail.name);
+    this.trail.applyUpdateModifiers(trailState);
+  }
+}
+
+export const mixTrailStrategy = (...args) => R.compose(...args)(NullTrailStrategy);
 
 class Trail {
   hikers = [];
+  modifiers = [];
   isOpen = false;
 
-  constructor(id, name, hike, plan, strategy = {}) {
+  constructor(id, name, hike, plan, strategy) {
     this.id = id;
     this.name = name;
     this.hike = hike;
     this.plan = plan;
     this.compass = plan.createCompass(hike.size);
-    this.strategy = withDefaults(strategy);
+    this.strategy = strategy || new NullTrailStrategy();
     this.strategy.trail = this;
   }
 
   addHiker(hiker) {
+    debug('addHiker', this.name);
     this.hikers.push(hiker);
+  }
+
+  addModifier(modifier) {
+    debug('addModifier', this.name);
+    this.modifiers.push(modifier);
   }
 
   open() {
@@ -48,17 +70,33 @@ class Trail {
   }
 
   createTrailState() {
-    return this.strategy.onCreateTrailState();
+    debug('createTrailState', this.name);
+    const trailState = this.strategy.onCreateTrailState();
+    trailState.trail = this;
+    return trailState;
   }
 
-  initializeTrailState() {
+  initializeTrailState(trailState) {
+    debug('initializeTrailState', this.name);
     this.assertOpen();
-    this.strategy.onInitializeTrailState();
+    this.strategy.onInitializeTrailState(trailState);
+    trailState.resetLocation();
   }
 
-  updateTrailState() {
+  applyInitModifiers(trailState) {
+    debug('applyInitModifiers', { trailState: trailState.toString() });
+    this.modifiers.forEach(m => m.modifyInitialTrailState(trailState));
+  }
+
+  updateTrailState(trailState) {
+    debug('updateTrailState', this.name);
     this.assertOpen();
-    this.strategy.onUpdateTrailState();
+    this.strategy.onUpdateTrailState(trailState);
+  }
+
+  applyUpdateModifiers(trailState) {
+    debug('applyUpdateModifiers', { trailState: trailState.toString() });
+    this.modifiers.forEach(m => m.modifyUpdateTrailState(trailState));
   }
 
   assertOpen(expected = true) {

@@ -2,7 +2,7 @@
 These are the primary elements of the simulation using an abstraction
 based on hiking.
 
-### Hike
+## Hike
 The hike sets the area to explore (photo image).
 It determines the start timing and finish timing.
 The hike holds a collection of trails.
@@ -19,7 +19,7 @@ Hike Strategy API
 - onRun
 - onClose
 
-### Trail
+## Trail
 The trail controls the course through the hike.
 It determines the direction, the start location and the finish location.
 The trail holds a collection of hikers.
@@ -40,7 +40,7 @@ Trail Strategy API
 - onInitializeTrailState
 - onUpdateTrailState
 
-### Hiker
+## Hiker
 The hiker controls the behavior along a trail.
 The hiker has two behaviors.
 - The movement behavior determines how a hiker moves along a trail.
@@ -59,8 +59,10 @@ Hiker Strategy API
 - onCreateMovementBehavior
 - onCreateActionBehavior
 
-#### Movement Behavior
+### Movement Behavior
 The movement behavior provides the implementation of initializing and updating the hiker's location on the trail.
+The behavior owns the values because they are per-hiker.
+The trail owns the method of assigning and changing the values.
 Different types of movement behaviors are created by assigning a movement strategy.
 A hiker's movement behavior owns trail state which represents the hiker's current location and movement.
 The hiker's movement behavior uses the trail to initialize and update the trail state.
@@ -75,7 +77,15 @@ Movement Strategy API
 - onMove
 - onEnd
 
-#### Action Behavior
+#### Trail Movement Strategy
+The trail movement strategy specializes the movement behavior to manage TrailState on the trial for a hiker.
+
+Trail Movement Strategy API
+- onStart - use trail to create trail state, set initial location and movement, use trail to initialize trail state
+- onMove - use trail to update trail state
+- onEnd - N/A
+
+### Action Behavior
 The action behavior provides the implementation of actions performed by the hiker along the trail.
 Different types of action behaviors are created by assigning an action strategy.
 

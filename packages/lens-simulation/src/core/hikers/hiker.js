@@ -5,25 +5,33 @@ import ActionBehavior from './actionBehaviors/actionBehavior';
 import getDebugLog from './debugLog';
 const debug = getDebugLog('hiker');
 
-const nullStrategy = {
-  onStart() {},
+class NullHikerStrategy {
+  onStart() {}
+
   onStep() {
+    debug('NullHikerStrategy onStep', this.hiker.name);
     if (this.hiker.active) {
       this.hiker.actionBehavior.act();
     }
     if (this.hiker.active) {
       this.hiker.movementBehavior.move();
     }
-  },
-  onEnd() {},
+  }
+
+  onEnd() {}
+
   onCreateMovementBehavior() {
+    debug('NullHikerStrategy onCreateMovementBehavior', this.hiker.name);
     return new MovementBehavior(this.hiker);
-  },
+  }
+
   onCreateActionBehavior() {
+    debug('NullHikerStrategy onCreateActionBehavior', this.hiker.name);
     return new ActionBehavior(this.hiker);
-  },
-};
-const withDefaults = R.mergeRight(nullStrategy);
+  }
+}
+
+export const mixHikerStrategy = (...args) => R.compose(...args)(NullHikerStrategy);
 
 class Hiker {
   active = true;
@@ -31,11 +39,11 @@ class Hiker {
   actionBehavior = null;
   exitReason = '';
 
-  constructor(id, name, trail, strategy = {}) {
+  constructor(id, name, trail, strategy) {
     this.id = id;
     this.name = name;
     this.trail = trail;
-    this.strategy = withDefaults(strategy);
+    this.strategy = strategy || new NullHikerStrategy();
     this.strategy.hiker = this;
   }
 
@@ -65,6 +73,7 @@ class Hiker {
   }
 
   ensureBehaviorsCreated() {
+    debug('ensureBehaviorsCreated', this.name);
     if (!this.movementBehavior || !this.actionBehavior) {
       this.movementBehavior = this.strategy.onCreateMovementBehavior();
       this.actionBehavior = this.strategy.onCreateActionBehavior();

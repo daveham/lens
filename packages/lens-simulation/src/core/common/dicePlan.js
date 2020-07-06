@@ -5,6 +5,10 @@ class DicePlan {
   step;
   depth;
 
+  /**
+   * Create a dice plan for slicing image data.
+   * @param {(DicePlan|Size|number)} args - grain, step, depth
+   */
   constructor(...args) {
     if (args[0].calculateBasePlan) {
       const [otherPlan, requestedDepth = 0] = args;

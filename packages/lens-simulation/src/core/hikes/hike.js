@@ -1,32 +1,37 @@
 import * as R from 'ramda';
+import Rectangle from '../../basic/rectangle';
 import getDebugLog from './debugLog';
 const debug = getDebugLog('hike');
 
 const DEFAULT_RUN_AWAY_LIMIT = 10000;
 
-const nullStrategy = {
-  onOpen() {},
-  onClose() {},
+class NullHikeStrategy {
+  onOpen() {}
+  onClose() {}
   onRun() {
+    debug('NullHikeStrategy run', this.hike.name);
     this.hike.onRun();
-  },
-};
-const withDefaults = R.mergeRight(nullStrategy);
+  }
+}
+
+export const mixHikeStrategy = (...args) => R.compose(...args)(NullHikeStrategy);
 
 class Hike {
   trails = [];
   stepCount = 0;
   stepRunAwayLimit = DEFAULT_RUN_AWAY_LIMIT;
 
-  constructor(id, name, size, strategy = {}) {
+  constructor(id, name, size, strategy) {
     this.id = id;
     this.name = name;
     this.size = size;
-    this.strategy = withDefaults(strategy);
+    this.bounds = new Rectangle([0, 0], size);
+    this.strategy = strategy || new NullHikeStrategy();
     this.strategy.hike = this;
   }
 
   addTrail(trail) {
+    debug('addTrail', this.name);
     this.trails.push(trail);
   }
 
@@ -74,6 +79,11 @@ class Hike {
         }
       }
     }
+  }
+
+  isLocationInBounds(location) {
+    debug('isLocationInBounds', { bound: this.bounds.toString(), location: location.toString() });
+    return this.bounds.containsPoint(location);
   }
 }
 

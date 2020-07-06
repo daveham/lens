@@ -1,4 +1,7 @@
 import E3 from 'eventemitter3';
+import invariant from 'tiny-invariant';
+import Point from '../../basic/point';
+import Size from '../../basic/size';
 
 import getDebugLog from './debugLog';
 const debug = getDebugLog('trailState');
@@ -7,9 +10,14 @@ class TrailState {
   _initialLocation;
   _location;
   _movement;
+  trail;
 
   constructor() {
     this.events = new E3.EventEmitter();
+  }
+
+  toString() {
+    return `{ initialLocation: ${this._initialLocation}, location: ${this._location}, movement: ${this._movement} }`;
   }
 
   get initialLocation() {
@@ -18,9 +26,8 @@ class TrailState {
 
   set initialLocation(value) {
     debug('set initial location', value);
-    this._initialLocation = value;
-    // noinspection JSCheckFunctionSignatures
-    this.events.emit('initialLocation', { initialLocation: this._initialLocation });
+    this._initialLocation = new Point(value);
+    this.sendInitialLocationEvent();
   }
 
   get location() {
@@ -29,9 +36,8 @@ class TrailState {
 
   set location(value) {
     debug('set location', value);
-    this._location = value;
-    // noinspection JSCheckFunctionSignatures
-    this.events.emit('location', { location: this._location });
+    this._location = new Point(value);
+    this.sendLocationEvent();
   }
 
   get movement() {
@@ -39,10 +45,42 @@ class TrailState {
   }
 
   set movement(value) {
-    this._movement = value;
     debug('set movement', value);
+    this._movement = new Size(value);
+    this.sendMovementEvent();
+  }
+
+  resetLocation() {
+    debug('resetLocation');
+    this._location = this._initialLocation;
+    this.sendLocationEvent();
+  }
+
+  addMovement(movement) {
+    this._location = movement ? this._location.add(movement) : this._location.add(this._movement);
+    this.sendLocationEvent();
+  }
+
+  sendInitialLocationEvent() {
+    // noinspection JSCheckFunctionSignatures
+    this.events.emit('initialLocation', { initialLocation: this._initialLocation });
+  }
+
+  sendLocationEvent() {
+    // noinspection JSCheckFunctionSignatures
+    this.events.emit('location', { location: this._location });
+  }
+
+  sendMovementEvent() {
     // noinspection JSCheckFunctionSignatures
     this.events.emit('movement', { movement: this._movement });
+  }
+
+  isInBounds(location) {
+    invariant(this.trail, 'trail should be assigned to trail state');
+    return location
+      ? this.trail.hike.isLocationInBounds(location)
+      : this.trail.hike.isLocationInBounds(this._location);
   }
 }
 

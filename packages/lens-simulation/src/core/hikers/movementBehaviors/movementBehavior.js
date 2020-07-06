@@ -1,25 +1,35 @@
+import invariant from 'tiny-invariant';
 import * as R from 'ramda';
 import { HikerExitReason } from '../../constants';
 
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('movementBehavior');
 
-const nullStrategy = {
-  onStart() {},
+class NullMovementBehaviorStrategy {
+  onStart() {}
+
   onMove() {
+    invariant(this.behavior, 'behavior should be assigned to strategy');
+    debug('NullMovementBehaviorStrategy onMove', this.behavior.hiker.name);
     this.behavior.abort(HikerExitReason.reachedStepLimit);
-  },
-  onEnd() {},
-};
-const withDefaults = R.mergeRight(nullStrategy);
+  }
+
+  onEnd() {}
+}
+
+export const mixMovementBehaviorStrategy = (...args) =>
+  R.compose(...args)(NullMovementBehaviorStrategy);
 
 class MovementBehavior {
   started = false;
+  hiker;
+  strategy;
 
-  constructor(hiker, strategy = {}) {
+  constructor(hiker, strategy) {
     this.hiker = hiker;
-    this.strategy = withDefaults(strategy);
+    this.strategy = strategy || new NullMovementBehaviorStrategy();
     this.strategy.behavior = this;
+    this.strategy.hiker = hiker;
   }
 
   start() {

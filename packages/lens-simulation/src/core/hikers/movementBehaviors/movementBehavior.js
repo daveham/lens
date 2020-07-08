@@ -12,6 +12,7 @@ class NullMovementBehaviorStrategy {
     invariant(this.behavior, 'behavior should be assigned to strategy');
     debug('NullMovementBehaviorStrategy onMove', this.behavior.hiker.name);
     this.behavior.abort(HikerExitReason.reachedStepLimit);
+    return Promise.resolve();
   }
 
   onEnd() {}
@@ -42,7 +43,7 @@ class MovementBehavior {
   move() {
     debug('move', this.hiker.name);
     this.assertStarted();
-    this.strategy.onMove();
+    return this.strategy.onMove();
   }
 
   end() {

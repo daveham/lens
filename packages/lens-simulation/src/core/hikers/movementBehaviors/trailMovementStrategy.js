@@ -50,6 +50,7 @@ const TrailMovementStrategyMixin = superclass =>
       trail.initializeTrailState(this.trailState);
     }
 
+    // async?
     onMove() {
       invariant(this.hiker, 'hiker should be assigned to movement strategy');
       invariant(this.hiker.trail, 'trail should be assigned to hiker');
@@ -61,6 +62,7 @@ const TrailMovementStrategyMixin = superclass =>
         this.hiker.trail.updateTrailState(this.trailState);
         this.steps += 1;
       }
+      return Promise.resolve();
     }
   };
 

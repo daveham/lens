@@ -5,8 +5,8 @@ import Hike from '../hike';
 import Trail from '../../trails/trail';
 import Hiker from '../../hikers/hiker';
 
-// import getDebugLog from '../debugLog';
-// const debug = getDebugLog('hikerTests');
+import getDebugLog from '../debugLog';
+const debug = getDebugLog('hikerTests');
 
 describe('hike', () => {
   test('null strategy merge', () => {
@@ -60,8 +60,13 @@ describe('hike', () => {
     const testHiker = new Hiker(3, 'mock-hiker', testTrail);
     testTrail.addHiker(testHiker);
 
-    testHike.run();
-
-    expect(testHike.stepCount).toEqual(1);
+    return testHike
+      .run()
+      .then(() => {
+        expect(testHike.stepCount).toEqual(1);
+      })
+      .catch(err => {
+        debug('runs active hikers test error', err);
+      });
   });
 });

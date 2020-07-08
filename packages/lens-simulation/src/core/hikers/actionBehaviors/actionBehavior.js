@@ -1,29 +1,45 @@
 import * as R from 'ramda';
+import invariant from 'tiny-invariant';
 
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('actionBehavior');
 
-const nullStrategy = {
-  onStart() {},
+class NullActionBehaviorStrategy {
+  onStart() {}
+
+  // async?
   onAct() {
-    this.onObserve();
-    this.onInfer();
-  },
-  onObserve() {},
-  onInfer() {},
-  onEnd() {},
-};
-const withDefaults = R.mergeRight(nullStrategy);
+    invariant(this.behavior, 'behavior should be assigned to strategy');
+    debug('NullActionBehaviorStrategy onAct', this.behavior.hiker.name);
+    return this.onObserve().then(() => this.onInfer());
+  }
+
+  // async?
+  onObserve() {
+    return Promise.resolve();
+  }
+
+  // async?
+  onInfer() {
+    return Promise.resolve();
+  }
+
+  onEnd() {}
+}
+
+export const mixActionBehaviorStrategy = (...args) =>
+  R.compose(...args)(NullActionBehaviorStrategy);
 
 class ActionBehavior {
   started = false;
 
-  constructor(hiker, strategy = {}) {
+  constructor(hiker, strategy) {
     this.hiker = hiker;
-    this.strategy = withDefaults(strategy);
+    this.strategy = strategy || new NullActionBehaviorStrategy();
     this.strategy.behavior = this;
   }
 
+  // async?
   start() {
     debug('start', this.hiker.name);
     this.assertStarted(false);
@@ -34,7 +50,7 @@ class ActionBehavior {
   act() {
     debug('act', this.hiker.name);
     this.assertStarted();
-    this.strategy.onAct();
+    return this.strategy.onAct();
   }
 
   end() {

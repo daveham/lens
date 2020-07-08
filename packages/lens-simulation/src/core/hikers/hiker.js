@@ -1,4 +1,6 @@
+import co from 'co';
 import * as R from 'ramda';
+import DataBehavior from './dataBehaviors/dataBehavior';
 import MovementBehavior from './movementBehaviors/movementBehavior';
 import ActionBehavior from './actionBehaviors/actionBehavior';
 
@@ -6,19 +8,21 @@ import getDebugLog from './debugLog';
 const debug = getDebugLog('hiker');
 
 class NullHikerStrategy {
+  hiker;
+
   onStart() {}
 
   onStep() {
     debug('NullHikerStrategy onStep', this.hiker.name);
-    if (this.hiker.active) {
-      this.hiker.actionBehavior.act();
-    }
-    if (this.hiker.active) {
-      this.hiker.movementBehavior.move();
-    }
+    return this.hiker.onStep();
   }
 
   onEnd() {}
+
+  onCreateDataBehavior() {
+    debug('NullHikerStrategy onCreateDataBehavior', this.hiker.name);
+    return new DataBehavior(this.hiker);
+  }
 
   onCreateMovementBehavior() {
     debug('NullHikerStrategy onCreateMovementBehavior', this.hiker.name);
@@ -35,8 +39,9 @@ export const mixHikerStrategy = (...args) => R.compose(...args)(NullHikerStrateg
 
 class Hiker {
   active = true;
-  movementBehavior = null;
-  actionBehavior = null;
+  dataBehavior;
+  movementBehavior;
+  actionBehavior;
   exitReason = '';
 
   constructor(id, name, trail, strategy) {
@@ -57,37 +62,46 @@ class Hiker {
     if (!this.started) {
       this.strategy.onStart();
       this.started = true;
+      this.dataBehavior.start();
       this.movementBehavior.start();
       this.actionBehavior.start();
     }
 
-    this.strategy.onStep();
+    return this.strategy.onStep().then(() => {
+      if (!this.active) {
+        this.strategy.onEnd();
+        this.dataBehavior.end();
+        this.movementBehavior.end();
+        this.actionBehavior.end();
+      }
 
-    if (!this.active) {
-      this.strategy.onEnd();
-      this.movementBehavior.end();
-      this.actionBehavior.end();
-    }
-
-    return this.isActive();
+      return this.isActive();
+    });
   }
 
   ensureBehaviorsCreated() {
     debug('ensureBehaviorsCreated', this.name);
-    if (!this.movementBehavior || !this.actionBehavior) {
+    if (!this.dataBehavior || !this.movementBehavior || !this.actionBehavior) {
+      this.dataBehavior = this.strategy.onCreateDataBehavior();
       this.movementBehavior = this.strategy.onCreateMovementBehavior();
       this.actionBehavior = this.strategy.onCreateActionBehavior();
     }
   }
 
-  onStep() {
+  *runBehaviors() {
     if (this.active) {
-      this.actionBehavior.act();
+      yield this.dataBehavior.load(); // async
     }
+    if (this.active) {
+      yield this.actionBehavior.act(); // async?
+    }
+    if (this.active) {
+      yield this.movementBehavior.move(); // async?
+    }
+  }
 
-    if (this.active) {
-      this.movementBehavior.move();
-    }
+  onStep() {
+    return co(this.runBehaviors());
   }
 
   abort(reason) {

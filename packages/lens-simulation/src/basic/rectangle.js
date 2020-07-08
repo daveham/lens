@@ -333,7 +333,8 @@ class Rectangle {
       : this.containsPoint(new Point(...arguments));
   }
 
-  containsPoint({ x, y }) {
+  containsPoint(/* point */ ...args) {
+    const [x, y] = getPointParamsFromArguments(args);
     return x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
   }
 

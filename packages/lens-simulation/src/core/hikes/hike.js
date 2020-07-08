@@ -1,3 +1,4 @@
+import co from 'co';
 import * as R from 'ramda';
 import Rectangle from '../../basic/rectangle';
 import getDebugLog from './debugLog';
@@ -10,7 +11,7 @@ class NullHikeStrategy {
   onClose() {}
   onRun() {
     debug('NullHikeStrategy run', this.hike.name);
-    this.hike.onRun();
+    return this.hike.onRun();
   }
 }
 
@@ -39,9 +40,10 @@ class Hike {
     debug('run', this.name);
     this.open();
     this.trails.forEach(trail => trail.open());
-    this.strategy.onRun();
-    this.trails.forEach(trail => trail.close());
-    this.close();
+    return this.strategy.onRun().then(() => {
+      this.trails.forEach(trail => trail.close());
+      this.close();
+    });
   }
 
   open() {
@@ -65,20 +67,25 @@ class Hike {
     }
   }
 
-  onRun() {
-    debug('onRun', { name: this.name });
+  // async? generator?
+  *runSteps() {
     const { stepRunAwayLimit } = this;
     let anyActive = true;
     while (anyActive && this.stepCount < stepRunAwayLimit) {
       anyActive = false;
       for (const k of this.activeHikers()) {
-        k.step();
+        yield k.step(); // async?
         this.stepCount += 1;
         if (k.isActive()) {
           anyActive = true;
         }
       }
     }
+  }
+
+  onRun() {
+    debug('onRun', { name: this.name });
+    return co(this.runSteps());
   }
 
   isLocationInBounds(location) {

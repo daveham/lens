@@ -293,6 +293,15 @@ describe('Rectangle', () => {
     expect(rect.contains(point)).toBeFalsy();
   });
 
+  test('rect.contains(array)', () => {
+    const rect = new Rectangle(160, 270, 20, 20);
+    let point = [166, 280];
+    expect(rect.contains(point)).toBeTruthy();
+
+    point = [30, 30];
+    expect(rect.contains(point)).toBeFalsy();
+  });
+
   test('rect1.intersect(rect2)', () => {
     const rect1 = new Rectangle(160, 270, 20, 20);
     const rect2 = new Rectangle(170.5, 280.5, 19, 19);

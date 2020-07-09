@@ -89,14 +89,15 @@ class Hiker {
   }
 
   *runBehaviors() {
+    debug('runBehaviors', { active: this.active });
     if (this.active) {
-      yield this.dataBehavior.load(); // async
+      yield this.dataBehavior.load();
     }
     if (this.active) {
-      yield this.actionBehavior.act(); // async?
+      yield this.actionBehavior.act();
     }
     if (this.active) {
-      yield this.movementBehavior.move(); // async?
+      yield this.movementBehavior.move();
     }
   }
 

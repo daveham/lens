@@ -7,20 +7,19 @@ const debug = getDebugLog('actionBehavior');
 class NullActionBehaviorStrategy {
   onStart() {}
 
-  // async?
   onAct() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
     debug('NullActionBehaviorStrategy onAct', this.behavior.hiker.name);
     return this.onObserve().then(() => this.onInfer());
   }
 
-  // async?
   onObserve() {
+    debug('NullActionBehaviorStrategy onObserve', this.behavior.hiker.name);
     return Promise.resolve();
   }
 
-  // async?
   onInfer() {
+    debug('NullActionBehaviorStrategy onInfer', this.behavior.hiker.name);
     return Promise.resolve();
   }
 
@@ -39,7 +38,6 @@ class ActionBehavior {
     this.strategy.behavior = this;
   }
 
-  // async?
   start() {
     debug('start', this.hiker.name);
     this.assertStarted(false);

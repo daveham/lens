@@ -67,15 +67,15 @@ class Hike {
     }
   }
 
-  // async? generator?
   *runSteps() {
     const { stepRunAwayLimit } = this;
     let anyActive = true;
     while (anyActive && this.stepCount < stepRunAwayLimit) {
       anyActive = false;
       for (const k of this.activeHikers()) {
-        yield k.step(); // async?
+        yield k.step();
         this.stepCount += 1;
+        debug('runSteps', { stepCount: this.stepCount, active: k.isActive() });
         if (k.isActive()) {
           anyActive = true;
         }
@@ -85,7 +85,9 @@ class Hike {
 
   onRun() {
     debug('onRun', { name: this.name });
-    return co(this.runSteps());
+    return co(this.runSteps()).then(() => {
+      debug('after onRun co');
+    });
   }
 
   isLocationInBounds(location) {

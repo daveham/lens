@@ -11,32 +11,29 @@ import Trail, { mixTrailStrategy } from '../trail';
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('trailTests');
 
+function createTestObjects(trailStrategy, hikerOptions) {
+  const hike = new Hike(100, 'testHike', new Size(200, 100));
+  const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
+
+  const trail = new Trail(101, 'lineTrail', hike, plan, trailStrategy);
+  hike.addTrail(trail);
+
+  const TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
+
+  const hiker = new Hiker(102, 'testHiker', trail, new TrailHikerStrategy(hikerOptions));
+  trail.addHiker(hiker);
+
+  return [hike, trail, hiker];
+}
+
 describe('trail', () => {
   describe('line trail', () => {
-    let hike;
-    let trail;
-    let TrailHikerStrategy;
-
-    const makeHiker = strategyOptions =>
-      new Hiker(102, 'testHiker', trail, new TrailHikerStrategy(strategyOptions));
-
-    beforeEach(() => {
-      hike = new Hike(100, 'testHike', new Size(200, 100));
-      const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
-
-      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
-      trail = new Trail(101, 'lineTrail', hike, plan, new LineTrailStrategy());
-      hike.addTrail(trail);
-
-      TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
-    });
-
     test('take one step', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 2], stepLimit: 1, initialLocation: [0, 50] },
       };
-      const hiker = makeHiker(hikerStrategyOptions);
-      trail.addHiker(hiker);
+      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(new LineTrailStrategy(), hikerStrategyOptions);
 
       hike.open();
       trail.open();
@@ -54,8 +51,8 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 2], stepLimit: 5, initialLocation: [0, 50] },
       };
-      const hiker = makeHiker(hikerStrategyOptions);
-      trail.addHiker(hiker);
+      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(new LineTrailStrategy(), hikerStrategyOptions);
 
       return hike.run().then(() => {
         expect(trail.isOpen).toBeFalsy();
@@ -72,52 +69,31 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 7], stepLimit: 100, initialLocation: [0, 50] },
       };
-      const hiker = makeHiker(hikerStrategyOptions);
-      trail.addHiker(hiker);
+      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(new LineTrailStrategy(), hikerStrategyOptions);
 
       return hike.run().then(() => {
         expect(trail.isOpen).toBeFalsy();
         expect(hiker.started).toBeTruthy();
         expect(hiker.movementBehavior.started).toBeTruthy();
-        expect(hiker.movementBehavior.strategy.steps).toBe(8); // 50/7 + 1
         expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
+        expect(hiker.movementBehavior.strategy.steps).toBe(8); // 50/7 + 1
         expect(hiker.movementBehavior.strategy.trailState.location.x).toBe(8);
         expect(hiker.movementBehavior.strategy.trailState.location.y).toBeGreaterThan(100);
       });
     });
   });
 
-  describe('cover trail', () => {
-    let hike;
-    let trail;
-    let TrailHikerStrategy;
-
-    const makeHiker = strategyOptions =>
-      new Hiker(102, 'testHiker', trail, new TrailHikerStrategy(strategyOptions));
-
-    beforeEach(() => {
-      hike = new Hike(100, 'testHike', new Size(200, 100));
-      const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
-
-      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
-      trail = new Trail(
-        101,
-        'coverTrail',
-        hike,
-        plan,
-        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.rowsFirst }),
-      );
-      hike.addTrail(trail);
-
-      TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
-    });
-
+  describe('cover trail by rows', () => {
     test('take one step', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [10, 20], stepLimit: 1 },
       };
-      const hiker = makeHiker(hikerStrategyOptions);
-      trail.addHiker(hiker);
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.rowsFirst }),
+        hikerStrategyOptions,
+      );
 
       hike.open();
       trail.open();
@@ -135,8 +111,11 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [10, 20], stepLimit: 25 },
       };
-      const hiker = makeHiker(hikerStrategyOptions);
-      trail.addHiker(hiker);
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.rowsFirst }),
+        hikerStrategyOptions,
+      );
 
       return hike.run().then(() => {
         expect(trail.isOpen).toBeFalsy();
@@ -146,6 +125,93 @@ describe('trail', () => {
         expect(hiker.movementBehavior.strategy.steps).toBe(25);
         expect(hiker.movementBehavior.strategy.trailState.location.x).toBe(50);
         expect(hiker.movementBehavior.strategy.trailState.location.y).toBe(20);
+      });
+    });
+
+    test('run to bounds limit', () => {
+      const hikerStrategyOptions = {
+        movementOptions: { fixedDisplacement: [40, 20], stepLimit: 30 },
+      };
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.rowsFirst }),
+        hikerStrategyOptions,
+      );
+
+      return hike.run().then(() => {
+        expect(trail.isOpen).toBeFalsy();
+        expect(hiker.started).toBeTruthy();
+        expect(hiker.movementBehavior.started).toBeTruthy();
+        expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
+        expect(hiker.movementBehavior.strategy.steps).toBe(25); // 200/40 * 100/20
+        expect(hiker.movementBehavior.strategy.trailState.location.x).toBe(0);
+        expect(hiker.movementBehavior.strategy.trailState.location.y).toBeGreaterThanOrEqual(100);
+      });
+    });
+  });
+
+  describe('cover trail by columns', () => {
+    test('take one step', () => {
+      const hikerStrategyOptions = {
+        movementOptions: { fixedDisplacement: [10, 20], stepLimit: 1 },
+      };
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.columnsFirst }),
+        hikerStrategyOptions,
+      );
+
+      hike.open();
+      trail.open();
+      return hiker.step().then(() => {
+        expect(trail.isOpen).toBeTruthy();
+        expect(hiker.started).toBeTruthy();
+        expect(hiker.movementBehavior.started).toBeTruthy();
+        expect(hiker.movementBehavior.strategy.steps).toBe(1);
+        expect(hiker.movementBehavior.strategy.trailState.location.x).toBe(0);
+        expect(hiker.movementBehavior.strategy.trailState.location.y).toBe(20);
+      });
+    });
+
+    test('run to step limit', () => {
+      const hikerStrategyOptions = {
+        movementOptions: { fixedDisplacement: [10, 20], stepLimit: 21 },
+      };
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.columnsFirst }),
+        hikerStrategyOptions,
+      );
+
+      return hike.run().then(() => {
+        expect(trail.isOpen).toBeFalsy();
+        expect(hiker.started).toBeTruthy();
+        expect(hiker.movementBehavior.started).toBeTruthy();
+        expect(hiker.exitReason).toBe(HikerExitReason.reachedStepLimit);
+        expect(hiker.movementBehavior.strategy.steps).toBe(21);
+        expect(hiker.movementBehavior.strategy.trailState.location.x).toBe(40);
+        expect(hiker.movementBehavior.strategy.trailState.location.y).toBe(20);
+      });
+    });
+
+    test('run to bounds limit', () => {
+      const hikerStrategyOptions = {
+        movementOptions: { fixedDisplacement: [40, 20], stepLimit: 30 },
+      };
+      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
+      const [hike, trail, hiker] = createTestObjects(
+        new CoverTrailStrategy({ moveOrder: CoverTrailMoveOrder.columnsFirst }),
+        hikerStrategyOptions,
+      );
+
+      return hike.run().then(() => {
+        expect(trail.isOpen).toBeFalsy();
+        expect(hiker.started).toBeTruthy();
+        expect(hiker.movementBehavior.started).toBeTruthy();
+        expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
+        expect(hiker.movementBehavior.strategy.steps).toBe(25); // 200/40 * 100/20
+        expect(hiker.movementBehavior.strategy.trailState.location.x).toBeGreaterThanOrEqual(200);
+        expect(hiker.movementBehavior.strategy.trailState.location.y).toBe(0);
       });
     });
   });

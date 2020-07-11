@@ -20,7 +20,7 @@ class RowsFirstTrailStateModifier {
       const movementHalf = trailState.movement.half();
       trailState.initialLocation = this.rightToLeft
         ? [bounds.width - movementHalf.width, movementHalf.height]
-        : [movementHalf.width, movementHalf.height];
+        : movementHalf;
     } else {
       trailState.initialLocation = this.rightToLeft ? [bounds.width / 2, 0] : [0, 0];
     }

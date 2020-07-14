@@ -7,7 +7,6 @@ const debug = getDebugLog('dataBehavior');
 class NullDataBehaviorStrategy {
   onStart() {}
 
-  // async?
   onLoad() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
     debug('NullDataBehaviorStrategy onLoad', this.behavior.hiker.name);

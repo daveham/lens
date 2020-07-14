@@ -22,6 +22,7 @@
     "core-js": "^3.6.5",
     "debug": "^4.1.1",
     "eventemitter3": "^4.0.4",
+    "js-yaml": "^3.14.0",
     "ramda": "^0.27.0",
     "ramda-adjunct": "^2.26.0",
     "regenerator-runtime": "^0.13.5",

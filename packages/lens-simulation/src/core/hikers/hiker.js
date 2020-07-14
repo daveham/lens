@@ -90,7 +90,7 @@ class Hiker {
 
   *runBehaviors() {
     debug('runBehaviors', { active: this.active });
-    if (this.active) {
+    if (this.active && this.actionBehavior.needsData()) {
       yield this.dataBehavior.load();
     }
     if (this.active) {

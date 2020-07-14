@@ -7,6 +7,12 @@ const debug = getDebugLog('actionBehavior');
 class NullActionBehaviorStrategy {
   onStart() {}
 
+  onNeedsData() {
+    invariant(this.behavior, 'behavior should be assigned to strategy');
+    debug('NullActionBehaviorStrategy onNeedsData', this.behavior.hiker.name);
+    return true;
+  }
+
   onAct() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
     debug('NullActionBehaviorStrategy onAct', this.behavior.hiker.name);
@@ -43,6 +49,12 @@ class ActionBehavior {
     this.assertStarted(false);
     this.strategy.onStart();
     this.started = true;
+  }
+
+  needsData() {
+    debug('needsData', this.hiker.name);
+    this.assertStarted();
+    return this.strategy.onNeedsData();
   }
 
   act() {

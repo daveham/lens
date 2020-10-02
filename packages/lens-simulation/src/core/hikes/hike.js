@@ -1,14 +1,21 @@
 import co from 'co';
 import * as R from 'ramda';
 import Rectangle from '../../basic/rectangle';
+import Size from '../../basic/size';
 import getDebugLog from './debugLog';
 const debug = getDebugLog('hike');
 
 const DEFAULT_RUN_AWAY_LIMIT = 10000;
 
-class NullHikeStrategy {
+export class NullHikeStrategy {
+  constructor(options = {}) {
+    this.options = { ...options };
+  }
+
   onOpen() {}
+
   onClose() {}
+
   onRun() {
     debug('NullHikeStrategy run', this.hike.name);
     return this.hike.onRun();
@@ -25,7 +32,7 @@ class Hike {
   constructor(id, name, size, strategy) {
     this.id = id;
     this.name = name;
-    this.size = size;
+    this.size = new Size(size);
     this.bounds = new Rectangle([0, 0], size);
     this.strategy = strategy || new NullHikeStrategy();
     this.strategy.hike = this;

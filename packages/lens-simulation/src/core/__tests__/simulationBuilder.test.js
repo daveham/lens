@@ -1,15 +1,11 @@
+import Size from '../../basic/size';
+import DicePlan from '../common/dicePlan';
 import build, { parse } from '../simulationBuilder';
 
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('simulationBuilderTests');
 
-test('build', () => {
-  const simulation = build();
-  expect(simulation).toBeTruthy();
-});
-
-test('parse', () => {
-  const document = `
+const document = `
 ---
 # test hike 1
 description: >
@@ -33,28 +29,70 @@ hikes:
             movementBehavior:
               id: 104
               type: Trail
-              displacementScheme: fixed
-              fixedDisplacement: [10, 20]
-              stepLimit: 45
-              initialLocation: [0, 10]
+              options:
+                displacementScheme: fixed
+                fixedDisplacement: [10, 20]
+                stepLimit: 45
+                initialLocation: [0, 10]
   `;
-  const doc = parse(document);
-  expect(doc).toBeTruthy();
-  expect(doc.hikes).toHaveLength(1);
-  const [hike] = doc.hikes;
+
+test('parse', () => {
+  const definition = parse(document);
+  expect(definition).toBeTruthy();
+  expect(definition.hikes).toHaveLength(1);
+
+  const [hike] = definition.hikes;
   expect(hike.type).toBe('Trail');
   expect(hike.trails).toHaveLength(1);
+
   const [trail] = hike.trails;
   expect(trail.type).toBe('Line');
   expect(trail.modifiers).toHaveLength(1);
+
   const [modifier] = trail.modifiers;
   expect(modifier.type).toBe('Line');
   expect(trail.hikers).toHaveLength(1);
+
   const [hiker] = trail.hikers;
   expect(hiker.type).toBe('Trail');
-  expect(hiker.movementBehavior).toBeTruthy();
+
   const { movementBehavior } = hiker;
+  expect(movementBehavior).toBeTruthy();
   expect(movementBehavior.type).toBe('Trail');
-  expect(movementBehavior.displacementScheme).toBe('fixed');
-  expect(movementBehavior.fixedDisplacement[1]).toBe(20);
+
+  const { options } = movementBehavior;
+  expect(options).toBeTruthy();
+  expect(options.displacementScheme).toBe('fixed');
+  expect(options.fixedDisplacement[1]).toBe(20);
+});
+
+test('build', () => {
+  const definition = parse(document);
+
+  const model = { size: [100, 200] };
+  const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
+
+  const simulation = build(model, plan, definition);
+  expect(simulation).toBeTruthy();
+
+  expect(simulation.hikes).toBeTruthy();
+  const [hike] = simulation.hikes;
+  expect(hike).toBeTruthy();
+  expect(hike.name).toBe('Hike1');
+
+  expect(hike.trails).toBeTruthy();
+  const [trail] = hike.trails;
+  expect(trail).toBeTruthy();
+
+  expect(trail.modifiers).toBeTruthy();
+  const [modifier] = trail.modifiers;
+  expect(modifier).toBeTruthy();
+
+  expect(trail.hikers).toBeTruthy();
+  const [hiker] = trail.hikers;
+  expect(hiker).toBeTruthy();
+
+  const { movementBehavior } = hiker.strategy;
+  expect(movementBehavior).toBeTruthy();
+  expect(movementBehavior.strategy.displacementScheme).toBe('fixed');
 });

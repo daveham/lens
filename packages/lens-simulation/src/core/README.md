@@ -2,6 +2,17 @@
 These are the primary elements of the simulation using an abstraction
 based on hiking.
 
+- Hike
+  - +HikeStrategy, parent=hike
+  - Tail, parent=hike
+    - +TrailStrategy, parent=trail
+    - TrailStateModifiers
+    - Hiker, parent=trail
+      - +HikerStrategy, parent=hiker
+        - behaviors, parent=hikerStrategy
+          - +behaviorStrategies, parent=behavior
+                
+
 ## Hike
 The hike sets the area to explore (photo image).
 It determines the start timing and finish timing.

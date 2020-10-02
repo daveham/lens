@@ -13,28 +13,34 @@ export const DisplacementScheme = {
 
 const TrailMovementStrategyMixin = superclass =>
   class extends superclass {
-    hiker;
     trailState;
     steps;
 
-    constructor(options = {}) {
-      super(options);
+    constructor({
+      displacementScheme,
+      fixedDisplacement,
+      stepLimit,
+      initialLocation,
+      ...other
+    } = {}) {
+      super(other);
 
-      this.displacementScheme = options.displacementScheme || DisplacementScheme.fixed;
-      this.fixedDisplacement = options.fixedDisplacement || [0, 0];
-      this.stepLimit = options.stepLimit || 0;
-      this.initialLocation = options.initialLocation;
+      this.displacementScheme = displacementScheme || DisplacementScheme.fixed;
+      this.fixedDisplacement = fixedDisplacement || [0, 0];
+      this.stepLimit = stepLimit || 0;
+      this.initialLocation = initialLocation;
     }
 
     onStart() {
-      invariant(this.hiker, 'hiker should be assigned to movement strategy');
-      invariant(this.hiker.trail, 'trail should be assigned to hiker');
-      debug('onStart', this.hiker.name);
+      invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
+      invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
+      const { hiker } = this.behavior.hikerStrategy;
+      debug('onStart', hiker.name);
 
       this.steps = 0;
-      const { trail } = this.hiker;
+      const { trail } = hiker;
       this.trailState = trail.createTrailState();
-      this.trailState.hiker = this.hiker;
+      this.trailState.hiker = hiker;
       this.trailState.movementBehavior = this;
 
       switch (this.displacementScheme) {
@@ -52,14 +58,15 @@ const TrailMovementStrategyMixin = superclass =>
 
     // async?
     onMove() {
-      invariant(this.hiker, 'hiker should be assigned to movement strategy');
-      invariant(this.hiker.trail, 'trail should be assigned to hiker');
-      debug('onMove', this.hiker.name);
+      invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
+      invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
+      const { hiker } = this.behavior.hikerStrategy;
+      debug('onMove', hiker.name);
 
       if (this.stepLimit > 0 && this.steps >= this.stepLimit) {
-        this.hiker.abort(HikerExitReason.reachedStepLimit);
+        hiker.abort(HikerExitReason.reachedStepLimit);
       } else {
-        this.hiker.trail.updateTrailState(this.trailState);
+        hiker.trail.updateTrailState(this.trailState);
         this.steps += 1;
       }
       return Promise.resolve();

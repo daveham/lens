@@ -5,7 +5,11 @@ import TrailState from './trailState';
 import getDebugLog from './debugLog';
 const debug = getDebugLog('trail');
 
-class NullTrailStrategy {
+export class NullTrailStrategy {
+  constructor(options = {}) {
+    this.options = { ...options };
+  }
+
   onOpen() {}
 
   onClose() {}
@@ -31,18 +35,23 @@ class NullTrailStrategy {
 export const mixTrailStrategy = (...args) => R.compose(...args)(NullTrailStrategy);
 
 class Trail {
+  hike;
   hikers = [];
   modifiers = [];
   isOpen = false;
 
-  constructor(id, name, hike, plan, strategy) {
+  constructor(id, name, strategy) {
+    debug('ctor', { id, name, strategy });
     this.id = id;
     this.name = name;
+    this.strategy = strategy || new NullTrailStrategy();
+    this.strategy.trail = this;
+  }
+
+  initialize(plan, hike) {
     this.hike = hike;
     this.plan = plan;
     this.compass = plan.createCompass(hike.size);
-    this.strategy = strategy || new NullTrailStrategy();
-    this.strategy.trail = this;
   }
 
   addHiker(hiker) {

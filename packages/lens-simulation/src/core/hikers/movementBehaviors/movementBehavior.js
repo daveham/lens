@@ -6,6 +6,10 @@ import getDebugLog from '../debugLog';
 const debug = getDebugLog('movementBehavior');
 
 class NullMovementBehaviorStrategy {
+  constructor(options = {}) {
+    this.options = { ...options };
+  }
+
   onStart() {}
 
   onMove() {
@@ -23,31 +27,31 @@ export const mixMovementBehaviorStrategy = (...args) =>
 
 class MovementBehavior {
   started = false;
-  hiker;
+  hikerStrategy;
   strategy;
 
-  constructor(hiker, strategy) {
-    this.hiker = hiker;
+  constructor(id, name, strategy) {
+    this.id = id;
+    this.name = name;
     this.strategy = strategy || new NullMovementBehaviorStrategy();
     this.strategy.behavior = this;
-    this.strategy.hiker = hiker;
   }
 
   start() {
-    debug('start', this.hiker.name);
+    debug('start', this.hikerStrategy.hiker.name);
     this.assertStarted(false);
     this.strategy.onStart();
     this.started = true;
   }
 
   move() {
-    debug('move', this.hiker.name);
+    debug('move', this.hikerStrategy.hiker.name);
     this.assertStarted();
     return this.strategy.onMove();
   }
 
   end() {
-    debug('end', this.hiker.name);
+    debug('end', this.hikerStrategy.hiker.name);
     this.assertStarted();
     this.strategy.onEnd();
   }
@@ -59,8 +63,8 @@ class MovementBehavior {
   }
 
   abort(reason) {
-    debug('abort', { name: this.hiker.name, reason });
-    this.hiker.abort(reason);
+    debug('abort', { name: this.hikerStrategy.hiker.name, reason });
+    this.hikerStrategy.hiker.abort(reason);
   }
 }
 

@@ -20,16 +20,20 @@ export default function build(model, plan, definition, options = {}) {
 
   const simulation = new Simulation(options);
 
-  definition.hikes.forEach(h => {
+  // all entities (h, t, k) can contain optional { id, name }
+  definition.hikes.forEach(({ trails, ...h }) => {
+    // h: { type, options }
     const hike = factory.createHike(h);
     simulation.addHike(hike);
 
-    h.trails.forEach(t => {
+    trails.forEach(({ hikers, ...t }) => {
+      // t: { type, options, modifiers }
       const trail = factory.createTrail(t);
       trail.initialize(plan, hike);
       hike.addTrail(trail);
 
-      t.hikers.forEach(k => {
+      // k: { type, options, movementBehavior, actionBehavior, dataBehavior }
+      hikers.forEach(k => {
         const hiker = factory.createHiker(k);
         hiker.initialize(trail);
         trail.addHiker(hiker);

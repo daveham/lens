@@ -25,6 +25,16 @@ function getNextId() {
   return idCounter;
 }
 
+function extractIdAndName(label, { id, name, ...definition }) {
+  const resolvedId = id || getNextId();
+  const resolvedName = name || `${label}-${resolvedId}`;
+  return [resolvedId, resolvedName, definition];
+}
+
+function extractTypeAndOptions({ type, options, ...other }) {
+  return [type, options, other];
+}
+
 class SimulationFactory {
   initialize(plan, model, inventory = []) {
     this.plan = plan;
@@ -32,20 +42,22 @@ class SimulationFactory {
     this.inventory = inventory;
   }
 
-  createHikeStrategy({ options }) {
+  createHikeStrategy(params) {
+    const [type, options] = extractTypeAndOptions(params);
+    debug('createHikeStrategy', { type, options });
     return new NullHikeStrategy(options);
   }
 
-  createHike(definition) {
-    const id = definition.id || getNextId();
-    const name = definition.name || `hike-${id}`;
+  createHike(params) {
+    const [id, name, definition] = extractIdAndName('hike', params);
     const strategy = this.createHikeStrategy(definition);
     const hike = new Hike(id, name, this.model.size, strategy);
     strategy.hike = hike;
     return hike;
   }
 
-  createTrailStrategy({ type, options }) {
+  createTrailStrategy(params) {
+    const [type, options] = extractTypeAndOptions(params);
     if (type === 'Line') {
       const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
       return new LineTrailStrategy(options);
@@ -58,27 +70,27 @@ class SimulationFactory {
 
   createTrailStateModifiers(trail, { modifiers }) {
     if (modifiers) {
-      modifiers.forEach(definition => {
-        switch (definition.type) {
+      modifiers.forEach(({ type, options }) => {
+        debug('createTrailStateModifiers, creating type', type);
+        switch (type) {
           case 'Line':
-            trail.modifiers.push(new LineTrailStateModifier());
+            trail.addModifier(new LineTrailStateModifier());
             break;
           case 'RowsFirst':
-            trail.modifiers.push(new RowsFirstTrailStateModifier());
+            trail.addModifier(new RowsFirstTrailStateModifier(options));
             break;
           case 'ColumnsFirst':
-            trail.modifiers.push(new ColumnsFirstTrailStateModifier());
+            trail.addModifier(new ColumnsFirstTrailStateModifier(options));
             break;
           default:
-            invariant(true, `Unsupported trail state modifier type '${definition.type};`);
+            invariant(true, `Unsupported trail state modifier type '${type};`);
         }
       });
     }
   }
 
-  createTrail(definition) {
-    const id = definition.id || getNextId();
-    const name = definition.name || `trail-${id}`;
+  createTrail(params) {
+    const [id, name, definition] = extractIdAndName('trail', params);
     const strategy = this.createTrailStrategy(definition);
     const trail = new Trail(id, name, strategy);
     strategy.trail = trail;
@@ -86,7 +98,8 @@ class SimulationFactory {
     return trail;
   }
 
-  createMovementBehaviorStrategy({ type, options }) {
+  createMovementBehaviorStrategy(params) {
+    const [type, options] = extractTypeAndOptions(params);
     if (type === 'Trail') {
       const TrailMovementBehaviorStrategy = mixMovementBehaviorStrategy(TrailMovementStrategyMixin);
       return new TrailMovementBehaviorStrategy(options);
@@ -94,10 +107,9 @@ class SimulationFactory {
     return null;
   }
 
-  createMovementBehavior(definition) {
+  createMovementBehavior(params) {
+    const [id, name, definition] = extractIdAndName('movementBehavior', params);
     debug('createMovementBehavior', definition);
-    const id = definition.id || getNextId();
-    const name = definition.name || `movementBehavior-${id}`;
     const strategy = this.createMovementBehaviorStrategy(definition);
     return new MovementBehavior(id, name, strategy);
   }
@@ -106,9 +118,8 @@ class SimulationFactory {
     return null;
   }
 
-  createActionBehavior(definition) {
-    const id = definition.id || getNextId();
-    const name = definition.name || `actionBehavior-${id}`;
+  createActionBehavior(params) {
+    const [id, name, definition] = extractIdAndName('actionBehavior', params);
     const strategy = this.createActionBehaviorStrategy(definition);
     return new ActionBehavior(id, name, strategy);
   }
@@ -117,9 +128,8 @@ class SimulationFactory {
     return null;
   }
 
-  createDataBehavior(definition) {
-    const id = definition.id || getNextId();
-    const name = definition.name || `dataBehavior-${id}`;
+  createDataBehavior(params) {
+    const [id, name, definition] = extractIdAndName('dataBehavior', params);
     const strategy = this.createDataBehaviorStrategy(definition);
     return new DataBehavior(id, name, strategy);
   }
@@ -145,7 +155,8 @@ class SimulationFactory {
     }
   }
 
-  createHikerStrategy({ type, options, ...other }) {
+  createHikerStrategy(params) {
+    const [type, options, other] = extractTypeAndOptions(params);
     if (type === 'Trail') {
       const TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
       const strategy = new TrailHikerStrategy(options);
@@ -155,9 +166,8 @@ class SimulationFactory {
     return new NullHikerStrategy(options);
   }
 
-  createHiker(definition) {
-    const id = definition.id || getNextId();
-    const name = definition.name || `hiker-${id}`;
+  createHiker(params) {
+    const [id, name, definition] = extractIdAndName('hiker', params);
     const strategy = this.createHikerStrategy(definition);
     const hiker = new Hiker(id, name, strategy);
     strategy.hiker = hiker;

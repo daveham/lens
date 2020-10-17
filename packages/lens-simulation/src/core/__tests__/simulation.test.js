@@ -24,6 +24,8 @@ hikes:
           - type: Line
         hikers:
           - type: Trail
+            actionBehavior:
+              type: Trace
             movementBehavior:
               type: Trail
               options:
@@ -103,6 +105,10 @@ hikes:
               positionByCenter: true
         hikers:
           - type: Trail
+            actionBehavior:
+              type: Record
+              options:
+                trace: true
             movementBehavior:
               type: Trail
               options:

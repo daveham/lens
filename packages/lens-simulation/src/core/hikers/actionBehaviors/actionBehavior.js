@@ -5,27 +5,36 @@ import getDebugLog from '../debugLog';
 const debug = getDebugLog('actionBehavior');
 
 class NullActionBehaviorStrategy {
+  trace() {}
   onStart() {}
+
+  get label() {
+    return this.behavior.label;
+  }
 
   onNeedsData() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
-    debug('NullActionBehaviorStrategy onNeedsData', this.behavior.hiker.name);
-    return true;
+    invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
+    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
+    debug('NullActionBehaviorStrategy onNeedsData', this.label);
+    return false;
   }
 
   onAct() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
-    debug('NullActionBehaviorStrategy onAct', this.behavior.hiker.name);
+    invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
+    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
+    debug('NullActionBehaviorStrategy onAct', this.label);
     return this.onObserve().then(() => this.onInfer());
   }
 
   onObserve() {
-    debug('NullActionBehaviorStrategy onObserve', this.behavior.hiker.name);
+    debug('NullActionBehaviorStrategy onObserve', this.label);
     return Promise.resolve();
   }
 
   onInfer() {
-    debug('NullActionBehaviorStrategy onInfer', this.behavior.hiker.name);
+    debug('NullActionBehaviorStrategy onInfer', this.label);
     return Promise.resolve();
   }
 
@@ -37,34 +46,41 @@ export const mixActionBehaviorStrategy = (...args) =>
 
 class ActionBehavior {
   started = false;
+  hikerStrategy;
+  strategy;
 
-  constructor(hiker, strategy) {
-    this.hiker = hiker;
+  constructor(id, name, strategy) {
+    this.id = id;
+    this.name = name;
     this.strategy = strategy || new NullActionBehaviorStrategy();
     this.strategy.behavior = this;
   }
 
+  get label() {
+    return this.hikerStrategy.hiker.name;
+  }
+
   start() {
-    debug('start', this.hiker.name);
+    debug('start', this.label);
     this.assertStarted(false);
     this.strategy.onStart();
     this.started = true;
   }
 
   needsData() {
-    debug('needsData', this.hiker.name);
+    debug('needsData', this.label);
     this.assertStarted();
     return this.strategy.onNeedsData();
   }
 
   act() {
-    debug('act', this.hiker.name);
+    debug('act', this.label);
     this.assertStarted();
     return this.strategy.onAct();
   }
 
   end() {
-    debug('end', this.hiker.name);
+    debug('end', this.label);
     this.assertStarted();
     this.strategy.onEnd();
   }
@@ -76,8 +92,8 @@ class ActionBehavior {
   }
 
   abort(reason) {
-    debug('abort', { name: this.hiker.name, reason });
-    this.hiker.abort(reason);
+    debug('abort', this.label);
+    this.hikerStrategy.hiker.abort(reason);
   }
 }
 

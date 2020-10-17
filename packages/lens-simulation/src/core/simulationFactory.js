@@ -1,20 +1,24 @@
 import invariant from 'tiny-invariant';
-import ActionBehavior from './hikers/actionBehaviors/actionBehavior';
-import DataBehavior from './hikers/dataBehaviors/dataBehavior';
+import RecordActionStrategyMixin from './hikers/actionBehaviors/recordActionStrategy';
+
+import Hike, { NullHikeStrategy } from './hikes/hike';
+
+import Trail, { mixTrailStrategy, NullTrailStrategy } from './trails/trail';
+import LineTrailStrategyMixin from './trails/lineTrailStrategy';
+import CoverTrailStrategyMixin from './trails/coverTrailStrategy';
+import LineTrailStateModifier from './trails/trailStateModifiers/lineTrailStateModifier';
+import RowsFirstTrailStateModifier from './trails/trailStateModifiers/rowsFirstTrailStateModifier';
+import ColumnsFirstTrailStateModifier from './trails/trailStateModifiers/columnsFirstTrailStateModifier';
+
+import Hiker, { mixHikerStrategy, NullHikerStrategy } from './hikers/hiker';
+import TrailHikerStrategyMixin from './hikers/trailHikerStrategy';
 import MovementBehavior, {
   mixMovementBehaviorStrategy,
 } from './hikers/movementBehaviors/movementBehavior';
 import TrailMovementStrategyMixin from './hikers/movementBehaviors/trailMovementStrategy';
-import TrailHikerStrategyMixin from './hikers/trailHikerStrategy';
-import CoverTrailStrategyMixin from './trails/coverTrailStrategy';
-import LineTrailStrategyMixin from './trails/lineTrailStrategy';
-import Hike, { NullHikeStrategy } from './hikes/hike';
-import Trail, { mixTrailStrategy, NullTrailStrategy } from './trails/trail';
-import Hiker, { mixHikerStrategy, NullHikerStrategy } from './hikers/hiker';
-
-import ColumnsFirstTrailStateModifier from './trails/trailStateModifiers/columnsFirstTrailStateModifier';
-import LineTrailStateModifier from './trails/trailStateModifiers/lineTrailStateModifier';
-import RowsFirstTrailStateModifier from './trails/trailStateModifiers/rowsFirstTrailStateModifier';
+import ActionBehavior, { mixActionBehaviorStrategy } from './hikers/actionBehaviors/actionBehavior';
+import TraceActionStrategyMixin from './hikers/actionBehaviors/traceActionStrategy';
+import DataBehavior from './hikers/dataBehaviors/dataBehavior';
 
 import getDebugLog from './debugLog';
 const debug = getDebugLog('simulationFactory');
@@ -100,6 +104,7 @@ class SimulationFactory {
 
   createMovementBehaviorStrategy(params) {
     const [type, options] = extractTypeAndOptions(params);
+    debug('createMovementBehaviorStrategy', { type });
     if (type === 'Trail') {
       const TrailMovementBehaviorStrategy = mixMovementBehaviorStrategy(TrailMovementStrategyMixin);
       return new TrailMovementBehaviorStrategy(options);
@@ -114,12 +119,24 @@ class SimulationFactory {
     return new MovementBehavior(id, name, strategy);
   }
 
-  createActionBehaviorStrategy() {
+  createActionBehaviorStrategy(params) {
+    const [type, options] = extractTypeAndOptions(params);
+    debug('createActionBehaviorStrategy', { type });
+    if (type === 'Trace') {
+      const TraceActionBehaviorStrategy = mixActionBehaviorStrategy(TraceActionStrategyMixin);
+      return new TraceActionBehaviorStrategy(options);
+    } else if (type === 'Record') {
+      const RecordActionBehaviorStrategy = options.trace
+        ? mixActionBehaviorStrategy(RecordActionStrategyMixin, TraceActionStrategyMixin)
+        : mixActionBehaviorStrategy(RecordActionStrategyMixin);
+      return new RecordActionBehaviorStrategy(options);
+    }
     return null;
   }
 
   createActionBehavior(params) {
     const [id, name, definition] = extractIdAndName('actionBehavior', params);
+    debug('createActionBehavior', definition);
     const strategy = this.createActionBehaviorStrategy(definition);
     return new ActionBehavior(id, name, strategy);
   }

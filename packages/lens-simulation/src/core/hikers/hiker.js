@@ -22,12 +22,15 @@ export class NullHikerStrategy {
       this.hiker.active &&
       this.actionBehavior.needsData()
     ) {
+      // load data that subsequent behaviors might consume
       yield this.dataBehavior.load();
     }
     if (this.actionBehavior && this.hiker.active) {
+      // take action based on current state (location and data)
       yield this.actionBehavior.act();
     }
     if (this.movementBehavior && this.hiker.active) {
+      // move to the next location
       yield this.movementBehavior.move();
     }
   }
@@ -48,7 +51,7 @@ export class NullHikerStrategy {
 
   onStep() {
     debug('NullHikerStrategy onStep', this.hiker.name);
-    return this.hiker.onStep();
+    return co(this.runBehaviors());
   }
 
   onEnd() {
@@ -102,10 +105,6 @@ class Hiker {
 
       return this.isActive();
     });
-  }
-
-  onStep() {
-    return co(this.strategy.runBehaviors());
   }
 
   abort(reason) {

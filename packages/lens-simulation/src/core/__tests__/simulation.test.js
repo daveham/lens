@@ -25,11 +25,13 @@ hikes:
         hikers:
           - type: Trail
             actionBehavior:
-              type: Trace
+              type: Record
+              options:
+                trace: true
             movementBehavior:
               type: Trail
               options:
-                displacement: fixed
+                displacementScheme: fixed
                 fixedDisplacement: [10, 0]
                 stepLimit: 50
                 initialLocation: [0, 10]
@@ -67,7 +69,7 @@ hikes:
             movementBehavior:
               type: Trail
               options:
-                displacement: fixed
+                displacementScheme: fixed
                 fixedDisplacement: [-5, 0]
                 stepLimit: 50
                 initialLocation: [99.9999, 30]
@@ -87,7 +89,7 @@ hikes:
   });
 });
 
-test('cover hiker, rows first', () => {
+test('cover hiker, fixed displacement, rows first', () => {
   const document = `
 ---
 # test hike 1
@@ -112,7 +114,7 @@ hikes:
             movementBehavior:
               type: Trail
               options:
-                displacement: fixed
+                displacementScheme: fixed
                 fixedDisplacement: [10, 10]
                 stepLimit: 500
                 initialLocation: [0, 0]
@@ -129,5 +131,48 @@ hikes:
     const { movementBehavior } = hiker.strategy;
     // in 20 steps
     expect(movementBehavior.strategy.steps).toBe(200);
+  });
+});
+
+test('line hiker, grid displacement, left to right', () => {
+  const document = `
+---
+# test hike 1
+description: >
+  Single hiker, start left edge, move right grid size at a time.
+  Stop after 50 steps or after hitting right edge.
+hikes:
+  - type: Trail
+    trails:
+      - type: Line
+        modifiers:
+          - type: Line
+            options:
+              orientation: horizontal
+        hikers:
+          - type: Trail
+            actionBehavior:
+              type: Record
+              options:
+                trace: true
+            movementBehavior:
+              type: Trail
+              options:
+                displacementScheme: grid
+                stepLimit: 50
+                initialLocation: [0, 10]
+  `;
+
+  const definition = parse(document);
+  const simulation = build(model, plan, definition);
+
+  return simulation.run(0).then(() => {
+    const [hiker] = simulation.hikes[0].trails[0].hikers;
+    // should have hit the right edge
+    expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
+
+    const { movementBehavior } = hiker.strategy;
+    // in 7 steps (100 / 16)
+    expect(movementBehavior.strategy.steps).toBe(7);
   });
 });

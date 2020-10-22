@@ -15,6 +15,7 @@ const TrailMovementStrategyMixin = superclass =>
   class extends superclass {
     trailState;
     steps;
+    displacementScheme;
 
     constructor({
       displacementScheme,
@@ -50,6 +51,8 @@ const TrailMovementStrategyMixin = superclass =>
         case DisplacementScheme.grid:
           this.trailState.movement = trail.plan.grain;
           break;
+        // case DisplacementScheme.size:
+        // case DisplacementScheme.bounds:
       }
       this.trailState.initialLocation = this.initialLocation;
 

@@ -78,7 +78,7 @@ class SimulationFactory {
         debug('createTrailStateModifiers, creating type', type);
         switch (type) {
           case 'Line':
-            trail.addModifier(new LineTrailStateModifier());
+            trail.addModifier(new LineTrailStateModifier(options));
             break;
           case 'RowsFirst':
             trail.addModifier(new RowsFirstTrailStateModifier(options));

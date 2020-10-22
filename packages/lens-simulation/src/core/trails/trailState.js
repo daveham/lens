@@ -10,6 +10,7 @@ class TrailState {
   _initialLocation;
   _location;
   _movement;
+  orientation;
   trail;
 
   constructor() {
@@ -57,7 +58,14 @@ class TrailState {
   }
 
   addMovement(movement) {
-    this._location = movement ? this._location.add(movement) : this._location.add(this._movement);
+    const m = movement || this._movement;
+    if (this.orientation === 'vertical') {
+      this._location = this._location.add(0, m.height);
+    } else if (this.orientation === 'horizontal') {
+      this._location = this._location.add(m.width, 0);
+    } else {
+      this._location = this._location.add(m);
+    }
     this.sendLocationEvent();
   }
 

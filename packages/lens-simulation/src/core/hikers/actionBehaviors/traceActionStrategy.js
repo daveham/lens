@@ -3,14 +3,16 @@ const debug = getDebugLog('traceActionStrategy');
 
 const TraceActionStrategyMixin = superclass =>
   class extends superclass {
-    trace(data) {
-      debug('trace', { data });
+    trace(/* data */) {
+      const { hikerStrategy } = this.behavior;
+      const { movementBehavior } = hikerStrategy;
+      if (movementBehavior.strategy.trailState) {
+        const {
+          location: { x, y },
+        } = movementBehavior.strategy.trailState;
+        debug(`trace '${this.label}' ${x},${y}`);
+      }
     }
-
-    // onInfer() {
-    //   debug('onInfer');
-    //   return super.onInfer();
-    // }
   };
 
 export default TraceActionStrategyMixin;

@@ -1,7 +1,6 @@
 import Size from '../../../basic/size';
 import DicePlan from '../../common/dicePlan';
 import { HikerExitReason } from '../../constants';
-import { CoverTrailMoveOrder } from '../coverTrailStrategy';
 import SimulationFactory from '../../simulationFactory';
 
 // import getDebugLog from '../debugLog';
@@ -40,7 +39,10 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 2], stepLimit: 1, initialLocation: [0, 50] },
       };
-      const trailStrategyOptions = { type: 'Line' };
+      const trailStrategyOptions = {
+        type: 'Line',
+        modifiers: [{ type: 'Line' }],
+      };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
       hike.open();
@@ -60,7 +62,10 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 2], stepLimit: 5, initialLocation: [0, 50] },
       };
-      const trailStrategyOptions = { type: 'Line' };
+      const trailStrategyOptions = {
+        type: 'Line',
+        modifiers: [{ type: 'Line' }],
+      };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
       return hike.run().then(() => {
@@ -79,7 +84,10 @@ describe('trail', () => {
       const hikerStrategyOptions = {
         movementOptions: { fixedDisplacement: [1, 7], stepLimit: 100, initialLocation: [0, 50] },
       };
-      const trailStrategyOptions = { type: 'Line' };
+      const trailStrategyOptions = {
+        type: 'Line',
+        modifiers: [{ type: 'Line' }],
+      };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
       return hike.run().then(() => {
@@ -102,9 +110,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.rowsFirst,
-        },
+        modifiers: [{ type: 'RowsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
@@ -127,9 +133,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.rowsFirst,
-        },
+        modifiers: [{ type: 'RowsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
@@ -151,9 +155,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.rowsFirst,
-        },
+        modifiers: [{ type: 'RowsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
@@ -177,9 +179,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.columnsFirst,
-        },
+        modifiers: [{ type: 'ColumnsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
@@ -202,9 +202,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.columnsFirst,
-        },
+        modifiers: [{ type: 'ColumnsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
@@ -226,9 +224,7 @@ describe('trail', () => {
       };
       const trailStrategyOptions = {
         type: 'Cover',
-        options: {
-          moveOrder: CoverTrailMoveOrder.columnsFirst,
-        },
+        modifiers: [{ type: 'ColumnsFirst' }],
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 

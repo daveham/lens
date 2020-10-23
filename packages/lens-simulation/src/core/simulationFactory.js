@@ -62,6 +62,7 @@ class SimulationFactory {
 
   createTrailStrategy(params) {
     const [type, options] = extractTypeAndOptions(params);
+    debug('createTrailStrategy', { type, options });
     if (type === 'Line') {
       const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
       return new LineTrailStrategy(options);

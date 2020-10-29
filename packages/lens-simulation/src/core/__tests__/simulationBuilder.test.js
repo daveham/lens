@@ -34,7 +34,7 @@ hikes:
                 fixedDisplacement: [10, 20]
                 stepLimit: 45
                 initialLocation: [0, 10]
-  `;
+`;
 
 test('parse', () => {
   const definition = parse(document);
@@ -66,33 +66,70 @@ test('parse', () => {
   expect(options.fixedDisplacement[1]).toBe(20);
 });
 
-test('build', () => {
-  const definition = parse(document);
-
+describe('build', () => {
   const model = { size: [100, 200] };
   const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
 
-  const simulation = build(model, plan, definition);
-  expect(simulation).toBeTruthy();
+  test('single', () => {
+    const definition = parse(document);
+    const simulation = build(model, plan, definition);
+    expect(simulation).toBeTruthy();
 
-  expect(simulation.hikes).toBeTruthy();
-  const [hike] = simulation.hikes;
-  expect(hike).toBeTruthy();
-  expect(hike.name).toBe('Hike1');
+    expect(simulation.hikes).toBeTruthy();
+    const [hike] = simulation.hikes;
+    expect(hike).toBeTruthy();
+    expect(hike.name).toBe('Hike1');
 
-  expect(hike.trails).toBeTruthy();
-  const [trail] = hike.trails;
-  expect(trail).toBeTruthy();
+    expect(hike.trails).toBeTruthy();
+    const [trail] = hike.trails;
+    expect(trail).toBeTruthy();
 
-  expect(trail.modifiers).toBeTruthy();
-  const [modifier] = trail.modifiers;
-  expect(modifier).toBeTruthy();
+    expect(trail.modifiers).toBeTruthy();
+    const [modifier] = trail.modifiers;
+    expect(modifier).toBeTruthy();
 
-  expect(trail.hikers).toBeTruthy();
-  const [hiker] = trail.hikers;
-  expect(hiker).toBeTruthy();
+    expect(trail.hikers).toBeTruthy();
+    const [hiker] = trail.hikers;
+    expect(hiker).toBeTruthy();
 
-  const { movementBehavior } = hiker.strategy;
-  expect(movementBehavior).toBeTruthy();
-  expect(movementBehavior.strategy.displacementScheme).toBe('fixed');
+    const { movementBehavior } = hiker.strategy;
+    expect(movementBehavior).toBeTruthy();
+    expect(movementBehavior.strategy.displacementScheme).toBe('fixed');
+  });
+
+  test('with addon', () => {
+    const addonDocument = `
+---
+# second hiker
+  id: 105
+  name: Hiker2
+  type: Trail
+  movementBehavior:
+    id: 106
+    type: Trail
+    options:
+      displacementScheme: grid
+      stepLimit: 45
+      initialLocation: [0, 10]
+`;
+
+    const definition = parse(document);
+    const addonDefinition = parse(addonDocument);
+
+    const [trailDef] = definition.hikes[0].trails;
+    trailDef.hikers.push(addonDefinition);
+
+    const simulation = build(model, plan, definition);
+    expect(simulation).toBeTruthy();
+
+    const [trail] = simulation.hikes[0].trails;
+    expect(trail.hikers).toHaveLength(2);
+    const [, hiker] = trail.hikers;
+    expect(hiker).toBeTruthy();
+    expect(hiker.id).toBe(105);
+
+    const { movementBehavior } = hiker.strategy;
+    expect(movementBehavior).toBeTruthy();
+    expect(movementBehavior.strategy.displacementScheme).toBe('grid');
+  });
 });

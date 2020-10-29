@@ -9,36 +9,59 @@ import build, { parse } from '../simulationBuilder';
 const model = { size: [100, 200] };
 const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
 
-test('line hiker, fixed displacement, left to right', () => {
-  const document = `
+const trailHikeWithLineTrailDocument = `
 ---
-# test hike 1
-description: >
-  Single hiker, start left edge, move right 10 at a time.
-  Stop after 50 steps or after hitting right edge.
+# trail hike with line trail
 hikes:
   - type: Trail
     trails:
       - type: Line
         modifiers:
           - type: Line
-        hikers:
-          - type: Trail
-            actionBehavior:
-              type: Record
-              options:
-                trace: true
-            movementBehavior:
-              type: Trail
-              options:
-                displacementScheme: fixed
-                fixedDisplacement: [10, 0]
-                stepLimit: 50
-                initialLocation: [0, 10]
-  `;
+`;
 
-  const definition = parse(document);
-  const simulation = build(model, plan, definition);
+const trailHikeWithCoverTrailDocument = `
+---
+# trail hike with line trail
+hikes:
+  - type: Trail
+    trails:
+      - type: Cover
+        modifiers:
+          - type: RowsFirst
+            options:
+              rightToLeft: false
+              positionByCenter: true
+`;
+
+const trailHikerDocument = `
+---
+# trail hiker with fixed displacement movement
+hikers:
+  - type: Trail
+    actionBehavior:
+      type: Record
+      options:
+        trace: true
+    movementBehavior:
+      type: Trail
+`;
+
+function makeSimulation(hikeDocument, hikerDocument, movementOptions) {
+  const definition = parse(hikeDocument);
+  const hikersDefinition = parse(hikerDocument);
+  definition.hikes[0].trails[0].hikers = hikersDefinition.hikers;
+  hikersDefinition.hikers[0].movementBehavior.options = movementOptions;
+  return build(model, plan, definition);
+}
+
+test('line hiker, fixed displacement, left to right', () => {
+  const simulation = makeSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+    displacementScheme: 'fixed',
+    fixedDisplacement: [10, 0],
+    stepLimit: 50,
+    initialLocation: [0, 10],
+  });
 
   return simulation.run(0).then(() => {
     const [hiker] = simulation.hikes[0].trails[0].hikers;
@@ -52,31 +75,12 @@ hikes:
 });
 
 test('line hiker, fixed displacement, right to left', () => {
-  const document = `
----
-# test hike 1
-description: >
-  Single hiker, start right edge, move left 5 at a time.
-  Stop after 50 steps or after hitting left edge.
-hikes:
-  - type: Trail
-    trails:
-      - type: Line
-        modifiers:
-          - type: Line
-        hikers:
-          - type: Trail
-            movementBehavior:
-              type: Trail
-              options:
-                displacementScheme: fixed
-                fixedDisplacement: [-5, 0]
-                stepLimit: 50
-                initialLocation: [99.9999, 30]
-  `;
-
-  const definition = parse(document);
-  const simulation = build(model, plan, definition);
+  const simulation = makeSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+    displacementScheme: 'fixed',
+    fixedDisplacement: [-5, 0],
+    stepLimit: 50,
+    initialLocation: [99.9999, 30],
+  });
 
   return simulation.run(0).then(() => {
     const [hiker] = simulation.hikes[0].trails[0].hikers;
@@ -90,38 +94,12 @@ hikes:
 });
 
 test('cover hiker, fixed displacement, rows first', () => {
-  const document = `
----
-# test hike 1
-description: >
-  Single hiker, cover image left to right, rows first.
-  Stop after 500 steps or after covering image.
-hikes:
-  - type: Trail
-    trails:
-      - type: Cover
-        modifiers:
-          - type: RowsFirst
-            options:
-              rightToLeft: false
-              positionByCenter: true
-        hikers:
-          - type: Trail
-            actionBehavior:
-              type: Record
-              options:
-                trace: true
-            movementBehavior:
-              type: Trail
-              options:
-                displacementScheme: fixed
-                fixedDisplacement: [10, 10]
-                stepLimit: 500
-                initialLocation: [0, 0]
-  `;
-
-  const definition = parse(document);
-  const simulation = build(model, plan, definition);
+  const simulation = makeSimulation(trailHikeWithCoverTrailDocument, trailHikerDocument, {
+    displacementScheme: 'fixed',
+    fixedDisplacement: [10, 10],
+    stepLimit: 500,
+    initialLocation: [0, 0],
+  });
 
   return simulation.run(0).then(() => {
     const [hiker] = simulation.hikes[0].trails[0].hikers;
@@ -135,36 +113,11 @@ hikes:
 });
 
 test('line hiker, grid displacement, left to right', () => {
-  const document = `
----
-# test hike 1
-description: >
-  Single hiker, start left edge, move right grid size at a time.
-  Stop after 50 steps or after hitting right edge.
-hikes:
-  - type: Trail
-    trails:
-      - type: Line
-        modifiers:
-          - type: Line
-            options:
-              orientation: horizontal
-        hikers:
-          - type: Trail
-            actionBehavior:
-              type: Record
-              options:
-                trace: true
-            movementBehavior:
-              type: Trail
-              options:
-                displacementScheme: grid
-                stepLimit: 50
-                initialLocation: [0, 10]
-  `;
-
-  const definition = parse(document);
-  const simulation = build(model, plan, definition);
+  const simulation = makeSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+    displacementScheme: 'grid',
+    stepLimit: 50,
+    initialLocation: [0, 10],
+  });
 
   return simulation.run(0).then(() => {
     const [hiker] = simulation.hikes[0].trails[0].hikers;

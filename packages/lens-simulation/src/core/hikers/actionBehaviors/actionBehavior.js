@@ -4,41 +4,77 @@ import invariant from 'tiny-invariant';
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('actionBehavior');
 
-class NullActionBehaviorStrategy {
+export class NullActionBehaviorStrategy {
+  behavior;
+
+  constructor(options = {}) {
+    debug('ctor', { options });
+    this.options = { ...options };
+  }
+
+  getType() {
+    return 'ActionBehavior';
+  }
+
+  assertIsValid() {
+    invariant(this.behavior, 'behavior should be assigned to strategy');
+    // invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
+    // invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
+  }
+
+  onSuspend(objectFactory, state) {
+    debug('onSuspend');
+    this.assertIsValid();
+
+    return {
+      ...state,
+      options: this.options,
+    };
+  }
+
+  onRestore(objectFactory, stateMap, state) {
+    debug('onRestore');
+    this.assertIsValid();
+
+    this.options = state.options;
+  }
+
   trace() {}
-  onStart() {}
+
+  onStart() {
+    this.assertIsValid();
+  }
 
   get label() {
     return this.behavior.label;
   }
 
   onNeedsData() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
-    invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
-    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
-    debug('NullActionBehaviorStrategy onNeedsData', this.label);
+    debug('onNeedsData');
+    this.assertIsValid();
+
     return false;
   }
 
   onAct() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
-    invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
-    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
-    debug('NullActionBehaviorStrategy onAct', this.label);
-    return this.onObserve().then(() => this.onInfer());
+    debug('onAct');
+    this.assertIsValid();
+
+    this.onObserve();
+    this.onInfer();
   }
 
   onObserve() {
-    debug('NullActionBehaviorStrategy onObserve', this.label);
-    return Promise.resolve();
+    debug('onObserve');
   }
 
   onInfer() {
-    debug('NullActionBehaviorStrategy onInfer', this.label);
-    return Promise.resolve();
+    debug('onInfer');
   }
 
-  onEnd() {}
+  onEnd() {
+    this.assertIsValid();
+  }
 }
 
 export const mixActionBehaviorStrategy = (...args) =>
@@ -54,6 +90,28 @@ class ActionBehavior {
     this.name = name;
     this.strategy = strategy || new NullActionBehaviorStrategy();
     this.strategy.behavior = this;
+  }
+
+  restore(objectFactory, stateMap, state) {
+    debug('restore');
+    const myState = state || stateMap.get(this.id);
+    this.id = myState.id;
+    this.name = myState.name;
+    this.started = myState.started;
+    this.strategy.onRestore(objectFactory, stateMap, myState);
+  }
+
+  suspend(objectFactory) {
+    debug('suspend');
+    objectFactory.suspendItem(
+      this,
+      this.strategy.onSuspend(objectFactory, {
+        type: this.strategy.getType(),
+        id: this.id,
+        name: this.name,
+        started: this.started,
+      }),
+    );
   }
 
   get label() {
@@ -76,7 +134,7 @@ class ActionBehavior {
   act() {
     debug('act', this.label);
     this.assertStarted();
-    return this.strategy.onAct();
+    this.strategy.onAct();
   }
 
   end() {

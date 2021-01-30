@@ -1,6 +1,6 @@
-import DefinitionFactory from './factories/definitionFactory';
-import ObjectFactory from './factories/objectFactory';
-import SuspendFactory from './factories/suspendFactory';
+import DefinitionFactory from './definitionFactory';
+import RestoreFactory from './restoreFactory';
+import SuspendFactory from './suspendFactory';
 
 // import getDebugLog from './debugLog';
 // const debug = getDebugLog('simulationFactory');
@@ -30,7 +30,7 @@ class SimulationFactory {
   }
 
   restoreSimulationFromMap(id, executionId, stateMap) {
-    const objectFactory = new ObjectFactory();
+    const objectFactory = new RestoreFactory();
     return objectFactory.restoreSimulation(id, executionId, stateMap);
   }
 }

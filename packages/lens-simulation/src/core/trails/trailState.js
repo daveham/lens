@@ -14,6 +14,7 @@ class TrailState {
   trail;
 
   constructor() {
+    debug('ctor');
     this.events = new E3.EventEmitter();
   }
 
@@ -21,7 +22,35 @@ class TrailState {
     return `{ initialLocation: ${this._initialLocation}, location: ${this._location}, movement: ${this._movement} }`;
   }
 
+  assertIsValid() {
+    invariant(this.trail, 'trail should be assigned to trail state');
+  }
+
+  suspend(/* stateMap, state */) {
+    debug('suspend', this.toString());
+    this.assertIsValid();
+
+    return {
+      _initialLocation: this._initialLocation,
+      _location: this._location,
+      _movement: this._movement,
+      orientation: this.orientation,
+    };
+  }
+
+  restore(objectFactory, stateMap, state) {
+    debug('restore', this.toString());
+    this.assertIsValid();
+
+    this._initialLocation = state._initialLocation;
+    this._location = state._location;
+    this._movement = state._movement;
+    this.orientation = state.orientation;
+    debug('restore - after', this.toString());
+  }
+
   get initialLocation() {
+    debug('get initialLocation');
     return this._initialLocation;
   }
 
@@ -32,6 +61,7 @@ class TrailState {
   }
 
   get location() {
+    debug('get location');
     return this._location;
   }
 
@@ -42,6 +72,7 @@ class TrailState {
   }
 
   get movement() {
+    debug('get movement');
     return this._movement;
   }
 
@@ -58,6 +89,7 @@ class TrailState {
   }
 
   addMovement(movement) {
+    debug('addMovement');
     const m = movement || this._movement;
     if (this.orientation === 'vertical') {
       this._location = this._location.add(0, m.height);
@@ -85,7 +117,7 @@ class TrailState {
   }
 
   isInBounds(location) {
-    invariant(this.trail, 'trail should be assigned to trail state');
+    this.assertIsValid();
     return location
       ? this.trail.hike.isLocationInBounds(location)
       : this.trail.hike.isLocationInBounds(this._location);

@@ -6,14 +6,48 @@ import getDebugLog from '../debugLog';
 const debug = getDebugLog('rowsFirstTrailStateModifier');
 
 class RowsFirstTrailStateModifier {
-  constructor(options = {}) {
+  constructor(id, name, options = {}) {
+    this.id = id;
+    this.name = name;
     this.rightToLeft = options.rightToLeft;
     this.positionByCenter = options.positionByCenter;
   }
 
-  modifyInitialTrailState(trailState) {
+  getType() {
+    return 'RowsFirst';
+  }
+
+  assertIsValid(trailState) {
+    invariant(trailState, 'trailState should be defined');
+    invariant(trailState.hiker, 'hiker should be assigned to trail state');
     invariant(trailState.trail, 'trail should be assigned to trail state');
-    debug('modifyInitialTrailState', trailState.trail.name);
+    invariant(trailState.trail.hike, 'hike should be assigned to trail in trail state');
+    invariant(trailState.trail.hike.bounds, 'bounds should be defined');
+    invariant(trailState.initialLocation, 'initialLocation should be defined');
+    invariant(trailState.movement, 'movement should be defined');
+  }
+
+  restore(stateMap) {
+    debug('restore');
+    const state = stateMap.get(this.id);
+    this.name = state.name;
+    this.rightToLeft = state.rightToLeft;
+    this.positionByCenter = state.positionByCenter;
+  }
+
+  suspend(objectFactory) {
+    debug('suspend');
+    objectFactory.suspendItem(this, {
+      type: this.getType(),
+      name: this.name,
+      rightToLeft: this.rightToLeft,
+      positionByCenter: this.positionByCenter,
+    });
+  }
+
+  modifyInitialTrailState(trailState) {
+    debug('modifyInitialTrailState');
+    this.assertIsValid(trailState);
 
     const { bounds } = trailState.trail.hike;
     if (this.positionByCenter) {
@@ -27,25 +61,25 @@ class RowsFirstTrailStateModifier {
   }
 
   modifyUpdateTrailState(trailState) {
-    const { trail, hiker, movement } = trailState;
-    invariant(trail, 'trail should be assigned to trail state');
-    invariant(hiker, 'hiker should be assigned to trail state');
-    debug('modifyUpdateTrailState', trail.name);
+    debug('modifyUpdateTrailState');
+    this.assertIsValid(trailState);
+
+    const { initialLocation, location, movement } = trailState;
 
     let nextLocation = this.rightToLeft
-      ? [trailState.location.x - movement.width, trailState.location.y]
-      : [trailState.location.x + movement.width, trailState.location.y];
+      ? [location.x - movement.width, location.y]
+      : [location.x + movement.width, location.y];
 
     const isInBounds = trailState.isInBounds(nextLocation);
 
     if (!isInBounds) {
-      nextLocation = [trailState.initialLocation.x, nextLocation[1] + movement.height];
+      nextLocation = [initialLocation.x, nextLocation[1] + movement.height];
     }
 
     trailState.location = nextLocation;
 
     if (!isInBounds && !trailState.isInBounds(trailState.location)) {
-      hiker.abort(HikerExitReason.exceededImageBounds);
+      trailState.hiker.abort(HikerExitReason.exceededImageBounds);
     }
   }
 }

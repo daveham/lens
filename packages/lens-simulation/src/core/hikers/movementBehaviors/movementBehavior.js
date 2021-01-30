@@ -5,23 +5,55 @@ import { HikerExitReason } from '../../constants';
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('movementBehavior');
 
-class NullMovementBehaviorStrategy {
+export class NullMovementBehaviorStrategy {
+  behavior;
+
   constructor(options = {}) {
+    debug('ctor', { options });
     this.options = { ...options };
   }
 
-  onStart() {}
-
-  onMove() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
-    invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
-    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
-    debug('NullMovementBehaviorStrategy onMove', this.behavior.hikerStrategy.hiker.name);
-    this.behavior.abort(HikerExitReason.reachedStepLimit);
-    return Promise.resolve();
+  getType() {
+    return 'MovementBehavior';
   }
 
-  onEnd() {}
+  assertIsValid() {
+    invariant(this.behavior, 'behavior should be assigned to strategy');
+    // invariant(this.behavior.hikerStrategy, 'hikerStrategy should be assigned to behavior');
+    // invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to hikerStrategy');
+  }
+
+  onSuspend(objectFactory, state) {
+    debug('onSuspend');
+    this.assertIsValid();
+
+    return {
+      ...state,
+      options: this.options,
+    };
+  }
+
+  onRestore(objectFactory, stateMap, state) {
+    debug('onRestore');
+    this.assertIsValid();
+
+    this.options = state.options;
+  }
+
+  onStart() {
+    this.assertIsValid();
+  }
+
+  onMove() {
+    debug('onMove');
+    this.assertIsValid();
+
+    this.behavior.abort(HikerExitReason.reachedStepLimit);
+  }
+
+  onEnd() {
+    this.assertIsValid();
+  }
 }
 
 export const mixMovementBehaviorStrategy = (...args) =>
@@ -39,29 +71,51 @@ class MovementBehavior {
     this.strategy.behavior = this;
   }
 
-  start() {
-    debug('start', this.hikerStrategy.hiker.name);
-    this.assertStarted(false);
-    this.strategy.onStart();
-    this.started = true;
+  restore(objectFactory, stateMap, state) {
+    debug('restore');
+    const myState = state || stateMap.get(this.id);
+    this.id = myState.id;
+    this.name = myState.name;
+    this.started = myState.started;
+    this.strategy.onRestore(objectFactory, stateMap, myState);
   }
 
-  move() {
-    debug('move', this.hikerStrategy.hiker.name);
-    this.assertStarted();
-    return this.strategy.onMove();
-  }
-
-  end() {
-    debug('end', this.hikerStrategy.hiker.name);
-    this.assertStarted();
-    this.strategy.onEnd();
+  suspend(objectFactory) {
+    debug('suspend');
+    objectFactory.suspendItem(
+      this,
+      this.strategy.onSuspend(objectFactory, {
+        type: this.strategy.getType(),
+        id: this.id,
+        name: this.name,
+        started: this.started,
+      }),
+    );
   }
 
   assertStarted(expected = true) {
     if (this.started !== expected) {
       throw new Error(`movement behavior ${expected ? 'not' : 'already'} started`);
     }
+  }
+
+  start() {
+    debug('start');
+    this.assertStarted(false);
+    this.strategy.onStart();
+    this.started = true;
+  }
+
+  move() {
+    debug('move');
+    this.assertStarted();
+    return this.strategy.onMove();
+  }
+
+  end() {
+    debug('end');
+    this.assertStarted();
+    this.strategy.onEnd();
   }
 
   abort(reason) {

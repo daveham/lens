@@ -1,23 +1,44 @@
 import Size from '../../../basic/size';
 import DicePlan from '../../common/dicePlan';
 import { HikerExitReason } from '../../constants';
-import SimulationFactory from '../../simulationFactory';
+import DefinitionFactory from '../../factories/definitionFactory';
+// import RestoreFactory from '../../factories/objectFactory';
+// import SuspendFactory from '../../factories/suspendFactory';
+import SimulationFactory from '../../factories/simulationFactory';
 
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('trailTests');
 
+class MockBuildContext {
+  idCounter = 0;
+
+  getNextId() {
+    this.idCounter += 1;
+    return this.idCounter;
+  }
+
+  resolveIdAndName(label, id, name) {
+    const resolvedId = id || this.getNextId();
+    const resolvedName = name || `${label}-${resolvedId}`;
+    return [resolvedId, resolvedName];
+  }
+}
+
 function createTestObjects(trailStrategyOptions, { movementOptions, ...options }) {
-  const factory = new SimulationFactory();
+  const model = { size: [200, 100] };
   const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
-  factory.initialize(plan, { size: new Size(200, 100) });
 
-  const hike = factory.createHike({ id: 100, name: 'testHike' });
+  const simulationFactory = new SimulationFactory(new MockBuildContext());
+  simulationFactory.initialize(plan, model, {});
+  const df = new DefinitionFactory(simulationFactory);
+  // const sf = new SuspendFactory();
+  // const of = new RestoreFactory();
 
-  const trail = factory.createTrail({ id: 101, name: 'lineTrail', ...trailStrategyOptions });
-  trail.initialize(plan, hike);
-  hike.addTrail(trail);
+  const hike = df.createHike({ id: 100, name: 'testHike' });
 
-  const hiker = factory.createHiker({
+  const trail = df.createTrail(hike, { id: 101, name: 'lineTrail', ...trailStrategyOptions });
+
+  const hiker = df.createHiker(trail, {
     id: 102,
     name: 'testHiker',
     type: 'Trail',
@@ -27,10 +48,17 @@ function createTestObjects(trailStrategyOptions, { movementOptions, ...options }
       options: movementOptions,
     },
   });
-  hiker.trail = trail;
-  trail.addHiker(hiker);
 
   return [hike, trail, hiker];
+}
+
+function runHike(hike) {
+  const TEST_LIMIT = 1000;
+  let stepLimitCounter = 0;
+  while (hike.isActive() && stepLimitCounter < TEST_LIMIT) {
+    hike.run(stepLimitCounter);
+    stepLimitCounter += 1;
+  }
 }
 
 describe('trail', () => {
@@ -47,15 +75,15 @@ describe('trail', () => {
 
       hike.open();
       trail.open();
-      return hiker.step().then(() => {
-        expect(trail.isOpen).toBeTruthy();
-        expect(hiker.started).toBeTruthy();
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(1);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(1);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(52);
-      });
+      hiker.step();
+
+      expect(trail.isOpen).toBeTruthy();
+      expect(hiker.started).toBeTruthy();
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(1);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(1);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(52);
     });
 
     test('run to step limit', () => {
@@ -68,16 +96,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.reachedStepLimit);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(5);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(5);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(60);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.reachedStepLimit);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(5);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(5);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(60);
     });
 
     test('run to bounds limit', () => {
@@ -90,16 +118,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(8); // 50/7 + 1
-        expect(movementBehavior.strategy.trailState.location.x).toBe(8);
-        expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThan(100);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(8); // 50/7 + 1
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(8);
+      expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThan(100);
     });
   });
 
@@ -116,15 +144,15 @@ describe('trail', () => {
 
       hike.open();
       trail.open();
-      return hiker.step().then(() => {
-        expect(trail.isOpen).toBeTruthy();
-        expect(hiker.started).toBeTruthy();
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(1);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(10);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(0);
-      });
+      hiker.step();
+
+      expect(trail.isOpen).toBeTruthy();
+      expect(hiker.started).toBeTruthy();
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(1);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(10);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(0);
     });
 
     test('run to step limit', () => {
@@ -137,16 +165,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.reachedStepLimit);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(25);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(50);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(20);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.reachedStepLimit);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(25);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(50);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
     });
 
     test('run to bounds limit', () => {
@@ -159,16 +187,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(25); // 200/40 * 100/20
-        expect(movementBehavior.strategy.trailState.location.x).toBe(0);
-        expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThanOrEqual(100);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(25); // 200/40 * 100/20
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(0);
+      expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThanOrEqual(100);
     });
   });
 
@@ -185,15 +213,15 @@ describe('trail', () => {
 
       hike.open();
       trail.open();
-      return hiker.step().then(() => {
-        expect(trail.isOpen).toBeTruthy();
-        expect(hiker.started).toBeTruthy();
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(1);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(0);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(20);
-      });
+      hiker.step();
+
+      expect(trail.isOpen).toBeTruthy();
+      expect(hiker.started).toBeTruthy();
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(1);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(0);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
     });
 
     test('run to step limit', () => {
@@ -206,16 +234,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.reachedStepLimit);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(21);
-        expect(movementBehavior.strategy.trailState.location.x).toBe(40);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(20);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.reachedStepLimit);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(21);
+      expect(movementBehavior.strategy.trailState.location.x).toEqual(40);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
     });
 
     test('run to bounds limit', () => {
@@ -228,16 +256,16 @@ describe('trail', () => {
       };
       const [hike, trail, hiker] = createTestObjects(trailStrategyOptions, hikerStrategyOptions);
 
-      return hike.run().then(() => {
-        expect(trail.isOpen).toBeFalsy();
-        expect(hiker.started).toBeTruthy();
-        expect(hiker.exitReason).toBe(HikerExitReason.exceededImageBounds);
-        const { movementBehavior } = hiker.strategy;
-        expect(movementBehavior.started).toBeTruthy();
-        expect(movementBehavior.strategy.steps).toBe(25); // 200/40 * 100/20
-        expect(movementBehavior.strategy.trailState.location.x).toBeGreaterThanOrEqual(200);
-        expect(movementBehavior.strategy.trailState.location.y).toBe(0);
-      });
+      runHike(hike);
+
+      expect(trail.isOpen).toBeFalsy();
+      expect(hiker.started).toBeTruthy();
+      expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
+      const { movementBehavior } = hiker.strategy;
+      expect(movementBehavior.started).toBeTruthy();
+      expect(movementBehavior.strategy.steps).toEqual(25); // 200/40 * 100/20
+      expect(movementBehavior.strategy.trailState.location.x).toBeGreaterThanOrEqual(200);
+      expect(movementBehavior.strategy.trailState.location.y).toEqual(0);
     });
   });
 });

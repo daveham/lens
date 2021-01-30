@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import { HikerExitReason } from '../../constants';
+import { buildType } from '../../utils';
 
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('trailMovementStrategy');
@@ -32,17 +33,64 @@ const TrailMovementStrategyMixin = superclass =>
       this.initialLocation = initialLocation;
     }
 
-    onStart() {
+    getType() {
+      return buildType(super.getType(), 'Trail');
+    }
+
+    assertIsValid() {
       invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
       invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
-      const { hiker } = this.behavior.hikerStrategy;
-      debug('onStart', hiker.name);
+    }
 
-      this.steps = 0;
-      const { trail } = hiker;
-      this.trailState = trail.createTrailState();
+    createTrailState() {
+      this.assertIsValid();
+      const { hiker } = this.behavior.hikerStrategy;
+
+      this.trailState = hiker.trail.createTrailState();
       this.trailState.hiker = hiker;
       this.trailState.movementBehavior = this;
+    }
+
+    onSuspend(objectFactory, state) {
+      debug('onSuspend');
+      this.assertIsValid();
+
+      return {
+        ...super.onSuspend(objectFactory, state),
+        displacementScheme: this.displacementScheme,
+        fixedDisplacement: this.fixedDisplacement,
+        stepLimit: this.stepLimit,
+        initialLocation: this.initialLocation,
+        steps: this.steps,
+        trailState: this.trailState ? this.trailState.suspend(objectFactory, state) : undefined,
+      };
+    }
+
+    onRestore(objectFactory, stateMap, state) {
+      debug('onRestore');
+
+      this.createTrailState();
+
+      super.onRestore(objectFactory, stateMap, state);
+      this.displacementScheme = state.displacementScheme;
+      this.fixedDisplacement = state.fixedDisplacement;
+      this.stepLimit = state.stepLimit;
+      this.initialLocation = state.initialLocation;
+      this.steps = state.steps;
+
+      if (state.trailState) {
+        this.trailState.restore(objectFactory, stateMap, state.trailState);
+      }
+    }
+
+    onStart() {
+      debug('onStart');
+      this.assertIsValid();
+
+      this.createTrailState();
+      this.steps = 0;
+
+      const { trail } = this.behavior.hikerStrategy.hiker;
 
       switch (this.displacementScheme) {
         case DisplacementScheme.fixed:
@@ -59,12 +107,11 @@ const TrailMovementStrategyMixin = superclass =>
       trail.initializeTrailState(this.trailState);
     }
 
-    // async?
     onMove() {
-      invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
-      invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
+      debug('onMove');
+      this.assertIsValid();
+
       const { hiker } = this.behavior.hikerStrategy;
-      debug('onMove', hiker.name);
 
       if (this.stepLimit > 0 && this.steps >= this.stepLimit) {
         hiker.abort(HikerExitReason.reachedStepLimit);
@@ -72,7 +119,6 @@ const TrailMovementStrategyMixin = superclass =>
         hiker.trail.updateTrailState(this.trailState);
         this.steps += 1;
       }
-      return Promise.resolve();
     }
   };
 

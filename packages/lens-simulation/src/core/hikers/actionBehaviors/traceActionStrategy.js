@@ -1,8 +1,13 @@
+import { buildType } from '../../utils';
 import getDebugLog from '../debugLog';
 const debug = getDebugLog('traceActionStrategy');
 
 const TraceActionStrategyMixin = superclass =>
   class extends superclass {
+    getType() {
+      return buildType(super.getType(), 'Trace');
+    }
+
     trace(/* data */) {
       const { hikerStrategy } = this.behavior;
       const { movementBehavior } = hikerStrategy;

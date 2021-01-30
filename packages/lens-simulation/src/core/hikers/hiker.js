@@ -1,4 +1,4 @@
-import co from 'co';
+import invariant from 'tiny-invariant';
 import * as R from 'ramda';
 
 import getDebugLog from './debugLog';
@@ -6,66 +6,46 @@ const debug = getDebugLog('hiker');
 
 export class NullHikerStrategy {
   hiker;
-  dataBehavior;
-  movementBehavior;
-  actionBehavior;
 
   constructor(options = {}) {
     this.options = { ...options };
   }
 
-  *runBehaviors() {
-    debug('NullHikerStrategy:runBehaviors', { active: this.hiker.active });
-    if (
-      this.actionBehavior &&
-      this.dataBehavior &&
-      this.hiker.active &&
-      this.actionBehavior.needsData()
-    ) {
-      // load data that subsequent behaviors might consume
-      yield this.dataBehavior.load();
-    }
-    if (this.actionBehavior && this.hiker.active) {
-      // take action based on current state (location and data)
-      yield this.actionBehavior.act();
-    }
-    if (this.movementBehavior && this.hiker.active) {
-      // move to the next location
-      yield this.movementBehavior.move();
-    }
+  getType() {
+    return 'Hiker';
+  }
+
+  assertIsValid() {
+    invariant(this.hiker, 'hiker should be assigned to hiker strategy');
+  }
+
+  onSuspend(objectFactory, state) {
+    debug('onSuspend');
+    this.assertIsValid();
+
+    return {
+      ...state,
+      options: this.options,
+    };
+  }
+
+  onRestore(objectFactory, stateMap, state) {
+    debug('onRestore');
+    this.assertIsValid();
+
+    this.options = state.options;
   }
 
   onStart() {
-    if (this.dataBehavior) {
-      this.dataBehavior.start();
-    }
-
-    if (this.movementBehavior) {
-      this.movementBehavior.start();
-    }
-
-    if (this.actionBehavior) {
-      this.actionBehavior.start();
-    }
+    this.assertIsValid();
   }
 
   onStep() {
-    debug('NullHikerStrategy onStep', this.hiker.name);
-    return co(this.runBehaviors());
+    this.assertIsValid();
   }
 
   onEnd() {
-    if (this.dataBehavior) {
-      this.dataBehavior.end();
-    }
-
-    if (this.movementBehavior) {
-      this.movementBehavior.end();
-    }
-
-    if (this.actionBehavior) {
-      this.actionBehavior.end();
-    }
+    this.assertIsValid();
   }
 }
 
@@ -83,11 +63,28 @@ class Hiker {
     this.strategy.hiker = this;
   }
 
-  initialize(trail) {
-    this.trail = trail;
+  restore(objectFactory, stateMap, state) {
+    debug('restore');
+    const myState = state || stateMap.get(this.id);
+    this.id = myState.id;
+    this.name = myState.name;
+    this.strategy.onRestore(objectFactory, stateMap, myState);
+  }
+
+  suspend(objectFactory) {
+    debug('suspend');
+    objectFactory.suspendItem(
+      this,
+      this.strategy.onSuspend(objectFactory, {
+        type: this.strategy.getType(),
+        id: this.id,
+        name: this.name,
+      }),
+    );
   }
 
   isActive() {
+    debug('isActive', { active: this.active, reason: this.exitReason });
     return this.active;
   }
 
@@ -98,13 +95,13 @@ class Hiker {
       this.started = true;
     }
 
-    return this.strategy.onStep().then(() => {
-      if (!this.active) {
-        this.strategy.onEnd();
-      }
+    this.strategy.onStep();
 
-      return this.isActive();
-    });
+    if (!this.active) {
+      this.strategy.onEnd();
+    }
+
+    return this.isActive();
   }
 
   abort(reason) {

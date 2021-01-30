@@ -6,28 +6,56 @@ import getDebugLog from '../debugLog';
 const debug = getDebugLog('lineTrailStateModifier');
 
 class LineTrailStateModifier {
-  constructor(options = {}) {
+  constructor(id, name, options = {}) {
+    debug('ctor', { id, name, options });
+    this.id = id;
+    this.name = name;
     this.orientation = options.orientation;
   }
 
-  modifyInitialTrailState(trailState) {
+  getType() {
+    return 'Line';
+  }
+
+  assertIsValid(trailState) {
+    invariant(trailState, 'trailState should be defined');
+    invariant(trailState.hiker, 'hiker should be assigned to trail state');
     invariant(trailState.trail, 'trail should be assigned to trail state');
-    debug('modifyInitialTrailState', trailState.trail.name);
+  }
+
+  restore(stateMap) {
+    debug('restore', { stateMap, id: this.id, state: stateMap.get(this.id) });
+    const state = stateMap.get(this.id);
+    this.name = state.name;
+    this.orientation = state.orientation;
+  }
+
+  suspend(objectFactory) {
+    debug('suspend');
+    objectFactory.suspendItem(this, {
+      type: this.getType(),
+      name: this.name,
+      orientation: this.orientation,
+    });
+  }
+
+  modifyInitialTrailState(trailState) {
+    debug('modifyInitialTrailState');
+    this.assertIsValid(trailState);
+
     if (this.orientation) {
       trailState.orientation = this.orientation;
     }
   }
 
   modifyUpdateTrailState(trailState) {
-    const { trail, hiker } = trailState;
-    invariant(trail, 'trail should be assigned to trail state');
-    invariant(hiker, 'hiker should be assigned to trail state');
+    debug('modifyUpdateTrailState');
+    this.assertIsValid(trailState);
 
-    debug('modifyUpdateTrailState', trail.name);
     trailState.addMovement();
 
     if (!trailState.isInBounds()) {
-      hiker.abort(HikerExitReason.exceededImageBounds);
+      trailState.hiker.abort(HikerExitReason.exceededImageBounds);
     }
   }
 }

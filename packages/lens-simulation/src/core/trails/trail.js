@@ -1,5 +1,6 @@
 import invariant from 'tiny-invariant';
 import * as R from 'ramda';
+import E3 from 'eventemitter3';
 import { makeSuspendListKey } from '../factories/utils';
 import TrailState from './trailState';
 
@@ -68,6 +69,7 @@ export class NullTrailStrategy {
 export const mixTrailStrategy = (...args) => R.compose(...args)(NullTrailStrategy);
 
 class Trail {
+  events;
   hike;
   hikers = [];
   modifiers = [];
@@ -75,6 +77,7 @@ class Trail {
 
   constructor(id, name, strategy) {
     debug('ctor', { id, name, strategy });
+    this.events = new E3.EventEmitter();
     this.id = id;
     this.name = name;
     this.strategy = strategy || new NullTrailStrategy();
@@ -104,10 +107,9 @@ class Trail {
 
   restore(objectFactory, stateMap, state) {
     debug('restore');
-    const myState = state || stateMap.get(this.id);
-    this.id = myState.id;
-    this.name = myState.name;
-    this.strategy.onRestore(objectFactory, stateMap, myState);
+    this.id = state.id;
+    this.name = state.name;
+    this.strategy.onRestore(objectFactory, stateMap, state);
 
     const modifierList = stateMap.get(makeSuspendListKey('TM', this.id));
     if (modifierList) {
@@ -156,10 +158,15 @@ class Trail {
     this.isOpen = false;
   }
 
+  sendTrailStateCreatedEvent(trailState) {
+    this.events.emit('trailStateCreated', { trailState });
+  }
+
   createTrailState() {
     debug('createTrailState');
     const trailState = this.strategy.onCreateTrailState();
     trailState.trail = this;
+    this.sendTrailStateCreatedEvent(trailState);
     return trailState;
   }
 

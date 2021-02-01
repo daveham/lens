@@ -380,11 +380,7 @@ describe('restore', () => {
     expect(obj104.name).toEqual('movementBehavior-104');
     expect(obj104.started).toBeFalsy();
     expect(obj104.steps).toBeUndefined();
-    expect(obj104.trailState).toBeDefined();
-    expect(obj104.trailState.orientation).toBeUndefined();
-    expect(obj104.trailState._initialLocation).toBeUndefined();
-    expect(obj104.trailState._movement).toBeUndefined();
-    expect(obj104.trailState._location).toBeUndefined();
+    expect(obj104.trailState).toBeUndefined();
   });
 
   test('after single step', () => {

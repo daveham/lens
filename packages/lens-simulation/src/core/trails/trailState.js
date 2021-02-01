@@ -7,11 +7,13 @@ import getDebugLog from './debugLog';
 const debug = getDebugLog('trailState');
 
 class TrailState {
+  events;
   _initialLocation;
   _location;
   _movement;
   orientation;
   trail;
+  hiker;
 
   constructor() {
     debug('ctor');
@@ -24,10 +26,35 @@ class TrailState {
 
   assertIsValid() {
     invariant(this.trail, 'trail should be assigned to trail state');
+    invariant(this.hiker, 'hiker should be assigned to trail state');
+  }
+
+  sendInitialLocationEvent() {
+    this.events.emit('initialLocation', {
+      initialLocation: this._initialLocation,
+      hiker: this.hiker,
+      trail: this.trail,
+    });
+  }
+
+  sendLocationEvent() {
+    this.events.emit('location', {
+      location: this._location,
+      hiker: this.hiker,
+      trail: this.trail,
+    });
+  }
+
+  sendMovementEvent() {
+    this.events.emit('movement', {
+      movement: this._movement,
+      hiker: this.hiker,
+      trail: this.trail,
+    });
   }
 
   suspend(/* stateMap, state */) {
-    debug('suspend', this.toString());
+    debug('suspend');
     this.assertIsValid();
 
     return {
@@ -39,14 +66,13 @@ class TrailState {
   }
 
   restore(objectFactory, stateMap, state) {
-    debug('restore', this.toString());
+    debug('restore');
     this.assertIsValid();
 
     this._initialLocation = state._initialLocation;
     this._location = state._location;
     this._movement = state._movement;
     this.orientation = state.orientation;
-    debug('restore - after', this.toString());
   }
 
   get initialLocation() {
@@ -99,21 +125,6 @@ class TrailState {
       this._location = this._location.add(m);
     }
     this.sendLocationEvent();
-  }
-
-  sendInitialLocationEvent() {
-    // noinspection JSCheckFunctionSignatures
-    this.events.emit('initialLocation', { initialLocation: this._initialLocation });
-  }
-
-  sendLocationEvent() {
-    // noinspection JSCheckFunctionSignatures
-    this.events.emit('location', { location: this._location });
-  }
-
-  sendMovementEvent() {
-    // noinspection JSCheckFunctionSignatures
-    this.events.emit('movement', { movement: this._movement });
   }
 
   isInBounds(location) {

@@ -73,7 +73,16 @@ class Hike {
   addTrail(trail) {
     debug('addTrail');
     this.trails.push(trail);
+    trail.events.on('trailStateCreated', this.handleTrailStateCreated);
   }
+
+  handleHikerLocation = ({ hiker, location: { x, y } }) => {
+    debug('handleHikerLocation', { hiker: hiker.name, x, y });
+  };
+
+  handleTrailStateCreated = ({ trailState }) => {
+    trailState.events.on('location', this.handleHikerLocation);
+  };
 
   configure(size) {
     debug('configure', { size });
@@ -83,12 +92,11 @@ class Hike {
 
   restore(objectFactory, stateMap, state) {
     debug('restore');
-    const myState = state || stateMap.get(this.id);
-    this.id = myState.id;
-    this.name = myState.name;
-    this.size = myState.size;
-    this.bounds = myState.bounds;
-    this.strategy.onRestore(objectFactory, stateMap, myState);
+    this.id = state.id;
+    this.name = state.name;
+    this.size = state.size;
+    this.bounds = state.bounds;
+    this.strategy.onRestore(objectFactory, stateMap, state);
 
     const trailList = stateMap.get(makeSuspendListKey('T', this.id));
     if (trailList) {

@@ -67,11 +67,10 @@ class DataBehavior {
 
   restore(objectFactory, stateMap, state) {
     debug('restore');
-    const myState = state || stateMap.get(this.id);
-    this.id = myState.id;
-    this.name = myState.name;
-    this.started = myState.started;
-    this.strategy.onRestore(objectFactory, stateMap, myState);
+    this.id = state.id;
+    this.name = state.name;
+    this.started = state.started;
+    this.strategy.onRestore(objectFactory, stateMap, state);
   }
 
   suspend(objectFactory) {

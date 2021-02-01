@@ -69,7 +69,9 @@ const TrailMovementStrategyMixin = superclass =>
     onRestore(objectFactory, stateMap, state) {
       debug('onRestore');
 
-      this.createTrailState();
+      if (this.behavior.started) {
+        this.createTrailState();
+      }
 
       super.onRestore(objectFactory, stateMap, state);
       this.displacementScheme = state.displacementScheme;

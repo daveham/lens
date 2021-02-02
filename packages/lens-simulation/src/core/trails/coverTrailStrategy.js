@@ -1,7 +1,7 @@
 import { buildType } from '../utils';
 
-import getDebugLog from './debugLog';
-const debug = getDebugLog('coverTrailStrategy');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('coverTrailStrategy');
 
 export const CoverTrailMoveOrder = {
   rowsFirst: 'rowsFirst',
@@ -17,7 +17,6 @@ const CoverTrailStrategyMixin = superclass =>
     }
 
     onSuspend(objectFactory, state) {
-      debug('onSuspend');
       return {
         ...super.onSuspend(objectFactory, state),
       };

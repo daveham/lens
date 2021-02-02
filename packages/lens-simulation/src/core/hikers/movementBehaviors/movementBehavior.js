@@ -19,12 +19,11 @@ export class NullMovementBehaviorStrategy {
 
   assertIsValid() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
+    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
+    invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
   }
 
   onSuspend(objectFactory, state) {
-    debug('onSuspend');
-    this.assertIsValid();
-
     return {
       ...state,
       options: this.options,
@@ -32,9 +31,6 @@ export class NullMovementBehaviorStrategy {
   }
 
   onRestore(objectFactory, stateMap, state) {
-    debug('onRestore');
-    this.assertIsValid();
-
     this.options = state.options;
   }
 
@@ -69,16 +65,14 @@ class MovementBehavior {
     this.strategy.behavior = this;
   }
 
-  restore(objectFactory, stateMap, state) {
-    debug('restore');
-    this.id = state.id;
-    this.name = state.name;
-    this.started = state.started;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+  assertIsValid() {
+    invariant(this.id, 'movement behavior should have an id');
+    invariant(this.strategy, 'movement behavior should have a strategy');
+    this.strategy.assertIsValid();
   }
 
   suspend(objectFactory) {
-    debug('suspend');
+    this.assertIsValid();
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
@@ -88,6 +82,14 @@ class MovementBehavior {
         started: this.started,
       }),
     );
+  }
+
+  restore(objectFactory, stateMap, state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.started = state.started;
+    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.assertIsValid();
   }
 
   assertStarted(expected = true) {

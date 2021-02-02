@@ -25,9 +25,6 @@ export class NullHikeStrategy {
   }
 
   onSuspend(objectFactory, state) {
-    debug('onSuspend');
-    this.assertIsValid();
-
     return {
       ...state,
       options: this.options,
@@ -35,9 +32,6 @@ export class NullHikeStrategy {
   }
 
   onRestore(objectFactory, stateMap, state) {
-    debug('onRestore');
-    this.assertIsValid();
-
     this.options = state.options;
   }
 
@@ -71,43 +65,23 @@ class Hike {
   }
 
   addTrail(trail) {
-    debug('addTrail');
     this.trails.push(trail);
     trail.events.on('trailStateCreated', this.handleTrailStateCreated);
   }
 
-  handleHikerLocation = ({ hiker, location: { x, y } }) => {
-    debug('handleHikerLocation', { hiker: hiker.name, x, y });
-  };
-
-  handleTrailStateCreated = ({ trailState }) => {
-    trailState.events.on('location', this.handleHikerLocation);
-  };
-
   configure(size) {
-    debug('configure', { size });
     this.size = new Size(size);
     this.bounds = new Rectangle([0, 0], size);
   }
 
-  restore(objectFactory, stateMap, state) {
-    debug('restore');
-    this.id = state.id;
-    this.name = state.name;
-    this.size = state.size;
-    this.bounds = state.bounds;
-    this.strategy.onRestore(objectFactory, stateMap, state);
-
-    const trailList = stateMap.get(makeSuspendListKey('T', this.id));
-    if (trailList) {
-      trailList.forEach(trailId =>
-        this.addTrail(objectFactory.restoreTrail(this, trailId, stateMap)),
-      );
-    }
+  assertIsValid() {
+    invariant(this.id, 'hike should have an id');
+    invariant(this.strategy, 'hike should have a strategy');
+    this.strategy.assertIsValid();
   }
 
   suspend(suspendFactory) {
-    debug('suspend');
+    this.assertIsValid();
     suspendFactory.suspendItem(
       this,
       this.strategy.onSuspend(suspendFactory, {
@@ -120,6 +94,30 @@ class Hike {
     );
     suspendFactory.suspendList('T', this, this.trails);
   }
+
+  restore(objectFactory, stateMap, state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.size = state.size;
+    this.bounds = state.bounds;
+    this.strategy.onRestore(objectFactory, stateMap, state);
+
+    const trailList = stateMap.get(makeSuspendListKey('T', this.id));
+    if (trailList) {
+      trailList.forEach(trailId =>
+        this.addTrail(objectFactory.restoreTrail(this, trailId, stateMap)),
+      );
+    }
+    this.assertIsValid();
+  }
+
+  handleHikerLocation = ({ hiker, location: { x, y } }) => {
+    debug('handleHikerLocation', { hiker: hiker.name, x, y });
+  };
+
+  handleTrailStateCreated = ({ trailState }) => {
+    trailState.events.on('location', this.handleHikerLocation);
+  };
 
   isActive() {
     return this.trails.some(t => t.isActive());

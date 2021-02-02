@@ -1,7 +1,7 @@
 import { buildType } from '../utils';
 
-import getDebugLog from './debugLog';
-const debug = getDebugLog('lineTrailStrategy');
+// import getDebugLog from './debugLog';
+// const debug = getDebugLog('lineTrailStrategy');
 
 const LineTrailStrategyMixin = superclass =>
   class extends superclass {
@@ -10,7 +10,6 @@ const LineTrailStrategyMixin = superclass =>
     }
 
     onSuspend(objectFactory, state) {
-      debug('onSuspend');
       return {
         ...super.onSuspend(objectFactory, state),
       };

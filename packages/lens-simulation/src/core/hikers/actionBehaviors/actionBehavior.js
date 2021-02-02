@@ -23,9 +23,6 @@ export class NullActionBehaviorStrategy {
   }
 
   onSuspend(objectFactory, state) {
-    debug('onSuspend');
-    this.assertIsValid();
-
     return {
       ...state,
       options: this.options,
@@ -33,9 +30,6 @@ export class NullActionBehaviorStrategy {
   }
 
   onRestore(objectFactory, stateMap, state) {
-    debug('onRestore');
-    this.assertIsValid();
-
     this.options = state.options;
   }
 
@@ -92,16 +86,14 @@ class ActionBehavior {
     this.strategy.behavior = this;
   }
 
-  restore(objectFactory, stateMap, state) {
-    debug('restore');
-    this.id = state.id;
-    this.name = state.name;
-    this.started = state.started;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+  assertIsValid() {
+    invariant(this.id, 'action behavior should have an id');
+    invariant(this.strategy, 'action behavior should have a strategy');
+    this.strategy.assertIsValid();
   }
 
   suspend(objectFactory) {
-    debug('suspend');
+    this.assertIsValid();
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
@@ -111,6 +103,14 @@ class ActionBehavior {
         started: this.started,
       }),
     );
+  }
+
+  restore(objectFactory, stateMap, state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.started = state.started;
+    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.assertIsValid();
   }
 
   get label() {

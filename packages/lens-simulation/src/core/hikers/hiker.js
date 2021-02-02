@@ -20,9 +20,6 @@ export class NullHikerStrategy {
   }
 
   onSuspend(objectFactory, state) {
-    debug('onSuspend');
-    this.assertIsValid();
-
     return {
       ...state,
       options: this.options,
@@ -30,9 +27,6 @@ export class NullHikerStrategy {
   }
 
   onRestore(objectFactory, stateMap, state) {
-    debug('onRestore');
-    this.assertIsValid();
-
     this.options = state.options;
   }
 
@@ -63,15 +57,14 @@ class Hiker {
     this.strategy.hiker = this;
   }
 
-  restore(objectFactory, stateMap, state) {
-    debug('restore');
-    this.id = state.id;
-    this.name = state.name;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+  assertIsValid() {
+    invariant(this.id, 'hiker should have an id');
+    invariant(this.strategy, 'hiker should have a strategy');
+    this.strategy.assertIsValid();
   }
 
   suspend(objectFactory) {
-    debug('suspend');
+    this.assertIsValid();
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
@@ -80,6 +73,13 @@ class Hiker {
         name: this.name,
       }),
     );
+  }
+
+  restore(objectFactory, stateMap, state) {
+    this.id = state.id;
+    this.name = state.name;
+    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.assertIsValid();
   }
 
   isActive() {

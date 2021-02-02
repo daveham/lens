@@ -24,9 +24,6 @@ export class NullTrailStrategy {
   }
 
   onSuspend(objectFactory, state) {
-    debug('onSuspend');
-    this.assertIsValid();
-
     return {
       ...state,
       options: this.options,
@@ -34,9 +31,6 @@ export class NullTrailStrategy {
   }
 
   onRestore(objectFactory, stateMap, state) {
-    debug('onRestore');
-    this.assertIsValid();
-
     this.options = state.options;
   }
 
@@ -85,28 +79,34 @@ class Trail {
   }
 
   addHiker(hiker) {
-    debug('addHiker');
     this.hikers.push(hiker);
   }
 
   addModifier(modifier) {
-    debug('addModifier');
     this.modifiers.push(modifier);
   }
 
-  assertOpen(expected = true) {
-    if (this.isOpen !== expected) {
-      throw new Error(`trail ${expected ? 'not' : 'already'} open`);
-    }
+  assertIsValid() {
+    invariant(this.id, 'trail should have an id');
+    invariant(this.strategy, 'trail should have a strategy');
+    this.strategy.assertIsValid();
   }
 
-  configure(plan) {
-    this.plan = plan;
-    this.compass = plan.createCompass(this.hike.size);
+  suspend(objectFactory) {
+    this.assertIsValid();
+    objectFactory.suspendItem(
+      this,
+      this.strategy.onSuspend(objectFactory, {
+        type: this.strategy.getType(),
+        id: this.id,
+        name: this.name,
+      }),
+    );
+    objectFactory.suspendList('K', this, this.hikers);
+    objectFactory.suspendList('TM', this, this.modifiers);
   }
 
   restore(objectFactory, stateMap, state) {
-    debug('restore');
     this.id = state.id;
     this.name = state.name;
     this.strategy.onRestore(objectFactory, stateMap, state);
@@ -124,20 +124,18 @@ class Trail {
         this.addHiker(objectFactory.restoreHiker(this, hikerId, stateMap)),
       );
     }
+    this.assertIsValid();
   }
 
-  suspend(objectFactory) {
-    debug('suspend');
-    objectFactory.suspendItem(
-      this,
-      this.strategy.onSuspend(objectFactory, {
-        type: this.strategy.getType(),
-        id: this.id,
-        name: this.name,
-      }),
-    );
-    objectFactory.suspendList('K', this, this.hikers);
-    objectFactory.suspendList('TM', this, this.modifiers);
+  assertOpen(expected = true) {
+    if (this.isOpen !== expected) {
+      throw new Error(`trail ${expected ? 'not' : 'already'} open`);
+    }
+  }
+
+  configure(plan) {
+    this.plan = plan;
+    this.compass = plan.createCompass(this.hike.size);
   }
 
   isActive() {

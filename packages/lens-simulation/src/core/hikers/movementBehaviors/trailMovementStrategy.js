@@ -1,4 +1,4 @@
-import invariant from 'tiny-invariant';
+// import invariant from 'tiny-invariant';
 import { HikerExitReason } from '../../constants';
 import { buildType } from '../../utils';
 
@@ -37,10 +37,9 @@ const TrailMovementStrategyMixin = superclass =>
       return buildType(super.getType(), 'Trail');
     }
 
-    assertIsValid() {
-      invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
-      invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
-    }
+    // assertIsValid() {
+    //   super.assertIsValid();
+    // }
 
     createTrailState() {
       this.assertIsValid();
@@ -52,9 +51,6 @@ const TrailMovementStrategyMixin = superclass =>
     }
 
     onSuspend(objectFactory, state) {
-      debug('onSuspend');
-      this.assertIsValid();
-
       return {
         ...super.onSuspend(objectFactory, state),
         displacementScheme: this.displacementScheme,
@@ -67,8 +63,6 @@ const TrailMovementStrategyMixin = superclass =>
     }
 
     onRestore(objectFactory, stateMap, state) {
-      debug('onRestore');
-
       if (this.behavior.started) {
         this.createTrailState();
       }

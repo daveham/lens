@@ -1,4 +1,4 @@
-import invariant from 'tiny-invariant';
+// import invariant from 'tiny-invariant';
 import { buildType } from '../utils';
 
 import getDebugLog from './debugLog';
@@ -14,14 +14,11 @@ const TrailHikerStrategyMixin = superclass =>
       return buildType(super.getType(), 'Trail');
     }
 
-    assertIsValid() {
-      invariant(this.hiker, 'hiker should be assigned to strategy');
-    }
+    // assertIsValid() {
+    //   super.assertIsValid();
+    // }
 
     onSuspend(objectFactory, state) {
-      debug('onSuspend');
-      this.assertIsValid();
-
       if (this.dataBehavior) {
         this.dataBehavior.suspend(objectFactory);
       }
@@ -40,9 +37,6 @@ const TrailHikerStrategyMixin = superclass =>
     }
 
     onRestore(objectFactory, stateMap, state) {
-      debug('onRestore');
-      this.assertIsValid();
-
       objectFactory.restoreTrailHikerBehaviors(this, stateMap, state);
     }
 

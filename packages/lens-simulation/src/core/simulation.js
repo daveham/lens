@@ -20,7 +20,7 @@ class Simulation {
   }
 
   assertIsValid() {
-    invariant(this.id, 'id must be assigned for restore');
+    invariant(this.id, 'simulation should have an id');
   }
 
   suspend(objectFactory) {

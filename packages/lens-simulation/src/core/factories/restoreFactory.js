@@ -39,8 +39,9 @@ class RestoreFactory {
   }
 
   restoreSimulation(id, executionId, stateMap) {
+    const state = stateMap.get(id);
     const simulation = new Simulation(id, executionId);
-    simulation.restore(this, stateMap);
+    simulation.restore(this, stateMap, state);
 
     return simulation;
   }

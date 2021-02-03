@@ -1,5 +1,6 @@
-import { buildType } from '../../utils';
 import getDebugLog from '../debugLog';
+import { buildType } from '../../utils';
+
 const debug = getDebugLog('recordActionStrategy');
 
 const RecordActionStrategyMixin = superclass =>

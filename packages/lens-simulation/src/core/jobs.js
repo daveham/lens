@@ -1,7 +1,8 @@
 import Controller from './controller';
-import { parse, build, restore, suspend } from './simulationBuilder';
+import { build, parse, restore, suspend } from './simulationBuilder';
 
 import getDebugLog from './debugLog';
+
 const debug = getDebugLog('jobs');
 
 // temp
@@ -43,22 +44,12 @@ function getNewSimulation(executionId) {
   );
 }
 
-function restoreSimulation(executionId, state) {
+function restoreSimulation(executionId, stateMap) {
   return getExecution(executionId).then(({ simulationId, model, plan }) =>
-    getSimulationYaml(simulationId)
-      .then(document => parse(document))
-      .then(definition =>
-        restore(
-          executionId,
-          simulationId,
-          definition,
-          {
-            model,
-            plan,
-          },
-          state,
-        ),
-      ),
+    restore(executionId, simulationId, stateMap, {
+      model,
+      plan,
+    }),
   );
 }
 

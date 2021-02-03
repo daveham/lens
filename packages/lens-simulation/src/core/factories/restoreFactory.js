@@ -4,31 +4,31 @@ import Simulation from '../simulation';
 
 import Hike, { NullHikeStrategy } from '../hikes/hike';
 
-import Trail, { mixTrailStrategy, NullTrailStrategy } from '../trails/trail';
-import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
-import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
 import ColumnsFirstTrailStateModifier from '../trails/trailStateModifiers/columnsFirstTrailStateModifier';
+import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
 import LineTrailStateModifier from '../trails/trailStateModifiers/lineTrailStateModifier';
+import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
 import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
+import Trail, { NullTrailStrategy, mixTrailStrategy } from '../trails/trail';
 
-import Hiker, { mixHikerStrategy, NullHikerStrategy } from '../hikers/hiker';
-import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
 import ActionBehavior, {
-  mixActionBehaviorStrategy,
   NullActionBehaviorStrategy,
+  mixActionBehaviorStrategy,
 } from '../hikers/actionBehaviors/actionBehavior';
+import DataBehavior, { NullDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
+import Hiker, { NullHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
+import MovementBehavior, {
+  NullMovementBehaviorStrategy,
+  mixMovementBehaviorStrategy,
+} from '../hikers/movementBehaviors/movementBehavior';
 import RecordActionStrategyMixin from '../hikers/actionBehaviors/recordActionStrategy';
 import TraceActionStrategyMixin from '../hikers/actionBehaviors/traceActionStrategy';
-import DataBehavior, { NullDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
-import MovementBehavior, {
-  mixMovementBehaviorStrategy,
-  NullMovementBehaviorStrategy,
-} from '../hikers/movementBehaviors/movementBehavior';
+import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
 import TrailMovementStrategyMixin from '../hikers/movementBehaviors/trailMovementStrategy';
 
+import getDebugLog from './debugLog';
 import { extractTypeAndOptions, getEndType } from './utils';
 
-import getDebugLog from './debugLog';
 const debug = getDebugLog('objectFactory');
 
 class RestoreFactory {

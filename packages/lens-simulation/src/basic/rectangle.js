@@ -20,10 +20,10 @@ import Point from './point';
 import Size from './size';
 
 import {
+  getPointParamsFromArguments,
   getRectParamsFromArguments,
   getRectParamsFromOneArg,
   getSizeParamsFromArguments,
-  getPointParamsFromArguments,
 } from './common';
 
 const getRectParamsUsingPrototype = options => {

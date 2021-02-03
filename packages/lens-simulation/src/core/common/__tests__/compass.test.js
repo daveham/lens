@@ -1,7 +1,7 @@
-import Size from '../../../basic/size';
+import Numerical from '../../../basic/numerical';
 import Point from '../../../basic/point';
 import Rectangle from '../../../basic/rectangle';
-import Numerical from '../../../basic/numerical';
+import Size from '../../../basic/size';
 
 import Compass from '../compass';
 import { ImageCompassMode } from '../imageCompass';

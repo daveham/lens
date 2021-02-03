@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { HikerExitReason } from '../../constants';
 
 import getDebugLog from '../debugLog';
+
 const debug = getDebugLog('columnsFirstTrailStateModifier');
 
 class ColumnsFirstTrailStateModifier {

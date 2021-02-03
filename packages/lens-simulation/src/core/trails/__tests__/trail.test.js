@@ -1,10 +1,8 @@
-import Size from '../../../basic/size';
-import DicePlan from '../../common/dicePlan';
-import { HikerExitReason } from '../../constants';
 import DefinitionFactory from '../../factories/definitionFactory';
-// import RestoreFactory from '../../factories/objectFactory';
-// import SuspendFactory from '../../factories/suspendFactory';
+import DicePlan from '../../common/dicePlan';
 import SimulationFactory from '../../factories/simulationFactory';
+import Size from '../../../basic/size';
+import { HikerExitReason } from '../../constants';
 
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('trailTests');
@@ -31,8 +29,6 @@ function createTestObjects(trailStrategyOptions, { movementOptions, ...options }
   const simulationFactory = new SimulationFactory(new MockBuildContext());
   simulationFactory.initialize(plan, model, {});
   const df = new DefinitionFactory(simulationFactory);
-  // const sf = new SuspendFactory();
-  // const of = new RestoreFactory();
 
   const hike = df.createHike({ id: 100, name: 'testHike' });
 

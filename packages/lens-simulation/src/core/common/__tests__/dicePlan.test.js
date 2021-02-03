@@ -1,5 +1,5 @@
-import Size from '../../../basic/size';
 import DicePlan from '../dicePlan';
+import Size from '../../../basic/size';
 
 describe('DicePlan', () => {
   describe('construct', () => {

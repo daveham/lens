@@ -1,4 +1,5 @@
 import getDebugLog from './debugLog';
+
 const debug = getDebugLog('controller');
 
 class Controller {

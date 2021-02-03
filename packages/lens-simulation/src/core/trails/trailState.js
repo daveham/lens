@@ -1,9 +1,11 @@
 import E3 from 'eventemitter3';
 import invariant from 'tiny-invariant';
+
 import Point from '../../basic/point';
 import Size from '../../basic/size';
 
 import getDebugLog from './debugLog';
+
 const debug = getDebugLog('trailState');
 
 class TrailState {

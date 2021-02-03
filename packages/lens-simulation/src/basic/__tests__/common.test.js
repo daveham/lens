@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 
 import {
-  getSizeParams,
-  getSizeParamsFromArguments,
   getPointParamsFromArguments,
   getRectParamsFromArguments,
+  getSizeParams,
+  getSizeParamsFromArguments,
   isZeroFromArguments,
 } from '../common';
 

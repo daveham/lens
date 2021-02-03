@@ -1,9 +1,10 @@
-import Size from '../../basic/size';
-import Point from '../../basic/point';
 import DicePlan from '../common/dicePlan';
+import Point from '../../basic/point';
+import Size from '../../basic/size';
 import { build, parse, restore, suspend } from '../simulationBuilder';
 
 import getDebugLog from '../debugLog';
+
 const debug = getDebugLog('simulationBuilderTests');
 
 const document = `

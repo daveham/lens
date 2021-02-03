@@ -1,12 +1,13 @@
-import Size from '../../../basic/size';
-import DicePlan from '../../common/dicePlan';
-import { parse } from '../../simulationBuilder';
-import SimulationFactory from '../simulationFactory';
 import DefinitionFactory from '../definitionFactory';
-import SuspendFactory from '../suspendFactory';
+import DicePlan from '../../common/dicePlan';
 import RestoreFactory from '../restoreFactory';
+import SimulationFactory from '../simulationFactory';
+import Size from '../../../basic/size';
+import SuspendFactory from '../suspendFactory';
+import { parse } from '../../simulationBuilder';
 
 import getDebugLog from '../debugLog';
+
 const debug = getDebugLog('simulationFactoryTests');
 
 class MockBuildContext {

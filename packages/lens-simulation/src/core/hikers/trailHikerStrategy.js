@@ -2,6 +2,7 @@
 import { buildType } from '../utils';
 
 import getDebugLog from './debugLog';
+
 const debug = getDebugLog('trailHikerStrategy');
 
 const TrailHikerStrategyMixin = superclass =>

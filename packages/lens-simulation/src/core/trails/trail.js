@@ -1,10 +1,11 @@
-import invariant from 'tiny-invariant';
 import * as R from 'ramda';
 import E3 from 'eventemitter3';
-import { makeSuspendListKey } from '../factories/utils';
-import TrailState from './trailState';
+import invariant from 'tiny-invariant';
 
+import TrailState from './trailState';
 import getDebugLog from './debugLog';
+import { makeSuspendListKey } from '../factories/utils';
+
 const debug = getDebugLog('trail');
 
 export class NullTrailStrategy {

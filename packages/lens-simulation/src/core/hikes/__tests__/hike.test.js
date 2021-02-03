@@ -1,9 +1,11 @@
 import * as R from 'ramda';
-import Size from '../../../basic/size';
+
 import DicePlan from '../../common/dicePlan';
+import Size from '../../../basic/size';
+
 import Hike from '../hike';
-import Trail from '../../trails/trail';
 import Hiker from '../../hikers/hiker';
+import Trail from '../../trails/trail';
 
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('hikerTests');

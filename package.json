@@ -92,6 +92,7 @@
     "eslint-plugin-react": "7.17.0",
     "eslint-plugin-react-app": "^6.1.0",
     "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-sort-imports-es6-autofix": "^0.5.0",
     "eslint-plugin-standard": "^4.0.1",
     "express": "^4.13.4",
     "file-loader": "3.0.1",

@@ -13,8 +13,8 @@
 
 // import Numerical from './numerical';
 import Point from '../point';
-import Size from '../size';
 import Rectangle from '../rectangle';
+import Size from '../size';
 
 describe('Rectangle', () => {
   test('new Rectangle(Point, Size)', () => {

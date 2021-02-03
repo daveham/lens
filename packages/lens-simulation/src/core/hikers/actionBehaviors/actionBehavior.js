@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import invariant from 'tiny-invariant';
 
 import getDebugLog from '../debugLog';
+
 const debug = getDebugLog('actionBehavior');
 
 export class NullActionBehaviorStrategy {

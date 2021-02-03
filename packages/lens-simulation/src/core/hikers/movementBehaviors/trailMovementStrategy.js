@@ -3,6 +3,7 @@ import { HikerExitReason } from '../../constants';
 import { buildType } from '../../utils';
 
 import getDebugLog from '../debugLog';
+
 const debug = getDebugLog('trailMovementStrategy');
 
 export const DisplacementScheme = {

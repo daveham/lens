@@ -2,6 +2,7 @@ import invariant from 'tiny-invariant';
 
 import getDebugLog from './debugLog';
 import { makeSuspendListKey } from './factories/utils';
+
 const debug = getDebugLog('simulation');
 
 class Simulation {

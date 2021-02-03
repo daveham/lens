@@ -3,12 +3,18 @@
     "plugin:jest/recommended"
   ],
   "plugins" : [
-    "jest"
+    "jest",
+    "sort-imports-es6-autofix"
   ],
   "env": {
     "jest/globals": true
   },
   "rules": {
-    "no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^[iI]gnored" }]
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true, "varsIgnorePattern": "^[iI]gnored" }],
+    "sort-imports-es6-autofix/sort-imports-es6": [2, {
+      "ignoreCase": false,
+      "ignoreMemberSort": false,
+      "memberSyntaxSortOrder": ["all", "single","multiple", "none"]
+    }]
   }
 }

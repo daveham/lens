@@ -5,6 +5,7 @@ import SimulationFactory from './factories/simulationFactory';
 import buildContext from './buildContext';
 
 import getDebugLog from './debugLog';
+
 const debug = getDebugLog('simulationBuilder');
 
 export function parse(document, options = {}) {

@@ -1,9 +1,10 @@
-import invariant from 'tiny-invariant';
 import * as R from 'ramda';
 import Rectangle from '../../basic/rectangle';
 import Size from '../../basic/size';
-import { makeSuspendListKey } from '../factories/utils';
 import getDebugLog from './debugLog';
+import invariant from 'tiny-invariant';
+import { makeSuspendListKey } from '../factories/utils';
+
 const debug = getDebugLog('hike');
 
 const DEFAULT_RUN_AWAY_LIMIT = 1000;

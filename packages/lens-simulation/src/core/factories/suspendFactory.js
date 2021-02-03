@@ -1,6 +1,6 @@
+import getDebugLog from './debugLog';
 import { makeSuspendListKey } from './utils';
 
-import getDebugLog from './debugLog';
 const debug = getDebugLog('suspendFactory');
 
 class SuspendFactory {

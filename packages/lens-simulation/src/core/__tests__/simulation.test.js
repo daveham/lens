@@ -1,8 +1,8 @@
-import Size from '../../basic/size';
+import Controller from '../controller';
 import DicePlan from '../common/dicePlan';
+import Size from '../../basic/size';
 import { HikerExitReason } from '../constants';
 import { build, parse } from '../simulationBuilder';
-import Controller from '../controller';
 
 // import getDebugLog from '../debugLog';
 // const debug = getDebugLog('simulationTests');
@@ -61,8 +61,8 @@ function makeTestSimulation(hikeDocument, hikerDocument, movementOptions) {
 }
 
 const TEST_LIMIT = 1000;
-function runTestSimulation(hikeDocument, hikerDocument, movementOptions) {
-  const simulation = makeTestSimulation(hikeDocument, hikerDocument, movementOptions);
+
+function runTestSimulation(simulation) {
   const controller = new Controller();
   let testLimitCounter = 0;
   while (controller.isActive(simulation) && testLimitCounter < TEST_LIMIT) {
@@ -74,12 +74,14 @@ function runTestSimulation(hikeDocument, hikerDocument, movementOptions) {
 }
 
 test('line hiker, fixed displacement, left to right', () => {
-  const simulation = runTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
-    displacementScheme: 'fixed',
-    fixedDisplacement: [10, 0],
-    stepLimit: 50,
-    initialLocation: [0, 10],
-  });
+  const simulation = runTestSimulation(
+    makeTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+      displacementScheme: 'fixed',
+      fixedDisplacement: [10, 0],
+      stepLimit: 50,
+      initialLocation: [0, 10],
+    }),
+  );
 
   const [hiker] = simulation.hikes[0].trails[0].hikers;
   // should have hit the right edge
@@ -91,12 +93,14 @@ test('line hiker, fixed displacement, left to right', () => {
 });
 
 test('line hiker, fixed displacement, right to left', () => {
-  const simulation = runTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
-    displacementScheme: 'fixed',
-    fixedDisplacement: [-5, 0],
-    stepLimit: 50,
-    initialLocation: [99.9999, 30],
-  });
+  const simulation = runTestSimulation(
+    makeTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+      displacementScheme: 'fixed',
+      fixedDisplacement: [-5, 0],
+      stepLimit: 50,
+      initialLocation: [99.9999, 30],
+    }),
+  );
 
   const [hiker] = simulation.hikes[0].trails[0].hikers;
   // should have hit the left edge
@@ -108,12 +112,14 @@ test('line hiker, fixed displacement, right to left', () => {
 });
 
 test('cover hiker, fixed displacement, rows first', () => {
-  const simulation = runTestSimulation(trailHikeWithCoverTrailDocument, trailHikerDocument, {
-    displacementScheme: 'fixed',
-    fixedDisplacement: [10, 10],
-    stepLimit: 500,
-    initialLocation: [0, 0],
-  });
+  const simulation = runTestSimulation(
+    makeTestSimulation(trailHikeWithCoverTrailDocument, trailHikerDocument, {
+      displacementScheme: 'fixed',
+      fixedDisplacement: [10, 10],
+      stepLimit: 500,
+      initialLocation: [0, 0],
+    }),
+  );
 
   const [hiker] = simulation.hikes[0].trails[0].hikers;
   // should have hit the left edge
@@ -125,11 +131,13 @@ test('cover hiker, fixed displacement, rows first', () => {
 });
 
 test('line hiker, grid displacement, left to right', () => {
-  const simulation = runTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
-    displacementScheme: 'grid',
-    stepLimit: 50,
-    initialLocation: [0, 10],
-  });
+  const simulation = runTestSimulation(
+    makeTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+      displacementScheme: 'grid',
+      stepLimit: 50,
+      initialLocation: [0, 10],
+    }),
+  );
 
   const [hiker] = simulation.hikes[0].trails[0].hikers;
   // should have hit the right edge

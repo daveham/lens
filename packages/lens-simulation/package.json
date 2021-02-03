@@ -14,6 +14,7 @@
     "url": "https://github.com/daveham/lens/issues"
   },
   "scripts": {
+    "lint": "eslint ./src",
     "test": "jest",
     "rmrf": "rimraf lib"
   },

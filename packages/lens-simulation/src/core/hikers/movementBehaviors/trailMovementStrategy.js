@@ -15,7 +15,6 @@ export const DisplacementScheme = {
 
 const TrailMovementStrategyMixin = superclass =>
   class extends superclass {
-    trailState;
     steps;
     displacementScheme;
 
@@ -46,12 +45,14 @@ const TrailMovementStrategyMixin = superclass =>
       this.assertIsValid();
       const { hiker } = this.behavior.hikerStrategy;
 
-      this.trailState = hiker.trail.createTrailState();
-      this.trailState.hiker = hiker;
-      this.trailState.movementBehavior = this;
+      const trailState = hiker.trail.createTrailState();
+      trailState.hiker = hiker;
+      trailState.movementBehavior = this;
+      hiker.trailState = trailState;
     }
 
     onSuspend(objectFactory, state) {
+      const { hiker } = this.behavior.hikerStrategy;
       return {
         ...super.onSuspend(objectFactory, state),
         displacementScheme: this.displacementScheme,
@@ -59,7 +60,7 @@ const TrailMovementStrategyMixin = superclass =>
         stepLimit: this.stepLimit,
         initialLocation: this.initialLocation,
         steps: this.steps,
-        trailState: this.trailState ? this.trailState.suspend(objectFactory, state) : undefined,
+        trailState: hiker.trailState ? hiker.trailState.suspend(objectFactory, state) : undefined,
       };
     }
 
@@ -76,7 +77,8 @@ const TrailMovementStrategyMixin = superclass =>
       this.steps = state.steps;
 
       if (state.trailState) {
-        this.trailState.restore(objectFactory, stateMap, state.trailState);
+        const { hiker } = this.behavior.hikerStrategy;
+        hiker.trailState.restore(objectFactory, stateMap, state.trailState);
       }
     }
 
@@ -87,21 +89,21 @@ const TrailMovementStrategyMixin = superclass =>
       this.createTrailState();
       this.steps = 0;
 
-      const { trail } = this.behavior.hikerStrategy.hiker;
+      const { trail, trailState } = this.behavior.hikerStrategy.hiker;
 
       switch (this.displacementScheme) {
         case DisplacementScheme.fixed:
-          this.trailState.movement = this.fixedDisplacement;
+          trailState.movement = this.fixedDisplacement;
           break;
         case DisplacementScheme.grid:
-          this.trailState.movement = trail.plan.grain;
+          trailState.movement = trail.plan.grain;
           break;
         // case DisplacementScheme.size:
         // case DisplacementScheme.bounds:
       }
-      this.trailState.initialLocation = this.initialLocation;
+      trailState.initialLocation = this.initialLocation;
 
-      trail.initializeTrailState(this.trailState);
+      trail.initializeTrailState(trailState);
     }
 
     onMove() {
@@ -109,11 +111,12 @@ const TrailMovementStrategyMixin = superclass =>
       this.assertIsValid();
 
       const { hiker } = this.behavior.hikerStrategy;
+      const { trail, trailState } = hiker;
 
       if (this.stepLimit > 0 && this.steps >= this.stepLimit) {
         hiker.abort(HikerExitReason.reachedStepLimit);
       } else {
-        hiker.trail.updateTrailState(this.trailState);
+        trail.updateTrailState(trailState);
         this.steps += 1;
       }
     }

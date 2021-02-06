@@ -5,7 +5,7 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('actionBehavior');
 
-export class NullActionBehaviorStrategy {
+export class BaseActionBehaviorStrategy {
   behavior;
 
   constructor(options = {}) {
@@ -51,12 +51,8 @@ export class NullActionBehaviorStrategy {
     return false;
   }
 
-  onAct() {
-    debug('onAct');
-    this.assertIsValid();
-
-    this.onObserve();
-    this.onInfer();
+  areConstraintsSatisfied() {
+    return true;
   }
 
   onObserve() {
@@ -67,13 +63,17 @@ export class NullActionBehaviorStrategy {
     debug('onInfer');
   }
 
+  onAct() {
+    debug('onAct');
+  }
+
   onEnd() {
     this.assertIsValid();
   }
 }
 
 export const mixActionBehaviorStrategy = (...args) =>
-  R.compose(...args)(NullActionBehaviorStrategy);
+  R.compose(...args)(BaseActionBehaviorStrategy);
 
 class ActionBehavior {
   started = false;
@@ -83,7 +83,7 @@ class ActionBehavior {
   constructor(id, name, strategy) {
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullActionBehaviorStrategy();
+    this.strategy = strategy || new BaseActionBehaviorStrategy();
     this.strategy.behavior = this;
   }
 
@@ -91,6 +91,10 @@ class ActionBehavior {
     invariant(this.id, 'action behavior should have an id');
     invariant(this.strategy, 'action behavior should have a strategy');
     this.strategy.assertIsValid();
+  }
+
+  assertIsStarted(expected = true) {
+    invariant(this.started === expected, `action behavior ${expected ? 'not' : 'already'} started`);
   }
 
   suspend(objectFactory) {
@@ -120,33 +124,33 @@ class ActionBehavior {
 
   start() {
     debug('start', this.label);
-    this.assertStarted(false);
+    this.assertIsStarted(false);
     this.strategy.onStart();
     this.started = true;
   }
 
   needsData() {
     debug('needsData', this.label);
-    this.assertStarted();
+    this.assertIsStarted();
     return this.strategy.onNeedsData();
   }
 
   act() {
+    this.assertIsValid();
     debug('act', this.label);
-    this.assertStarted();
-    this.strategy.onAct();
+    this.assertIsStarted();
+
+    this.strategy.onObserve();
+    this.strategy.onInfer();
+    if (this.strategy.areConstraintsSatisfied()) {
+      this.strategy.onAct();
+    }
   }
 
   end() {
     debug('end', this.label);
-    this.assertStarted();
+    this.assertIsStarted();
     this.strategy.onEnd();
-  }
-
-  assertStarted(expected = true) {
-    if (this.started !== expected) {
-      throw new Error(`action behavior ${expected ? 'not' : 'already'} started`);
-    }
   }
 
   abort(reason) {

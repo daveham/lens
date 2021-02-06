@@ -78,8 +78,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(1);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(1);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(52);
+      expect(hiker.trailState.location.x).toEqual(1);
+      expect(hiker.trailState.location.y).toEqual(52);
     });
 
     test('run to step limit', () => {
@@ -100,8 +100,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(5);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(5);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(60);
+      expect(hiker.trailState.location.x).toEqual(5);
+      expect(hiker.trailState.location.y).toEqual(60);
     });
 
     test('run to bounds limit', () => {
@@ -122,8 +122,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(8); // 50/7 + 1
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(8);
-      expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThan(100);
+      expect(hiker.trailState.location.x).toEqual(8);
+      expect(hiker.trailState.location.y).toBeGreaterThan(100);
     });
   });
 
@@ -147,8 +147,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(1);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(10);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(0);
+      expect(hiker.trailState.location.x).toEqual(10);
+      expect(hiker.trailState.location.y).toEqual(0);
     });
 
     test('run to step limit', () => {
@@ -169,8 +169,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(25);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(50);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
+      expect(hiker.trailState.location.x).toEqual(50);
+      expect(hiker.trailState.location.y).toEqual(20);
     });
 
     test('run to bounds limit', () => {
@@ -191,8 +191,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(25); // 200/40 * 100/20
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(0);
-      expect(movementBehavior.strategy.trailState.location.y).toBeGreaterThanOrEqual(100);
+      expect(hiker.trailState.location.x).toEqual(0);
+      expect(hiker.trailState.location.y).toBeGreaterThanOrEqual(100);
     });
   });
 
@@ -216,8 +216,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(1);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(0);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
+      expect(hiker.trailState.location.x).toEqual(0);
+      expect(hiker.trailState.location.y).toEqual(20);
     });
 
     test('run to step limit', () => {
@@ -238,8 +238,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(21);
-      expect(movementBehavior.strategy.trailState.location.x).toEqual(40);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(20);
+      expect(hiker.trailState.location.x).toEqual(40);
+      expect(hiker.trailState.location.y).toEqual(20);
     });
 
     test('run to bounds limit', () => {
@@ -260,8 +260,8 @@ describe('trail', () => {
       const { movementBehavior } = hiker.strategy;
       expect(movementBehavior.started).toBeTruthy();
       expect(movementBehavior.strategy.steps).toEqual(25); // 200/40 * 100/20
-      expect(movementBehavior.strategy.trailState.location.x).toBeGreaterThanOrEqual(200);
-      expect(movementBehavior.strategy.trailState.location.y).toEqual(0);
+      expect(hiker.trailState.location.x).toBeGreaterThanOrEqual(200);
+      expect(hiker.trailState.location.y).toEqual(0);
     });
   });
 });

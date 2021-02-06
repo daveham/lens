@@ -9,10 +9,16 @@ const RecordActionStrategyMixin = superclass =>
       return buildType(super.getType(), 'Record');
     }
 
-    onInfer() {
-      debug('onInfer');
-      super.trace('RecordActionStrategyMixin.onInfer');
-      super.onInfer();
+    onAct() {
+      super.onAct();
+      debug('onAct');
+      super.trace('RecordActionStrategyMixin.onAct');
+      const ts = this.behavior.hikerStrategy.hiker.trailState;
+      this.record({ ...ts.location });
+    }
+
+    record(op) {
+      debug('record', op);
     }
   };
 

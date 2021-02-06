@@ -6,7 +6,7 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('movementBehavior');
 
-export class NullMovementBehaviorStrategy {
+export class BaseMovementBehaviorStrategy {
   behavior;
 
   constructor(options = {}) {
@@ -52,7 +52,7 @@ export class NullMovementBehaviorStrategy {
 }
 
 export const mixMovementBehaviorStrategy = (...args) =>
-  R.compose(...args)(NullMovementBehaviorStrategy);
+  R.compose(...args)(BaseMovementBehaviorStrategy);
 
 class MovementBehavior {
   started = false;
@@ -62,7 +62,7 @@ class MovementBehavior {
   constructor(id, name, strategy) {
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullMovementBehaviorStrategy();
+    this.strategy = strategy || new BaseMovementBehaviorStrategy();
     this.strategy.behavior = this;
   }
 

@@ -5,7 +5,7 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('dataBehavior');
 
-export class NullDataBehaviorStrategy {
+export class BaseDataBehaviorStrategy {
   behavior;
 
   constructor(options = {}) {
@@ -48,7 +48,7 @@ export class NullDataBehaviorStrategy {
   }
 }
 
-export const mixDataBehaviorStrategy = (...args) => R.compose(...args)(NullDataBehaviorStrategy);
+export const mixDataBehaviorStrategy = (...args) => R.compose(...args)(BaseDataBehaviorStrategy);
 
 class DataBehavior {
   started = false;
@@ -58,7 +58,7 @@ class DataBehavior {
   constructor(id, name, strategy) {
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullDataBehaviorStrategy();
+    this.strategy = strategy || new BaseDataBehaviorStrategy();
     this.strategy.behavior = this;
   }
 

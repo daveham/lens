@@ -2,23 +2,23 @@ import invariant from 'tiny-invariant';
 
 import Simulation from '../simulation';
 
-import Hike, { NullHikeStrategy } from '../hikes/hike';
+import Hike, { BaseHikeStrategy } from '../hikes/hike';
 
 import ColumnsFirstTrailStateModifier from '../trails/trailStateModifiers/columnsFirstTrailStateModifier';
 import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
 import LineTrailStateModifier from '../trails/trailStateModifiers/lineTrailStateModifier';
 import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
 import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
-import Trail, { NullTrailStrategy, mixTrailStrategy } from '../trails/trail';
+import Trail, { BaseTrailStrategy, mixTrailStrategy } from '../trails/trail';
 
 import ActionBehavior, {
-  NullActionBehaviorStrategy,
+  BaseActionBehaviorStrategy,
   mixActionBehaviorStrategy,
 } from '../hikers/actionBehaviors/actionBehavior';
-import DataBehavior, { NullDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
-import Hiker, { NullHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
+import DataBehavior, { BaseDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
+import Hiker, { BaseHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
 import MovementBehavior, {
-  NullMovementBehaviorStrategy,
+  BaseMovementBehaviorStrategy,
   mixMovementBehaviorStrategy,
 } from '../hikers/movementBehaviors/movementBehavior';
 import RecordActionStrategyMixin from '../hikers/actionBehaviors/recordActionStrategy';
@@ -55,7 +55,7 @@ class DefinitionFactory {
   createHikeStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
     debug('createHikeStrategy', { type, options });
-    return new NullHikeStrategy(options);
+    return new BaseHikeStrategy(options);
   }
 
   createHike({ trails, id: hikeId, name: hikeName, ...definition }) {
@@ -87,7 +87,7 @@ class DefinitionFactory {
       const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
       return new CoverTrailStrategy(options);
     }
-    return new NullTrailStrategy(options);
+    return new BaseTrailStrategy(options);
   }
 
   createTrail(hike, { hikers, modifiers, id: trailId, name: trailName, ...definition }) {
@@ -142,7 +142,7 @@ class DefinitionFactory {
       const TrailMovementBehaviorStrategy = mixMovementBehaviorStrategy(TrailMovementStrategyMixin);
       return new TrailMovementBehaviorStrategy(options);
     }
-    return new NullMovementBehaviorStrategy(options);
+    return new BaseMovementBehaviorStrategy(options);
   }
 
   createMovementBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
@@ -168,7 +168,7 @@ class DefinitionFactory {
         : mixActionBehaviorStrategy(RecordActionStrategyMixin);
       return new RecordActionBehaviorStrategy(options);
     }
-    return new NullActionBehaviorStrategy(options);
+    return new BaseActionBehaviorStrategy(options);
   }
 
   createActionBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
@@ -185,7 +185,7 @@ class DefinitionFactory {
   createDataBehaviorStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
     debug('createDataBehaviorStrategy', { type });
-    return new NullDataBehaviorStrategy(options);
+    return new BaseDataBehaviorStrategy(options);
   }
 
   createDataBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
@@ -229,7 +229,7 @@ class DefinitionFactory {
       this.createTrailHikerBehaviors(strategy, other);
       return strategy;
     }
-    return new NullHikerStrategy(options);
+    return new BaseHikerStrategy(options);
   }
 
   createHiker(trail, { id: hikerId, name: hikerName, ...definition }) {

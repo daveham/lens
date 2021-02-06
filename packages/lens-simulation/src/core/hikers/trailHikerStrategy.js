@@ -8,16 +8,28 @@ const debug = getDebugLog('trailHikerStrategy');
 const TrailHikerStrategyMixin = superclass =>
   class extends superclass {
     dataBehavior;
-    movementBehavior;
     actionBehavior;
+    movementBehavior;
 
     getType() {
       return buildType(super.getType(), 'Trail');
     }
 
-    // assertIsValid() {
-    //   super.assertIsValid();
-    // }
+    assertIsValid() {
+      super.assertIsValid();
+
+      if (this.dataBehavior) {
+        this.dataBehavior.assertIsValid();
+      }
+
+      if (this.actionBehavior) {
+        this.actionBehavior.assertIsValid();
+      }
+
+      if (this.movementBehavior) {
+        this.movementBehavior.assertIsValid();
+      }
+    }
 
     onSuspend(objectFactory, state) {
       if (this.dataBehavior) {
@@ -43,24 +55,24 @@ const TrailHikerStrategyMixin = superclass =>
 
     onStart() {
       debug('onStart');
-      this.assertIsValid();
+      super.onStart();
 
       if (this.dataBehavior) {
         this.dataBehavior.start();
       }
 
-      if (this.movementBehavior) {
-        this.movementBehavior.start();
-      }
-
       if (this.actionBehavior) {
         this.actionBehavior.start();
+      }
+
+      if (this.movementBehavior) {
+        this.movementBehavior.start();
       }
     }
 
     onStep() {
       debug('onStep');
-      this.assertIsValid();
+      super.onStep();
 
       if (this.actionBehavior && this.hiker.active) {
         // take action based on current state (location and data)
@@ -74,18 +86,18 @@ const TrailHikerStrategyMixin = superclass =>
 
     onEnd() {
       debug('onEnd');
-      this.assertIsValid();
+      super.onEnd();
 
       if (this.dataBehavior) {
         this.dataBehavior.end();
       }
 
-      if (this.movementBehavior) {
-        this.movementBehavior.end();
-      }
-
       if (this.actionBehavior) {
         this.actionBehavior.end();
+      }
+
+      if (this.movementBehavior) {
+        this.movementBehavior.end();
       }
     }
   };

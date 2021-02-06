@@ -10,12 +10,11 @@ const TraceActionStrategyMixin = superclass =>
     }
 
     trace(/* data */) {
-      const { hikerStrategy } = this.behavior;
-      const { movementBehavior } = hikerStrategy;
-      if (movementBehavior.strategy.trailState) {
+      const { trailState } = this.behavior.hikerStrategy.hiker;
+      if (trailState) {
         const {
           location: { x, y },
-        } = movementBehavior.strategy.trailState;
+        } = trailState;
         debug(`trace '${this.label}' ${x},${y}`);
       }
     }

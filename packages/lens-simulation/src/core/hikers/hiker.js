@@ -5,7 +5,7 @@ import getDebugLog from './debugLog';
 
 const debug = getDebugLog('hiker');
 
-export class NullHikerStrategy {
+export class BaseHikerStrategy {
   hiker;
 
   constructor(options = {}) {
@@ -44,7 +44,7 @@ export class NullHikerStrategy {
   }
 }
 
-export const mixHikerStrategy = (...args) => R.compose(...args)(NullHikerStrategy);
+export const mixHikerStrategy = (...args) => R.compose(...args)(BaseHikerStrategy);
 
 class Hiker {
   trail;
@@ -54,7 +54,7 @@ class Hiker {
   constructor(id, name, strategy) {
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullHikerStrategy();
+    this.strategy = strategy || new BaseHikerStrategy();
     this.strategy.hiker = this;
   }
 

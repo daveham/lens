@@ -9,11 +9,11 @@ const debug = getDebugLog('hike');
 
 const DEFAULT_RUN_AWAY_LIMIT = 1000;
 
-export class NullHikeStrategy {
+export class BaseHikeStrategy {
   hike;
 
   constructor(options = {}) {
-    debug('NullHikeStrategy ctor', { options });
+    debug('BaseHikeStrategy ctor', { options });
     this.options = { ...options };
   }
 
@@ -48,7 +48,7 @@ export class NullHikeStrategy {
   }
 }
 
-export const mixHikeStrategy = (...args) => R.compose(...args)(NullHikeStrategy);
+export const mixHikeStrategy = (...args) => R.compose(...args)(BaseHikeStrategy);
 
 class Hike {
   trails = [];
@@ -59,7 +59,7 @@ class Hike {
   constructor(id, name, strategy) {
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullHikeStrategy();
+    this.strategy = strategy || new BaseHikeStrategy();
     this.strategy.hike = this;
     this.stepCount = 0;
     this.isOpen = false;

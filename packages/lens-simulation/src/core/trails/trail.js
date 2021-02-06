@@ -8,11 +8,11 @@ import { makeSuspendListKey } from '../factories/utils';
 
 const debug = getDebugLog('trail');
 
-export class NullTrailStrategy {
+export class BaseTrailStrategy {
   trail;
 
   constructor(options = {}) {
-    debug('NullTrailStrategy ctor', { options });
+    debug('BaseTrailStrategy ctor', { options });
     this.options = { ...options };
   }
 
@@ -61,7 +61,7 @@ export class NullTrailStrategy {
   }
 }
 
-export const mixTrailStrategy = (...args) => R.compose(...args)(NullTrailStrategy);
+export const mixTrailStrategy = (...args) => R.compose(...args)(BaseTrailStrategy);
 
 class Trail {
   events;
@@ -75,7 +75,7 @@ class Trail {
     this.events = new E3.EventEmitter();
     this.id = id;
     this.name = name;
-    this.strategy = strategy || new NullTrailStrategy();
+    this.strategy = strategy || new BaseTrailStrategy();
     this.strategy.trail = this;
   }
 

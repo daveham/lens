@@ -48,7 +48,9 @@ export class BaseHikeStrategy {
   }
 }
 
-export const mixHikeStrategy = (...args) => R.compose(...args)(BaseHikeStrategy);
+export function mixHikeStrategy(...args) {
+  return R.compose(...args)(BaseHikeStrategy);
+}
 
 class Hike {
   trails = [];
@@ -63,6 +65,10 @@ class Hike {
     this.strategy.hike = this;
     this.stepCount = 0;
     this.isOpen = false;
+  }
+
+  get type() {
+    return this.strategy.getType();
   }
 
   addTrail(trail) {
@@ -86,7 +92,7 @@ class Hike {
     suspendFactory.suspendItem(
       this,
       this.strategy.onSuspend(suspendFactory, {
-        type: this.strategy.getType(),
+        type: this.type,
         id: this.id,
         name: this.name,
         size: this.size,

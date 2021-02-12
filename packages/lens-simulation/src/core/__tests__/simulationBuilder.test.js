@@ -1,11 +1,26 @@
 import DicePlan from '../common/dicePlan';
 import Point from '../../basic/point';
 import Size from '../../basic/size';
-import { build, parse, restore, suspend } from '../simulationBuilder';
-
 import getDebugLog from '../debugLog';
+import { build, parse, restore, suspend } from '../simulationBuilder';
+import { getEndType } from '../factories/utils';
 
 const debug = getDebugLog('simulationBuilderTests');
+
+const testExecutionId = 101;
+const testSimulationId = 102;
+
+const hikeId = 201;
+const trailId = 301;
+const lineTrailModifierId = 302;
+
+const trailHikerId = 401;
+const trailHikerDataBehaviorId = 402;
+const trailHikerRecordShapeActionBehaviorId = 403;
+const trailHikerTrailMovementBehaviorId = 404;
+
+const trailHikerTwoId = 501;
+const trailHikerTwoTrailMovementBehaviorId = 502;
 
 const document = `
 ---
@@ -14,22 +29,22 @@ description: >
   This is an example of a trail hike that covers
   the image in row-first order.
 hikes:
-  - id: 101
+  - id: ${hikeId}
     name: Hike1
     type: Trail
     trails:
-      - id: 102
+      - id: ${trailId}
         name: Trail1
         type: Line
         modifiers:
-          - id: 105
+          - id: ${lineTrailModifierId}
             type: Line
         hikers:
-          - id: 103
+          - id: ${trailHikerId}
             name: Hiker1
             type: Trail
             movementBehavior:
-              id: 104
+              id: ${trailHikerTrailMovementBehaviorId}
               type: Trail
               options:
                 displacementScheme: fixed
@@ -37,18 +52,19 @@ hikes:
                 stepLimit: 45
                 initialLocation: [0, 10]
             actionBehavior:
-              id: 106
-              type: Record
+              id: ${trailHikerRecordShapeActionBehaviorId}
+              type: RecordShape
               options:
                 trace: true
+                sizeScheme: fixed
+                borderSize: 0
+                fixedSize: [4, 4]
             dataBehavior:
-              id: 107
+              id: ${trailHikerDataBehaviorId}
 `;
 
 const model = { size: [100, 200] };
 const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
-const testExecutionId = 201;
-const testSimulationId = 202;
 
 test('parse', () => {
   const definition = parse(document);
@@ -78,6 +94,10 @@ test('parse', () => {
   expect(options).toBeTruthy();
   expect(options.displacementScheme).toEqual('fixed');
   expect(options.fixedDisplacement[1]).toEqual(20);
+
+  const { actionBehavior } = hiker;
+  expect(actionBehavior).toBeTruthy();
+  expect(actionBehavior.type).toEqual('RecordShape');
 });
 
 describe('build', () => {
@@ -109,17 +129,21 @@ describe('build', () => {
     const { movementBehavior } = hiker.strategy;
     expect(movementBehavior).toBeTruthy();
     expect(movementBehavior.strategy.displacementScheme).toEqual('fixed');
+
+    const { actionBehavior } = hiker.strategy;
+    expect(actionBehavior).toBeTruthy();
+    expect(getEndType(actionBehavior)).toEqual('RecordShape');
   });
 
   test('with addon', () => {
     const addonDocument = `
 ---
 # second hiker
-  id: 105
+  id: ${trailHikerTwoId}
   name: Hiker2
   type: Trail
   movementBehavior:
-    id: 106
+    id: ${trailHikerTwoTrailMovementBehaviorId}
     type: Trail
     options:
       displacementScheme: grid
@@ -141,13 +165,13 @@ describe('build', () => {
 
     const [trail] = simulation.hikes[0].trails;
     expect(trail.hikers).toHaveLength(2);
-    const [, hiker] = trail.hikers;
-    expect(hiker).toBeTruthy();
-    expect(hiker.id).toEqual(105);
+    const [, trailHikerTwo] = trail.hikers;
+    expect(trailHikerTwo).toBeTruthy();
+    expect(trailHikerTwo.id).toEqual(trailHikerTwoId);
 
-    const { movementBehavior } = hiker.strategy;
-    expect(movementBehavior).toBeTruthy();
-    expect(movementBehavior.strategy.displacementScheme).toEqual('grid');
+    const { movementBehavior: trailHikerTwoMovementBehavior } = trailHikerTwo.strategy;
+    expect(trailHikerTwoMovementBehavior).toBeTruthy();
+    expect(trailHikerTwoMovementBehavior.strategy.displacementScheme).toEqual('grid');
   });
 });
 
@@ -170,69 +194,73 @@ describe('suspend', () => {
     expect(objSimulation.executionId).toEqual(testExecutionId);
 
     // hike
-    const obj101 = state.get(101);
-    expect(obj101).toBeTruthy();
-    expect(obj101.type).toEqual('Hike');
-    expect(obj101.id).toEqual(101);
-    expect(obj101.name).toEqual('Hike1');
-    expect(obj101.size).toEqual(new Size(100, 200));
-    expect(obj101.bounds.width).toEqual(100);
-    expect(obj101.bounds.height).toEqual(200);
-    expect(obj101.options).toBeTruthy();
+    const objHike = state.get(hikeId);
+    expect(objHike).toBeTruthy();
+    expect(objHike.type).toEqual('Hike');
+    expect(objHike.id).toEqual(hikeId);
+    expect(objHike.name).toEqual('Hike1');
+    expect(objHike.size).toEqual(new Size(100, 200));
+    expect(objHike.bounds.width).toEqual(100);
+    expect(objHike.bounds.height).toEqual(200);
+    expect(objHike.options).toBeTruthy();
 
     // trails list
-    const list101 = state.get('T.101');
-    expect(list101).toBeTruthy();
-    expect(Array.isArray(list101)).toBeTruthy();
-    expect(list101).toHaveLength(1);
-    expect(list101[0]).toEqual(102);
+    const listTrails = state.get(`T.${hikeId}`);
+    expect(listTrails).toBeTruthy();
+    expect(Array.isArray(listTrails)).toBeTruthy();
+    expect(listTrails).toHaveLength(1);
+    expect(listTrails[0]).toEqual(trailId);
 
     // trail
-    const obj102 = state.get(102);
-    expect(obj102).toBeTruthy();
-    expect(obj102.type).toEqual('Trail:Line');
-    expect(obj102.id).toEqual(102);
-    expect(obj102.name).toEqual('Trail1');
-    expect(obj102.options).toBeTruthy();
+    const objTrail = state.get(trailId);
+    expect(objTrail).toBeTruthy();
+    expect(objTrail.type).toEqual('Trail:Line');
+    expect(objTrail.id).toEqual(trailId);
+    expect(objTrail.name).toEqual('Trail1');
+    expect(objTrail.options).toBeTruthy();
 
     // trail modifier
-    const obj105 = state.get(105);
-    expect(obj105).toBeTruthy();
-    expect(obj105.type).toEqual('Line');
+    const objLineTrailModifier = state.get(lineTrailModifierId);
+    expect(objLineTrailModifier).toBeTruthy();
+    expect(objLineTrailModifier.type).toEqual('Line');
 
     // hikers list
-    const list102 = state.get('K.102');
-    expect(list102).toBeTruthy();
-    expect(Array.isArray(list102)).toBeTruthy();
-    expect(list102).toHaveLength(1);
-    expect(list102[0]).toEqual(103);
+    const listHikers = state.get(`K.${trailId}`);
+    expect(listHikers).toBeTruthy();
+    expect(Array.isArray(listHikers)).toBeTruthy();
+    expect(listHikers).toHaveLength(1);
+    expect(listHikers[0]).toEqual(trailHikerId);
 
     // hiker
-    const obj103 = state.get(103);
-    expect(obj103).toBeTruthy();
-    expect(obj103.type).toEqual('Hiker:Trail');
-    expect(obj103.id).toEqual(103);
-    expect(obj103.name).toEqual('Hiker1');
-    expect(obj103.options).toBeTruthy();
+    const objTrailHikerId = state.get(trailHikerId);
+    expect(objTrailHikerId).toBeTruthy();
+    expect(objTrailHikerId.type).toEqual('Hiker:Trail');
+    expect(objTrailHikerId.id).toEqual(trailHikerId);
+    expect(objTrailHikerId.name).toEqual('Hiker1');
+    expect(objTrailHikerId.options).toBeTruthy();
 
     // hiker movement behavior
-    const obj104 = state.get(104);
-    expect(obj104).toBeTruthy();
-    expect(obj104.type).toEqual('MovementBehavior:Trail');
-    expect(obj104.id).toEqual(104);
-    expect(obj104.name).toEqual('movementBehavior-104');
-    expect(obj104.started).toBeFalsy();
-    expect(obj104.steps).toBeUndefined();
-    expect(obj104.trailState).toBeUndefined();
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.type).toEqual('MovementBehavior:Trail');
+    expect(objTrailHikerTrailMovementBehavior.id).toEqual(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.name).toEqual(
+      `movementBehavior-${trailHikerTrailMovementBehaviorId}`,
+    );
+    expect(objTrailHikerTrailMovementBehavior.started).toBeFalsy();
+    expect(objTrailHikerTrailMovementBehavior.steps).toBeUndefined();
+    expect(objTrailHikerTrailMovementBehavior.trailState).toBeUndefined();
 
     // hiker action behavior
-    const obj106 = state.get(106);
-    expect(obj106).toBeTruthy();
-    expect(obj106.type).toEqual('ActionBehavior:Trace:Record');
+    const objTrailHikerRecordShapeActionBehavior = state.get(trailHikerRecordShapeActionBehaviorId);
+    expect(objTrailHikerRecordShapeActionBehavior).toBeTruthy();
+    expect(objTrailHikerRecordShapeActionBehavior.type).toEqual(
+      'ActionBehavior:Trace:Record:RecordShape',
+    );
 
     // hiker data behavior
-    const obj107 = state.get(107);
-    expect(obj107).toBeTruthy();
+    const objTrailHikerDataBehavior = state.get(trailHikerDataBehaviorId);
+    expect(objTrailHikerDataBehavior).toBeTruthy();
   });
 
   test('after single step', () => {
@@ -249,20 +277,22 @@ describe('suspend', () => {
     expect(state).toBeTruthy();
 
     // hiker movement behavior
-    const obj104 = state.get(104);
-    debug('suspend', obj104);
-    expect(obj104).toBeTruthy();
-    expect(obj104.type).toEqual('MovementBehavior:Trail');
-    expect(obj104.id).toEqual(104);
-    expect(obj104.name).toEqual('movementBehavior-104');
-    expect(obj104.displacementScheme).toEqual('fixed');
-    expect(obj104.fixedDisplacement).toEqual([10, 20]);
-    expect(obj104.initialLocation).toEqual([0, 10]);
-    expect(obj104.stepLimit).toEqual(45);
-    expect(obj104.started).toBeTruthy();
-    expect(obj104.steps).toEqual(1);
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    debug('suspend', objTrailHikerTrailMovementBehavior);
+    expect(objTrailHikerTrailMovementBehavior).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.type).toEqual('MovementBehavior:Trail');
+    expect(objTrailHikerTrailMovementBehavior.id).toEqual(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.name).toEqual(
+      `movementBehavior-${trailHikerTrailMovementBehaviorId}`,
+    );
+    expect(objTrailHikerTrailMovementBehavior.displacementScheme).toEqual('fixed');
+    expect(objTrailHikerTrailMovementBehavior.fixedDisplacement).toEqual([10, 20]);
+    expect(objTrailHikerTrailMovementBehavior.initialLocation).toEqual([0, 10]);
+    expect(objTrailHikerTrailMovementBehavior.stepLimit).toEqual(45);
+    expect(objTrailHikerTrailMovementBehavior.started).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.steps).toEqual(1);
 
-    const trailState = obj104.trailState;
+    const trailState = objTrailHikerTrailMovementBehavior.trailState;
     expect(trailState).toBeDefined();
     expect(trailState.orientation).toBeUndefined();
     expect(trailState._initialLocation).toEqual(new Point([0, 10]));
@@ -286,20 +316,22 @@ describe('suspend', () => {
     expect(state).toBeTruthy();
 
     // hiker movement behavior
-    const obj104 = state.get(104);
-    debug('suspend', obj104);
-    expect(obj104).toBeTruthy();
-    expect(obj104.type).toEqual('MovementBehavior:Trail');
-    expect(obj104.id).toEqual(104);
-    expect(obj104.name).toEqual('movementBehavior-104');
-    expect(obj104.displacementScheme).toEqual('fixed');
-    expect(obj104.fixedDisplacement).toEqual([10, 20]);
-    expect(obj104.initialLocation).toEqual([0, 10]);
-    expect(obj104.stepLimit).toEqual(45);
-    expect(obj104.started).toBeTruthy();
-    expect(obj104.steps).toEqual(3);
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    debug('suspend', objTrailHikerTrailMovementBehavior);
+    expect(objTrailHikerTrailMovementBehavior).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.type).toEqual('MovementBehavior:Trail');
+    expect(objTrailHikerTrailMovementBehavior.id).toEqual(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.name).toEqual(
+      `movementBehavior-${trailHikerTrailMovementBehaviorId}`,
+    );
+    expect(objTrailHikerTrailMovementBehavior.displacementScheme).toEqual('fixed');
+    expect(objTrailHikerTrailMovementBehavior.fixedDisplacement).toEqual([10, 20]);
+    expect(objTrailHikerTrailMovementBehavior.initialLocation).toEqual([0, 10]);
+    expect(objTrailHikerTrailMovementBehavior.stepLimit).toEqual(45);
+    expect(objTrailHikerTrailMovementBehavior.started).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.steps).toEqual(3);
 
-    const trailState = obj104.trailState;
+    const trailState = objTrailHikerTrailMovementBehavior.trailState;
     expect(trailState).toBeDefined();
     expect(trailState.orientation).toBeUndefined();
     expect(trailState._initialLocation).toEqual(new Point([0, 10]));
@@ -333,55 +365,57 @@ describe('restore', () => {
     expect(objSimulation.executionId).toEqual(testExecutionId);
 
     // hike
-    const obj101 = state.get(101);
-    expect(obj101).toBeTruthy();
-    expect(obj101.type).toEqual('Hike');
-    expect(obj101.id).toEqual(101);
-    expect(obj101.name).toEqual('Hike1');
-    expect(obj101.size).toEqual(new Size(100, 200));
-    expect(obj101.bounds.width).toEqual(100);
-    expect(obj101.bounds.height).toEqual(200);
-    expect(obj101.options).toBeTruthy();
+    const objHike = state.get(hikeId);
+    expect(objHike).toBeTruthy();
+    expect(objHike.type).toEqual('Hike');
+    expect(objHike.id).toEqual(hikeId);
+    expect(objHike.name).toEqual('Hike1');
+    expect(objHike.size).toEqual(new Size(100, 200));
+    expect(objHike.bounds.width).toEqual(100);
+    expect(objHike.bounds.height).toEqual(200);
+    expect(objHike.options).toBeTruthy();
 
     // trails list
-    const list101 = state.get('T.101');
-    expect(list101).toBeTruthy();
-    expect(Array.isArray(list101)).toBeTruthy();
-    expect(list101).toHaveLength(1);
-    expect(list101[0]).toEqual(102);
+    const listTrails = state.get(`T.${hikeId}`);
+    expect(listTrails).toBeTruthy();
+    expect(Array.isArray(listTrails)).toBeTruthy();
+    expect(listTrails).toHaveLength(1);
+    expect(listTrails[0]).toEqual(trailId);
 
     // trail
-    const obj102 = state.get(102);
-    expect(obj102).toBeTruthy();
-    expect(obj102.type).toEqual('Trail:Line');
-    expect(obj102.id).toEqual(102);
-    expect(obj102.name).toEqual('Trail1');
-    expect(obj102.options).toBeTruthy();
+    const objTrail = state.get(trailId);
+    expect(objTrail).toBeTruthy();
+    expect(objTrail.type).toEqual('Trail:Line');
+    expect(objTrail.id).toEqual(trailId);
+    expect(objTrail.name).toEqual('Trail1');
+    expect(objTrail.options).toBeTruthy();
 
     // hikers list
-    const list102 = state.get('K.102');
-    expect(list102).toBeTruthy();
-    expect(Array.isArray(list102)).toBeTruthy();
-    expect(list102).toHaveLength(1);
-    expect(list102[0]).toEqual(103);
+    const listHikers = state.get(`K.${trailId}`);
+    expect(listHikers).toBeTruthy();
+    expect(Array.isArray(listHikers)).toBeTruthy();
+    expect(listHikers).toHaveLength(1);
+    expect(listHikers[0]).toEqual(trailHikerId);
 
     // hiker
-    const obj103 = state.get(103);
-    expect(obj103).toBeTruthy();
-    expect(obj103.type).toEqual('Hiker:Trail');
-    expect(obj103.id).toEqual(103);
-    expect(obj103.name).toEqual('Hiker1');
-    expect(obj103.options).toBeTruthy();
+    const objTrailHiker = state.get(trailHikerId);
+    expect(objTrailHiker).toBeTruthy();
+    expect(objTrailHiker.type).toEqual('Hiker:Trail');
+    expect(objTrailHiker.id).toEqual(trailHikerId);
+    expect(objTrailHiker.name).toEqual('Hiker1');
+    expect(objTrailHiker.options).toBeTruthy();
 
     // hiker movement behavior
-    const obj104 = state.get(104);
-    expect(obj104).toBeTruthy();
-    expect(obj104.type).toEqual('MovementBehavior:Trail');
-    expect(obj104.id).toEqual(104);
-    expect(obj104.name).toEqual('movementBehavior-104');
-    expect(obj104.started).toBeFalsy();
-    expect(obj104.steps).toBeUndefined();
-    expect(obj104.trailState).toBeUndefined();
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.type).toEqual('MovementBehavior:Trail');
+    expect(objTrailHikerTrailMovementBehavior.id).toEqual(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.name).toEqual(
+      `movementBehavior-${trailHikerTrailMovementBehaviorId}`,
+    );
+    expect(objTrailHikerTrailMovementBehavior.started).toBeFalsy();
+    expect(objTrailHikerTrailMovementBehavior.steps).toBeUndefined();
+    expect(objTrailHikerTrailMovementBehavior.trailState).toBeUndefined();
   });
 
   test('after single step', () => {
@@ -405,20 +439,22 @@ describe('restore', () => {
     const state = suspend(restored);
 
     // hiker movement behavior
-    const obj104 = state.get(104);
-    debug('second suspend', obj104);
-    expect(obj104).toBeTruthy();
-    expect(obj104.type).toEqual('MovementBehavior:Trail');
-    expect(obj104.id).toEqual(104);
-    expect(obj104.name).toEqual('movementBehavior-104');
-    expect(obj104.displacementScheme).toEqual('fixed');
-    expect(obj104.fixedDisplacement).toEqual([10, 20]);
-    expect(obj104.initialLocation).toEqual([0, 10]);
-    expect(obj104.stepLimit).toEqual(45);
-    expect(obj104.started).toBeTruthy();
-    expect(obj104.steps).toEqual(1);
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    debug('second suspend', objTrailHikerTrailMovementBehavior);
+    expect(objTrailHikerTrailMovementBehavior).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.type).toEqual('MovementBehavior:Trail');
+    expect(objTrailHikerTrailMovementBehavior.id).toEqual(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.name).toEqual(
+      `movementBehavior-${trailHikerTrailMovementBehaviorId}`,
+    );
+    expect(objTrailHikerTrailMovementBehavior.displacementScheme).toEqual('fixed');
+    expect(objTrailHikerTrailMovementBehavior.fixedDisplacement).toEqual([10, 20]);
+    expect(objTrailHikerTrailMovementBehavior.initialLocation).toEqual([0, 10]);
+    expect(objTrailHikerTrailMovementBehavior.stepLimit).toEqual(45);
+    expect(objTrailHikerTrailMovementBehavior.started).toBeTruthy();
+    expect(objTrailHikerTrailMovementBehavior.steps).toEqual(1);
 
-    const trailState = obj104.trailState;
+    const trailState = objTrailHikerTrailMovementBehavior.trailState;
     expect(trailState).toBeDefined();
     expect(trailState.orientation).toBeUndefined();
     expect(trailState._initialLocation).toEqual(new Point([0, 10]));
@@ -446,10 +482,10 @@ describe('restore', () => {
     const state = suspend(restored);
 
     // hiker movement behavior
-    const hikerMovementBehavior = state.get(104);
-    expect(hikerMovementBehavior.steps).toEqual(iterations);
+    const objTrailHikerTrailMovementBehavior = state.get(trailHikerTrailMovementBehaviorId);
+    expect(objTrailHikerTrailMovementBehavior.steps).toEqual(iterations);
 
-    const trailState = hikerMovementBehavior.trailState;
+    const trailState = objTrailHikerTrailMovementBehavior.trailState;
     const { _initialLocation, _location, _movement } = trailState;
     expect(_location).toEqual(
       new Point([

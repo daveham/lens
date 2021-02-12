@@ -24,7 +24,9 @@ describe('hike', () => {
       }
     }
 
-    const mixedStrategy = (...args) => R.compose(...args)(NullStrategy);
+    function mixedStrategy(...args) {
+      return R.compose(...args)(NullStrategy);
+    }
 
     const StrategyMixin = superclass =>
       class extends superclass {

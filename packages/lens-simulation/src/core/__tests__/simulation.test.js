@@ -41,7 +41,20 @@ const trailHikerDocument = `
 hikers:
   - type: Trail
     actionBehavior:
-      type: Record
+      type: RecordShape
+      options:
+        trace: true
+    movementBehavior:
+      type: Trail
+`;
+
+const shapeHikerDocument = `
+---
+# shape hiker with fixed displacement movement
+hikers:
+  - type: Trail
+    actionBehavior:
+      type: RecordShape
       options:
         trace: true
     movementBehavior:
@@ -132,7 +145,7 @@ test('cover hiker, fixed displacement, rows first', () => {
 
 test('line hiker, grid displacement, left to right', () => {
   const simulation = runTestSimulation(
-    makeTestSimulation(trailHikeWithLineTrailDocument, trailHikerDocument, {
+    makeTestSimulation(trailHikeWithLineTrailDocument, shapeHikerDocument, {
       displacementScheme: 'grid',
       stepLimit: 50,
       initialLocation: [0, 10],

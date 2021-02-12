@@ -61,7 +61,9 @@ export class BaseTrailStrategy {
   }
 }
 
-export const mixTrailStrategy = (...args) => R.compose(...args)(BaseTrailStrategy);
+export function mixTrailStrategy(...args) {
+  return R.compose(...args)(BaseTrailStrategy);
+}
 
 class Trail {
   events;
@@ -77,6 +79,10 @@ class Trail {
     this.name = name;
     this.strategy = strategy || new BaseTrailStrategy();
     this.strategy.trail = this;
+  }
+
+  get type() {
+    return this.strategy.getType();
   }
 
   addHiker(hiker) {
@@ -98,7 +104,7 @@ class Trail {
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
-        type: this.strategy.getType(),
+        type: this.type,
         id: this.id,
         name: this.name,
       }),

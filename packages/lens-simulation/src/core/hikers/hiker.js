@@ -44,7 +44,9 @@ export class BaseHikerStrategy {
   }
 }
 
-export const mixHikerStrategy = (...args) => R.compose(...args)(BaseHikerStrategy);
+export function mixHikerStrategy(...args) {
+  return R.compose(...args)(BaseHikerStrategy);
+}
 
 class Hiker {
   trail;
@@ -58,6 +60,10 @@ class Hiker {
     this.strategy.hiker = this;
   }
 
+  get type() {
+    return this.strategy.getType();
+  }
+
   assertIsValid() {
     invariant(this.id, 'hiker should have an id');
     invariant(this.strategy, 'hiker should have a strategy');
@@ -69,7 +75,7 @@ class Hiker {
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
-        type: this.strategy.getType(),
+        type: this.type,
         id: this.id,
         name: this.name,
       }),

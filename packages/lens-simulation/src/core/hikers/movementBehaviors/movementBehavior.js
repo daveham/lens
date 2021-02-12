@@ -20,8 +20,6 @@ export class BaseMovementBehaviorStrategy {
 
   assertIsValid() {
     invariant(this.behavior, 'behavior should be assigned to strategy');
-    invariant(this.behavior.hikerStrategy.hiker, 'hiker should be assigned to movement strategy');
-    invariant(this.behavior.hikerStrategy.hiker.trail, 'trail should be assigned to hiker');
   }
 
   onSuspend(objectFactory, state) {
@@ -51,8 +49,9 @@ export class BaseMovementBehaviorStrategy {
   }
 }
 
-export const mixMovementBehaviorStrategy = (...args) =>
-  R.compose(...args)(BaseMovementBehaviorStrategy);
+export function mixMovementBehaviorStrategy(...args) {
+  return R.compose(...args)(BaseMovementBehaviorStrategy);
+}
 
 class MovementBehavior {
   started = false;
@@ -66,9 +65,15 @@ class MovementBehavior {
     this.strategy.behavior = this;
   }
 
+  get type() {
+    return this.strategy.getType();
+  }
+
   assertIsValid() {
     invariant(this.id, 'movement behavior should have an id');
     invariant(this.strategy, 'movement behavior should have a strategy');
+    invariant(this.hikerStrategy, 'movement behavior should have a hiker strategy');
+    invariant(this.hikerStrategy.hiker, 'movement behavior strategy should have a hiker');
     this.strategy.assertIsValid();
   }
 
@@ -77,7 +82,7 @@ class MovementBehavior {
     objectFactory.suspendItem(
       this,
       this.strategy.onSuspend(objectFactory, {
-        type: this.strategy.getType(),
+        type: this.type,
         id: this.id,
         name: this.name,
         started: this.started,

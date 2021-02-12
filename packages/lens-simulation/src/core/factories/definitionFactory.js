@@ -11,20 +11,15 @@ import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
 import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
 import Trail, { BaseTrailStrategy, mixTrailStrategy } from '../trails/trail';
 
-import ActionBehavior, {
-  BaseActionBehaviorStrategy,
-  mixActionBehaviorStrategy,
-} from '../hikers/actionBehaviors/actionBehavior';
+import ActionBehavior from '../hikers/actionBehaviors/actionBehavior';
 import DataBehavior, { BaseDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
 import Hiker, { BaseHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
-import MovementBehavior, {
-  BaseMovementBehaviorStrategy,
-  mixMovementBehaviorStrategy,
-} from '../hikers/movementBehaviors/movementBehavior';
-import RecordActionStrategyMixin from '../hikers/actionBehaviors/recordActionStrategy';
-import TraceActionStrategyMixin from '../hikers/actionBehaviors/traceActionStrategy';
+import MovementBehavior from '../hikers/movementBehaviors/movementBehavior';
 import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
-import TrailMovementStrategyMixin from '../hikers/movementBehaviors/trailMovementStrategy';
+import {
+  createActionBehaviorStrategyClass,
+  createMovementBehaviorStrategyClass,
+} from './classFactory';
 
 import getDebugLog from './debugLog';
 import { extractTypeAndOptions } from './utils';
@@ -137,12 +132,7 @@ class DefinitionFactory {
   // region hiker
   createMovementBehaviorStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
-    debug('createMovementBehaviorStrategy', { type, options });
-    if (type === 'Trail') {
-      const TrailMovementBehaviorStrategy = mixMovementBehaviorStrategy(TrailMovementStrategyMixin);
-      return new TrailMovementBehaviorStrategy(options);
-    }
-    return new BaseMovementBehaviorStrategy(options);
+    return createMovementBehaviorStrategyClass(type, options);
   }
 
   createMovementBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
@@ -158,17 +148,7 @@ class DefinitionFactory {
 
   createActionBehaviorStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
-    debug('createActionBehaviorStrategy', { type });
-    if (type === 'Trace') {
-      const TraceActionBehaviorStrategy = mixActionBehaviorStrategy(TraceActionStrategyMixin);
-      return new TraceActionBehaviorStrategy(options);
-    } else if (type === 'Record') {
-      const RecordActionBehaviorStrategy = options.trace
-        ? mixActionBehaviorStrategy(RecordActionStrategyMixin, TraceActionStrategyMixin)
-        : mixActionBehaviorStrategy(RecordActionStrategyMixin);
-      return new RecordActionBehaviorStrategy(options);
-    }
-    return new BaseActionBehaviorStrategy(options);
+    return createActionBehaviorStrategyClass(type, options);
   }
 
   createActionBehavior({ id: behaviorId, name: behaviorName, ...definition }) {

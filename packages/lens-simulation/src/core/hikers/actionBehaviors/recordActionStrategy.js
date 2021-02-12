@@ -3,23 +3,22 @@ import { buildType } from '../../utils';
 
 const debug = getDebugLog('recordActionStrategy');
 
-const RecordActionStrategyMixin = superclass =>
-  class extends superclass {
+const RecordActionStrategyMixin = superclass => {
+  debug('RecordActionStrategyMixin', { superclass });
+  return class extends superclass {
+    constructor({ abc, ...other } = {}) {
+      super(other);
+    }
+
     getType() {
       return buildType(super.getType(), 'Record');
     }
 
-    onAct() {
-      super.onAct();
-      debug('onAct');
-      super.trace('RecordActionStrategyMixin.onAct');
-      const ts = this.behavior.hikerStrategy.hiker.trailState;
-      this.record({ ...ts.location });
-    }
-
     record(op) {
-      debug('record', op);
+      debug(`record '${op}'`);
+      // TODO
     }
   };
+};
 
 export default RecordActionStrategyMixin;

@@ -1,4 +1,5 @@
 // import invariant from 'tiny-invariant';
+import Rectangle from '../../../basic/rectangle';
 import { HikerExitReason } from '../../constants';
 import { buildType } from '../../utils';
 
@@ -82,6 +83,24 @@ const TrailMovementStrategyMixin = superclass =>
       }
     }
 
+    updateHikerBounds() {
+      const { hiker } = this.behavior.hikerStrategy;
+      let bounds;
+      const { trail, trailState } = hiker;
+
+      switch (this.displacementScheme) {
+        // case DisplacementScheme.fixed:
+        case DisplacementScheme.grid:
+          bounds = new Rectangle(trailState.location, trail.plan.grain);
+          break;
+        default:
+          bounds = new Rectangle(trailState.location, trail.plan.grain);
+        // case DisplacementScheme.size:
+        // case DisplacementScheme.bounds:
+      }
+      hiker.bounds = bounds;
+    }
+
     onStart() {
       debug('onStart');
       this.assertIsValid();
@@ -104,6 +123,7 @@ const TrailMovementStrategyMixin = superclass =>
       trailState.initialLocation = this.initialLocation;
 
       trail.initializeTrailState(trailState);
+      this.updateHikerBounds();
     }
 
     onMove() {
@@ -117,6 +137,7 @@ const TrailMovementStrategyMixin = superclass =>
         hiker.abort(HikerExitReason.reachedStepLimit);
       } else {
         trail.updateTrailState(trailState);
+        this.updateHikerBounds();
         this.steps += 1;
       }
     }

@@ -1,27 +1,20 @@
-import invariant from 'tiny-invariant';
-
-import Simulation from '../simulation';
-
-import Hike, { BaseHikeStrategy } from '../hikes/hike';
-
-import ColumnsFirstTrailStateModifier from '../trails/trailStateModifiers/columnsFirstTrailStateModifier';
-import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
-import LineTrailStateModifier from '../trails/trailStateModifiers/lineTrailStateModifier';
-import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
-import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
-import Trail, { BaseTrailStrategy, mixTrailStrategy } from '../trails/trail';
-
 import ActionBehavior from '../hikers/actionBehaviors/actionBehavior';
-import DataBehavior, { BaseDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
-import Hiker, { BaseHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
+import DataBehavior from '../hikers/dataBehaviors/dataBehavior';
+import Hike from '../hikes/hike';
+import Hiker from '../hikers/hiker';
 import MovementBehavior from '../hikers/movementBehaviors/movementBehavior';
-import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
+import Simulation from '../simulation';
+import Trail from '../trails/trail';
+import getDebugLog from './debugLog';
 import {
   createActionBehaviorStrategyClass,
+  createDataBehaviorStrategyClass,
+  createHikeStrategyClass,
+  createHikerStrategyClass,
   createMovementBehaviorStrategyClass,
+  createTrailModifierClass,
+  createTrailStrategyClass,
 } from './classFactory';
-
-import getDebugLog from './debugLog';
 import { extractTypeAndOptions } from './utils';
 
 const debug = getDebugLog('definitionFactory');
@@ -49,8 +42,7 @@ class DefinitionFactory {
   // region hike
   createHikeStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
-    debug('createHikeStrategy', { type, options });
-    return new BaseHikeStrategy(options);
+    return createHikeStrategyClass(type, options);
   }
 
   createHike({ trails, id: hikeId, name: hikeName, ...definition }) {
@@ -74,15 +66,7 @@ class DefinitionFactory {
   // region trail
   createTrailStrategy(params) {
     const [type, options] = extractTypeAndOptions(params);
-    debug('createTrailStrategy', { type, options });
-    if (type === 'Line') {
-      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
-      return new LineTrailStrategy(options);
-    } else if (type === 'Cover') {
-      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
-      return new CoverTrailStrategy(options);
-    }
-    return new BaseTrailStrategy(options);
+    return createTrailStrategyClass(type, options);
   }
 
   createTrail(hike, { hikers, modifiers, id: trailId, name: trailName, ...definition }) {
@@ -102,19 +86,7 @@ class DefinitionFactory {
           modifierId,
           modifierName,
         );
-        switch (type) {
-          case 'Line':
-            trail.addModifier(new LineTrailStateModifier(id, name, options));
-            break;
-          case 'RowsFirst':
-            trail.addModifier(new RowsFirstTrailStateModifier(id, name, options));
-            break;
-          case 'ColumnsFirst':
-            trail.addModifier(new ColumnsFirstTrailStateModifier(id, name, options));
-            break;
-          default:
-            invariant(true, `Unsupported trail state modifier type '${type};`);
-        }
+        trail.addModifier(createTrailModifierClass(type, id, name, options));
       });
     }
 
@@ -164,8 +136,7 @@ class DefinitionFactory {
 
   createDataBehaviorStrategy(definition) {
     const [type, options] = extractTypeAndOptions(definition);
-    debug('createDataBehaviorStrategy', { type });
-    return new BaseDataBehaviorStrategy(options);
+    return createDataBehaviorStrategyClass(type, options);
   }
 
   createDataBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
@@ -202,14 +173,11 @@ class DefinitionFactory {
 
   createHikerStrategy(definition) {
     const [type, options, other] = extractTypeAndOptions(definition);
-    debug('createHikerStrategy', { type, options, other });
+    const strategy = createHikerStrategyClass(type, options);
     if (type === 'Trail') {
-      const TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
-      const strategy = new TrailHikerStrategy(options);
       this.createTrailHikerBehaviors(strategy, other);
-      return strategy;
     }
-    return new BaseHikerStrategy(options);
+    return strategy;
   }
 
   createHiker(trail, { id: hikerId, name: hikerName, ...definition }) {

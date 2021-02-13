@@ -1,27 +1,20 @@
-import invariant from 'tiny-invariant';
-
-import Simulation from '../simulation';
-
-import Hike, { BaseHikeStrategy } from '../hikes/hike';
-
-import ColumnsFirstTrailStateModifier from '../trails/trailStateModifiers/columnsFirstTrailStateModifier';
-import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
-import LineTrailStateModifier from '../trails/trailStateModifiers/lineTrailStateModifier';
-import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
-import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
-import Trail, { BaseTrailStrategy, mixTrailStrategy } from '../trails/trail';
-
 import ActionBehavior from '../hikers/actionBehaviors/actionBehavior';
-import DataBehavior, { BaseDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
-import Hiker, { BaseHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
+import DataBehavior from '../hikers/dataBehaviors/dataBehavior';
+import Hike from '../hikes/hike';
+import Hiker from '../hikers/hiker';
 import MovementBehavior from '../hikers/movementBehaviors/movementBehavior';
-import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
+import Simulation from '../simulation';
+import Trail from '../trails/trail';
+import getDebugLog from './debugLog';
 import {
   createActionBehaviorStrategyClass,
+  createDataBehaviorStrategyClass,
+  createHikeStrategyClass,
+  createHikerStrategyClass,
   createMovementBehaviorStrategyClass,
+  createTrailModifierClass,
+  createTrailStrategyClass,
 } from './classFactory';
-
-import getDebugLog from './debugLog';
 import { extractTypeAndOptions, getEndType } from './utils';
 
 const debug = getDebugLog('objectFactory');
@@ -44,8 +37,7 @@ class RestoreFactory {
   restoreHikeStrategy(id, stateMap, state) {
     const [, options] = extractTypeAndOptions(state);
     const type = getEndType(state);
-    debug('restoreHikeStrategy', { type, options });
-    return new BaseHikeStrategy(options);
+    return createHikeStrategyClass(type, options);
   }
 
   restoreHike(simulation, id, stateMap) {
@@ -62,37 +54,14 @@ class RestoreFactory {
   restoreTrailStrategy(id, stateMap, state) {
     const type = getEndType(state);
     const { options } = state;
-    debug('restoreTrailStrategy', { type, options });
-    if (type === 'Line') {
-      const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
-      return new LineTrailStrategy(options);
-    } else if (type === 'Cover') {
-      const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
-      return new CoverTrailStrategy(options);
-    } else {
-      return new BaseTrailStrategy(options);
-    }
+    return createTrailStrategyClass(type, options);
   }
 
   restoreTrailModifier(trail, id, stateMap) {
     const state = stateMap.get(id);
     const type = getEndType(state);
     const { options } = state;
-    debug('restoreTrailModifier', { type, options });
-    let modifier;
-    switch (type) {
-      case 'Line':
-        modifier = new LineTrailStateModifier(id, state.name, options);
-        break;
-      case 'RowsFirst':
-        modifier = new RowsFirstTrailStateModifier(id, state.name, options);
-        break;
-      case 'ColumnsFirst':
-        modifier = new ColumnsFirstTrailStateModifier(id, state.name, options);
-        break;
-      default:
-        invariant(true, `Unsupported trail state modifier type '${type};`);
-    }
+    const modifier = createTrailModifierClass(type, id, state.name, options);
     modifier.trail = trail;
     return modifier;
   }
@@ -139,8 +108,7 @@ class RestoreFactory {
   restoreDataBehaviorStrategy(id, stateMap, state) {
     const type = getEndType(state);
     const { options } = state;
-    debug('restoreDataBehaviorStrategy', { type });
-    return new BaseDataBehaviorStrategy(options);
+    return createDataBehaviorStrategyClass(type, options);
   }
 
   restoreDataBehavior(id, stateMap) {
@@ -181,12 +149,7 @@ class RestoreFactory {
   restoreHikerStrategy(id, stateMap, state) {
     const type = getEndType(state);
     const { options } = state;
-    debug('restoreHikerStrategy', { type });
-    if (type === 'Trail') {
-      const TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
-      return new TrailHikerStrategy(options);
-    }
-    return new BaseHikerStrategy(options);
+    return createHikerStrategyClass(type, options);
   }
 
   restoreHiker(trail, id, stateMap) {

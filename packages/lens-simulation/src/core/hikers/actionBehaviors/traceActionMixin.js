@@ -1,16 +1,16 @@
 import getDebugLog from '../debugLog';
 import { buildType } from '../../utils';
 
-const debug = getDebugLog('traceActionStrategy');
+const debug = getDebugLog('TraceActionMixin');
 
-const TraceActionStrategyMixin = superclass =>
+const TraceActionMixin = superclass =>
   class extends superclass {
     getType() {
       return buildType(super.getType(), 'Trace');
     }
 
     trace(/* data */) {
-      const { trailState } = this.behavior.hikerStrategy.hiker;
+      const { trailState } = this.hiker;
       if (trailState) {
         const {
           location: { x, y },
@@ -20,4 +20,4 @@ const TraceActionStrategyMixin = superclass =>
     }
   };
 
-export default TraceActionStrategyMixin;
+export default TraceActionMixin;

@@ -9,20 +9,40 @@ const debug = getDebugLog('hike');
 
 const DEFAULT_RUN_AWAY_LIMIT = 1000;
 
-export class BaseHikeStrategy {
-  hike;
+class Hike {
+  trails = [];
+  stepCount;
+  isOpen;
+  stepRunAwayLimit = DEFAULT_RUN_AWAY_LIMIT;
 
-  constructor(options = {}) {
-    debug('BaseHikeStrategy ctor', { options });
+  constructor(id, name, options = {}) {
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
+    this.stepCount = 0;
+    this.isOpen = false;
+  }
+
+  get type() {
+    return this.getType();
   }
 
   getType() {
     return 'Hike';
   }
 
+  addTrail(trail) {
+    this.trails.push(trail);
+    trail.events.on('trailStateCreated', this.handleTrailStateCreated);
+  }
+
+  configure(size) {
+    this.size = new Size(size);
+    this.bounds = new Rectangle([0, 0], size);
+  }
+
   assertIsValid() {
-    invariant(this.hike, 'hike should be assigned to hike strategy');
+    invariant(this.id, 'hike should have an id');
   }
 
   onSuspend(objectFactory, state) {
@@ -40,58 +60,11 @@ export class BaseHikeStrategy {
 
   onClose() {}
 
-  onRun(step) {
-    debug('onRun');
-    this.assertIsValid();
-
-    return this.hike.onRun(step);
-  }
-}
-
-export function mixHikeStrategy(...args) {
-  return R.compose(...args)(BaseHikeStrategy);
-}
-
-class Hike {
-  trails = [];
-  stepCount;
-  isOpen;
-  stepRunAwayLimit = DEFAULT_RUN_AWAY_LIMIT;
-
-  constructor(id, name, strategy) {
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseHikeStrategy();
-    this.strategy.hike = this;
-    this.stepCount = 0;
-    this.isOpen = false;
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
-
-  addTrail(trail) {
-    this.trails.push(trail);
-    trail.events.on('trailStateCreated', this.handleTrailStateCreated);
-  }
-
-  configure(size) {
-    this.size = new Size(size);
-    this.bounds = new Rectangle([0, 0], size);
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'hike should have an id');
-    invariant(this.strategy, 'hike should have a strategy');
-    this.strategy.assertIsValid();
-  }
-
   suspend(suspendFactory) {
     this.assertIsValid();
     suspendFactory.suspendItem(
       this,
-      this.strategy.onSuspend(suspendFactory, {
+      this.onSuspend(suspendFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -107,7 +80,7 @@ class Hike {
     this.name = state.name;
     this.size = state.size;
     this.bounds = state.bounds;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
 
     const trailList = stateMap.get(makeSuspendListKey('T', this.id));
     if (trailList) {
@@ -138,7 +111,7 @@ class Hike {
       this.trails.forEach(trail => trail.open());
       this.isOpen = true;
     }
-    this.strategy.onRun(step);
+    this.onRun(step);
     if (!this.isActive()) {
       this.trails.forEach(trail => trail.close());
       this.close();
@@ -148,12 +121,12 @@ class Hike {
 
   open() {
     debug('open');
-    this.strategy.onOpen();
+    this.onOpen();
   }
 
   close() {
     debug('close');
-    this.strategy.onClose();
+    this.onClose();
   }
 
   *activeHikers() {
@@ -179,6 +152,10 @@ class Hike {
     debug('isLocationInBounds', { bound: this.bounds.toString(), location: location.toString() });
     return this.bounds.containsPoint(location);
   }
+}
+
+export function mixHike(...args) {
+  return R.compose(...args)(Hike);
 }
 
 export default Hike;

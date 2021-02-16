@@ -4,7 +4,7 @@ import getDebugLog from '../debugLog';
 import { RenderOp, RenderOpShapes } from '../../render/renderOp';
 import { buildType } from '../../utils';
 
-const debug = getDebugLog('recordShapeActionStrategy');
+const debug = getDebugLog('RecordShapeActionMixin');
 
 export const ShapeSizeScheme = {
   fixed: 'fixed',
@@ -12,7 +12,7 @@ export const ShapeSizeScheme = {
   shape: 'shape',
 };
 
-const RecordShapeActionStrategyMixin = superclass =>
+const RecordShapeActionMixin = superclass =>
   class extends superclass {
     size;
     sizeScheme;
@@ -20,9 +20,8 @@ const RecordShapeActionStrategyMixin = superclass =>
     fixedSize;
     shapeBounds;
 
-    constructor({ fixedSize, sizeScheme, borderSize, ...options } = {}) {
-      debug('ctor');
-      super(options);
+    constructor(id, name, { fixedSize, sizeScheme, borderSize, ...options } = {}) {
+      super(id, name, options);
 
       this.fixedSize = fixedSize || new Size(4, 4);
       this.sizeScheme = sizeScheme || ShapeSizeScheme.grid;
@@ -62,7 +61,7 @@ const RecordShapeActionStrategyMixin = superclass =>
           this.size = new Size(this.fixedSize);
           break;
         case ShapeSizeScheme.grid:
-          this.size = new Size(this.behavior.hikerStrategy.hiker.trail.plan.grain);
+          this.size = new Size(this.hiker.trail.plan.grain);
           break;
         // case ShapeSizeScheme.shape:
         //   break;
@@ -72,16 +71,16 @@ const RecordShapeActionStrategyMixin = superclass =>
     onObserve() {
       super.onObserve();
       debug('onObserve');
-      const { hiker } = this.behavior.hikerStrategy;
-      hiker.renderBounds = new Rectangle(hiker.bounds);
+      this.hiker.renderBounds = new Rectangle(this.hiker.bounds);
     }
 
     onAct() {
       super.onAct();
       debug('onAct');
-      const { hiker } = this.behavior.hikerStrategy;
-      this.record(new RenderOp({ shape: RenderOpShapes.rectangle, bounds: hiker.renderBounds }));
+      this.record(
+        new RenderOp({ shape: RenderOpShapes.rectangle, bounds: this.hiker.renderBounds }),
+      );
     }
   };
 
-export default RecordShapeActionStrategyMixin;
+export default RecordShapeActionMixin;

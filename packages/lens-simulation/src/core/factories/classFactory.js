@@ -1,71 +1,72 @@
+import ActionBehavior, { mixActionBehavior } from '../hikers/actionBehaviors/actionBehavior';
 import ColumnsFirstTrailStateModifier from '../trails/trailStateModifiers/columnsFirstTrailStateModifier';
-import CoverTrailStrategyMixin from '../trails/coverTrailStrategy';
+import CoverTrailMixin from '../trails/coverTrailMixin';
+import DataBehavior /*, { mixDataBehavior } */ from '../hikers/dataBehaviors/dataBehavior';
+import Hike, { mixHike } from '../hikes/hike';
+import Hiker, { mixHiker } from '../hikers/hiker';
+import LineTrailMixin from '../trails/lineTrailMixin';
 import LineTrailStateModifier from '../trails/trailStateModifiers/lineTrailStateModifier';
-import LineTrailStrategyMixin from '../trails/lineTrailStrategy';
-import RecordActionStrategyMixin from '../hikers/actionBehaviors/recordActionStrategy';
-import RecordShapeActionStrategyMixin from '../hikers/actionBehaviors/recordShapeActionStrategy';
+import MovementBehavior, {
+  mixMovementBehavior,
+} from '../hikers/movementBehaviors/movementBehavior';
+import RecordActionMixin from '../hikers/actionBehaviors/recordActionMixin';
+import RecordHikeMixin from '../hikes/recordHikeMixin';
+import RecordShapeActionMixin from '../hikers/actionBehaviors/recordShapeActionMixin';
 import RowsFirstTrailStateModifier from '../trails/trailStateModifiers/rowsFirstTrailStateModifier';
-import TraceActionStrategyMixin from '../hikers/actionBehaviors/traceActionStrategy';
-import TrailHikerStrategyMixin from '../hikers/trailHikerStrategy';
-import TrailMovementStrategyMixin from '../hikers/movementBehaviors/trailMovementStrategy';
+import TraceActionMixin from '../hikers/actionBehaviors/traceActionMixin';
+import Trail, { mixTrail } from '../trails/trail';
+import TrailHikerMixin from '../hikers/trailHikerMixin';
+import TrailMovementMixin from '../hikers/movementBehaviors/trailMovementMixin';
 import getDebugLog from './debugLog';
 import invariant from 'tiny-invariant';
-import {
-  BaseActionBehaviorStrategy,
-  mixActionBehaviorStrategy,
-} from '../hikers/actionBehaviors/actionBehavior';
-import { BaseDataBehaviorStrategy } from '../hikers/dataBehaviors/dataBehavior';
-import { BaseHikeStrategy } from '../hikes/hike';
-import { BaseHikerStrategy, mixHikerStrategy } from '../hikers/hiker';
-import {
-  BaseMovementBehaviorStrategy,
-  mixMovementBehaviorStrategy,
-} from '../hikers/movementBehaviors/movementBehavior';
-import { BaseTrailStrategy, mixTrailStrategy } from '../trails/trail';
 
-const debug = getDebugLog('definitionFactory');
+const debug = getDebugLog('classFactory');
 
-export function createMovementBehaviorStrategyClass(type, options) {
-  debug('createMovementBehaviorStrategyClass', { type, options });
+export function createMovementBehaviorClass(id, name, type, options) {
+  debug('createMovementBehaviorClass', { id, name, type, options });
   if (type === 'Trail') {
-    const TrailMovementBehaviorStrategy = mixMovementBehaviorStrategy(TrailMovementStrategyMixin);
-    return new TrailMovementBehaviorStrategy(options);
+    const TrailMovementBehaviorClass = mixMovementBehavior(TrailMovementMixin);
+    return new TrailMovementBehaviorClass(id, name, options);
   }
-  return new BaseMovementBehaviorStrategy(options);
+  return new MovementBehavior(id, name, options);
 }
 
-export function createActionBehaviorStrategyClass(type, options) {
-  debug('createActionBehaviorStrategyClass', { type });
+export function createActionBehaviorClass(id, name, type, options) {
+  debug('createActionBehaviorClass', { id, name, type, options });
   let mixins;
 
   switch (type) {
     case 'Trace':
-      mixins = [TraceActionStrategyMixin];
+      mixins = [TraceActionMixin];
       break;
     case 'Record':
-      mixins = [RecordActionStrategyMixin];
+      mixins = [RecordActionMixin];
       break;
     case 'RecordShape':
-      mixins = [RecordShapeActionStrategyMixin, RecordActionStrategyMixin];
+      mixins = [RecordShapeActionMixin, RecordActionMixin];
       break;
     default:
-      return new BaseActionBehaviorStrategy(options);
+      return new ActionBehavior(id, name, options);
   }
   if (options.trace) {
-    mixins.push(TraceActionStrategyMixin);
+    mixins.push(TraceActionMixin);
   }
-  const StrategyClass = mixActionBehaviorStrategy(...mixins);
-  return new StrategyClass(options);
+  const ActionBehaviorClass = mixActionBehavior(...mixins);
+  return new ActionBehaviorClass(id, name, options);
 }
 
-export function createDataBehaviorStrategyClass(type, options) {
-  debug('createDataBehaviorStrategyClass', { type, options });
-  return new BaseDataBehaviorStrategy(options);
+export function createDataBehaviorClass(id, name, type, options) {
+  debug('createDataBehaviorClass', { id, name, type, options });
+  return new DataBehavior(id, name, options);
 }
 
-export function createHikeStrategyClass(type, options) {
-  debug('createHikeStrategyClass', { type, options });
-  return new BaseHikeStrategy(options);
+export function createHikeClass(id, name, type, options) {
+  debug('createHikeClass', { id, name, type, options });
+  if (type === 'Record') {
+    const RecordHikeClass = mixHike(RecordHikeMixin);
+    return new RecordHikeClass(id, name, options);
+  }
+  return new Hike(id, name, options);
 }
 
 export function createTrailModifierClass(type, id, name, options) {
@@ -82,23 +83,23 @@ export function createTrailModifierClass(type, id, name, options) {
   }
 }
 
-export function createTrailStrategyClass(type, options) {
-  debug('createTrailStrategyClass', { type, options });
+export function createTrailClass(id, name, type, options) {
+  debug('createTrailClass', { id, name, type, options });
   if (type === 'Line') {
-    const LineTrailStrategy = mixTrailStrategy(LineTrailStrategyMixin);
-    return new LineTrailStrategy(options);
+    const LineTrailClass = mixTrail(LineTrailMixin);
+    return new LineTrailClass(id, name, options);
   } else if (type === 'Cover') {
-    const CoverTrailStrategy = mixTrailStrategy(CoverTrailStrategyMixin);
-    return new CoverTrailStrategy(options);
+    const CoverTrailClass = mixTrail(CoverTrailMixin);
+    return new CoverTrailClass(id, name, options);
   }
-  return new BaseTrailStrategy(options);
+  return new Trail(id, name, options);
 }
 
-export function createHikerStrategyClass(type, options) {
-  debug('createHikerStrategyClass', { type, options });
+export function createHikerClass(id, name, type, options) {
+  debug('createHikerClass', { id, name, type, options });
   if (type === 'Trail') {
-    const TrailHikerStrategy = mixHikerStrategy(TrailHikerStrategyMixin);
-    return new TrailHikerStrategy(options);
+    const TrailHikerClass = mixHiker(TrailHikerMixin);
+    return new TrailHikerClass(id, name, options);
   }
-  return new BaseHikerStrategy(options);
+  return new Hiker(id, name, options);
 }

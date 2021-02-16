@@ -52,7 +52,7 @@ options:
       const hike = df.createHike(definition);
 
       expect(hike).toBeTruthy();
-      expect(hike.strategy.options.marker).toEqual('testHike');
+      expect(hike.options.marker).toEqual('testHike');
     });
 
     test('suspend hike', () => {
@@ -95,7 +95,7 @@ modifiers:
       const trail = df.createTrail(hike, definition);
 
       expect(trail).toBeTruthy();
-      expect(trail.strategy.options.marker).toEqual('testTrail');
+      expect(trail.options.marker).toEqual('testTrail');
     });
 
     test('suspend trail', () => {
@@ -148,13 +148,11 @@ movementBehavior:
       const hiker = df.createHiker(trail, definition);
 
       expect(hiker).toBeTruthy();
-      const { strategy: hikerStrategy } = hiker;
-      expect(hikerStrategy).toBeTruthy();
-      expect(hikerStrategy.options.marker).toEqual('testHiker');
-      const { movementBehavior } = hikerStrategy;
+      expect(hiker.options.marker).toEqual('testHiker');
+      const { movementBehavior } = hiker;
       expect(movementBehavior).toBeTruthy();
       debug('movementBehavior', movementBehavior);
-      expect(movementBehavior.strategy.options.marker).toEqual('testMovementBehavior');
+      expect(movementBehavior.options.marker).toEqual('testMovementBehavior');
     });
 
     test('suspend hiker', () => {

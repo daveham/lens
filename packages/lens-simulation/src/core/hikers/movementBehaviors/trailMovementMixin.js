@@ -5,7 +5,7 @@ import { buildType } from '../../utils';
 
 import getDebugLog from '../debugLog';
 
-const debug = getDebugLog('trailMovementStrategy');
+const debug = getDebugLog('TrailMovementMixin');
 
 export const DisplacementScheme = {
   fixed: 'fixed',
@@ -14,19 +14,17 @@ export const DisplacementScheme = {
   bounds: 'bounds',
 };
 
-const TrailMovementStrategyMixin = superclass =>
+const TrailMovementMixin = superclass =>
   class extends superclass {
     steps;
     displacementScheme;
 
-    constructor({
-      displacementScheme,
-      fixedDisplacement,
-      stepLimit,
-      initialLocation,
-      ...other
-    } = {}) {
-      super(other);
+    constructor(
+      id,
+      name,
+      { displacementScheme, fixedDisplacement, stepLimit, initialLocation, ...other } = {},
+    ) {
+      super(id, name, other);
 
       this.displacementScheme = displacementScheme || DisplacementScheme.fixed;
       this.fixedDisplacement = fixedDisplacement || [0, 0];
@@ -44,16 +42,14 @@ const TrailMovementStrategyMixin = superclass =>
 
     createTrailState() {
       this.assertIsValid();
-      const { hiker } = this.behavior.hikerStrategy;
-
-      const trailState = hiker.trail.createTrailState();
-      trailState.hiker = hiker;
+      const trailState = this.hiker.trail.createTrailState();
+      trailState.hiker = this.hiker;
       trailState.movementBehavior = this;
-      hiker.trailState = trailState;
+      this.hiker.trailState = trailState;
     }
 
     onSuspend(objectFactory, state) {
-      const { hiker } = this.behavior.hikerStrategy;
+      debug('onSuspend', { ...this });
       return {
         ...super.onSuspend(objectFactory, state),
         displacementScheme: this.displacementScheme,
@@ -61,12 +57,14 @@ const TrailMovementStrategyMixin = superclass =>
         stepLimit: this.stepLimit,
         initialLocation: this.initialLocation,
         steps: this.steps,
-        trailState: hiker.trailState ? hiker.trailState.suspend(objectFactory, state) : undefined,
+        trailState: this.hiker.trailState
+          ? this.hiker.trailState.suspend(objectFactory, state)
+          : undefined,
       };
     }
 
     onRestore(objectFactory, stateMap, state) {
-      if (this.behavior.started) {
+      if (this.started) {
         this.createTrailState();
       }
 
@@ -78,15 +76,13 @@ const TrailMovementStrategyMixin = superclass =>
       this.steps = state.steps;
 
       if (state.trailState) {
-        const { hiker } = this.behavior.hikerStrategy;
-        hiker.trailState.restore(objectFactory, stateMap, state.trailState);
+        this.hiker.trailState.restore(objectFactory, stateMap, state.trailState);
       }
     }
 
     updateHikerBounds() {
-      const { hiker } = this.behavior.hikerStrategy;
       let bounds;
-      const { trail, trailState } = hiker;
+      const { trail, trailState } = this.hiker;
 
       switch (this.displacementScheme) {
         // case DisplacementScheme.fixed:
@@ -98,7 +94,7 @@ const TrailMovementStrategyMixin = superclass =>
         // case DisplacementScheme.size:
         // case DisplacementScheme.bounds:
       }
-      hiker.bounds = bounds;
+      this.hiker.bounds = bounds;
     }
 
     onStart() {
@@ -108,7 +104,7 @@ const TrailMovementStrategyMixin = superclass =>
       this.createTrailState();
       this.steps = 0;
 
-      const { trail, trailState } = this.behavior.hikerStrategy.hiker;
+      const { trail, trailState } = this.hiker;
 
       switch (this.displacementScheme) {
         case DisplacementScheme.fixed:
@@ -130,11 +126,10 @@ const TrailMovementStrategyMixin = superclass =>
       debug('onMove');
       this.assertIsValid();
 
-      const { hiker } = this.behavior.hikerStrategy;
-      const { trail, trailState } = hiker;
+      const { trail, trailState } = this.hiker;
 
       if (this.stepLimit > 0 && this.steps >= this.stepLimit) {
-        hiker.abort(HikerExitReason.reachedStepLimit);
+        this.hiker.abort(HikerExitReason.reachedStepLimit);
       } else {
         trail.updateTrailState(trailState);
         this.updateHikerBounds();
@@ -143,4 +138,4 @@ const TrailMovementStrategyMixin = superclass =>
     }
   };
 
-export default TrailMovementStrategyMixin;
+export default TrailMovementMixin;

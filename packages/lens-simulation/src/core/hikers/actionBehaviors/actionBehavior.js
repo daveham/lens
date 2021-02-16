@@ -5,20 +5,28 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('actionBehavior');
 
-export class BaseActionBehaviorStrategy {
-  behavior;
+class ActionBehavior {
+  started = false;
+  hiker;
+  options;
 
-  constructor(options = {}) {
-    debug('ctor', { options });
+  constructor(id, name, options) {
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
+  }
+
+  assertIsValid() {
+    invariant(this.id, 'action behavior should have an id');
+    invariant(this.hiker, 'action behavior should have a hiker');
   }
 
   getType() {
     return 'ActionBehavior';
   }
 
-  assertIsValid() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
+  get type() {
+    return this.getType();
   }
 
   onSuspend(objectFactory, state) {
@@ -36,10 +44,6 @@ export class BaseActionBehaviorStrategy {
 
   onStart() {
     debug('onStart');
-  }
-
-  get label() {
-    return this.behavior.label;
   }
 
   onNeedsData() {
@@ -67,35 +71,6 @@ export class BaseActionBehaviorStrategy {
   onEnd() {
     debug('onEnd');
   }
-}
-
-export function mixActionBehaviorStrategy(...args) {
-  return R.compose(...args)(BaseActionBehaviorStrategy);
-}
-
-class ActionBehavior {
-  started = false;
-  hikerStrategy;
-  strategy;
-
-  constructor(id, name, strategy) {
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseActionBehaviorStrategy();
-    this.strategy.behavior = this;
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'action behavior should have an id');
-    invariant(this.strategy, 'action behavior should have a strategy');
-    invariant(this.hikerStrategy, 'action behavior should have a hiker strategy');
-    invariant(this.hikerStrategy.hiker, 'action behavior strategy should have a hiker');
-    this.strategy.assertIsValid();
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
 
   assertIsStarted(expected = true) {
     invariant(this.started === expected, `action behavior ${expected ? 'not' : 'already'} started`);
@@ -105,7 +80,7 @@ class ActionBehavior {
     this.assertIsValid();
     objectFactory.suspendItem(
       this,
-      this.strategy.onSuspend(objectFactory, {
+      this.onSuspend(objectFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -118,25 +93,25 @@ class ActionBehavior {
     this.id = state.id;
     this.name = state.name;
     this.started = state.started;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
     this.assertIsValid();
   }
 
   get label() {
-    return this.hikerStrategy.hiker.name;
+    return this.hiker.name;
   }
 
   start() {
     debug('start', this.label);
     this.assertIsStarted(false);
-    this.strategy.onStart();
+    this.onStart();
     this.started = true;
   }
 
   needsData() {
     debug('needsData', this.label);
     this.assertIsStarted();
-    return this.strategy.onNeedsData();
+    return this.onNeedsData();
   }
 
   act() {
@@ -144,23 +119,27 @@ class ActionBehavior {
     debug('act', this.label);
     this.assertIsStarted();
 
-    this.strategy.onObserve();
-    this.strategy.onInfer();
-    if (this.strategy.areConstraintsSatisfied()) {
-      this.strategy.onAct();
+    this.onObserve();
+    this.onInfer();
+    if (this.areConstraintsSatisfied()) {
+      this.onAct();
     }
   }
 
   end() {
     debug('end', this.label);
     this.assertIsStarted();
-    this.strategy.onEnd();
+    this.onEnd();
   }
 
   abort(reason) {
     debug('abort', this.label);
-    this.hikerStrategy.hiker.abort(reason);
+    this.hiker.abort(reason);
   }
 }
 
 export default ActionBehavior;
+
+export function mixActionBehavior(...args) {
+  return R.compose(...args)(ActionBehavior);
+}

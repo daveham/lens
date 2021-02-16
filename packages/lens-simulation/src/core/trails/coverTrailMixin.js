@@ -1,7 +1,7 @@
 import { buildType } from '../utils';
 
 // import getDebugLog from './debugLog';
-// const debug = getDebugLog('coverTrailStrategy');
+// const debug = getDebugLog('CoverTrailMoveOrder');
 
 export const CoverTrailMoveOrder = {
   rowsFirst: 'rowsFirst',
@@ -10,7 +10,7 @@ export const CoverTrailMoveOrder = {
   columnsFirstBottomToTop: 'columnsFirstBottomToTop',
 };
 
-const CoverTrailStrategyMixin = superclass =>
+const CoverTrailMixin = superclass =>
   class extends superclass {
     getType() {
       return buildType(super.getType(), 'Cover');
@@ -23,4 +23,4 @@ const CoverTrailStrategyMixin = superclass =>
     }
   };
 
-export default CoverTrailStrategyMixin;
+export default CoverTrailMixin;

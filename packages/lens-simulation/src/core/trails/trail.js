@@ -8,20 +8,38 @@ import { makeSuspendListKey } from '../factories/utils';
 
 const debug = getDebugLog('trail');
 
-export class BaseTrailStrategy {
-  trail;
+class Trail {
+  events;
+  hike;
+  hikers = [];
+  modifiers = [];
+  isOpen = false;
 
-  constructor(options = {}) {
-    debug('BaseTrailStrategy ctor', { options });
+  constructor(id, name, options = {}) {
+    this.events = new E3.EventEmitter();
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
+  }
+
+  get type() {
+    return this.getType();
   }
 
   getType() {
     return 'Trail';
   }
 
+  addHiker(hiker) {
+    this.hikers.push(hiker);
+  }
+
+  addModifier(modifier) {
+    this.modifiers.push(modifier);
+  }
+
   assertIsValid() {
-    invariant(this.trail, 'trail should be assigned to trail strategy');
+    invariant(this.id, 'trail should have an id');
   }
 
   onSuspend(objectFactory, state) {
@@ -50,60 +68,21 @@ export class BaseTrailStrategy {
     debug('onInitializeTrailState');
     this.assertIsValid();
 
-    this.trail.applyInitModifiers(trailState);
+    this.applyInitModifiers(trailState);
   }
 
   onUpdateTrailState(trailState) {
     debug('onUpdateTrailState');
     this.assertIsValid();
 
-    this.trail.applyUpdateModifiers(trailState);
-  }
-}
-
-export function mixTrailStrategy(...args) {
-  return R.compose(...args)(BaseTrailStrategy);
-}
-
-class Trail {
-  events;
-  hike;
-  hikers = [];
-  modifiers = [];
-  isOpen = false;
-
-  constructor(id, name, strategy) {
-    debug('ctor', { id, name, strategy });
-    this.events = new E3.EventEmitter();
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseTrailStrategy();
-    this.strategy.trail = this;
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
-
-  addHiker(hiker) {
-    this.hikers.push(hiker);
-  }
-
-  addModifier(modifier) {
-    this.modifiers.push(modifier);
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'trail should have an id');
-    invariant(this.strategy, 'trail should have a strategy');
-    this.strategy.assertIsValid();
+    this.applyUpdateModifiers(trailState);
   }
 
   suspend(objectFactory) {
     this.assertIsValid();
     objectFactory.suspendItem(
       this,
-      this.strategy.onSuspend(objectFactory, {
+      this.onSuspend(objectFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -116,7 +95,7 @@ class Trail {
   restore(objectFactory, stateMap, state) {
     this.id = state.id;
     this.name = state.name;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
 
     const modifierList = stateMap.get(makeSuspendListKey('TM', this.id));
     if (modifierList) {
@@ -152,14 +131,14 @@ class Trail {
   open() {
     debug('open');
     this.assertOpen(false);
-    this.strategy.onOpen();
+    this.onOpen();
     this.isOpen = true;
   }
 
   close() {
     debug('close');
     this.assertOpen();
-    this.strategy.onClose();
+    this.onClose();
     this.isOpen = false;
   }
 
@@ -169,7 +148,7 @@ class Trail {
 
   createTrailState() {
     debug('createTrailState');
-    const trailState = this.strategy.onCreateTrailState();
+    const trailState = this.onCreateTrailState();
     trailState.trail = this;
     this.sendTrailStateCreatedEvent(trailState);
     return trailState;
@@ -178,7 +157,7 @@ class Trail {
   initializeTrailState(trailState) {
     debug('initializeTrailState');
     this.assertOpen();
-    this.strategy.onInitializeTrailState(trailState);
+    this.onInitializeTrailState(trailState);
     trailState.resetLocation();
   }
 
@@ -190,7 +169,7 @@ class Trail {
   updateTrailState(trailState) {
     debug('updateTrailState');
     this.assertOpen();
-    this.strategy.onUpdateTrailState(trailState);
+    this.onUpdateTrailState(trailState);
   }
 
   applyUpdateModifiers(trailState) {
@@ -200,3 +179,7 @@ class Trail {
 }
 
 export default Trail;
+
+export function mixTrail(...args) {
+  return R.compose(...args)(Trail);
+}

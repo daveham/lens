@@ -12,9 +12,9 @@ const plan = new DicePlan(new Size(16, 16), new Size(2, 2), 0);
 
 const trailHikeWithLineTrailDocument = `
 ---
-# trail hike with line trail
+# Record hike with Line trail
 hikes:
-  - type: Trail
+  - type: Record
     trails:
       - type: Line
         modifiers:
@@ -23,9 +23,9 @@ hikes:
 
 const trailHikeWithCoverTrailDocument = `
 ---
-# trail hike with line trail
+# Record hike with Line trail
 hikes:
-  - type: Trail
+  - type: Record
     trails:
       - type: Cover
         modifiers:
@@ -37,7 +37,7 @@ hikes:
 
 const trailHikerDocument = `
 ---
-# trail hiker with fixed displacement movement
+# Trail hiker with fixed displacement movement
 hikers:
   - type: Trail
     actionBehavior:
@@ -50,7 +50,7 @@ hikers:
 
 const shapeHikerDocument = `
 ---
-# shape hiker with fixed displacement movement
+# Trail hiker with fixed displacement movement
 hikers:
   - type: Trail
     actionBehavior:
@@ -100,9 +100,9 @@ test('line hiker, fixed displacement, left to right', () => {
   // should have hit the right edge
   expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
 
-  const { movementBehavior } = hiker.strategy;
+  const { movementBehavior } = hiker;
   // in 10 steps
-  expect(movementBehavior.strategy.steps).toEqual(10);
+  expect(movementBehavior.steps).toEqual(10);
 });
 
 test('line hiker, fixed displacement, right to left', () => {
@@ -119,9 +119,9 @@ test('line hiker, fixed displacement, right to left', () => {
   // should have hit the left edge
   expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
 
-  const { movementBehavior } = hiker.strategy;
+  const { movementBehavior } = hiker;
   // in 20 steps
-  expect(movementBehavior.strategy.steps).toEqual(20);
+  expect(movementBehavior.steps).toEqual(20);
 });
 
 test('cover hiker, fixed displacement, rows first', () => {
@@ -138,9 +138,9 @@ test('cover hiker, fixed displacement, rows first', () => {
   // should have hit the left edge
   expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
 
-  const { movementBehavior } = hiker.strategy;
+  const { movementBehavior } = hiker;
   // in 20 steps
-  expect(movementBehavior.strategy.steps).toEqual(200);
+  expect(movementBehavior.steps).toEqual(200);
 });
 
 test('line hiker, grid displacement, left to right', () => {
@@ -156,7 +156,7 @@ test('line hiker, grid displacement, left to right', () => {
   // should have hit the right edge
   expect(hiker.exitReason).toEqual(HikerExitReason.exceededImageBounds);
 
-  const { movementBehavior } = hiker.strategy;
+  const { movementBehavior } = hiker;
   // in 7 steps (100 / 16)
-  expect(movementBehavior.strategy.steps).toEqual(7);
+  expect(movementBehavior.steps).toEqual(7);
 });

@@ -5,11 +5,13 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('dataBehavior');
 
-export class BaseDataBehaviorStrategy {
-  behavior;
+class DataBehavior {
+  started = false;
+  hiker;
 
-  constructor(options = {}) {
-    debug('ctor', { options });
+  constructor(id, name, options) {
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
   }
 
@@ -17,8 +19,13 @@ export class BaseDataBehaviorStrategy {
     return 'ActionBehavior';
   }
 
+  get type() {
+    return this.getType();
+  }
+
   assertIsValid() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
+    invariant(this.id, 'data behavior should have an id');
+    invariant(this.hiker, 'data behavior should have a hiker');
   }
 
   onSuspend(objectFactory, state) {
@@ -44,41 +51,12 @@ export class BaseDataBehaviorStrategy {
   onEnd() {
     this.assertIsValid();
   }
-}
-
-export function mixDataBehaviorStrategy(...args) {
-  return R.compose(...args)(BaseDataBehaviorStrategy);
-}
-
-class DataBehavior {
-  started = false;
-  hikerStrategy;
-  strategy;
-
-  constructor(id, name, strategy) {
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseDataBehaviorStrategy();
-    this.strategy.behavior = this;
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'data behavior should have an id');
-    invariant(this.strategy, 'data behavior should have a strategy');
-    invariant(this.hikerStrategy, 'data behavior should have a hiker strategy');
-    invariant(this.hikerStrategy.hiker, 'data behavior strategy should have a hiker');
-    this.strategy.assertIsValid();
-  }
 
   suspend(objectFactory) {
     this.assertIsValid();
     objectFactory.suspendItem(
       this,
-      this.strategy.onSuspend(objectFactory, {
+      this.onSuspend(objectFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -91,27 +69,27 @@ class DataBehavior {
     this.id = state.id;
     this.name = state.name;
     this.started = state.started;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
     this.assertIsValid();
   }
 
   start() {
     debug('start');
     this.assertStarted(false);
-    this.strategy.onStart();
+    this.onStart();
     this.started = true;
   }
 
   load() {
     debug('load');
     this.assertStarted();
-    return this.strategy.onLoad();
+    return this.onLoad();
   }
 
   end() {
     debug('end');
     this.assertStarted();
-    this.strategy.onEnd();
+    this.onEnd();
   }
 
   assertStarted(expected = true) {
@@ -122,3 +100,7 @@ class DataBehavior {
 }
 
 export default DataBehavior;
+
+export function mixDataBehavior(...args) {
+  return R.compose(...args)(DataBehavior);
+}

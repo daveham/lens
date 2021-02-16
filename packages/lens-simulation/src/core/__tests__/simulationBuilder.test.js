@@ -31,7 +31,7 @@ description: >
 hikes:
   - id: ${hikeId}
     name: Hike1
-    type: Trail
+    type: Record
     trails:
       - id: ${trailId}
         name: Trail1
@@ -72,7 +72,7 @@ test('parse', () => {
   expect(definition.hikes).toHaveLength(1);
 
   const [hike] = definition.hikes;
-  expect(hike.type).toEqual('Trail');
+  expect(hike.type).toEqual('Record');
   expect(hike.trails).toHaveLength(1);
 
   const [trail] = hike.trails;
@@ -126,11 +126,11 @@ describe('build', () => {
     const [hiker] = trail.hikers;
     expect(hiker).toBeTruthy();
 
-    const { movementBehavior } = hiker.strategy;
+    const { movementBehavior } = hiker;
     expect(movementBehavior).toBeTruthy();
-    expect(movementBehavior.strategy.displacementScheme).toEqual('fixed');
+    expect(movementBehavior.displacementScheme).toEqual('fixed');
 
-    const { actionBehavior } = hiker.strategy;
+    const { actionBehavior } = hiker;
     expect(actionBehavior).toBeTruthy();
     expect(getEndType(actionBehavior)).toEqual('RecordShape');
   });
@@ -169,9 +169,9 @@ describe('build', () => {
     expect(trailHikerTwo).toBeTruthy();
     expect(trailHikerTwo.id).toEqual(trailHikerTwoId);
 
-    const { movementBehavior: trailHikerTwoMovementBehavior } = trailHikerTwo.strategy;
+    const { movementBehavior: trailHikerTwoMovementBehavior } = trailHikerTwo;
     expect(trailHikerTwoMovementBehavior).toBeTruthy();
-    expect(trailHikerTwoMovementBehavior.strategy.displacementScheme).toEqual('grid');
+    expect(trailHikerTwoMovementBehavior.displacementScheme).toEqual('grid');
   });
 });
 
@@ -196,7 +196,7 @@ describe('suspend', () => {
     // hike
     const objHike = state.get(hikeId);
     expect(objHike).toBeTruthy();
-    expect(objHike.type).toEqual('Hike');
+    expect(objHike.type).toEqual('Hike:Record');
     expect(objHike.id).toEqual(hikeId);
     expect(objHike.name).toEqual('Hike1');
     expect(objHike.size).toEqual(new Size(100, 200));
@@ -367,7 +367,7 @@ describe('restore', () => {
     // hike
     const objHike = state.get(hikeId);
     expect(objHike).toBeTruthy();
-    expect(objHike.type).toEqual('Hike');
+    expect(objHike.type).toEqual('Hike:Record');
     expect(objHike.id).toEqual(hikeId);
     expect(objHike.name).toEqual('Hike1');
     expect(objHike.size).toEqual(new Size(100, 200));

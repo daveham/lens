@@ -1,9 +1,9 @@
 import { buildType } from '../utils';
 
 // import getDebugLog from './debugLog';
-// const debug = getDebugLog('lineTrailStrategy');
+// const debug = getDebugLog('LineTrailMixin');
 
-const LineTrailStrategyMixin = superclass =>
+const LineTrailMixin = superclass =>
   class extends superclass {
     getType() {
       return buildType(super.getType(), 'Line');
@@ -16,4 +16,4 @@ const LineTrailStrategyMixin = superclass =>
     }
   };
 
-export default LineTrailStrategyMixin;
+export default LineTrailMixin;

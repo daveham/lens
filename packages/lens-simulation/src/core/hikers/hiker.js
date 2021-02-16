@@ -5,11 +5,19 @@ import getDebugLog from './debugLog';
 
 const debug = getDebugLog('hiker');
 
-export class BaseHikerStrategy {
-  hiker;
+class Hiker {
+  trail;
+  active = true;
+  exitReason = '';
 
-  constructor(options = {}) {
+  constructor(id, name, options) {
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
+  }
+
+  get type() {
+    return this.getType();
   }
 
   getType() {
@@ -17,7 +25,7 @@ export class BaseHikerStrategy {
   }
 
   assertIsValid() {
-    invariant(this.hiker, 'hiker should be assigned to hiker strategy');
+    invariant(this.id, 'hiker should have an id');
   }
 
   onSuspend(objectFactory, state) {
@@ -42,39 +50,12 @@ export class BaseHikerStrategy {
   onEnd() {
     this.assertIsValid();
   }
-}
-
-export function mixHikerStrategy(...args) {
-  return R.compose(...args)(BaseHikerStrategy);
-}
-
-class Hiker {
-  trail;
-  active = true;
-  exitReason = '';
-
-  constructor(id, name, strategy) {
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseHikerStrategy();
-    this.strategy.hiker = this;
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'hiker should have an id');
-    invariant(this.strategy, 'hiker should have a strategy');
-    this.strategy.assertIsValid();
-  }
 
   suspend(objectFactory) {
     this.assertIsValid();
     objectFactory.suspendItem(
       this,
-      this.strategy.onSuspend(objectFactory, {
+      this.onSuspend(objectFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -85,7 +66,7 @@ class Hiker {
   restore(objectFactory, stateMap, state) {
     this.id = state.id;
     this.name = state.name;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
     this.assertIsValid();
   }
 
@@ -97,14 +78,14 @@ class Hiker {
   step() {
     debug('step', this.name);
     if (!this.started) {
-      this.strategy.onStart();
+      this.onStart();
       this.started = true;
     }
 
-    this.strategy.onStep();
+    this.onStep();
 
-    if (!this.active) {
-      this.strategy.onEnd();
+    if (!this.isActive()) {
+      this.onEnd();
     }
 
     return this.isActive();
@@ -118,3 +99,7 @@ class Hiker {
 }
 
 export default Hiker;
+
+export function mixHiker(...args) {
+  return R.compose(...args)(Hiker);
+}

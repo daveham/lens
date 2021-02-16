@@ -3,9 +3,9 @@ import { buildType } from '../utils';
 
 import getDebugLog from './debugLog';
 
-const debug = getDebugLog('trailHikerStrategy');
+const debug = getDebugLog('TrailHikerMixin');
 
-const TrailHikerStrategyMixin = superclass =>
+const TrailHikerMixin = superclass =>
   class extends superclass {
     dataBehavior;
     actionBehavior;
@@ -74,11 +74,11 @@ const TrailHikerStrategyMixin = superclass =>
       debug('onStep');
       super.onStep();
 
-      if (this.actionBehavior && this.hiker.active) {
+      if (this.actionBehavior && this.isActive()) {
         // take action based on current state (location and data)
         this.actionBehavior.act();
       }
-      if (this.movementBehavior && this.hiker.active) {
+      if (this.movementBehavior && this.isActive()) {
         // move to the next location
         this.movementBehavior.move();
       }
@@ -102,4 +102,4 @@ const TrailHikerStrategyMixin = superclass =>
     }
   };
 
-export default TrailHikerStrategyMixin;
+export default TrailHikerMixin;

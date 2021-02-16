@@ -1,23 +1,16 @@
-import ActionBehavior from '../hikers/actionBehaviors/actionBehavior';
-import DataBehavior from '../hikers/dataBehaviors/dataBehavior';
-import Hike from '../hikes/hike';
-import Hiker from '../hikers/hiker';
-import MovementBehavior from '../hikers/movementBehaviors/movementBehavior';
 import Simulation from '../simulation';
-import Trail from '../trails/trail';
-import getDebugLog from './debugLog';
 import {
-  createActionBehaviorStrategyClass,
-  createDataBehaviorStrategyClass,
-  createHikeStrategyClass,
-  createHikerStrategyClass,
-  createMovementBehaviorStrategyClass,
+  createActionBehaviorClass,
+  createDataBehaviorClass,
+  createHikeClass,
+  createHikerClass,
+  createMovementBehaviorClass,
+  createTrailClass,
   createTrailModifierClass,
-  createTrailStrategyClass,
 } from './classFactory';
-import { extractTypeAndOptions, getEndType } from './utils';
+import { getEndType } from './utils';
 
-const debug = getDebugLog('objectFactory');
+// const debug = getDebugLog('objectFactory');
 
 class RestoreFactory {
   stateMap;
@@ -34,27 +27,14 @@ class RestoreFactory {
     return simulation;
   }
 
-  restoreHikeStrategy(id, stateMap, state) {
-    const [, options] = extractTypeAndOptions(state);
-    const type = getEndType(state);
-    return createHikeStrategyClass(type, options);
-  }
-
   restoreHike(simulation, id, stateMap) {
     const state = stateMap.get(id);
-    const strategy = this.restoreHikeStrategy(id, stateMap, state);
-
-    const hike = new Hike(id, state.name, strategy);
+    const { name, options } = state;
+    const type = getEndType(state);
+    const hike = createHikeClass(id, name, type, options);
     hike.simulation = simulation;
     hike.restore(this, stateMap, state);
-
     return hike;
-  }
-
-  restoreTrailStrategy(id, stateMap, state) {
-    const type = getEndType(state);
-    const { options } = state;
-    return createTrailStrategyClass(type, options);
   }
 
   restoreTrailModifier(trail, id, stateMap) {
@@ -68,98 +48,69 @@ class RestoreFactory {
 
   restoreTrail(hike, id, stateMap) {
     const state = stateMap.get(id);
-    const strategy = this.restoreTrailStrategy(id, stateMap, state);
-
-    const trail = new Trail(id, state.name, strategy);
+    const { name, options } = state;
+    const type = getEndType(state);
+    const trail = createTrailClass(id, name, type, options);
     trail.hike = hike;
     trail.restore(this, stateMap, state);
-
     return trail;
   }
 
-  restoreMovementBehaviorStrategy(id, stateMap, state) {
-    const type = getEndType(state);
-    const { options } = state;
-    return createMovementBehaviorStrategyClass(type, options);
-  }
-
   restoreMovementBehavior(id, stateMap) {
-    debug('restoreMovementBehavior');
     const state = stateMap.get(id);
-    const strategy = this.restoreMovementBehaviorStrategy(id, stateMap, state);
-
-    return new MovementBehavior(id, state.name, strategy);
-  }
-
-  restoreActionBehaviorStrategy(id, stateMap, state) {
+    const { name, options } = state;
     const type = getEndType(state);
-    const { options } = state;
-    return createActionBehaviorStrategyClass(type, options);
+    return createMovementBehaviorClass(id, name, type, options);
   }
 
   restoreActionBehavior(id, stateMap) {
-    debug('restoreActionBehavior');
     const state = stateMap.get(id);
-    const strategy = this.restoreActionBehaviorStrategy(id, stateMap, state);
-
-    return new ActionBehavior(id, state.name, strategy);
-  }
-
-  restoreDataBehaviorStrategy(id, stateMap, state) {
+    const { name, options } = state;
     const type = getEndType(state);
-    const { options } = state;
-    return createDataBehaviorStrategyClass(type, options);
+    return createActionBehaviorClass(id, name, type, options);
   }
 
   restoreDataBehavior(id, stateMap) {
-    debug('restoreDataBehavior');
     const state = stateMap.get(id);
-    const strategy = this.restoreDataBehaviorStrategy(id, stateMap, state);
-
-    return new DataBehavior(id, state.name, strategy);
+    const { name, options } = state;
+    const type = getEndType(state);
+    return createDataBehaviorClass(id, name, type, options);
   }
 
   restoreTrailHikerBehaviors(
-    strategy,
+    hiker,
     stateMap,
     { movementBehaviorId, actionBehaviorId, dataBehaviorId },
   ) {
     if (movementBehaviorId) {
       const movementBehavior = this.restoreMovementBehavior(movementBehaviorId, stateMap);
-      movementBehavior.hikerStrategy = strategy;
+      movementBehavior.hiker = hiker;
       movementBehavior.restore(this, stateMap, stateMap.get(movementBehaviorId));
-      strategy.movementBehavior = movementBehavior;
+      hiker.movementBehavior = movementBehavior;
     }
 
     if (actionBehaviorId) {
       const actionBehavior = this.restoreActionBehavior(actionBehaviorId, stateMap);
-      actionBehavior.hikerStrategy = strategy;
+      actionBehavior.hiker = hiker;
       actionBehavior.restore(this, stateMap, stateMap.get(actionBehaviorId));
-      strategy.actionBehavior = actionBehavior;
+      hiker.actionBehavior = actionBehavior;
     }
 
     if (dataBehaviorId) {
       const dataBehavior = this.restoreDataBehavior(dataBehaviorId, stateMap);
-      dataBehavior.hikerStrategy = strategy;
+      dataBehavior.hiker = hiker;
       dataBehavior.restore(this, stateMap, stateMap.get(dataBehaviorId));
-      strategy.dataBehavior = dataBehavior;
+      hiker.dataBehavior = dataBehavior;
     }
-  }
-
-  restoreHikerStrategy(id, stateMap, state) {
-    const type = getEndType(state);
-    const { options } = state;
-    return createHikerStrategyClass(type, options);
   }
 
   restoreHiker(trail, id, stateMap) {
     const state = stateMap.get(id);
-    const strategy = this.restoreHikerStrategy(id, stateMap, state);
-
-    const hiker = new Hiker(id, state.name, strategy);
+    const { name, options } = state;
+    const type = getEndType(state);
+    const hiker = createHikerClass(id, name, type, options);
     hiker.trail = trail;
     hiker.restore(this, stateMap, state);
-
     return hiker;
   }
 }

@@ -1,23 +1,17 @@
-import ActionBehavior from '../hikers/actionBehaviors/actionBehavior';
-import DataBehavior from '../hikers/dataBehaviors/dataBehavior';
-import Hike from '../hikes/hike';
-import Hiker from '../hikers/hiker';
-import MovementBehavior from '../hikers/movementBehaviors/movementBehavior';
 import Simulation from '../simulation';
-import Trail from '../trails/trail';
-import getDebugLog from './debugLog';
+// import getDebugLog from './debugLog';
 import {
-  createActionBehaviorStrategyClass,
-  createDataBehaviorStrategyClass,
-  createHikeStrategyClass,
-  createHikerStrategyClass,
-  createMovementBehaviorStrategyClass,
+  createActionBehaviorClass,
+  createDataBehaviorClass,
+  createHikeClass,
+  createHikerClass,
+  createMovementBehaviorClass,
+  createTrailClass,
   createTrailModifierClass,
-  createTrailStrategyClass,
 } from './classFactory';
 import { extractTypeAndOptions } from './utils';
 
-const debug = getDebugLog('definitionFactory');
+// const debug = getDebugLog('definitionFactory');
 
 class DefinitionFactory {
   simulationFactory;
@@ -40,19 +34,15 @@ class DefinitionFactory {
   }
 
   // region hike
-  createHikeStrategy(definition) {
-    const [type, options] = extractTypeAndOptions(definition);
-    return createHikeStrategyClass(type, options);
-  }
 
   createHike({ trails, id: hikeId, name: hikeName, ...definition }) {
-    const strategy = this.createHikeStrategy(definition);
+    const [type, options] = extractTypeAndOptions(definition);
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'hike',
       hikeId,
       hikeName,
     );
-    const hike = new Hike(id, name, strategy);
+    const hike = createHikeClass(id, name, type, options);
     hike.configure(this.simulationFactory.model.size);
 
     if (trails) {
@@ -64,19 +54,14 @@ class DefinitionFactory {
   // endregion
 
   // region trail
-  createTrailStrategy(params) {
-    const [type, options] = extractTypeAndOptions(params);
-    return createTrailStrategyClass(type, options);
-  }
-
   createTrail(hike, { hikers, modifiers, id: trailId, name: trailName, ...definition }) {
-    const strategy = this.createTrailStrategy(definition);
+    const [type, options] = extractTypeAndOptions(definition);
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'trail',
       trailId,
       trailName,
     );
-    const trail = new Trail(id, name, strategy);
+    const trail = createTrailClass(id, name, type, options);
     trail.hike = hike;
 
     if (modifiers) {
@@ -102,93 +87,67 @@ class DefinitionFactory {
   // endregion
 
   // region hiker
-  createMovementBehaviorStrategy(definition) {
-    const [type, options] = extractTypeAndOptions(definition);
-    return createMovementBehaviorStrategyClass(type, options);
-  }
-
-  createMovementBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
-    debug('createMovementBehavior', definition);
-    const strategy = this.createMovementBehaviorStrategy(definition);
+  createMovementBehavior({ id: behaviorId, name: behaviorName, type, options }) {
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'movementBehavior',
       behaviorId,
       behaviorName,
     );
-    return new MovementBehavior(id, name, strategy);
-  }
-
-  createActionBehaviorStrategy(definition) {
-    const [type, options] = extractTypeAndOptions(definition);
-    return createActionBehaviorStrategyClass(type, options);
+    return createMovementBehaviorClass(id, name, type, options);
   }
 
   createActionBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
-    debug('createActionBehavior', definition);
-    const strategy = this.createActionBehaviorStrategy(definition);
+    const [type, options] = extractTypeAndOptions(definition);
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'actionBehavior',
       behaviorId,
       behaviorName,
     );
-    return new ActionBehavior(id, name, strategy);
-  }
-
-  createDataBehaviorStrategy(definition) {
-    const [type, options] = extractTypeAndOptions(definition);
-    return createDataBehaviorStrategyClass(type, options);
+    return createActionBehaviorClass(id, name, type, options);
   }
 
   createDataBehavior({ id: behaviorId, name: behaviorName, ...definition }) {
-    debug('createDataBehavior', definition);
-    const strategy = this.createDataBehaviorStrategy(definition);
+    const [type, options] = extractTypeAndOptions(definition);
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'dataBehavior',
       behaviorId,
       behaviorName,
     );
-    return new DataBehavior(id, name, strategy);
+    return createDataBehaviorClass(id, name, type, options);
   }
 
-  createTrailHikerBehaviors(strategy, { movementBehavior, actionBehavior, dataBehavior }) {
+  createTrailHikerBehaviors(hiker, { movementBehavior, actionBehavior, dataBehavior }) {
     let behavior;
     if (movementBehavior) {
       behavior = this.createMovementBehavior(movementBehavior);
-      behavior.hikerStrategy = strategy;
-      strategy.movementBehavior = behavior;
+      behavior.hiker = hiker;
+      hiker.movementBehavior = behavior;
     }
 
     if (actionBehavior) {
       behavior = this.createActionBehavior(actionBehavior);
-      behavior.hikerStrategy = strategy;
-      strategy.actionBehavior = behavior;
+      behavior.hiker = hiker;
+      hiker.actionBehavior = behavior;
     }
 
     if (dataBehavior) {
       behavior = this.createDataBehavior(dataBehavior);
-      behavior.hikerStrategy = strategy;
-      strategy.dataBehavior = behavior;
+      behavior.hiker = hiker;
+      hiker.dataBehavior = behavior;
     }
   }
 
-  createHikerStrategy(definition) {
-    const [type, options, other] = extractTypeAndOptions(definition);
-    const strategy = createHikerStrategyClass(type, options);
-    if (type === 'Trail') {
-      this.createTrailHikerBehaviors(strategy, other);
-    }
-    return strategy;
-  }
-
-  createHiker(trail, { id: hikerId, name: hikerName, ...definition }) {
-    const strategy = this.createHikerStrategy(definition);
+  createHiker(trail, { id: hikerId, name: hikerName, type, options, ...definition }) {
     const [id, name] = this.simulationFactory.buildContext.resolveIdAndName(
       'hiker',
       hikerId,
       hikerName,
     );
-    const hiker = new Hiker(id, name, strategy);
+    const hiker = createHikerClass(id, name, type, options);
     hiker.trail = trail;
+    if (type === 'Trail') {
+      this.createTrailHikerBehaviors(hiker, definition);
+    }
     trail.addHiker(hiker);
     return hiker;
   }

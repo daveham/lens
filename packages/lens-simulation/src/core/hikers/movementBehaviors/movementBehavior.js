@@ -6,11 +6,13 @@ import getDebugLog from '../debugLog';
 
 const debug = getDebugLog('movementBehavior');
 
-export class BaseMovementBehaviorStrategy {
-  behavior;
+class MovementBehavior {
+  started = false;
+  hiker;
 
-  constructor(options = {}) {
-    debug('ctor', { options });
+  constructor(id, name, options) {
+    this.id = id;
+    this.name = name;
     this.options = { ...options };
   }
 
@@ -18,8 +20,13 @@ export class BaseMovementBehaviorStrategy {
     return 'MovementBehavior';
   }
 
+  get type() {
+    return this.getType();
+  }
+
   assertIsValid() {
-    invariant(this.behavior, 'behavior should be assigned to strategy');
+    invariant(this.id, 'movement behavior should have an id');
+    invariant(this.hiker, 'movement behavior should have a hiker');
   }
 
   onSuspend(objectFactory, state) {
@@ -41,47 +48,18 @@ export class BaseMovementBehaviorStrategy {
     debug('onMove');
     this.assertIsValid();
 
-    this.behavior.abort(HikerExitReason.reachedStepLimit);
+    this.abort(HikerExitReason.reachedStepLimit);
   }
 
   onEnd() {
     this.assertIsValid();
-  }
-}
-
-export function mixMovementBehaviorStrategy(...args) {
-  return R.compose(...args)(BaseMovementBehaviorStrategy);
-}
-
-class MovementBehavior {
-  started = false;
-  hikerStrategy;
-  strategy;
-
-  constructor(id, name, strategy) {
-    this.id = id;
-    this.name = name;
-    this.strategy = strategy || new BaseMovementBehaviorStrategy();
-    this.strategy.behavior = this;
-  }
-
-  get type() {
-    return this.strategy.getType();
-  }
-
-  assertIsValid() {
-    invariant(this.id, 'movement behavior should have an id');
-    invariant(this.strategy, 'movement behavior should have a strategy');
-    invariant(this.hikerStrategy, 'movement behavior should have a hiker strategy');
-    invariant(this.hikerStrategy.hiker, 'movement behavior strategy should have a hiker');
-    this.strategy.assertIsValid();
   }
 
   suspend(objectFactory) {
     this.assertIsValid();
     objectFactory.suspendItem(
       this,
-      this.strategy.onSuspend(objectFactory, {
+      this.onSuspend(objectFactory, {
         type: this.type,
         id: this.id,
         name: this.name,
@@ -94,7 +72,7 @@ class MovementBehavior {
     this.id = state.id;
     this.name = state.name;
     this.started = state.started;
-    this.strategy.onRestore(objectFactory, stateMap, state);
+    this.onRestore(objectFactory, stateMap, state);
     this.assertIsValid();
   }
 
@@ -107,26 +85,30 @@ class MovementBehavior {
   start() {
     debug('start');
     this.assertStarted(false);
-    this.strategy.onStart();
+    this.onStart();
     this.started = true;
   }
 
   move() {
     debug('move');
     this.assertStarted();
-    return this.strategy.onMove();
+    return this.onMove();
   }
 
   end() {
     debug('end');
     this.assertStarted();
-    this.strategy.onEnd();
+    this.onEnd();
   }
 
   abort(reason) {
-    debug('abort', { name: this.hikerStrategy.hiker.name, reason });
-    this.hikerStrategy.hiker.abort(reason);
+    debug('abort', { name: this.hiker.name, reason });
+    this.hiker.abort(reason);
   }
 }
 
 export default MovementBehavior;
+
+export function mixMovementBehavior(...args) {
+  return R.compose(...args)(MovementBehavior);
+}
